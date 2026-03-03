@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Spatie\LaravelPdf\Facades\Pdf;
 use Illuminate\Http\Request;
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -41,3 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     });
 });
+
+Route::get('/users-export', function () {
+    return Excel::download(new UsersExport(), 'users.xlsx');
+
+})->middleware(['auth', 'verified']);
