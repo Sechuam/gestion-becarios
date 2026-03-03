@@ -24,7 +24,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Becarios',
-        href: '/interns', // ruta que hemos creado en web.php
+        href: '/becarios', // ruta que hemos creado en web.php
         icon: Users,
     },
 ];
