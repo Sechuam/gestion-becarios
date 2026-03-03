@@ -13,6 +13,8 @@ Route::inertia('/', 'welcome', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    // Nueva ruta para becarios
+    Route::inertia('becarios', 'interns/index')->name('interns.index');
 });
 
 require __DIR__.'/settings.php';
