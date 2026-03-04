@@ -1,11 +1,11 @@
 <?php
 
+use App\Exports\UsersExport;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
-use Spatie\LaravelPdf\Facades\Pdf;
-use Illuminate\Http\Request;
-use App\Exports\UsersExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -18,8 +18,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
-
-
 
 Route::get('/pdf-ejemplo', function () {
     $user = auth()->user();
@@ -36,17 +34,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'file' => ['required', 'file'],
         ]);
 
-        $user = $request->user(); //usuario logueado
+        $user = $request->user(); // usuario logueado
 
         $user->addMediaFromRequest('file')->toMediaCollection('avatars');
 
         return 'OK';
 
-
     });
 });
 
 Route::get('/users-export', function () {
-    return Excel::download(new UsersExport(), 'users.xlsx');
+    return Excel::download(new UsersExport, 'users.xlsx');
 
 })->middleware(['auth', 'verified']);
