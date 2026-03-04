@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import { title } from 'process';
 
 const mainNavItems: NavItem[] = [
     {
@@ -27,6 +28,14 @@ const mainNavItems: NavItem[] = [
         href: '/becarios', // ruta que hemos creado en web.php
         icon: Users,
     },
+
+    // Nueva sección para tutores
+
+    {
+        title: 'Tutores',
+        href: '/tutores', // ruta que hemos creado en web.php
+        icon: Users,
+    }
 ];
 
 const footerNavItems: NavItem[] = [

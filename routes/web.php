@@ -19,6 +19,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('becarios', 'interns/index')->name('interns.index');
 });
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    // Nueva ruta para tutores
+    Route::inertia('tutores', 'tutors/index')->name('tutors.index');
+});
+
 require __DIR__.'/settings.php';
 
 // ruta para descargar un pdf
