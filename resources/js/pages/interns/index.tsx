@@ -1,6 +1,6 @@
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
+import { Head } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types';
 
 // Array de objetos con la propiedad title y href
 const breadcrumbs: BreadcrumbItem[] = [
@@ -14,10 +14,10 @@ export default function Index() {
             <Head title="Becarios" />
             <div className="p-4">
                 <h1 className="text-2xl font-bold">Lista de becarios</h1>
-                <p className="text-gray-600">Aquí podremos gestionar a todos los becarios del sistema</p>
+                <p className="text-gray-600">
+                    Aquí podremos gestionar a todos los becarios del sistema
+                </p>
             </div>
         </AppLayout>
     );
 }
-
-
