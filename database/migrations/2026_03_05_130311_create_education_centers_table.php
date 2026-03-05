@@ -13,7 +13,19 @@ return new class extends Migration
     {
         Schema::create('education_centers', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            
+            $table->string('name');
+            $table->string('code')->unique();
+            $table->string('adress');
+            $table->string('city');
+
+            $table->string('contact_person');
+            $table->string('email')->unique;
+            $table->string('phone');
+
+            $table->timestaps();
+            $table->softDeletes();
+
         });
     }
 
