@@ -28,6 +28,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos
     Route::inertia('schools', 'schools/index')->name('schools.index');
+    //Ruta para tareas
+    Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
+    // Ruta para evaluaciones
+    Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
+    // Ruta para asistencia
+    Route::inertia('/asistencia', 'attendance/index')->name('attendance.index');
+    // Ruta para reportes
+    Route::inertia('/reportes', 'reports/index')->name('reports.index');
 
     // Gestión de Media / Archivos
     Route::view('/media-test-form', 'media-test');

@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users } from 'lucide-react';
+import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users, Building2, Clock, ClipboardList, Kanban, Star, FileText } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem as BaseNavItem } from '@/types';
-import { Building2 } from 'lucide-react';
 
 interface NavItem extends BaseNavItem {
     items?: NavItem[];
@@ -27,12 +26,18 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+
+    {
+        title: 'Centros educativos',
+        href: '/schools',
+        icon: Building2,
+    },
     {
 
         title: 'Usuarios',
         href: '#',
         icon: Users,
-        isActive: true, // Esto lo mantiene abierto por defecto
+        isActive: false, // Esto lo mantiene abierto por defecto
         items: [
 
             {
@@ -60,9 +65,32 @@ const mainNavItems: NavItem[] = [
     },
 
     {
-        title: 'Centros educativos',
-        href: '/schools',
-        icon: Building2,
+        title: 'Seguimiento académico',
+        href: '#',
+        icon: ClipboardList,
+        isActive: false,
+        items: [
+            {
+                title: 'Tareas (Kanban)',
+                href: '/tareas',
+                icon: Kanban,
+            },
+            {
+                title: 'Evaluaciones',
+                href: '/evaluaciones',
+                icon: Star,
+            },
+        ],
+    },
+    {
+        title: 'Control horario',
+        href: '/asistencia',
+        icon: Clock,
+    },
+    {
+        title: 'Reportes e informes',
+        href: '/reportes',
+        icon: FileText,
     }
 ];
 
