@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\EducationCenter;
 use Illuminate\Database\Seeder;
 
 class EducationCenterSeeder extends Seeder
