@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
+    // Ruta para los centros educativos
+    Route::inertia('schools', 'schools/index')->name('schools.index');
 
     // Gestión de Media / Archivos
     Route::view('/media-test-form', 'media-test');

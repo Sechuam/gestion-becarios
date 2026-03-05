@@ -14,7 +14,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavItem as BaseNavItem } from '@/types';
+import { Building2 } from 'lucide-react';
+
+interface NavItem extends BaseNavItem {
+    items?: NavItem[];
+}
 
 const mainNavItems: NavItem[] = [
     {
@@ -31,9 +36,6 @@ const mainNavItems: NavItem[] = [
         items: [
 
             {
-
-
-
                 title: 'Becarios',
                 href: '/becarios', // ruta que hemos creado en web.php
                 icon: BookOpen,
@@ -54,10 +56,14 @@ const mainNavItems: NavItem[] = [
                 href: '/administrador', // ruta que hemos creado en web.php
                 icon: ShieldCheck,
             },
-        ]
+        ],
+    },
+
+    {
+        title: 'Centros educativos',
+        href: '/schools',
+        icon: Building2,
     }
-
-
 ];
 
 
