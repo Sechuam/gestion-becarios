@@ -16,14 +16,14 @@ return new class extends Migration
             
             $table->string('name');
             $table->string('code')->unique();
-            $table->string('adress');
+            $table->string('address');
             $table->string('city');
 
             $table->string('contact_person');
-            $table->string('email')->unique;
+            $table->string('email')->unique();
             $table->string('phone');
 
-            $table->timestaps();
+            $table->timestamps();
             $table->softDeletes();
 
         });
