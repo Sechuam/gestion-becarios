@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, Users } from 'lucide-react';
+import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -25,7 +25,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Becarios',
         href: '/becarios', // ruta que hemos creado en web.php
-        icon: Users,
+        icon: BookOpen,
     },
 
     // Nueva sección para tutores
@@ -33,7 +33,17 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Tutores',
         href: '/tutores', // ruta que hemos creado en web.php
-        icon: Users,
+        icon: GraduationCap,
+    },
+
+
+
+    // Nueva sección para administradores
+
+    {
+        title: 'Administrador',
+        href: '/administrador', // ruta que hemos creado en web.php
+        icon: ShieldCheck,
     }
 ];
 

@@ -25,6 +25,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('tutores', 'tutors/index')->name('tutors.index');
 });
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    // Nueva ruta para Administradores
+    Route::inertia('administrador', 'admin/index')->name('admin.index');
+});
+
 require __DIR__.'/settings.php';
 
 // ruta para descargar un pdf
