@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck } from 'lucide-react';
+import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -23,29 +23,43 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Becarios',
-        href: '/becarios', // ruta que hemos creado en web.php
-        icon: BookOpen,
-    },
 
-    // Nueva sección para tutores
+        title: 'Usuarios',
+        href: '#',
+        icon: Users,
+        isActive: true, // Esto lo mantiene abierto por defecto
+        items: [
 
-    {
-        title: 'Tutores',
-        href: '/tutores', // ruta que hemos creado en web.php
-        icon: GraduationCap,
-    },
+            {
 
 
 
-    // Nueva sección para administradores
+                title: 'Becarios',
+                href: '/becarios', // ruta que hemos creado en web.php
+                icon: BookOpen,
+            },
 
-    {
-        title: 'Administrador',
-        href: '/administrador', // ruta que hemos creado en web.php
-        icon: ShieldCheck,
+            // Nueva sección para tutores
+
+            {
+                title: 'Tutores',
+                href: '/tutores', // ruta que hemos creado en web.php
+                icon: GraduationCap,
+            },
+
+            // Nueva sección para administradores
+
+            {
+                title: 'Administrador',
+                href: '/administrador', // ruta que hemos creado en web.php
+                icon: ShieldCheck,
+            },
+        ]
     }
+
+
 ];
+
 
 const footerNavItems: NavItem[] = [
     {

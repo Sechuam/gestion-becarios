@@ -2,9 +2,10 @@ import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
-// Array de objetos con la propiedad title y href
+// Array de objetos con la jerarquía de navegación
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Usuarios', href: '/usuarios' }, // <-- Nivel intermedio (no clickable)
     { title: 'Becarios', href: '/becarios' },
 ];
 

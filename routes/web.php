@@ -6,61 +6,54 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\LaravelPdf\Facades\Pdf;
+use Inertia\Inertia;
 
-// ruta de bienvenida, que se carga con React
+// Ruta de bienvenida
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-// ruta de dashboard para hacer login o registro
+// --- RUTAS PROTEGIDAS (Requieren Login) ---
 Route::middleware(['auth', 'verified'])->group(function () {
+    
+    // Dashboard principal
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
-    // Nueva ruta para becarios
-    Route::inertia('becarios', 'interns/index')->name('interns.index');
-});
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-    // Nueva ruta para tutores
-    Route::inertia('tutores', 'tutors/index')->name('tutors.index');
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-    // Nueva ruta para Administradores
+    // Módulo de Usuarios (Coincidiendo con tu Sidebar)
+    // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
+    Route::inertia('becarios', 'interns/index')->name('becarios.index');
+    Route::inertia('tutores', 'tutors/index')->name('tutores.index');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
-});
+    // Ruta para la pestaña Usuarios
+    Route::inertia('usuarios', 'users/index')->name('users.index');
 
-require __DIR__.'/settings.php';
-
-// ruta para descargar un pdf
-Route::get('/pdf-ejemplo', function () {
-    $user = auth()->user();
-
-    return Pdf::view('example', ['user' => $user])
-        ->download('ejemplo.pdf');
-});
-// ruta para subir un archivo, primero identifica al usuario logueado y luego sube el archivo
-Route::middleware(['auth', 'verified'])->group(function () {
+    // Gestión de Media / Archivos
     Route::view('/media-test-form', 'media-test');
-
-    // ruta para subir un archivo
     Route::post('/media-test', function (Request $request) {
         $request->validate([
             'file' => ['required', 'file'],
         ]);
 
-        $user = $request->user(); // usuario logueado
-        // sube el archivo al media collection 'avatars'
+        $user = $request->user();
         $user->addMediaFromRequest('file')->toMediaCollection('avatars');
 
         return 'OK';
-
     });
+
+    // Exportación de Usuarios
+    Route::get('/users-export', function () {
+        return Excel::download(new UsersExport, 'users.xlsx');
+    })->name('users.export');
 });
 
-// ruta para exportar usuarios
-Route::get('/users-export', function () {
-    return Excel::download(new UsersExport, 'users.xlsx');
+// --- RUTAS PÚBLICAS O ESPECIALES ---
 
-})->middleware(['auth', 'verified']);
+require __DIR__.'/settings.php';
+
+// Generación de PDF
+Route::get('/pdf-ejemplo', function () {
+    $user = auth()->user();
+    return Pdf::view('example', ['user' => $user])
+        ->download('ejemplo.pdf');
+});
+

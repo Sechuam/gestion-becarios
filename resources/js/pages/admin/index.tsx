@@ -5,6 +5,7 @@ import type { BreadcrumbItem } from '@/types';
 // Array de objetos con la propiedad title y href
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Usuarios', href: '/usuarios' },
     { title: 'Administrador', href: '/administrador' },
 ];
 
