@@ -37,33 +37,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
 
-    // Gestión de Media / Archivos
-    Route::view('/media-test-form', 'media-test');
-    Route::post('/media-test', function (Request $request) {
-        $request->validate([
-            'file' => ['required', 'file'],
-        ]);
-
-        $user = $request->user();
-        $user->addMediaFromRequest('file')->toMediaCollection('avatars');
-
-        return 'OK';
-    });
-
-    // Exportación de Usuarios
-    Route::get('/users-export', function () {
-        return Excel::download(new UsersExport, 'users.xlsx');
-    })->name('users.export');
 });
 
 // --- RUTAS PÚBLICAS O ESPECIALES ---
 
 require __DIR__.'/settings.php';
-
-// Generación de PDF
-Route::get('/pdf-ejemplo', function () {
-    $user = auth()->user();
-    return Pdf::view('example', ['user' => $user])
-        ->download('ejemplo.pdf');
-});
 
