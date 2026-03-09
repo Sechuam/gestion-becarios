@@ -24,7 +24,13 @@ class StoreEducationCenterRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:50|unique:education_centers,code',
-            
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'contact_person' => 'required|string|max:255',
+            'contact_position' => 'nullable|string|max:255',
+            'email' => 'required|email|max:255|unique:education_centers,email',
+            'phone' => 'required|string|max:255',
+            'web' => 'nullable|string|max:255',
         ];
     }
 }

@@ -24,6 +24,8 @@ class EducationCenterFactory extends Factory
             'contact_person' => $this->faker->name(),
             'email'          => $this->faker->unique()->safeEmail(),
             'phone'          => $this->faker->phoneNumber(),
+            'web'            => $this->faker->url(),
+            'contact_position' => $this->faker->jobTitle(),
         ];
     }
 }

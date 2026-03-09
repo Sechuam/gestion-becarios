@@ -15,7 +15,9 @@ class EducationCenter extends Model {
         'adress',
         'city',
         'contact_person',
+        'contact_position',
         'email',
         'phone',
+        'web',       
     ];
 }

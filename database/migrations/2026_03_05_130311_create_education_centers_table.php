@@ -26,6 +26,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->string('web')->nullable();
+            $table->string('contact_position')->nullable();
+
         });
     }
 

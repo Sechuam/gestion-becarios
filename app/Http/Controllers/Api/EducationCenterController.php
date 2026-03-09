@@ -6,6 +6,7 @@ use App\Models\EducationCenter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreEducationCenterRequest;
+use Inertia\Inertia;
 
 class EducationCenterController extends Controller
 {
@@ -14,22 +15,15 @@ class EducationCenterController extends Controller
      */
     public function index()
     {
-        $centers = EducationCenter::all();
-        return response()->json($centers);
+        $centers = EducationCenter::paginate(10);
+        return Inertia::render('schools/index', [
+            'schools' => $centers
+        ]);
     }
 
     public function create()
     {
-        return inertia('EducationCenters/Create');
-    }
-
-    public function edit(EducationCenter $education_center)
-
-    {
-        return inertia('EducationCenters/Edit', [
-            'educationCenter' => $education_center
-        ]);
-
+        return Inertia::render('schools/Create');
     }
 
     /**
@@ -37,34 +31,41 @@ class EducationCenterController extends Controller
      */
     public function store(StoreEducationCenterRequest $request)
     {
-        $center = EducationCenter::create($request->validated());
-        return to_route('education-centers.index');
+        EducationCenter::create($request->validated());
+        return to_route('schools.index')->with('success', 'Centro Educativo creado.');
 
+    }
+
+    public function edit(EducationCenter $school)
+    {
+        return Inertia::render('schools/Edit', [
+            'educationCenter' => $school
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(EducationCenter $education_center)
+    public function show(EducationCenter $school)
     {
-        return response()->json($education_center);
+        return response()->json($school);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreEducationCenterRequest $request, EducationCenter $education_center)
+    public function update(StoreEducationCenterRequest $request, EducationCenter $school)
     {
-        $education_center->update($request->validated());
-        return to_route('education-centers.index')->with('success', 'Centro actualizado');
+        $school->update($request->validated());
+        return to_route('schools.index')->with('success', 'Centro Educativo actualizado');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(EducationCenter $education_center)
+    public function destroy(EducationCenter $school)
     {
-        $education_center->delete();
-        return to_route('education-centers.index')->with('success', 'Centro eliminado');
+        $school->delete();
+        return to_route('schools.index')->with('success', 'Centro Educativo eliminado');
     }
 }

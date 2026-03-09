@@ -27,7 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos
-    Route::inertia('schools', 'schools/index')->name('schools.index');
+    Route::resource('schools', \App\Http\Controllers\Api\EducationCenterController::class);
     //Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
     // Ruta para evaluaciones
