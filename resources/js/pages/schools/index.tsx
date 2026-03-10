@@ -1,8 +1,9 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem } from '@/types/navigation';
 import { Building2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -10,6 +11,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ schools }: { schools: any }) {
+    const { auth } = usePage().props as any;
+    const canManage = auth.user?.permissions?.includes('manage schools');
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Centros Educativos" />
@@ -22,10 +26,14 @@ export default function Index({ schools }: { schools: any }) {
                             Gestiona las instituciones, universidades y centros de formación.
                         </p>
                     </div>
-                    <Button className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        Añadir Centro
-                    </Button>
+                    {canManage && (
+                        <Button className="gap-2" asChild>
+                            <Link href="/schools/create">
+                                <Plus className="h-4 w-4" />
+                                Añadir Centro
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <input
@@ -58,7 +66,17 @@ export default function Index({ schools }: { schools: any }) {
                                     <td className="py-2 px-4">{school.city}</td>
                                     <td className="py-2 px-4">{school.contact_person}</td>
                                     <td className="py-2 px-4">{school.email}</td>
-                                    <td className="py-2 px-4">
+                                    <td className="py-2 px-4 flex gap-3 items-center">
+                                        {canManage ? (
+                                            <>
+                                                <Link href={`/schools/${school.id}/edit`} className="text-blue-600 hover:underline text-xs font-medium">
+                                                    Editar
+                                                </Link>
+                                                <DeleteCenterModal school={school} />
+                                            </>
+                                        ) : (
+                                            <span className="text-muted-foreground text-xs italic">Solo lectura</span>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

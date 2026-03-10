@@ -26,8 +26,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
-    // Ruta para los centros educativos
-    Route::resource('schools', \App\Http\Controllers\Api\EducationCenterController::class);
+    // Ruta para los centros educativos (Pública para ver el listado)
+    Route::get('schools', [\App\Http\Controllers\Api\EducationCenterController::class, 'index'])->name('schools.index');
+
+    // Rutas protegidas para administración de centros
+    Route::middleware('can:manage schools')->group(function () {
+        Route::resource('schools', \App\Http\Controllers\Api\EducationCenterController::class)->except(['index']);
+    });
     //Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
     // Ruta para evaluaciones

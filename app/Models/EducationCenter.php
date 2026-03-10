@@ -12,7 +12,7 @@ class EducationCenter extends Model {
     protected $fillable = [
         'name',
         'code',
-        'adress',
+        'address',
         'city',
         'contact_person',
         'contact_position',
