@@ -21,13 +21,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Módulo de Usuarios (Coincidiendo con tu Sidebar)
     // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
-    Route::inertia('becarios', 'interns/index')->name('becarios.index');
+    Route::get('becarios', [App\Http\Controllers\InternController::class, 'index'])->name('becarios.index');
     Route::inertia('tutores', 'tutors/index')->name('tutores.index');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos (Pública para ver el listado)
     Route::get('schools', [\App\Http\Controllers\Api\EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('interns/{intern}', [App\Http\Controllers\InternController::class, 'show'])->name('interns.show');
+    Route::middleware('can:manage interns')->group(function () {
+    Route::resource('interns', App\Http\Controllers\InternController::class)->except(['index', 'show']);
+});
 
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {
