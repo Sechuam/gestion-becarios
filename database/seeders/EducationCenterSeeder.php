@@ -12,6 +12,6 @@ class EducationCenterSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\EducationCenter::factory(10)->create();
+        \App\Models\EducationCenter::factory(35)->create();
     }
 }

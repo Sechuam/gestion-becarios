@@ -13,11 +13,18 @@ class EducationCenterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $centers = EducationCenter::paginate(10);
+        $query = EducationCenter::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'ilike', '%' . $request->search . '%');
+        }
+        $centers = $query->paginate(10)->withQueryString();
+
         return Inertia::render('schools/index', [
-            'schools' => $centers
+            'schools' => $centers,
+            'filters' => $request->only('search')
         ]);
     }
 
