@@ -4,7 +4,7 @@ import { BreadcrumbItem } from '@/types/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, GraduationCap, Calendar, FileText, ArrowLeft } from 'lucide-react';
-export default function Show({ intern }: { intern: any }) {
+export default function Show({ intern, dni_url, agreement_url }: { intern: any, dni_url: string, agreement_url: string }) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Becarios', href: '/becarios' },
@@ -22,45 +22,87 @@ export default function Show({ intern }: { intern: any }) {
                         <Link href={`/interns/${intern.id}/edit`}>Editar Perfil</Link>
                     </Button>
                 </div>
+
+                {/* Cuadrícula principal: 3 columnas en pantallas grandes */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Tarjeta de Datos Personales */}
-                    <Card className="md:col-span-1">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><User className="h-5 w-5" /> Personales</CardTitle>
+
+                    {/* Tarjeta de Datos Personales (Ocupa 1 columna) */}
+                    <Card className="md:col-span-1 shadow-sm">
+                        <CardHeader className="bg-muted/30 pb-3">
+                            <CardTitle className="flex items-center gap-2 text-primary">
+                                <User className="h-5 w-5" /> Datos Personales
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div><p className="text-xs text-muted-foreground">Nombre</p><p className="font-medium">{intern.user.name}</p></div>
-                            <div><p className="text-xs text-muted-foreground">Email</p><p className="font-medium">{intern.user.email}</p></div>
-                            <div><p className="text-xs text-muted-foreground">DNI</p><p className="font-medium">{intern.dni}</p></div>
-                            <div><p className="text-xs text-muted-foreground">Teléfono</p><p className="font-medium">{intern.phone || 'No indicado'}</p></div>
+                        <CardContent className="space-y-4 pt-4">
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">Nombre</p><p className="font-medium">{intern.user.name}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">Email</p><p className="font-medium">{intern.user.email}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">DNI / NIE</p><p className="font-medium">{intern.dni}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">Teléfono</p><p className="font-medium">{intern.phone || 'No indicado'}</p></div>
                         </CardContent>
                     </Card>
-                    {/* Tarjeta de Datos Académicos y Prácticas */}
-                    <Card className="md:col-span-2">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><GraduationCap className="h-5 w-5" /> Académicos y Prácticas</CardTitle>
+                    {/* Tarjeta de Datos Académicos y Prácticas (Ocupa 2 columnas) */}
+                    <Card className="md:col-span-2 shadow-sm">
+                        <CardHeader className="bg-muted/30 pb-3">
+                            <CardTitle className="flex items-center gap-2 text-primary">
+                                <GraduationCap className="h-5 w-5" /> Académicos y Prácticas
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent className="grid grid-cols-2 gap-6">
-                            <div><p className="text-xs text-muted-foreground">Centro</p><p className="font-medium">{intern.education_center.name}</p></div>
-                            <div><p className="text-xs text-muted-foreground">Titulación</p><p className="font-medium">{intern.academic_degree}</p></div>
-                            <div><p className="text-xs text-muted-foreground">Tutor Centro</p><p className="font-medium">{intern.tutor_name || 'Sin asignar'}</p></div>
-                            <div><p className="text-xs text-muted-foreground">Estado</p><p className="font-medium uppercase">{intern.status}</p></div>
+                        <CardContent className="grid grid-cols-2 gap-6 pt-4">
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">Centro</p><p className="font-medium">{intern.education_center?.name || 'Sin centro'}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">Titulación</p><p className="font-medium">{intern.academic_degree}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">Tutor Centro</p><p className="font-medium">{intern.tutor_name || 'Sin asignar'}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground uppercase font-bold">Estado</p><p className="font-medium uppercase">{intern.status}</p></div>
                             <div className="col-span-2 border-t pt-4 grid grid-cols-2 gap-4">
-                                <div><p className="text-xs text-muted-foreground flex items-center gap-1"><Calendar className="h-3 w-3" /> Inicio</p><p className="font-medium">{intern.start_date}</p></div>
-                                <div><p className="text-xs text-muted-foreground flex items-center gap-1"><Calendar className="h-3 w-3" /> Fin</p><p className="font-medium">{intern.end_date}</p></div>
+                                <div><p className="text-[10px] text-muted-foreground flex items-center gap-1 mb-1"><Calendar className="h-3 w-3" /> Fecha Inicio</p><p className="font-medium">{intern.start_date}</p></div>
+                                <div><p className="text-[10px] text-muted-foreground flex items-center gap-1 mb-1"><Calendar className="h-3 w-3" /> Fecha Fin</p><p className="font-medium">{intern.end_date}</p></div>
                             </div>
                         </CardContent>
                     </Card>
-                    {/* Tarjeta de Documentos (Pendiente de implementar subida) */}
-                    <Card className="md:col-span-3">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5" /> Documentación</CardTitle>
+                    {/* Tarjeta de Documentación (Ocupa las 3 columnas abajo) */}
+                    <Card className="md:col-span-3 shadow-sm border-primary/10">
+                        <CardHeader className="bg-primary/5 pb-3">
+                            <CardTitle className="flex items-center gap-2 text-primary">
+                                <FileText className="h-5 w-5" /> Documentación Oficial
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg opacity-50">
-                                <FileText className="h-10 w-10 mb-2" />
-                                <p className="text-sm font-medium">No hay documentos subidos</p>
-                                <p className="text-xs">Próximamente: DNI, Convenio, Seguro...</p>
+                        <CardContent className="pt-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {dni_url ? (
+                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-blue-50/30">
+                                        <div className="flex items-center gap-3">
+                                            <FileText className="h-8 w-8 text-blue-500" />
+                                            <div>
+                                                <p className="text-sm font-semibold">Copia del DNI</p>
+                                                <p className="text-xs text-muted-foreground">Documento subido</p>
+                                            </div>
+                                        </div>
+                                        <Button variant="outline" size="sm" asChild>
+                                            <a href={dni_url} target="_blank" download>Descargar</a>
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="p-4 border border-dashed rounded-xl bg-muted/10 text-center">
+                                        <p className="text-sm text-muted-foreground italic">DNI no disponible</p>
+                                    </div>
+                                )}
+                                {agreement_url ? (
+                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-green-50/30">
+                                        <div className="flex items-center gap-3">
+                                            <FileText className="h-8 w-8 text-green-500" />
+                                            <div>
+                                                <p className="text-sm font-semibold">Convenio de Prácticas</p>
+                                                <p className="text-xs text-muted-foreground">Documento subido</p>
+                                            </div>
+                                        </div>
+                                        <Button variant="outline" size="sm" asChild>
+                                            <a href={agreement_url} target="_blank" download>Descargar</a>
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="p-4 border border-dashed rounded-xl bg-muted/10 text-center">
+                                        <p className="text-sm text-muted-foreground italic">Convenio no disponible</p>
+                                    </div>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

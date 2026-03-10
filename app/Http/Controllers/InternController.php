@@ -70,8 +70,11 @@ class InternController extends Controller
     {
         return Inertia::render('interns/Show', [
             'intern' => $intern->load(['user', 'educationCenter']),
+            
+            'dni_url' => $intern->getFirstMediaUrl('dni'),
+            'agreement_url' => $intern->getFirstMediaUrl('agreement'),
         ]);
-    }
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -106,8 +109,15 @@ class InternController extends Controller
             $intern->update($request->all());
         });
         
-        return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
-}
+        if ($request->hasFile('dni_file')) {
+            $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
+        }
+        if ($request->hasFile('agreement_file')) {
+            $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
+        }
+
+    return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
+    }
 
     /**
      * Remove the specified resource from storage.

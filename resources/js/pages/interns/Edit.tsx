@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { router } from '@inertiajs/react';
+
 export default function Edit({ intern, education_centers }: { intern: any; education_centers: any[] }) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -26,10 +28,17 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
         start_date: intern.start_date,
         end_date: intern.end_date,
         tutor_name: intern.tutor_name,
+        dni_file: null as File | null,
+        agreement_file: null as File | null,
+
     });
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/interns/${intern.id}`);
+
+        router.post(`/interns/${intern.id}`, {
+            _method: 'put',
+            ...data,
+        });
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -37,9 +46,10 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
             <div className="p-4 max-w-4xl mx-auto">
                 <form onSubmit={submit} className="space-y-6">
                     <Tabs defaultValue="personal" className="w-full">
-                        <TabsList className="grid w-full grid-cols-3">
+                        <TabsList className="grid w-full grid-cols-4">
                             <TabsTrigger value="personal">Datos Personales</TabsTrigger>
                             <TabsTrigger value="academic">Académicos</TabsTrigger>
+                            <TabsTrigger value="documents">Documentos</TabsTrigger>
                             <TabsTrigger value="internship">Prácticas</TabsTrigger>
                         </TabsList>
                         <TabsContent value="personal" className="space-y-4 pt-4 border rounded-md p-4 bg-white shadow-sm mt-4">
@@ -109,6 +119,28 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                                     <Label htmlFor="year">Curso</Label>
                                     <Input id="year" value={data.academic_year} onChange={e => setData('academic_year', e.target.value)} />
                                     {errors.academic_year && <p className="text-red-500 text-xs">{errors.academic_year}</p>}
+                                </div>
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="documents" className="space-y-4 pt-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="dni_file">Copia del DNI (PDF/Imagen)</Label>
+                                    <Input
+                                        id="dni_file"
+                                        type="file"
+                                        onChange={e => setData('dni_file', e.target.files?.[0] || null)}
+                                    />
+                                    {errors.dni_file && <div className="text-red-500 text-xs">{errors.dni_file}</div>}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="agreement_file">Convenio de Prácticas (PDF)</Label>
+                                    <Input
+                                        id="agreement_file"
+                                        type="file"
+                                        onChange={e => setData('agreement_file', e.target.files?.[0] || null)}
+                                    />
+                                    {errors.agreement_file && <div className="text-red-500 text-xs">{errors.agreement_file}</div>}
                                 </div>
                             </div>
                         </TabsContent>
