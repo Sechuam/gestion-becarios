@@ -10,28 +10,37 @@ use App\Http\Requests\StoreInternRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Exports\InternsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 
 class InternController extends Controller
 {
     public function index(Request $request)
+{
+    $query = Intern::with(['user', 'educationCenter']);
 
-    {
-        $interns = Intern::with(['user', 'educationCenter'])
-        ->when($request->search, function ($query, $search) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        })
-        ->latest()
+    if ($request->filled('search')) {
+        $query->whereHas('user', function ($q) use ($request) {
+            $q->where('name', 'like', "%{$request->search}%");
+        });
+    }
+    if ($request->filled('center')) {
+        $query->where('education_center_id', $request->center);
+    }
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+    $interns = $query->latest()
         ->paginate(10)
         ->withQueryString();
-
-        return Inertia::render('interns/index', [
-            'interns' => $interns,
-            'filters' => $request->only(['search']),
-        ]);
-    }
+    return Inertia::render('interns/index', [
+        'interns' => $interns,
+        'filters' => $request->only(['search', 'center', 'status']),
+        'education_centers' => EducationCenter::all(['id', 'name']),
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.
@@ -70,9 +79,22 @@ class InternController extends Controller
     {
         return Inertia::render('interns/Show', [
             'intern' => $intern->load(['user', 'educationCenter']),
-            
             'dni_url' => $intern->getFirstMediaUrl('dni'),
             'agreement_url' => $intern->getFirstMediaUrl('agreement'),
+            'insurance_url' => $intern->getFirstMediaUrl('insurance'),
+
+            'activities' => $intern->activities()
+            ->with('causer')
+            ->latest()
+            ->get()
+            ->map(fn($activity) => [
+                'id' => $activity->id,
+                'description' => $activity->description,
+                'event' => $activity->event,
+                'causer_name' => $activity->causer->name ?? 'System',
+                'created_at' => $activity->created_at->format('d/m/Y H:i:'),
+                'properties' => $activity->properties,
+            ]),
         ]);
 }
 
@@ -98,6 +120,7 @@ class InternController extends Controller
             'education_center_id' => 'required|exists:education_centers,id',
             'dni' => 'required|string|unique:interns,dni,' . $intern->id,
             'birth_date' => 'required|date',
+            'total_hours' => 'required|integer',
         ]);
         
         DB::transaction(function () use ($request, $intern) {
@@ -115,6 +138,9 @@ class InternController extends Controller
         if ($request->hasFile('agreement_file')) {
             $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
         }
+        if ($request->hasFile('insurance_file')) {
+            $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
+        }
 
     return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
     }
@@ -126,5 +152,10 @@ class InternController extends Controller
     {
         $intern->delete(); 
         return redirect()->route('becarios.index')->with('success', 'Becario eliminado (archivado)');
+    }
+    
+    public function export(Request $request)
+    {
+    return Excel::download(new InternsExport($request->all()), 'becarios_'.date('Y-m-d').'.xlsx');
     }
 }

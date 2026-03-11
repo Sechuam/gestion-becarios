@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Intern extends Model implements HasMedia {
 
-    use HasFactory, SoftDeletes, InteractsWithMedia;
+    use HasFactory, SoftDeletes, InteractsWithMedia, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -28,6 +30,7 @@ class Intern extends Model implements HasMedia {
         'end_date',
         'status',
         'tutor_name',
+        'total_hours',
     ];
 
     public function user(): BelongsTo {
@@ -44,6 +47,15 @@ class Intern extends Model implements HasMedia {
         ->singleFile();
         $this->addMediaCollection('agreement')
         ->singleFile();
+        $this->addMediaCollection('insurance')
+        ->singleFile();
+    }
+
+    public function getActivitylogOptions(): LogOptions {
+        return LogOptions::defaults()
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs();
     }
 }
 

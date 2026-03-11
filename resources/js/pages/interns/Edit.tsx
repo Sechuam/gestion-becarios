@@ -28,8 +28,10 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
         start_date: intern.start_date,
         end_date: intern.end_date,
         tutor_name: intern.tutor_name,
+        total_hours: intern.total_hours || '',
         dni_file: null as File | null,
         agreement_file: null as File | null,
+        insurance_file: null as File | null,
 
     });
     const submit = (e: React.FormEvent) => {
@@ -142,6 +144,15 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                                     />
                                     {errors.agreement_file && <div className="text-red-500 text-xs">{errors.agreement_file}</div>}
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="insurance_file">Seguro Escolar / Responsabilidad (PDF)</Label>
+                                    <Input
+                                        id="insurance_file"
+                                        type="file"
+                                        onChange={e => setData('insurance_file', e.target.files?.[0] || null)}
+                                    />
+                                    {errors.insurance_file && <div className="text-red-500 text-xs">{errors.insurance_file}</div>}
+                                </div>
                             </div>
                         </TabsContent>
                         <TabsContent value="internship" className="space-y-4 pt-4 border rounded-md p-4 bg-white shadow-sm mt-4">
@@ -157,9 +168,16 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                                     {errors.end_date && <p className="text-red-500 text-xs">{errors.end_date}</p>}
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="tutor">Tutor Académico (Centro)</Label>
-                                <Input id="tutor" value={data.tutor_name} onChange={e => setData('tutor_name', e.target.value)} />
+                            <div className="grid grid-cols-2 gap-4"> {/* Añade este div nuevo */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="total_hours">Horas Totales Requeridas</Label>
+                                    <Input id="total_hours" type="number" value={data.total_hours} onChange={e => setData('total_hours', e.target.value)} />
+                                    {errors.total_hours && <p className="text-red-500 text-xs">{errors.total_hours}</p>}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="tutor">Tutor Académico (Centro)</Label>
+                                    <Input id="tutor" value={data.tutor_name} onChange={e => setData('tutor_name', e.target.value)} />
+                                </div>
                             </div>
                         </TabsContent>
                     </Tabs>
@@ -169,6 +187,6 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                     </div>
                 </form>
             </div>
-        </AppLayout>
+        </AppLayout >
     );
 }

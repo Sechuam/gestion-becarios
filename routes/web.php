@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos (Pública para ver el listado)
     Route::get('schools', [\App\Http\Controllers\Api\EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
     Route::get('interns/{intern}', [App\Http\Controllers\InternController::class, 'show'])->name('interns.show');
     Route::middleware('can:manage interns')->group(function () {
     Route::resource('interns', App\Http\Controllers\InternController::class)->except(['index', 'show']);
@@ -45,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('/asistencia', 'attendance/index')->name('attendance.index');
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
+    
 
 });
 

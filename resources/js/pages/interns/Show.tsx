@@ -3,8 +3,9 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, GraduationCap, Calendar, FileText, ArrowLeft } from 'lucide-react';
-export default function Show({ intern, dni_url, agreement_url }: { intern: any, dni_url: string, agreement_url: string }) {
+import { User, GraduationCap, Calendar, FileText, ArrowLeft, Clock } from 'lucide-react';
+
+export default function Show({ intern, dni_url, agreement_url, insurance_url, activities }: { intern: any, dni_url: string, agreement_url: string, insurance_url: string, activities: any[] }) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Becarios', href: '/becarios' },
@@ -55,6 +56,12 @@ export default function Show({ intern, dni_url, agreement_url }: { intern: any, 
                             <div className="col-span-2 border-t pt-4 grid grid-cols-2 gap-4">
                                 <div><p className="text-[10px] text-muted-foreground flex items-center gap-1 mb-1"><Calendar className="h-3 w-3" /> Fecha Inicio</p><p className="font-medium">{intern.start_date}</p></div>
                                 <div><p className="text-[10px] text-muted-foreground flex items-center gap-1 mb-1"><Calendar className="h-3 w-3" /> Fecha Fin</p><p className="font-medium">{intern.end_date}</p></div>
+                                <div>
+                                    <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
+                                        <Clock className="h-3 w-3" /> Horas Totales
+                                    </p>
+                                    <p className="font-medium">{intern.total_hours}h</p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -103,11 +110,72 @@ export default function Show({ intern, dni_url, agreement_url }: { intern: any, 
                                         <p className="text-sm text-muted-foreground italic">Convenio no disponible</p>
                                     </div>
                                 )}
+                                {insurance_url ? (
+                                    <div className="flex items-center justify-between p-4 border rounded-xl bg-amber-50/30">
+                                        <div className="flex items-center gap-3">
+                                            <FileText className="h-8 w-8 text-amber-500" />
+                                            <div>
+                                                <p className="text-sm font-semibold">Seguro / Responsabilidad</p>
+                                                <p className="text-xs text-muted-foreground">Documento subido</p>
+                                            </div>
+                                        </div>
+                                        <Button variant="outline" size="sm" asChild>
+                                            <a href={insurance_url} target="_blank" download>Descargar</a>
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="p-4 border border-dashed rounded-xl bg-muted/10 text-center">
+                                        <p className="text-sm text-muted-foreground italic">Seguro no disponible</p>
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card className="md:col-span-3 shadow-sm border-amber-100">
+                        <CardHeader className="bg-amber-50/30 pb-3">
+                            <CardTitle className="flex items-center gap-2 text-amber-900">
+                                <Clock className="h-5 w-5" /> Historial de Cambios
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-6">
+                            <div className="space-y-6">
+                                {activities.length > 0 ? (
+                                    activities.map((activity) => (
+                                        <div key={activity.id} className="relative pl-6 border-l-2 border-muted last:border-0 pb-6 last:pb-0">
+                                            <div className="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-amber-500 border-2 border-white" />
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-1">
+                                                <span className="text-sm font-bold capitalize">
+                                                    {activity.event === 'updated' ? 'Actualización' : activity.event === 'created' ? 'Creación' : activity.event}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                                                    {activity.created_at} por {activity.causer_name}
+                                                </span>
+                                            </div>
+
+                                            {/* Aquí mostramos los detalles de lo que cambió si fue una actualización */}
+                                            {activity.event === 'updated' && activity.properties?.old && (
+                                                <div className="mt-2 text-xs grid grid-cols-1 sm:grid-cols-2 gap-2 bg-muted/20 p-3 rounded-lg">
+                                                    {Object.keys(activity.properties.attributes).map(key => (
+                                                        <div key={key} className="border-b border-muted/30 pb-1 last:border-0">
+                                                            <span className="font-semibold text-muted-foreground uppercase text-[9px] block mb-1">{key}</span>
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className="line-through text-red-400 bg-red-50 px-1 rounded">{String(activity.properties.old[key])}</span>
+                                                                <span className="text-green-600 bg-green-50 px-1 rounded font-medium">{String(activity.properties.attributes[key])}</span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-muted-foreground italic text-center py-4">No hay historial disponible para este becario</p>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
                 </div>
             </div>
-        </AppLayout>
+        </AppLayout >
     );
 }

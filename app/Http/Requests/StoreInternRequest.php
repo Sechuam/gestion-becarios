@@ -34,6 +34,7 @@ class StoreInternRequest extends FormRequest
             'academic_year' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
+            'total_hours' => 'required|integer|min:1',
         ];
     }
 }

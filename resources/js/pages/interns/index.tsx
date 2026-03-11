@@ -1,22 +1,27 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { Users, Plus, Search } from 'lucide-react';
+import { Users, Plus, Search, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import DeleteInternModal from '@/components/interns/DeleteInternModal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Becarios', href: '/becarios' },
 ];
-export default function Index({ interns, filters }: { interns: any; filters: any }) {
+export default function Index({ interns, filters = {}, education_centers = [] }: { interns: any; filters: any; education_centers: any[] }) {
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage interns');
     // Función para manejar la búsqueda en tiempo real
-    const handleSearch = (value: string) => {
-        router.get('/becarios', { search: value }, {
+    const handleFilter = (key: string, value: string) => {
+        const newFilters = { ...filters, [key]: value };
+        if (value === 'all') {
+            delete newFilters[key];
+        }
+        router.get('/becarios', newFilters, {
             preserveState: true,
             replace: true
         });
@@ -52,12 +57,18 @@ export default function Index({ interns, filters }: { interns: any; filters: any
                         </p>
                     </div>
                     {canManage && (
-                        <Button className="gap-2" asChild>
-                            <Link href="/interns/create">
-                                <Plus className="h-4 w-4" />
-                                Añadir Becario
-                            </Link>
-                        </Button>
+                        <div className="flex gap-2">
+                            <Button variant="outline" className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200" onClick={() => window.open(`/interns/export?${new URLSearchParams(filters).toString()}`)}>
+                                <FileDown className="h-4 w-4" />
+                                Exportar Excel
+                            </Button>
+                            <Button className="gap-2" asChild>
+                                <Link href="/interns/create">
+                                    <Plus className="h-4 w-4" />
+                                    Añadir Becario
+                                </Link>
+                            </Button>
+                        </div>
                     )}
                 </div>
                 {/* Filtros y Buscador */}
@@ -67,9 +78,43 @@ export default function Index({ interns, filters }: { interns: any; filters: any
                         <Input
                             placeholder="Buscar por nombre..."
                             className="pl-9"
-                            defaultValue={filters.search}
-                            onChange={(e) => handleSearch(e.target.value)}
+                            value={filters.search}
+                            onChange={(e) => handleFilter('search', e.target.value)}
                         />
+                    </div>
+                    <div className="w-full max-w-[200px]">
+                        <Select
+                            value={filters.center || 'all'}
+                            onValueChange={(v) => handleFilter('center', v)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Filtrar por centro" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Todos los centros</SelectItem>
+                                {education_centers.map(center => (
+                                    <SelectItem key={center.id} value={center.id.toString()}>{center.name}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    {/* Filtro por Estado */}
+                    <div className="w-full max-w-[150px]">
+                        <Select
+                            value={filters.status || 'all'}
+                            onValueChange={(v) => handleFilter('status', v)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Estado" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Todos los estados</SelectItem>
+                                <SelectItem value="active">Activos</SelectItem>
+                                <SelectItem value="pending">Pendientes</SelectItem>
+                                <SelectItem value="completed">Completados</SelectItem>
+                                <SelectItem value="cancelled">Cancelados</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
                 {/* Tabla de Becarios */}
