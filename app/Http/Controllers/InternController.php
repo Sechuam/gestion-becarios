@@ -23,7 +23,7 @@ class InternController extends Controller
 
     if ($request->filled('search')) {
         $query->whereHas('user', function ($q) use ($request) {
-            $q->where('name', 'like', "%{$request->search}%");
+            $q->where(DB::raw('lower(name)'), 'like', '%' . strtolower($request->search) . '%');
         });
     }
     if ($request->filled('center')) {

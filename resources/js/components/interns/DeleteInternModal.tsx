@@ -21,11 +21,11 @@ export default function DeleteInternModal({ intern }: { intern: any }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="text-red-500 hover:underline text-xs flex items-center gap-1">
-                    <Trash2 className="h-3 w-3" />
-                    Borrar
-                </button>
+                <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium shadow-none">
+                    <Trash2 className="w-4 h-4 mr-1.5 text-red-500/70" /> Borrar
+                </Button>
             </DialogTrigger>
+
             <DialogContent>
                 <DialogTitle>¿Estás seguro de eliminar a este becario?</DialogTitle>
                 <DialogDescription>
