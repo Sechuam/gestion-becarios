@@ -59,6 +59,9 @@ export default function Index({ schools }: { schools: any }) {
                             }
                         />
                     </div>
+                    <p className="text-sm text-muted-foreground dark:text-slate-400 ml-auto font-medium">
+                        Mostrando {schools.data.length} de {schools.total} centros
+                    </p>
                 </div>
 
                 {/* TABLA */}

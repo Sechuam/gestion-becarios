@@ -19,12 +19,13 @@ class InternController extends Controller
 {
     public function index(Request $request)
 {
-    $query = Intern::with(['user', 'educationCenter']);
+    $query = Intern::query()
+        ->join('users', 'users.id', '=', 'interns.user_id')
+        ->with(['user', 'educationCenter'])
+        ->select('interns.*');
 
     if ($request->filled('search')) {
-        $query->whereHas('user', function ($q) use ($request) {
-            $q->where(DB::raw('lower(name)'), 'like', '%' . strtolower($request->search) . '%');
-        });
+        $query->where(DB::raw('lower(users.name)'), 'like', '%' . strtolower($request->search) . '%');
     }
     if ($request->filled('center')) {
         $query->where('education_center_id', $request->center);
@@ -32,12 +33,19 @@ class InternController extends Controller
     if ($request->filled('status')) {
         $query->where('status', $request->status);
     }
-    $interns = $query->latest()
-        ->paginate(10)
-        ->withQueryString();
+
+    $order = $request->get('order', 'az');
+    if ($order === 'za') {
+        $query->orderBy('users.name', 'desc');
+    } else {
+        $query->orderBy('users.name', 'asc');
+    }
+
+    $interns = $query->paginate(10)->withQueryString();
+
     return Inertia::render('interns/index', [
         'interns' => $interns,
-        'filters' => $request->only(['search', 'center', 'status']),
+        'filters' => $request->only(['search', 'center', 'status', 'order']),
         'education_centers' => EducationCenter::all(['id', 'name']),
     ]);
 }

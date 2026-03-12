@@ -15,7 +15,7 @@ export default function Create({ education_centers }: { education_centers: any[]
     const { data, setData, post, processing, errors } = useForm({
         name: '', email: '', education_center_id: '', dni: '', birth_date: '',
         phone: '', address: '', city: '', academic_degree: '', academic_year: '2024-2025',
-        start_date: '', end_date: '', tutor_name: '',
+        start_date: '', end_date: '', tutor_name: '', total_hours: '',
     });
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -127,6 +127,20 @@ export default function Create({ education_centers }: { education_centers: any[]
                         <Label htmlFor="tutor" className="text-slate-700 dark:text-slate-200">Tutor Académico (Centro)</Label>
                         <Input id="tutor" className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100" value={data.tutor_name} onChange={e => setData('tutor_name', e.target.value)} />
                     </div>
+                    <div className="space-y-2">
+    <Label htmlFor="total_hours" className="text-slate-700 dark:text-slate-200">Horas Totales Requeridas</Label>
+    <div className="relative">
+        <Input
+            id="total_hours"
+            type="number"
+            className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 pr-8"
+            value={data.total_hours}
+            onChange={e => setData('total_hours', e.target.value)}
+        />
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-medium font-mono text-sm">h</span>
+    </div>
+    {errors.total_hours && <p className="text-red-500 text-xs">{errors.total_hours}</p>}
+</div>
                 </div>
             </TabsContent>
         </Tabs>

@@ -32,6 +32,10 @@ class StoreEducationCenterRequest extends FormRequest
             'email' => 'required|email|max:255|unique:education_centers,email,' . $schoolId,
             'phone' => 'required|string|max:255',
             'web' => 'nullable|string|max:255',
+            'agreement_signed_at' => 'nullable|date',
+            'agreement_expires_at' => 'nullable|date|after_or_equal:agreement_signed_at',
+            'agreement_slots' => 'nullable|integer|min:1',
+            'agreement_file' => 'nullable|file|mimes:pdf|max:5120',
         ];
     }
 }

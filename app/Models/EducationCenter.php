@@ -5,9 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class EducationCenter extends Model {
-    use HasFactory, SoftDeletes;
+class EducationCenter extends Model implements HasMedia {
+    use HasFactory, SoftDeletes, InteractsWithMedia;
+
+    public function registerMediaCollections(): void {
+        $this->addMediaCollection('agreement_pdf')->singleFile();
+    }
 
     protected $fillable = [
         'name',
@@ -18,6 +24,9 @@ class EducationCenter extends Model {
         'contact_position',
         'email',
         'phone',
-        'web',       
+        'web',
+        'agreement_signed_at',
+        'agreement_expires_at',
+        'agreement_slots',
     ];
 }

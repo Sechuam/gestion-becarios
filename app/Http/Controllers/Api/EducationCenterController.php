@@ -37,16 +37,21 @@ class EducationCenterController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreEducationCenterRequest $request)
-    {
-        EducationCenter::create($request->validated());
-        return to_route('schools.index')->with('success', 'Centro Educativo creado.');
+{
+    $school = EducationCenter::create($request->validated());
 
+    if ($request->hasFile('agreement_file')) {
+        $school->addMediaFromRequest('agreement_file')->toMediaCollection('agreement_pdf');
     }
+
+    return to_route('schools.index')->with('success', 'Centro Educativo creado.');
+}
 
     public function edit(EducationCenter $school)
     {
         return Inertia::render('schools/Edit', [
-            'educationCenter' => $school
+            'educationCenter' => $school,
+            'agreement_url' => $school->getFirstMediaUrl('agreement_pdf'),
         ]);
     }
 
@@ -62,10 +67,15 @@ class EducationCenterController extends Controller
      * Update the specified resource in storage.
      */
     public function update(StoreEducationCenterRequest $request, EducationCenter $school)
-    {
-        $school->update($request->validated());
-        return to_route('schools.index')->with('success', 'Centro Educativo actualizado');
+{
+    $school->update($request->validated());
+
+    if ($request->hasFile('agreement_file')) {
+        $school->addMediaFromRequest('agreement_file')->toMediaCollection('agreement_pdf');
     }
+
+    return to_route('schools.index')->with('success', 'Centro Educativo actualizado');
+}
 
     /**
      * Remove the specified resource from storage.

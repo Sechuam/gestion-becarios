@@ -19,14 +19,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard principal
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
-    // Módulo de Usuarios (Coincidiendo con tu Sidebar)
+    // Módulo de Usuarios
     // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
     Route::get('becarios', [App\Http\Controllers\InternController::class, 'index'])->name('becarios.index');
     Route::inertia('tutores', 'tutors/index')->name('tutores.index');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
-    // Ruta para los centros educativos (Pública para ver el listado)
+    // Ruta para los centros educativos
     Route::get('schools', [\App\Http\Controllers\Api\EducationCenterController::class, 'index'])->name('schools.index');
     Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
     
