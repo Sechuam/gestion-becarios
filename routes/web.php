@@ -29,9 +29,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para los centros educativos (Pública para ver el listado)
     Route::get('schools', [\App\Http\Controllers\Api\EducationCenterController::class, 'index'])->name('schools.index');
     Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
-    Route::get('interns/{intern}', [App\Http\Controllers\InternController::class, 'show'])->name('interns.show');
+    
     Route::middleware('can:manage interns')->group(function () {
     Route::resource('interns', App\Http\Controllers\InternController::class)->except(['index', 'show']);
+    Route::get('interns/{intern}', [App\Http\Controllers\InternController::class, 'show'])->name('interns.show');
 });
 
     // Rutas protegidas para administración de centros
