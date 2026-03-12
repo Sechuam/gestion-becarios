@@ -73,28 +73,33 @@ export default function Index({
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Gestión de Becarios" />
-<div className="flex flex-col gap-6 p-6">
+             <Head title="Gestión de Becarios" />
+
+<div className="flex flex-col gap-6 p-6 bg-white dark:bg-slate-900">
     {/* HEADER */}
     <div className="flex flex-wrap items-center gap-3 justify-between">
         <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2 tracking-tight">
+            <h1 className="text-2xl font-bold flex items-center gap-2 tracking-tight text-slate-900 dark:text-slate-100">
                 <Users className="h-6 w-6" />
                 Gestión de Becarios
             </h1>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground dark:text-slate-400">
                 Administra los becarios, sus centros y estados de prácticas.
             </p>
         </div>
         {canManage && (
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <Button variant="outline" className="gap-2" onClick={() =>
-                    window.open(`/interns/export?${new URLSearchParams(filters).toString()}`)
-                }>
+                <Button
+                    variant="outline"
+                    className="gap-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                    onClick={() =>
+                        window.open(`/interns/export?${new URLSearchParams(filters).toString()}`)
+                    }
+                >
                     <FileDown className="h-4 w-4" />
                     Exportar Excel
                 </Button>
-                <Button className="gap-2" asChild>
+                <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white" asChild>
                     <Link href="/interns/create">
                         <Plus className="h-4 w-4" />
                         Añadir Becario
@@ -106,37 +111,37 @@ export default function Index({
 
     {/* STATS */}
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-3 border rounded-xl bg-card shadow-sm">
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Total becarios</p>
-            <p className="text-lg font-semibold mt-1">{interns.total}</p>
+        <div className="p-3 border rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
+            <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-medium uppercase tracking-wider">Total becarios</p>
+            <p className="text-lg font-semibold mt-1 text-slate-900 dark:text-slate-100">{interns.total}</p>
         </div>
-        <div className="p-3 border rounded-xl bg-card shadow-sm">
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Activos</p>
-            <p className="text-lg font-semibold mt-1">
+        <div className="p-3 border rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
+            <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-medium uppercase tracking-wider">Activos</p>
+            <p className="text-lg font-semibold mt-1 text-slate-900 dark:text-slate-100">
                 {interns.data.filter((i: any) => i.status === 'active').length}
             </p>
         </div>
-        <div className="p-3 border rounded-xl bg-card shadow-sm">
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Pendientes</p>
-            <p className="text-lg font-semibold mt-1">
+        <div className="p-3 border rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
+            <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-medium uppercase tracking-wider">Pendientes</p>
+            <p className="text-lg font-semibold mt-1 text-slate-900 dark:text-slate-100">
                 {interns.data.filter((i: any) => i.status === 'pending').length}
             </p>
         </div>
-        <div className="p-3 border rounded-xl bg-card shadow-sm">
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Completados</p>
-            <p className="text-lg font-semibold mt-1">
+        <div className="p-3 border rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
+            <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-medium uppercase tracking-wider">Completados</p>
+            <p className="text-lg font-semibold mt-1 text-slate-900 dark:text-slate-100">
                 {interns.data.filter((i: any) => i.status === 'completed').length}
             </p>
         </div>
     </div>
 
     {/* FILTROS */}
-    <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card shadow-sm">
+    <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
             <Input
                 placeholder="Buscar por nombre..."
-                className="pl-9"
+                className="pl-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 onChange={(e) => handleFilter('search', e.target.value)}
             />
         </div>
@@ -145,14 +150,14 @@ export default function Index({
                 value={filters.center || 'all'}
                 onValueChange={(v) => handleFilter('center', v)}
             >
-                <SelectTrigger className="w-full overflow-hidden [&>span]:truncate">
+                <SelectTrigger className="w-full overflow-hidden [&>span]:truncate bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                     <SelectValue>
                         {filters.center && filters.center !== 'all'
                             ? education_centers.find(c => c.id.toString() === filters.center?.toString())?.name
                             : 'Todos los centros'}
                     </SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-slate-900 dark:border-slate-700">
                     <SelectItem value="all">Todos los centros</SelectItem>
                     {education_centers.map((center) => (
                         <SelectItem key={center.id} value={center.id.toString()}>{center.name}</SelectItem>
@@ -165,7 +170,7 @@ export default function Index({
                 value={filters.status || 'all'}
                 onValueChange={(v) => handleFilter('status', v)}
             >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                     <SelectValue>
                         {{
                             'active': 'Activos',
@@ -175,7 +180,7 @@ export default function Index({
                         }[filters.status as string] || 'Todos los estados'}
                     </SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-slate-900 dark:border-slate-700">
                     <SelectItem value="all">Todos los estados</SelectItem>
                     <SelectItem value="active">Activos</SelectItem>
                     <SelectItem value="pending">Pendientes</SelectItem>
@@ -184,102 +189,102 @@ export default function Index({
                 </SelectContent>
             </Select>
         </div>
-        <p className="text-sm text-muted-foreground ml-auto font-medium">
+        <p className="text-sm text-muted-foreground dark:text-slate-400 ml-auto font-medium">
             Mostrando {interns.data.length} de {interns.total} becarios
         </p>
     </div>
-                {/* TABLA */}
-                <div className="w-full rounded-xl border bg-card shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800/20">
-                <div className="w-full overflow-x-auto">
-                    <table className="min-w-[900px] w-full text-sm">
-                        <thead>
-                            <tr className="border-b bg-slate-50 dark:bg-slate-800/60 border-b-slate-200 dark:border-b-slate-700">
-                                <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Nombre</th>
-                                <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">DNI</th>
-                                <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Centro Educativo</th>
-                                <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Grado</th>
-                                <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Estado</th>
-                                <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {interns.data.map((intern: any) => (
-                                <tr
-                                    key={intern.id}
-                                    className="border-b dark:border-slate-800 hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors"
-                                >
-                                    <td className="px-4 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
-                                                {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="font-semibold text-slate-900 dark:text-slate-100">{intern.user?.name}</span>
-                                                <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-medium">{intern.user?.email}</span>
-                                            </div>
+
+    {/* TABLA */}
+    <div className="w-full rounded-xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="w-full overflow-x-auto">
+            <table className="min-w-[900px] w-full text-sm">
+                <thead>
+                    <tr className="border-b bg-slate-50 dark:bg-slate-800/60 border-b-slate-200 dark:border-b-slate-700">
+                        <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Nombre</th>
+                        <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">DNI</th>
+                        <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Centro Educativo</th>
+                        <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Grado</th>
+                        <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Estado</th>
+                        <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {interns.data.map((intern: any) => (
+                        <tr
+                            key={intern.id}
+                            className="border-b dark:border-slate-800 hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors"
+                        >
+                            <td className="px-4 py-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="font-semibold text-slate-900 dark:text-slate-100">{intern.user?.name}</span>
+                                        <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-medium">{intern.user?.email}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td className="px-4 py-4 text-slate-600 dark:text-slate-400 font-mono text-xs italic">{intern.dni}</td>
+                            <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{intern.education_center?.name}</td>
+                            <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{intern.academic_degree}</td>
+                            <td className="px-4 py-4">{getStatusBadge(intern?.status as string)}</td>
+                            <td className="px-4 py-4 flex gap-2">
+                                <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none" asChild>
+                                    <Link href={`/interns/${intern.id}`}>
+                                        <div className="flex items-center">
+                                            <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
                                         </div>
-                                    </td>
-                                    <td className="px-4 py-4 text-slate-600 dark:text-slate-400 font-mono text-xs italic">{intern.dni}</td>
-                                    <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{intern.education_center?.name}</td>
-                                    <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{intern.academic_degree}</td>
-                                    <td className="px-4 py-4">
-                                        {getStatusBadge(intern?.status as string)}
-                                    </td>
-                                    <td className="px-4 py-4 flex gap-2">
-                                        {/* Botones Minimalistas Outline */}
-                                        <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none" asChild>
-                                            <Link href={`/interns/${intern.id}`}>
+                                    </Link>
+                                </Button>
+                                {canManage && (
+                                    <>
+                                        <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none" asChild>
+                                            <Link href={`/interns/${intern.id}/edit`}>
                                                 <div className="flex items-center">
-                                                    <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
+                                                    <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
                                                 </div>
                                             </Link>
                                         </Button>
-                                        {canManage && (
-                                            <>
-                                                <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none" asChild>
-                                                    <Link href={`/interns/${intern.id}/edit`}>
-                                                        <div className="flex items-center">
-                                                            <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
-                                                        </div>
-                                                    </Link>
-                                                </Button>
-                                                <DeleteInternModal intern={intern} />
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    </div>
-                </div>
-                <div className="w-full mt-6">
-                    <div className="flex items-center justify-between flex-wrap gap-4">
-                        <span className="text-sm text-muted-foreground whitespace-nowrap font-medium">
-                            Página {interns.current_page} de {interns.last_page}
-                        </span>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {interns.links.map((link: any, i: number) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest border rounded-xl transition-all
-                                    ${link.active
-                                            ? 'bg-blue-600 text-white border-blue-600 shadow-md transform scale-105'
-                                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'}
-                                    ${!link.url ? 'opacity-30 pointer-events-none' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente')
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                                        <DeleteInternModal intern={intern} />
+                                    </>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {/* PAGINACIÓN */}
+    <div className="w-full mt-6">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+            <span className="text-sm text-muted-foreground dark:text-slate-400 whitespace-nowrap font-medium">
+                Página {interns.current_page} de {interns.last_page}
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+                {interns.links.map((link: any, i: number) => (
+                    <Link
+                        key={i}
+                        href={link.url ?? '#'}
+                        preserveState
+                        className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest border rounded-xl transition-all
+                        ${link.active
+                                ? 'bg-blue-600 text-white border-blue-600 shadow-md transform scale-105'
+                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'}
+                        ${!link.url ? 'opacity-30 pointer-events-none' : ''}`}
+                        dangerouslySetInnerHTML={{
+                            __html: link.label
+                                .replace('Previous', 'Anterior')
+                                .replace('Next', 'Siguiente')
+                        }}
+                    />
+                ))}
             </div>
+        </div>
+    </div>
+</div>
         </AppLayout>
     );  
 }

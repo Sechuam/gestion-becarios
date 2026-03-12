@@ -20,18 +20,20 @@ export default function Index({ schools }: { schools: any }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Centros Educativos" />
 
-            <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-6 p-6 bg-white dark:bg-slate-900">
                 {/* HEADER */}
                 <div className="flex flex-wrap items-center gap-3 justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Centros Educativos</h1>
-                        <p className="text-muted-foreground text-sm">
+                        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                            Centros Educativos
+                        </h1>
+                        <p className="text-sm text-muted-foreground dark:text-slate-400">
                             Gestiona las instituciones, universidades y centros de formación.
                         </p>
                     </div>
                     {canManage && (
                         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                            <Button className="gap-2" asChild>
+                            <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white" asChild>
                                 <Link href="/schools/create">
                                     <Plus className="h-4 w-4" />
                                     Añadir Centro
@@ -42,53 +44,52 @@ export default function Index({ schools }: { schools: any }) {
                 </div>
 
                 {/* FILTROS */}
-                {/* FILTROS */}
-<div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card shadow-sm">
-    <div className="relative w-full max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-            placeholder="Buscar por nombre..."
-            className="pl-9"
-            onChange={(e) =>
-                router.get(
-                    '/schools',
-                    { search: e.target.value },
-                    { preserveState: true, preserveScroll: true, replace: true }
-                )
-            }
-        />
-    </div>
-</div>
+                <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="relative w-full max-w-sm">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
+                        <Input
+                            placeholder="Buscar por nombre..."
+                            className="pl-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            onChange={(e) =>
+                                router.get(
+                                    '/schools',
+                                    { search: e.target.value },
+                                    { preserveState: true, preserveScroll: true, replace: true }
+                                )
+                            }
+                        />
+                    </div>
+                </div>
 
                 {/* TABLA */}
-                <div className="w-full rounded-xl border bg-card shadow-sm overflow-hidden">
+                <div className="w-full rounded-xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                     <div className="w-full overflow-x-auto">
                         <table className="min-w-[900px] w-full text-sm text-left">
                             <thead>
-                                <tr className="border-b bg-slate-50 border-b-slate-200">
-                                    <th className="px-4 py-4 text-left font-semibold text-slate-700">Nombre</th>
-                                    <th className="px-4 py-4 text-left font-semibold text-slate-700">Código</th>
-                                    <th className="px-4 py-4 text-left font-semibold text-slate-700">Ciudad</th>
-                                    <th className="px-4 py-4 text-left font-semibold text-slate-700">Contacto</th>
-                                    <th className="px-4 py-4 text-left font-semibold text-slate-700">Email</th>
-                                    <th className="px-4 py-4 text-left font-semibold text-slate-700">Acciones</th>
+                                <tr className="border-b bg-slate-50 dark:bg-slate-800/60 border-b-slate-200 dark:border-b-slate-700">
+                                    <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Nombre</th>
+                                    <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Código</th>
+                                    <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Ciudad</th>
+                                    <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Contacto</th>
+                                    <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Email</th>
+                                    <th className="px-4 py-4 text-left font-semibold text-slate-700 dark:text-slate-200">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {schools.data.map((school: any) => (
                                     <tr
                                         key={school.id}
-                                        className="border-b hover:bg-slate-50/80 transition-colors"
+                                        className="border-b dark:border-slate-800 hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors"
                                     >
-                                        <td className="px-4 py-4 text-slate-700">{school.name}</td>
-                                        <td className="px-4 py-4 text-slate-600">{school.code}</td>
-                                        <td className="px-4 py-4 text-slate-600">{school.city}</td>
-                                        <td className="px-4 py-4 text-slate-600">{school.contact_person}</td>
-                                        <td className="px-4 py-4 text-slate-600">{school.email}</td>
+                                        <td className="px-4 py-4 text-slate-700 dark:text-slate-200">{school.name}</td>
+                                        <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{school.code}</td>
+                                        <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{school.city}</td>
+                                        <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{school.contact_person}</td>
+                                        <td className="px-4 py-4 text-slate-600 dark:text-slate-400">{school.email}</td>
                                         <td className="px-4 py-4 flex gap-2">
                                             {canManage ? (
                                                 <>
-                                                    <Button variant="outline" size="sm" className="gap-1" asChild>
+                                                    <Button variant="outline" size="sm" className="gap-1 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800" asChild>
                                                         <Link href={`/schools/${school.id}/edit`}>
                                                             Editar
                                                         </Link>

@@ -21,11 +21,10 @@ export default function DeleteCenterModal({ school }: { school: any }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="text-red-600 hover:underline text-xs font-medium flex items-center gap-1">
-                    <Trash2 className="h-3 w-3" />
-                    Eliminar
-                </button>
-            </DialogTrigger>
+    <Button variant="outline" size="sm" className="gap-1 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
+        Eliminar
+    </Button>
+</DialogTrigger>
             <DialogContent>
                 <DialogTitle>¿Estás seguro de eliminar este centro?</DialogTitle>
                 <DialogDescription>
