@@ -29,6 +29,7 @@ class EducationCenter extends Model implements HasMedia
         'address',
         'city',
         'contact_person',
+        'contact_email',
         'contact_position',
         'email',
         'phone',

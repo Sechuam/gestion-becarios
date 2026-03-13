@@ -7,6 +7,8 @@ use App\Models\EducationCenter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\InternsExport;
 
 class EducationCenterController extends Controller
 {
@@ -123,6 +125,25 @@ class EducationCenterController extends Controller
             report($e);
 
             return back()->with('error', 'No se pudo eliminar el centro educativo.');
+        }
+    }
+
+    public function export(Request $request, EducationCenter $school)
+    {
+        try {
+            $filters = array_merge(
+                $request->only(['search', 'status']),
+                ['center' => $school->id],
+            );
+
+            return Excel::download(
+                new InternsExport($filters),
+                'becarios_'.$school->id.'_'.date('Y-m-d').'.xlsx'
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo exportar el histórico de becarios.');
         }
     }
 }

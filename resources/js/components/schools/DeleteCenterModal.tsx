@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -20,10 +21,14 @@ export default function DeleteCenterModal({ school }: { school: any }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-    <Button variant="outline" size="sm" className="gap-1 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
-        Eliminar
-    </Button>
-</DialogTrigger>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-card text-muted-foreground border-border hover:text-red-600 hover:bg-red-50 font-medium shadow-none"
+                >
+                    <Trash2 className="w-4 h-4 mr-1.5 text-red-500/70" /> Borrar
+                </Button>
+            </DialogTrigger>
             <DialogContent>
                 <DialogTitle>¿Estás seguro de eliminar este centro?</DialogTitle>
                 <DialogDescription>

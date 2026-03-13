@@ -26,6 +26,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('schools/{school}', [\App\Http\Controllers\EducationCenterController::class, 'show'])
         ->whereNumber('school')
         ->name('schools.show');
+    Route::get('schools/{school}/export', [\App\Http\Controllers\EducationCenterController::class, 'export'])
+        ->whereNumber('school')
+        ->name('schools.export');
     Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
 
     Route::middleware('can:manage interns')->group(function () {

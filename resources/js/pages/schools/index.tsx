@@ -1,6 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Plus } from 'lucide-react';
-import { Search } from 'lucide-react';
+import { Eye, Pencil, Plus, Search } from 'lucide-react';
 import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,7 +73,8 @@ export default function Index({ schools }: { schools: any }) {
                                     <th className="px-4 py-4 text-left font-semibold text-foreground">Código</th>
                                     <th className="px-4 py-4 text-left font-semibold text-foreground">Ciudad</th>
                                     <th className="px-4 py-4 text-left font-semibold text-foreground">Contacto</th>
-                                    <th className="px-4 py-4 text-left font-semibold text-foreground">Email</th>
+                                    <th className="px-4 py-4 text-left font-semibold text-foreground">Email Coordinador</th>
+                                    <th className="px-4 py-4 text-left font-semibold text-foreground">Email Institucional</th>
                                     <th className="px-4 py-4 text-left font-semibold text-foreground">Acciones</th>
                                 </tr>
                             </thead>
@@ -92,18 +92,33 @@ export default function Index({ schools }: { schools: any }) {
                                         <td className="px-4 py-4 text-muted-foreground">{school.code}</td>
                                         <td className="px-4 py-4 text-muted-foreground">{school.city}</td>
                                         <td className="px-4 py-4 text-muted-foreground">{school.contact_person}</td>
+                                        <td className="px-4 py-4 text-muted-foreground">{school.contact_email}</td>
                                         <td className="px-4 py-4 text-muted-foreground">{school.email}</td>
                                         <td className="px-4 py-4 flex gap-2">
-                                            <Button variant="outline" size="sm" className="gap-1 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800" asChild>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="bg-card text-muted-foreground border-border hover:text-blue-600 hover:bg-blue-50 font-medium shadow-none"
+                                                asChild
+                                            >
                                                 <Link href={`/schools/${school.id}`}>
-                                                    Ver
+                                                    <div className="flex items-center">
+                                                        <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
+                                                    </div>
                                                 </Link>
                                             </Button>
                                             {canManage ? (
                                                 <>
-                                                    <Button variant="outline" size="sm" className="gap-1 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800" asChild>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="bg-card text-muted-foreground border-border hover:text-amber-600 hover:bg-amber-50 font-medium shadow-none"
+                                                        asChild
+                                                    >
                                                         <Link href={`/schools/${school.id}/edit`}>
-                                                            Editar
+                                                            <div className="flex items-center">
+                                                                <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
+                                                            </div>
                                                         </Link>
                                                     </Button>
                                                     <DeleteCenterModal school={school} />

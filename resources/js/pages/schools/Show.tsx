@@ -26,6 +26,7 @@ const statusLabels: Record<string, { label: string; variant: 'default' | 'second
 export default function Show({ educationCenter, agreement_url, interns, filters }: Props) {
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
+    const canExport = auth.user?.permissions?.includes('manage interns');
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -80,7 +81,11 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 <p className="text-foreground font-medium">{educationCenter.contact_person || '—'}</p>
                             </div>
                             <div>
-                                <p className="text-muted-foreground">Email</p>
+                                <p className="text-muted-foreground">Email del coordinador</p>
+                                <p className="text-foreground font-medium">{educationCenter.contact_email || '—'}</p>
+                            </div>
+                            <div>
+                                <p className="text-muted-foreground">Email institucional</p>
                                 <p className="text-foreground font-medium">{educationCenter.email || '—'}</p>
                             </div>
                             <div>
@@ -117,12 +122,16 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                             </div>
                             {agreement_url && (
                                 <div className="flex flex-wrap gap-2">
-                                    <a href={agreement_url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
-                                        Ver convenio PDF
-                                    </a>
-                                    <a href={agreement_url} download className="text-blue-600 hover:underline">
-                                        Descargar
-                                    </a>
+                                    <Button variant="outline" size="sm" className="border-border text-foreground hover:bg-muted" asChild>
+                                        <a href={agreement_url} target="_blank" rel="noreferrer">
+                                            Ver convenio PDF
+                                        </a>
+                                    </Button>
+                                    <Button variant="outline" size="sm" className="border-border text-foreground hover:bg-muted" asChild>
+                                        <a href={agreement_url} download>
+                                            Descargar
+                                        </a>
+                                    </Button>
                                 </div>
                             )}
                         </div>
@@ -166,6 +175,23 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 <option value="cancelled">Cancelado</option>
                             </select>
                         </div>
+                        {canExport && (
+                            <Button
+                                variant="outline"
+                                className="border-border text-foreground hover:bg-muted"
+                                onClick={() => {
+                                    const params = new URLSearchParams();
+                                    if (filters?.search) params.set('search', filters.search);
+                                    if (filters?.status) params.set('status', filters.status);
+                                    const query = params.toString();
+                                    window.open(
+                                        `/schools/${educationCenter.id}/export${query ? `?${query}` : ''}`
+                                    );
+                                }}
+                            >
+                                Exportar Excel
+                            </Button>
+                        )}
                         <p className="text-sm text-muted-foreground ml-auto font-medium">
                             Mostrando {interns.data.length} de {interns.total} becarios
                         </p>

@@ -29,6 +29,7 @@ class StoreEducationCenterRequest extends FormRequest
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'contact_person' => 'required|string|max:255',
+            'contact_email' => 'required|email|max:255|unique:education_centers,contact_email,'.$schoolId,
             'contact_position' => 'nullable|string|max:255',
             'email' => 'required|email|max:255|unique:education_centers,email,'.$schoolId,
             'phone' => 'required|string|max:255',

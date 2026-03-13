@@ -18,6 +18,7 @@ export default function Edit({ educationCenter, agreement_url }: { educationCent
         address: educationCenter.address || '',
         city: educationCenter.city || '',
         contact_person: educationCenter.contact_person || '',
+        contact_email: educationCenter.contact_email || '',
         contact_position: educationCenter.contact_position || '',
         email: educationCenter.email || '',
         phone: educationCenter.phone || '',
@@ -75,6 +76,11 @@ export default function Edit({ educationCenter, agreement_url }: { educationCent
                             <Label htmlFor="contact_person" className="text-foreground">Persona de Contacto</Label>
                             <Input id="contact_person" className="bg-background border-border text-foreground" value={data.contact_person} onChange={e => setData('contact_person', e.target.value)} required />
                             {errors.contact_person && <p className="text-red-500 text-xs">{errors.contact_person}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="contact_email" className="text-foreground">Email del Coordinador</Label>
+                            <Input id="contact_email" type="email" className="bg-background border-border text-foreground" value={data.contact_email} onChange={e => setData('contact_email', e.target.value)} required />
+                            {errors.contact_email && <p className="text-red-500 text-xs">{errors.contact_email}</p>}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="contact_position" className="text-foreground">Cargo (Opcional)</Label>
