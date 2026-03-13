@@ -1,11 +1,11 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
+import { Search } from 'lucide-react';
+import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -113,7 +113,7 @@ export default function Index({ schools }: { schools: any }) {
                 {/* PAGINACIÓN */}
                 <div className="flex items-center gap-2">
                     {schools.links.map((link: any, i: number) => {
-                        let label = link.label.replace('Previous', 'Anterior').replace('Next', 'Siguiente');
+                        const label = link.label.replace('Previous', 'Anterior').replace('Next', 'Siguiente');
                         return (
                             <Link
                                 key={i}

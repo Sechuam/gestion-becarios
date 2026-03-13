@@ -6,15 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
-class Intern extends Model implements HasMedia {
-
-    use HasFactory, SoftDeletes, InteractsWithMedia, LogsActivity;
+class Intern extends Model implements HasMedia
+{
+    use HasFactory, InteractsWithMedia, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -33,29 +32,31 @@ class Intern extends Model implements HasMedia {
         'total_hours',
     ];
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function educationCenter(): BelongsTo {
+    public function educationCenter(): BelongsTo
+    {
         return $this->belongsTo(EducationCenter::class);
     }
 
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('dni')
-        ->singleFile();
+            ->singleFile();
         $this->addMediaCollection('agreement')
-        ->singleFile();
+            ->singleFile();
         $this->addMediaCollection('insurance')
-        ->singleFile();
+            ->singleFile();
     }
 
-    public function getActivitylogOptions(): LogOptions {
+    public function getActivitylogOptions(): LogOptions
+    {
         return LogOptions::defaults()
-        ->logFillable()
-        ->logOnlyDirty()
-        ->dontSubmitEmptyLogs();
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
-

@@ -9,7 +9,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Trash2 } from 'lucide-react';
 export default function DeleteCenterModal({ school }: { school: any }) {
     const handleDelete = () => {
         router.delete(`/schools/${school.id}`, {

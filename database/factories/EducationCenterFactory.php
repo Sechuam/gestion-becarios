@@ -17,14 +17,14 @@ class EducationCenterFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company() . ' School ',
-            'code'           => 'EC-' . $this->faker->unique()->numberBetween(1000, 9999),
-            'address'        => $this->faker->streetAddress(),
-            'city'           => $this->faker->city(),
+            'name' => $this->faker->company().' School ',
+            'code' => 'EC-'.$this->faker->unique()->numberBetween(1000, 9999),
+            'address' => $this->faker->streetAddress(),
+            'city' => $this->faker->city(),
             'contact_person' => $this->faker->name(),
-            'email'          => $this->faker->unique()->safeEmail(),
-            'phone'          => $this->faker->phoneNumber(),
-            'web'            => $this->faker->url(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->phoneNumber(),
+            'web' => $this->faker->url(),
             'contact_position' => $this->faker->jobTitle(),
         ];
     }

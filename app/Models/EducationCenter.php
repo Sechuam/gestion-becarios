@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class EducationCenter extends Model implements HasMedia {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
+class EducationCenter extends Model implements HasMedia
+{
+    use HasFactory, InteractsWithMedia, SoftDeletes;
 
-    public function registerMediaCollections(): void {
+    public function registerMediaCollections(): void
+    {
         $this->addMediaCollection('agreement_pdf')->singleFile();
     }
 

@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -9,7 +10,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Trash2 } from 'lucide-react';
 export default function DeleteInternModal({ intern }: { intern: any }) {
     const handleDelete = () => {
         router.delete(`/interns/${intern.id}`, {

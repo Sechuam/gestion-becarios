@@ -1,12 +1,7 @@
 <?php
 
-use App\Exports\UsersExport;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
-use Maatwebsite\Excel\Facades\Excel;
-use Spatie\LaravelPdf\Facades\Pdf;
-use Inertia\Inertia;
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
@@ -15,7 +10,7 @@ Route::inertia('/', 'welcome', [
 
 // --- RUTAS PROTEGIDAS (Requieren Login) ---
 Route::middleware(['auth', 'verified'])->group(function () {
-    
+
     // Dashboard principal
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
@@ -29,17 +24,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para los centros educativos
     Route::get('schools', [\App\Http\Controllers\Api\EducationCenterController::class, 'index'])->name('schools.index');
     Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
-    
+
     Route::middleware('can:manage interns')->group(function () {
-    Route::resource('interns', App\Http\Controllers\InternController::class)->except(['index', 'show']);
-    Route::get('interns/{intern}', [App\Http\Controllers\InternController::class, 'show'])->name('interns.show');
-});
+        Route::resource('interns', App\Http\Controllers\InternController::class)->except(['index', 'show']);
+        Route::get('interns/{intern}', [App\Http\Controllers\InternController::class, 'show'])->name('interns.show');
+    });
 
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {
         Route::resource('schools', \App\Http\Controllers\Api\EducationCenterController::class)->except(['index']);
     });
-    //Ruta para tareas
+    // Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
     // Ruta para evaluaciones
     Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
@@ -47,11 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('/asistencia', 'attendance/index')->name('attendance.index');
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
-    
 
 });
 
 // --- RUTAS PÚBLICAS O ESPECIALES ---
 
 require __DIR__.'/settings.php';
-

@@ -1,12 +1,8 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types/navigation';
 import { Users, Plus, Search, FileDown, Pencil, Eye } from 'lucide-react';
+import DeleteInternModal from '@/components/interns/DeleteInternModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import DeleteInternModal from '@/components/interns/DeleteInternModal';
-import { useState, useEffect } from 'react';
 import {
     Select,
     SelectContent,
@@ -14,6 +10,8 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types/navigation';
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Becarios', href: '/becarios' },

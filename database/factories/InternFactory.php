@@ -28,7 +28,7 @@ class InternFactory extends Factory
 
             'academic_degree' => $this->faker->randomElement(['DAM', 'DAW', 'ADE', 'Derecho', 'Magisterio']),
             'academic_year' => '2024-2025',
-            
+
             'start_date' => now()->addDays(rand(1, 30)),
             'end_date' => now()->addMonths(rand(3, 6)),
             'status' => $this->faker->randomElement(['pending', 'active', 'completed']),

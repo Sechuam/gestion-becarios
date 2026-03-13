@@ -2,53 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Intern;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Models\EducationCenter;
+use App\Exports\InternsExport;
 use App\Http\Requests\StoreInternRequest;
+use App\Models\EducationCenter;
+use App\Models\Intern;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Exports\InternsExport;
+use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-
-
 
 class InternController extends Controller
 {
     public function index(Request $request)
-{
-    $query = Intern::query()
-        ->join('users', 'users.id', '=', 'interns.user_id')
-        ->with(['user', 'educationCenter'])
-        ->select('interns.*');
+    {
+        $query = Intern::query()
+            ->join('users', 'users.id', '=', 'interns.user_id')
+            ->with(['user', 'educationCenter'])
+            ->select('interns.*');
 
-    if ($request->filled('search')) {
-        $query->where(DB::raw('lower(users.name)'), 'like', '%' . strtolower($request->search) . '%');
-    }
-    if ($request->filled('center')) {
-        $query->where('education_center_id', $request->center);
-    }
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
+        if ($request->filled('search')) {
+            $query->where(DB::raw('lower(users.name)'), 'like', '%'.strtolower($request->search).'%');
+        }
+        if ($request->filled('center')) {
+            $query->where('education_center_id', $request->center);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-    $order = $request->get('order', 'az');
-    if ($order === 'za') {
-        $query->orderBy('users.name', 'desc');
-    } else {
-        $query->orderBy('users.name', 'asc');
+        $order = $request->get('order', 'az');
+        if ($order === 'za') {
+            $query->orderBy('users.name', 'desc');
+        } else {
+            $query->orderBy('users.name', 'asc');
+        }
+
+        $interns = $query->paginate(10)->withQueryString();
+
+        return Inertia::render('interns/index', [
+            'interns' => $interns,
+            'filters' => $request->only(['search', 'center', 'status', 'order']),
+            'education_centers' => EducationCenter::all(['id', 'name']),
+        ]);
     }
-
-    $interns = $query->paginate(10)->withQueryString();
-
-    return Inertia::render('interns/index', [
-        'interns' => $interns,
-        'filters' => $request->only(['search', 'center', 'status', 'order']),
-        'education_centers' => EducationCenter::all(['id', 'name']),
-    ]);
-}
 
     /**
      * Show the form for creating a new resource.
@@ -77,6 +75,7 @@ class InternController extends Controller
             $user->intern()->create($request->validated());
 
         });
+
         return redirect()->route('becarios.index')->with('success', 'Becario creado correctamente');
     }
 
@@ -92,19 +91,19 @@ class InternController extends Controller
             'insurance_url' => $intern->getFirstMediaUrl('insurance'),
 
             'activities' => $intern->activities()
-            ->with('causer')
-            ->latest()
-            ->get()
-            ->map(fn($activity) => [
-                'id' => $activity->id,
-                'description' => $activity->description,
-                'event' => $activity->event,
-                'causer_name' => $activity->causer->name ?? 'System',
-                'created_at' => $activity->created_at->format('d/m/Y H:i:'),
-                'properties' => $activity->properties,
-            ]),
+                ->with('causer')
+                ->latest()
+                ->get()
+                ->map(fn ($activity) => [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'event' => $activity->event,
+                    'causer_name' => $activity->causer->name ?? 'System',
+                    'created_at' => $activity->created_at->format('d/m/Y H:i:'),
+                    'properties' => $activity->properties,
+                ]),
         ]);
-}
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -112,7 +111,7 @@ class InternController extends Controller
     public function edit(Intern $intern)
     {
         return Inertia::render('interns/Edit', [
-            'intern' => $intern->load('user'), 
+            'intern' => $intern->load('user'),
             'education_centers' => EducationCenter::all(['id', 'name']),
         ]);
     }
@@ -124,22 +123,22 @@ class InternController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $intern->user_id,
+            'email' => 'required|email|unique:users,email,'.$intern->user_id,
             'education_center_id' => 'required|exists:education_centers,id',
-            'dni' => 'required|string|unique:interns,dni,' . $intern->id,
+            'dni' => 'required|string|unique:interns,dni,'.$intern->id,
             'birth_date' => 'required|date',
             'total_hours' => 'required|integer',
         ]);
-        
+
         DB::transaction(function () use ($request, $intern) {
             $intern->user->update([
                 'name' => $request->name,
                 'email' => $request->email,
             ]);
-            
+
             $intern->update($request->all());
         });
-        
+
         if ($request->hasFile('dni_file')) {
             $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
         }
@@ -150,7 +149,7 @@ class InternController extends Controller
             $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
         }
 
-    return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
+        return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
     }
 
     /**
@@ -158,12 +157,13 @@ class InternController extends Controller
      */
     public function destroy(Intern $intern)
     {
-        $intern->delete(); 
+        $intern->delete();
+
         return redirect()->route('becarios.index')->with('success', 'Becario eliminado (archivado)');
     }
-    
+
     public function export(Request $request)
     {
-    return Excel::download(new InternsExport($request->all()), 'becarios_'.date('Y-m-d').'.xlsx');
+        return Excel::download(new InternsExport($request->all()), 'becarios_'.date('Y-m-d').'.xlsx');
     }
 }

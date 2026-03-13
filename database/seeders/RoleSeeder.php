@@ -15,7 +15,6 @@ class RoleSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'manage schools']);
         Permission::firstOrCreate(['name' => 'manage interns']);
 
-
         // Creamos los tres roles definidos en la fase 1
         $admin = Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'tutor']);
