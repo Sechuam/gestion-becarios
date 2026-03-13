@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -11,6 +12,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class EducationCenter extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, SoftDeletes;
+
+    public function interns(): HasMany
+    {
+        return $this->hasMany(Intern::class);
+    }
 
     public function registerMediaCollections(): void
     {

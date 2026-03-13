@@ -63,20 +63,25 @@ class InternController extends Controller
      */
     public function store(StoreInternRequest $request)
     {
-        DB::transaction(function () use ($request) {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make('password123'),
-            ]);
+        try {
+            DB::transaction(function () use ($request) {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make('password123'),
+                ]);
 
-            $user->assignRole('intern');
+                $user->assignRole('intern');
 
-            $user->intern()->create($request->validated());
+                $user->intern()->create($request->validated());
+            });
 
-        });
+            return redirect()->route('becarios.index')->with('success', 'Becario creado correctamente');
+        } catch (\Throwable $e) {
+            report($e);
 
-        return redirect()->route('becarios.index')->with('success', 'Becario creado correctamente');
+            return back()->with('error', 'No se pudo crear el becario.');
+        }
     }
 
     /**
@@ -130,26 +135,32 @@ class InternController extends Controller
             'total_hours' => 'required|integer',
         ]);
 
-        DB::transaction(function () use ($request, $intern) {
-            $intern->user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-            ]);
+        try {
+            DB::transaction(function () use ($request, $intern) {
+                $intern->user->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                ]);
 
-            $intern->update($request->all());
-        });
+                $intern->update($request->all());
+            });
 
-        if ($request->hasFile('dni_file')) {
-            $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
-        }
-        if ($request->hasFile('agreement_file')) {
-            $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
-        }
-        if ($request->hasFile('insurance_file')) {
-            $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
-        }
+            if ($request->hasFile('dni_file')) {
+                $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
+            }
+            if ($request->hasFile('agreement_file')) {
+                $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
+            }
+            if ($request->hasFile('insurance_file')) {
+                $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
+            }
 
-        return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
+            return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo actualizar el becario.');
+        }
     }
 
     /**
@@ -157,13 +168,25 @@ class InternController extends Controller
      */
     public function destroy(Intern $intern)
     {
-        $intern->delete();
+        try {
+            $intern->delete();
 
-        return redirect()->route('becarios.index')->with('success', 'Becario eliminado (archivado)');
+            return redirect()->route('becarios.index')->with('success', 'Becario eliminado (archivado)');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo eliminar el becario.');
+        }
     }
 
     public function export(Request $request)
     {
-        return Excel::download(new InternsExport($request->all()), 'becarios_'.date('Y-m-d').'.xlsx');
+        try {
+            return Excel::download(new InternsExport($request->all()), 'becarios_'.date('Y-m-d').'.xlsx');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo exportar el listado de becarios.');
+        }
     }
 }

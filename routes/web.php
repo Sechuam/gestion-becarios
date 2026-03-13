@@ -8,7 +8,7 @@ Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-// --- RUTAS PROTEGIDAS (Requieren Login) ---
+// Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard principal
@@ -23,6 +23,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos
     Route::get('schools', [\App\Http\Controllers\EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('schools/{school}', [\App\Http\Controllers\EducationCenterController::class, 'show'])
+        ->whereNumber('school')
+        ->name('schools.show');
     Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
 
     Route::middleware('can:manage interns')->group(function () {
@@ -32,7 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {
-        Route::resource('schools', \App\Http\Controllers\EducationCenterController::class)->except(['index']);
+        Route::resource('schools', \App\Http\Controllers\EducationCenterController::class)->except(['index', 'show']);
     });
     // Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
@@ -45,6 +48,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
-// --- RUTAS PÚBLICAS O ESPECIALES ---
+// rutas públicas o especiales
 
 require __DIR__.'/settings.php';

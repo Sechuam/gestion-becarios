@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEducationCenterRequest;
 use App\Models\EducationCenter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class EducationCenterController extends Controller
@@ -37,13 +38,19 @@ class EducationCenterController extends Controller
      */
     public function store(StoreEducationCenterRequest $request)
     {
-        $school = EducationCenter::create($request->validated());
+        try {
+            $school = EducationCenter::create($request->validated());
 
-        if ($request->hasFile('agreement_file')) {
-            $school->addMediaFromRequest('agreement_file')->toMediaCollection('agreement_pdf');
+            if ($request->hasFile('agreement_file')) {
+                $school->addMediaFromRequest('agreement_file')->toMediaCollection('agreement_pdf');
+            }
+
+            return to_route('schools.index')->with('success', 'Centro Educativo creado.');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo crear el centro educativo.');
         }
-
-        return to_route('schools.index')->with('success', 'Centro Educativo creado.');
     }
 
     public function edit(EducationCenter $school)
@@ -57,9 +64,30 @@ class EducationCenterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(EducationCenter $school)
+    public function show(Request $request, EducationCenter $school)
     {
-        return response()->json($school);
+        $internsQuery = $school->interns()->with('user');
+
+        if ($request->filled('search')) {
+            $internsQuery->whereHas('user', function ($q) {
+                $q->where(DB::raw('lower(name)'), 'like', '%'.strtolower($request->search).'%');
+            });
+        }
+        if ($request->filled('status')) {
+            $internsQuery->where('status', $request->status);
+        }
+
+        $interns = $internsQuery
+            ->orderBy('start_date', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('schools/Show', [
+            'educationCenter' => $school,
+            'agreement_url' => $school->getFirstMediaUrl('agreement_pdf'),
+            'interns' => $interns,
+            'filters' => $request->only(['search', 'status']),
+        ]);
     }
 
     /**
@@ -67,13 +95,19 @@ class EducationCenterController extends Controller
      */
     public function update(StoreEducationCenterRequest $request, EducationCenter $school)
     {
-        $school->update($request->validated());
+        try {
+            $school->update($request->validated());
 
-        if ($request->hasFile('agreement_file')) {
-            $school->addMediaFromRequest('agreement_file')->toMediaCollection('agreement_pdf');
+            if ($request->hasFile('agreement_file')) {
+                $school->addMediaFromRequest('agreement_file')->toMediaCollection('agreement_pdf');
+            }
+
+            return to_route('schools.index')->with('success', 'Centro Educativo actualizado');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo actualizar el centro educativo.');
         }
-
-        return to_route('schools.index')->with('success', 'Centro Educativo actualizado');
     }
 
     /**
@@ -81,8 +115,14 @@ class EducationCenterController extends Controller
      */
     public function destroy(EducationCenter $school)
     {
-        $school->delete();
+        try {
+            $school->delete();
 
-        return to_route('schools.index')->with('success', 'Centro Educativo eliminado');
+            return to_route('schools.index')->with('success', 'Centro Educativo eliminado');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo eliminar el centro educativo.');
+        }
     }
 }
