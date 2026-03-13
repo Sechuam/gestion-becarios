@@ -22,7 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos
-    Route::get('schools', [\App\Http\Controllers\Api\EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('schools', [\App\Http\Controllers\EducationCenterController::class, 'index'])->name('schools.index');
     Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
 
     Route::middleware('can:manage interns')->group(function () {
@@ -32,7 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {
-        Route::resource('schools', \App\Http\Controllers\Api\EducationCenterController::class)->except(['index']);
+        Route::resource('schools', \App\Http\Controllers\EducationCenterController::class)->except(['index']);
     });
     // Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
