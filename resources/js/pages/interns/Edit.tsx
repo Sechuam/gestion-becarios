@@ -27,6 +27,8 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
         start_date: intern.start_date,
         end_date: intern.end_date,
         tutor_name: intern.tutor_name,
+        status: intern.status,
+        abandon_reason: intern.abandon_reason || '',
         total_hours: intern.total_hours || '',
         dni_file: null as File | null,
         agreement_file: null as File | null,
@@ -230,6 +232,33 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                         </div>
                         {errors.total_hours && <p className="text-red-500 text-xs">{errors.total_hours}</p>}
                     </div>
+                    <div className="space-y-2 md:col-span-3">
+                        <Label className="text-foreground">Estado</Label>
+                        <Select value={data.status} onValueChange={(val) => setData('status', val)}>
+                            <SelectTrigger className="bg-background border-border text-foreground">
+                                <SelectValue placeholder="Selecciona un estado" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="pending">Pendiente</SelectItem>
+                                <SelectItem value="active">Activo</SelectItem>
+                                <SelectItem value="completed">Finalizado</SelectItem>
+                                <SelectItem value="abandoned">Abandonado</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {errors.status && <p className="text-red-500 text-xs">{errors.status}</p>}
+                    </div>
+                    {data.status === 'abandoned' && (
+                        <div className="space-y-2 md:col-span-3">
+                            <Label htmlFor="abandon_reason" className="text-foreground">Motivo de abandono</Label>
+                            <Input
+                                id="abandon_reason"
+                                className="bg-background border-border text-foreground"
+                                value={data.abandon_reason}
+                                onChange={(e) => setData('abandon_reason', e.target.value)}
+                            />
+                            {errors.abandon_reason && <p className="text-red-500 text-xs">{errors.abandon_reason}</p>}
+                        </div>
+                    )}
                 </div>
             </TabsContent>
         </Tabs>

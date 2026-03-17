@@ -19,7 +19,7 @@ class Intern extends Model implements HasMedia
     protected static function booted(): void
     {
         static::saving(function (Intern $intern) {
-            if ($intern->status === 'cancelled') {
+            if (in_array($intern->status, ['cancelled', 'abandoned'], true)) {
                 return;
             }
 

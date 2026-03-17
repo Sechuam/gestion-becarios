@@ -156,16 +156,6 @@ export default function Index({
                     </div>
                     {canManage && (
                         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                            <Button
-                                variant="outline"
-                                className="gap-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-                                onClick={() =>
-                                    window.open(`/interns/export?${new URLSearchParams(filters).toString()}`)
-                                }
-                            >
-                                <FileDown className="h-4 w-4" />
-                                Exportar Excel
-                            </Button>
                             <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white" asChild>
                                 <Link href="/interns/create">
                                     <Plus className="h-4 w-4" />
@@ -243,7 +233,8 @@ export default function Index({
                                         'active': 'Activos',
                                         'pending': 'Pendientes',
                                         'completed': 'Completados',
-                                        'cancelled': 'Cancelados'
+                                        'cancelled': 'Cancelados',
+                                        'abandoned': 'Abandonados'
                                     }[filters.status as string] || 'Todos los estados'}
                                 </SelectValue>
                             </SelectTrigger>
@@ -253,9 +244,22 @@ export default function Index({
                                 <SelectItem value="pending">Pendientes</SelectItem>
                                 <SelectItem value="completed">Completados</SelectItem>
                                 <SelectItem value="cancelled">Cancelados</SelectItem>
+                                <SelectItem value="abandoned">Abandonados</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
+                    {canManage && (
+                        <Button
+                            variant="outline"
+                            className="gap-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                            onClick={() =>
+                                window.open(`/interns/export?${new URLSearchParams(filters).toString()}`)
+                            }
+                        >
+                            <FileDown className="h-4 w-4" />
+                            Exportar Excel
+                        </Button>
+                    )}
                     <p className="text-sm text-muted-foreground ml-auto font-medium">
                         Mostrando {interns.data.length} de {interns.total} becarios
                     </p>

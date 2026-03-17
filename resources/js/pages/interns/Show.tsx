@@ -82,6 +82,12 @@ export default function Show({ intern, dni_url, agreement_url, insurance_url, ac
                                     <span className="text-xs text-slate-500 dark:text-slate-400">Estado</span>
                                     <StatusBadge status={intern.status} />
                                 </div>
+                                {intern.abandon_reason && (
+                                    <div className="flex justify-between items-center py-3">
+                                        <span className="text-xs text-slate-500 dark:text-slate-400">Motivo abandono</span>
+                                        <span className="text-sm text-slate-700 dark:text-slate-200 font-medium">{intern.abandon_reason}</span>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 

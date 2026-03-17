@@ -7,6 +7,7 @@ const statusConfig: Record<string, { label: string; dot: string }> = {
     pending: { label: 'Pendiente', dot: 'bg-amber-500' },
     completed: { label: 'Completado', dot: 'bg-blue-500' },
     cancelled: { label: 'Cancelado', dot: 'bg-slate-400' },
+    abandoned: { label: 'Abandonado', dot: 'bg-rose-500' },
 };
 
 export function StatusBadge({ status }: StatusBadgeProps) {

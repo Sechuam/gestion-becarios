@@ -35,6 +35,8 @@ class StoreInternRequest extends FormRequest
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'total_hours' => 'required|integer|min:1',
+            'status' => 'required|in:pending,active,completed,cancelled,abandoned',
+            'abandon_reason' => 'string|max:255|required_if:status,abandoned',
         ];
     }
 

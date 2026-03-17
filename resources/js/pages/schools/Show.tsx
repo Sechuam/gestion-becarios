@@ -184,6 +184,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 <option value="active">Activo</option>
                                 <option value="completed">Finalizado</option>
                                 <option value="cancelled">Cancelado</option>
+                                <option value="abandoned">Abandonado</option>
                             </select>
                         </div>
                         {canExport && (

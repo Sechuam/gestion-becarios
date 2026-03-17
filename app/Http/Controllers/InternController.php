@@ -133,6 +133,8 @@ class InternController extends Controller
             'dni' => 'required|string|regex:/^[XYZ]?\d{7,8}[A-Z]$/i|unique:interns,dni,'.$intern->id,
             'birth_date' => 'required|date',
             'total_hours' => 'required|integer',
+            'status' => 'required|in:pending,active,completed,cancelled,abandoned',
+            'abandon_reason' => 'nullable|string|max:255|required_if:status,abandoned',
         ],
         [
             'dni.regex' => 'El DNI/NIE no tiene un formato válido.',

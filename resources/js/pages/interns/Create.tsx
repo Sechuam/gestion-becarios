@@ -128,19 +128,46 @@ export default function Create({ education_centers }: { education_centers: any[]
                         <Input id="tutor" className="bg-background border-border text-foreground" value={data.tutor_name} onChange={e => setData('tutor_name', e.target.value)} />
                     </div>
                     <div className="space-y-2">
-    <Label htmlFor="total_hours" className="text-foreground">Horas Totales Requeridas</Label>
-    <div className="relative">
-        <Input
-            id="total_hours"
-            type="number"
-            className="bg-background border-border text-foreground pr-8"
-            value={data.total_hours}
-            onChange={e => setData('total_hours', e.target.value)}
-        />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium font-mono text-sm">h</span>
-    </div>
-    {errors.total_hours && <p className="text-red-500 text-xs">{errors.total_hours}</p>}
-</div>
+                        <Label htmlFor="total_hours" className="text-foreground">Horas Totales Requeridas</Label>
+                        <div className="relative">
+                            <Input
+                                id="total_hours"
+                                type="number"
+                                className="bg-background border-border text-foreground pr-8"
+                                value={data.total_hours}
+                                onChange={e => setData('total_hours', e.target.value)}
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium font-mono text-sm">h</span>
+                        </div>
+                        {errors.total_hours && <p className="text-red-500 text-xs">{errors.total_hours}</p>}
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                        <Label className="text-foreground">Estado</Label>
+                        <Select value={data.status} onValueChange={(val) => setData('status', val)}>
+                            <SelectTrigger className="bg-background border-border text-foreground">
+                                <SelectValue placeholder="Selecciona un estado" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="pending">Pendiente</SelectItem>
+                                <SelectItem value="active">Activo</SelectItem>
+                                <SelectItem value="completed">Finalizado</SelectItem>
+                                <SelectItem value="abandoned">Abandonado</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {errors.status && <p className="text-red-500 text-xs">{errors.status}</p>}
+                    </div>
+                    {data.status === 'abandoned' && (
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="abandon_reason" className="text-foreground">Motivo de abandono</Label>
+                            <Input
+                                id="abandon_reason"
+                                className="bg-background border-border text-foreground"
+                                value={data.abandon_reason}
+                                onChange={(e) => setData('abandon_reason', e.target.value)}
+                            />
+                            {errors.abandon_reason && <p className="text-red-500 text-xs">{errors.abandon_reason}</p>}
+                        </div>
+                    )}
                 </div>
             </TabsContent>
         </Tabs>
