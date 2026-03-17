@@ -57,6 +57,7 @@ class Intern extends Model implements HasMedia
         'status',
         'tutor_name',
         'total_hours',
+        'abandon_reason',
     ];
 
     public function user(): BelongsTo
