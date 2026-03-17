@@ -1,0 +1,63 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+type Column<T> = {
+  key: keyof T | string;
+  label: string;
+  render?: (row: T) => React.ReactNode;
+  cellClassName?: string;
+};
+
+type SimpleTableProps<T> = {
+  columns: Column<T>[];
+  rows: T[];
+  rowKey: (row: T) => string | number;
+};
+
+export function SimpleTable<T>({ columns, rows, rowKey }: SimpleTableProps<T>) {
+  return (
+    <div className="w-full rounded-xl border bg-card border-border shadow-sm overflow-hidden">
+      <div className="w-full overflow-x-auto">
+        <Table className="min-w-[900px] w-full text-sm text-left">
+          <TableHeader>
+            <TableRow className="border-b bg-muted border-b-border">
+              {columns.map((col) => (
+                <TableHead
+                  key={col.label}
+                  className="px-4 py-4 text-left font-semibold text-foreground"
+                >
+                  {col.label}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow
+                key={rowKey(row)}
+                className="border-b border-border hover:bg-muted/60 transition-colors"
+              >
+                {columns.map((col) => (
+                  <TableCell
+                    key={col.label}
+                    className={`px-4 py-4 ${
+                      col.cellClassName ?? "text-muted-foreground"
+                    }`}
+                  >
+                    {col.render ? col.render(row) : (row as any)[col.key]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}

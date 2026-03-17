@@ -1,8 +1,8 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Search } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { StatusBadge } from '@/components/interns/StatusBadge';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -14,13 +14,6 @@ type Props = {
         search?: string;
         status?: string;
     };
-};
-
-const statusLabels: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
-    pending: { label: 'Pendiente', variant: 'secondary' },
-    active: { label: 'Activo', variant: 'default' },
-    completed: { label: 'Finalizado', variant: 'outline' },
-    cancelled: { label: 'Cancelado', variant: 'destructive' },
 };
 
 export default function Show({ educationCenter, agreement_url, interns, filters }: Props) {
@@ -82,11 +75,29 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Email del coordinador</p>
-                                <p className="text-foreground font-medium">{educationCenter.contact_email || '—'}</p>
+                                {educationCenter.contact_email ? (
+                                    <a
+                                        href={`mailto:${educationCenter.contact_email}`}
+                                        className="text-foreground font-medium hover:underline"
+                                    >
+                                        {educationCenter.contact_email}
+                                    </a>
+                                ) : (
+                                    <p className="text-foreground font-medium">—</p>
+                                )}
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Email institucional</p>
-                                <p className="text-foreground font-medium">{educationCenter.email || '—'}</p>
+                                {educationCenter.email ? (
+                                    <a
+                                        href={`mailto:${educationCenter.email}`}
+                                        className="text-foreground font-medium hover:underline"
+                                    >
+                                        {educationCenter.email}
+                                    </a>
+                                ) : (
+                                    <p className="text-foreground font-medium">—</p>
+                                )}
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Teléfono</p>
@@ -211,26 +222,31 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {interns.data.map((intern: any) => {
-                                        const status = statusLabels[intern.status] ?? statusLabels.pending;
-                                        return (
-                                            <tr
-                                                key={intern.id}
-                                                className="border-b border-border hover:bg-muted/60 transition-colors"
-                                            >
-                                                <td className="px-4 py-4 text-foreground">
-                                                    {intern.user?.name ?? '—'}
+                                    {interns.data.map((intern: any) => (
+                                        <tr
+                                            key={intern.id}
+                                            className="border-b border-border hover:bg-muted/60 transition-colors"
+                                        >
+                                            <td className="px-4 py-4 text-foreground">
+                                                {intern.user?.name ?? '—'}
+                                            </td>
+                                                <td className="px-4 py-4 text-muted-foreground">
+                                                    {intern.user?.email ? (
+                                                        <a href={`mailto:${intern.user.email}`} className="hover:underline">
+                                                            {intern.user.email}
+                                                        </a>
+                                                    ) : (
+                                                        '—'
+                                                    )}
                                                 </td>
-                                                <td className="px-4 py-4 text-muted-foreground">{intern.user?.email ?? '—'}</td>
-                                                <td className="px-4 py-4 text-muted-foreground">{intern.academic_degree || '—'}</td>
-                                                <td className="px-4 py-4 text-muted-foreground">{intern.start_date || '—'}</td>
-                                                <td className="px-4 py-4 text-muted-foreground">{intern.end_date || '—'}</td>
-                                                <td className="px-4 py-4">
-                                                    <Badge variant={status.variant}>{status.label}</Badge>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
+                                            <td className="px-4 py-4 text-muted-foreground">{intern.academic_degree || '—'}</td>
+                                            <td className="px-4 py-4 text-muted-foreground">{intern.start_date || '—'}</td>
+                                            <td className="px-4 py-4 text-muted-foreground">{intern.end_date || '—'}</td>
+                                            <td className="px-4 py-4">
+                                                <StatusBadge status={intern.status} />
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>

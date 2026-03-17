@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
+import { StatusBadge } from '@/components/interns/StatusBadge';
 
 export default function Show({ intern, dni_url, agreement_url, insurance_url, activities }: { intern: any, dni_url: string, agreement_url: string, insurance_url: string, activities: any[] }) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -58,7 +59,16 @@ export default function Show({ intern, dni_url, agreement_url, insurance_url, ac
                             <CardContent className="pt-2 px-6">
                                 <div className="flex justify-between items-center py-3 border-b border-slate-50 dark:border-slate-800">
                                     <span className="text-xs text-slate-500 dark:text-slate-400">Correo Electrónico</span>
-                                    <span className="text-sm text-slate-700 dark:text-slate-200 font-medium">{intern.user.email}</span>
+                                    {intern.user.email ? (
+                                        <a
+                                            href={`mailto:${intern.user.email}`}
+                                            className="text-sm text-slate-700 dark:text-slate-200 font-medium hover:underline"
+                                        >
+                                            {intern.user.email}
+                                        </a>
+                                    ) : (
+                                        <span className="text-sm text-slate-700 dark:text-slate-200 font-medium">—</span>
+                                    )}
                                 </div>
                                 <div className="flex justify-between items-center py-3 border-b border-slate-50 dark:border-slate-800">
                                     <span className="text-xs text-slate-500 dark:text-slate-400">Teléfono</span>
@@ -70,9 +80,7 @@ export default function Show({ intern, dni_url, agreement_url, insurance_url, ac
                                 </div>
                                 <div className="flex justify-between items-center py-3">
                                     <span className="text-xs text-slate-500 dark:text-slate-400">Estado</span>
-                                    <span className="text-xs font-semibold capitalize px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">
-                                        {intern.status}
-                                    </span>
+                                    <StatusBadge status={intern.status} />
                                 </div>
                             </CardContent>
                         </Card>
