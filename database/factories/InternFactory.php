@@ -31,7 +31,7 @@ class InternFactory extends Factory
 
             'start_date' => now()->addDays(rand(1, 30)),
             'end_date' => now()->addMonths(rand(3, 6)),
-            'status' => $this->faker->randomElement(['pending', 'active', 'completed']),
+            'status' => $this->faker->randomElement(['active', 'completed', 'abandoned']),
             'tutor_name' => $this->faker->name(),
         ];
     }

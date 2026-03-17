@@ -19,22 +19,14 @@ class Intern extends Model implements HasMedia
     protected static function booted(): void
     {
         static::saving(function (Intern $intern) {
-            if (in_array($intern->status, ['cancelled', 'abandoned'], true)) {
+            if ($intern->status === 'abandoned') {
                 return;
             }
 
-            $start = $intern->start_date ? Carbon::parse($intern->start_date)->startOfDay() : null;
             $end = $intern->end_date ? Carbon::parse($intern->end_date)->endOfDay() : null;
             $today = Carbon::today();
 
-            if (! $start || ! $end) {
-                $intern->status = 'pending';
-                return;
-            }
-
-            if ($today->lt($start)) {
-                $intern->status = 'pending';
-            } elseif ($today->gt($end)) {
+            if ($end && $today->gt($end)) {
                 $intern->status = 'completed';
             } else {
                 $intern->status = 'active';
@@ -78,6 +70,44 @@ class Intern extends Model implements HasMedia
             ->singleFile();
         $this->addMediaCollection('insurance')
             ->singleFile();
+    }
+
+    public function getProgressAttribute(): int
+    {
+        if (! $this->start_date || ! $this->end_date) {
+            return 0;
+        }
+
+        $start = Carbon::parse($this->start_date)->startOfDay();
+        $end = Carbon::parse($this->end_date)->endOfDay();
+        $today = Carbon::today();
+
+        if ($today->lte($start)) {
+            return 0;
+        }
+        if ($today->gte($end)) {
+            return 100;
+        }
+
+        $total = $start->diffInDays($end);
+        $done = $start->diffInDays($today);
+
+        if ($total === 0) {
+            return 100;
+        }
+
+        return (int) round(($done / $total) * 100);
+    }
+
+    public function getIsDelayedAttribute(): bool
+    {
+        if (! $this->end_date) {
+            return false;
+        }
+
+        $end = Carbon::parse($this->end_date)->endOfDay();
+
+        return Carbon::today()->gt($end) && $this->status !== 'completed';
     }
 
     public function getActivitylogOptions(): LogOptions

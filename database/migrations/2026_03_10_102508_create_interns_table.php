@@ -28,7 +28,7 @@ return new class extends Migration
 
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['pending', 'active', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['active', 'completed', 'abandoned'])->default('active');
             $table->string('tutor_name')->nullable();
 
             $table->timestamps();

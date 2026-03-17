@@ -45,98 +45,118 @@ export default function Index({
     };
 
     const columns = [
-    {
-        key: 'name',
-        label: 'Nombre',
-        cellClassName: 'text-foreground',
-        render: (intern: any) => (
-            <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs border border-border">
-                    {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
+        {
+            key: 'name',
+            label: 'Nombre',
+            cellClassName: 'text-foreground',
+            render: (intern: any) => (
+                <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs border border-border">
+                        {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="font-semibold text-foreground">{intern.user?.name}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                            {intern.user?.email ? (
+                                <a href={`mailto:${intern.user.email}`} className="hover:underline">
+                                    {intern.user.email}
+                                </a>
+                            ) : (
+                                '—'
+                            )}
+                        </span>
+                    </div>
                 </div>
-                <div className="flex flex-col">
-                    <span className="font-semibold text-foreground">{intern.user?.name}</span>
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                        {intern.user?.email ? (
-                            <a href={`mailto:${intern.user.email}`} className="hover:underline">
-                                {intern.user.email}
-                            </a>
-                        ) : (
-                            '—'
-                        )}
-                    </span>
-                </div>
-            </div>
-        ),
-    },
-    {
-        key: 'dni',
-        label: 'DNI',
-        cellClassName: 'text-muted-foreground font-mono text-xs italic',
-    },
-    {
-        key: 'education_center',
-        label: 'Centro Educativo',
-        cellClassName: 'text-muted-foreground',
-        render: (intern: any) =>
-            intern.education_center?.id ? (
-                <Link href={`/schools/${intern.education_center.id}`} className="hover:underline">
-                    {intern.education_center.name}
-                </Link>
-            ) : (
-                '—'
             ),
-    },
-    {
-        key: 'academic_degree',
-        label: 'Grado',
-        cellClassName: 'text-muted-foreground',
-    },
-    {
-        key: 'status',
-        label: 'Estado',
-        cellClassName: 'text-foreground',
-        render: (intern: any) => <StatusBadge status={intern?.status as string} />,
-    },
-    {
-        key: 'actions',
-        label: 'Acciones',
-        cellClassName: 'text-foreground',
-        render: (intern: any) => (
-            <div className="flex gap-2">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none"
-                    asChild
-                >
-                    <Link href={`/interns/${intern.id}`}>
-                        <div className="flex items-center">
-                            <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
-                        </div>
+        },
+        {
+            key: 'dni',
+            label: 'DNI',
+            cellClassName: 'text-muted-foreground font-mono text-xs italic',
+        },
+        {
+            key: 'education_center',
+            label: 'Centro Educativo',
+            cellClassName: 'text-muted-foreground',
+            render: (intern: any) =>
+                intern.education_center?.id ? (
+                    <Link href={`/schools/${intern.education_center.id}`} className="hover:underline">
+                        {intern.education_center.name}
                     </Link>
-                </Button>
-                {canManage && (
-                    <>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none"
-                            asChild
-                        >
-                            <Link href={`/interns/${intern.id}/edit`}>
-                                <div className="flex items-center">
-                                    <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
-                                </div>
-                            </Link>
-                        </Button>
-                        <DeleteInternModal intern={intern} />
-                    </>
-                )}
-            </div>
-        ),
-    },
-];
+                ) : (
+                    '—'
+                ),
+        },
+        {
+            key: 'academic_degree',
+            label: 'Grado',
+            cellClassName: 'text-muted-foreground',
+        },
+        {
+            key: 'progress',
+            label: 'Progreso',
+            render: (intern: any) => (
+                <div className="flex items-center gap-2">
+                    <div className="h-2 w-24 rounded bg-muted overflow-hidden">
+                        <div
+                            className={`h-2 ${intern.is_delayed ? 'bg-red-500' : 'bg-blue-500'}`}
+                            style={{ width: `${intern.progress ?? 0}%` }}
+                        />
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                        {intern.progress ?? 0}%
+                    </span>
+                    {intern.is_delayed && (
+                        <span className="text-xs text-red-500 font-medium">Retrasado</span>
+                    )}
+                </div>
+            ),
+        },
+        {
+            key: 'status',
+            label: 'Estado',
+            cellClassName: 'text-foreground',
+            render: (intern: any) => <StatusBadge status={intern?.status as string} />,
+        },
+        {
+            key: 'actions',
+            label: 'Acciones',
+            cellClassName: 'text-foreground',
+            render: (intern: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none"
+                        asChild
+                    >
+                        <Link href={`/interns/${intern.id}`}>
+                            <div className="flex items-center">
+                                <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
+                            </div>
+                        </Link>
+                    </Button>
+                    {canManage && (
+                        <>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none"
+                                asChild
+                            >
+                                <Link href={`/interns/${intern.id}/edit`}>
+                                    <div className="flex items-center">
+                                        <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
+                                    </div>
+                                </Link>
+                            </Button>
+                            <DeleteInternModal intern={intern} />
+                        </>
+                    )}
+                </div>
+            ),
+        },
+    ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -168,23 +188,23 @@ export default function Index({
 
                 {/* STATS */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
+                    <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
                         <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Total becarios</p>
                         <p className="text-lg font-semibold mt-1 text-foreground">{interns.total}</p>
                     </div>
-        <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
+                    <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
                         <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Activos</p>
                         <p className="text-lg font-semibold mt-1 text-foreground">
                             {interns.data.filter((i: any) => i.status === 'active').length}
                         </p>
                     </div>
-        <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
-                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Pendientes</p>
+                    <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Abandonados</p>
                         <p className="text-lg font-semibold mt-1 text-foreground">
-                            {interns.data.filter((i: any) => i.status === 'pending').length}
+                            {interns.data.filter((i: any) => i.status === 'abandoned').length}
                         </p>
                     </div>
-        <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
+                    <div className="p-3 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
                         <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Completados</p>
                         <p className="text-lg font-semibold mt-1 text-foreground">
                             {interns.data.filter((i: any) => i.status === 'completed').length}
@@ -193,7 +213,7 @@ export default function Index({
                 </div>
 
                 {/* FILTROS */}
-    <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
+                <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
                     <div className="relative w-full max-w-sm">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -202,6 +222,7 @@ export default function Index({
                             onChange={(e) => handleFilter('search', e.target.value)}
                         />
                     </div>
+
                     <div className="w-[300px]">
                         <Select
                             value={filters.center || 'all'}
@@ -222,6 +243,7 @@ export default function Index({
                             </SelectContent>
                         </Select>
                     </div>
+
                     <div className="w-[200px]">
                         <Select
                             value={filters.status || 'all'}
@@ -231,9 +253,7 @@ export default function Index({
                                 <SelectValue>
                                     {{
                                         'active': 'Activos',
-                                        'pending': 'Pendientes',
                                         'completed': 'Completados',
-                                        'cancelled': 'Cancelados',
                                         'abandoned': 'Abandonados'
                                     }[filters.status as string] || 'Todos los estados'}
                                 </SelectValue>
@@ -241,13 +261,29 @@ export default function Index({
                             <SelectContent>
                                 <SelectItem value="all">Todos los estados</SelectItem>
                                 <SelectItem value="active">Activos</SelectItem>
-                                <SelectItem value="pending">Pendientes</SelectItem>
                                 <SelectItem value="completed">Completados</SelectItem>
-                                <SelectItem value="cancelled">Cancelados</SelectItem>
                                 <SelectItem value="abandoned">Abandonados</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
+
+                    <div className="w-[180px]">
+                        <Input
+                            type="date"
+                            className="bg-background border-border text-foreground"
+                            value={filters.start_from || ''}
+                            onChange={(e) => handleFilter('start_from', e.target.value)}
+                        />
+                    </div>
+                    <div className="w-[180px]">
+                        <Input
+                            type="date"
+                            className="bg-background border-border text-foreground"
+                            value={filters.start_to || ''}
+                            onChange={(e) => handleFilter('start_to', e.target.value)}
+                        />
+                    </div>
+
                     {canManage && (
                         <Button
                             variant="outline"
@@ -260,6 +296,7 @@ export default function Index({
                             Exportar Excel
                         </Button>
                     )}
+
                     <p className="text-sm text-muted-foreground ml-auto font-medium">
                         Mostrando {interns.data.length} de {interns.total} becarios
                     </p>

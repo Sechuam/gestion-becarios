@@ -38,12 +38,23 @@ class InternController extends Controller
         } else {
             $query->orderBy('users.name', 'asc');
         }
+        if ($request->filled('start_from')) {
+            $query->whereDate('start_date', '>=', $request->start_from);
+        }
+        if ($request->filled('start_to')) {
+            $query->whereDate('start_date', '<=', $request->start_to);
+        }
 
-        $interns = $query->paginate(10)->withQueryString();
+        $interns = $query->paginate(10)->through(function ($intern) {
+            return array_merge($intern->toArray(), [
+                'progress' => $intern->progress,
+                'is_delayed' => $intern->is_delayed,
+            ]);
+        })->withQueryString();
 
         return Inertia::render('interns/index', [
             'interns' => $interns,
-            'filters' => $request->only(['search', 'center', 'status', 'order']),
+            'filters' => $request->only(['search', 'center', 'status', 'order', 'start_from', 'start_to']),
             'education_centers' => EducationCenter::all(['id', 'name']),
         ]);
     }
@@ -90,7 +101,7 @@ class InternController extends Controller
     public function show(Intern $intern)
     {
         return Inertia::render('interns/Show', [
-            'intern' => $intern->load(['user', 'educationCenter']),
+            'intern' => $intern->load(['user', 'educationCenter'])->append(['progress', 'is_delayed']),
             'dni_url' => $intern->getFirstMediaUrl('dni'),
             'agreement_url' => $intern->getFirstMediaUrl('agreement'),
             'insurance_url' => $intern->getFirstMediaUrl('insurance'),
@@ -133,8 +144,8 @@ class InternController extends Controller
             'dni' => 'required|string|regex:/^[XYZ]?\d{7,8}[A-Z]$/i|unique:interns,dni,'.$intern->id,
             'birth_date' => 'required|date',
             'total_hours' => 'required|integer',
-            'status' => 'required|in:pending,active,completed,cancelled,abandoned',
-            'abandon_reason' => 'nullable|string|max:255|required_if:status,abandoned',
+            'status' => 'required|in:active,completed,abandoned',
+            'abandon_reason' => 'nullable|string|max:255',
         ],
         [
             'dni.regex' => 'El DNI/NIE no tiene un formato válido.',

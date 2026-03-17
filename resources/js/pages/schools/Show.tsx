@@ -180,10 +180,8 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 }
                             >
                                 <option value="">Todos</option>
-                                <option value="pending">Pendiente</option>
                                 <option value="active">Activo</option>
                                 <option value="completed">Finalizado</option>
-                                <option value="cancelled">Cancelado</option>
                                 <option value="abandoned">Abandonado</option>
                             </select>
                         </div>
@@ -229,7 +227,16 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                             className="border-b border-border dark:border-slate-700/70 hover:bg-muted/60 dark:hover:bg-slate-800/50 transition-colors"
                                         >
                                             <td className="px-4 py-4 text-foreground">
-                                                {intern.user?.name ?? '—'}
+                                                {intern.user?.name ? (
+                                                    <Link
+                                                        href={`/interns/${intern.id}`}
+                                                        className="font-medium hover:underline"
+                                                    >
+                                                        {intern.user.name}
+                                                    </Link>
+                                                ) : (
+                                                    '—'
+                                                )}
                                             </td>
                                                 <td className="px-4 py-4 text-muted-foreground">
                                                     {intern.user?.email ? (

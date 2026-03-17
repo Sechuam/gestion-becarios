@@ -15,7 +15,7 @@ export default function Create({ education_centers }: { education_centers: any[]
     const { data, setData, post, processing, errors } = useForm({
         name: '', email: '', education_center_id: '', dni: '', birth_date: '',
         phone: '', address: '', city: '', academic_degree: '', academic_year: '2024-2025',
-        start_date: '', end_date: '', tutor_name: '', total_hours: '', status: 'pending', abandon_reason: '',
+        start_date: '', end_date: '', tutor_name: '', total_hours: '', status: 'active', abandon_reason: '',
     });
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -148,7 +148,6 @@ export default function Create({ education_centers }: { education_centers: any[]
                                 <SelectValue placeholder="Selecciona un estado" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="pending">Pendiente</SelectItem>
                                 <SelectItem value="active">Activo</SelectItem>
                                 <SelectItem value="completed">Finalizado</SelectItem>
                                 <SelectItem value="abandoned">Abandonado</SelectItem>

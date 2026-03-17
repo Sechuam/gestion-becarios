@@ -239,7 +239,6 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                                 <SelectValue placeholder="Selecciona un estado" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="pending">Pendiente</SelectItem>
                                 <SelectItem value="active">Activo</SelectItem>
                                 <SelectItem value="completed">Finalizado</SelectItem>
                                 <SelectItem value="abandoned">Abandonado</SelectItem>

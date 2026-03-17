@@ -4,9 +4,7 @@ type StatusBadgeProps = {
 
 const statusConfig: Record<string, { label: string; dot: string }> = {
     active: { label: 'Activo', dot: 'bg-emerald-500' },
-    pending: { label: 'Pendiente', dot: 'bg-amber-500' },
-    completed: { label: 'Completado', dot: 'bg-blue-500' },
-    cancelled: { label: 'Cancelado', dot: 'bg-slate-400' },
+    completed: { label: 'Finalizado', dot: 'bg-blue-500' },
     abandoned: { label: 'Abandonado', dot: 'bg-rose-500' },
 };
 
