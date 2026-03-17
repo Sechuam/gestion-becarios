@@ -47,7 +47,7 @@ export default function Edit({ educationCenter, agreement_url }: { educationCent
                     </p>
                 </div>
 
-                <form onSubmit={submit} className="space-y-6 border rounded-xl bg-card border-border shadow-sm p-6" >
+                <form onSubmit={submit} className="space-y-6 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6" >
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="space-y-2">
                             <Label htmlFor="name" className="text-foreground">Nombre del Centro</Label>

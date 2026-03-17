@@ -1,5 +1,4 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import { router } from '@inertiajs/react';
 import { FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +13,7 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
         { title: 'Becarios', href: '/becarios' },
         { title: `Editar: ${intern.user.name}`, href: '#' },
     ];
-    const { data, setData, processing, errors } = useForm({
+    const { data, setData, put, processing, errors } = useForm({
         name: intern.user.name,
         email: intern.user.email,
         education_center_id: intern.education_center_id.toString(),
@@ -35,10 +34,7 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
     });
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        router.post(`/interns/${intern.id}`, {
-            _method: 'put',
-            ...data,
-        });
+        put(`/interns/${intern.id}`, { preserveScroll: true });
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -60,7 +56,7 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
 
     <form onSubmit={submit} className="space-y-6">
         <Tabs defaultValue="personal" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto sm:h-12 bg-muted p-1 rounded-xl gap-1">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto sm:h-12 bg-muted dark:bg-slate-800/70 border border-border dark:border-slate-700/70 p-1 rounded-xl gap-1">
                 <TabsTrigger className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground" value="personal">
                     Datos Personales
                 </TabsTrigger>
@@ -75,7 +71,7 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                 </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="personal" className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm mt-4">
+            <TabsContent value="personal" className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm mt-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="name" className="text-foreground">Nombre Completo</Label>
@@ -115,7 +111,7 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                 </div>
             </TabsContent>
 
-            <TabsContent value="academic" className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm mt-4">
+            <TabsContent value="academic" className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm mt-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label className="text-foreground">Centro Educativo</Label>
@@ -144,7 +140,7 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                 </div>
             </TabsContent>
 
-            <TabsContent value="documents" className="pt-6 border border-border rounded-xl p-6 bg-card shadow-sm mt-4">
+            <TabsContent value="documents" className="pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm mt-4">
                 <div className="space-y-4 w-full">
                     <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Documentación del becario</h3>
 
@@ -210,7 +206,7 @@ export default function Edit({ intern, education_centers }: { intern: any; educa
                 </div>
             </TabsContent>
 
-            <TabsContent value="internship" className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm mt-4">
+            <TabsContent value="internship" className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm mt-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="start" className="text-foreground">Fecha Inicio</Label>

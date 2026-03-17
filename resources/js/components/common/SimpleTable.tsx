@@ -22,11 +22,11 @@ type SimpleTableProps<T> = {
 
 export function SimpleTable<T>({ columns, rows, rowKey }: SimpleTableProps<T>) {
   return (
-    <div className="w-full rounded-xl border bg-card border-border shadow-sm overflow-hidden">
+    <div className="w-full rounded-xl border bg-card border-border dark:border-slate-700/70 dark:bg-slate-900/60 shadow-sm overflow-hidden">
       <div className="w-full overflow-x-auto">
         <Table className="min-w-[900px] w-full text-sm text-left">
           <TableHeader>
-            <TableRow className="border-b bg-muted border-b-border">
+            <TableRow className="border-b bg-muted border-b-border dark:border-slate-700/70 dark:bg-slate-800/70">
               {columns.map((col) => (
                 <TableHead
                   key={col.label}
@@ -41,7 +41,7 @@ export function SimpleTable<T>({ columns, rows, rowKey }: SimpleTableProps<T>) {
             {rows.map((row) => (
               <TableRow
                 key={rowKey(row)}
-                className="border-b border-border hover:bg-muted/60 transition-colors"
+                className="border-b border-border dark:border-slate-700/70 hover:bg-muted/60 dark:hover:bg-slate-800/50 transition-colors"
               >
                 {columns.map((col) => (
                   <TableCell

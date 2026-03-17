@@ -122,7 +122,7 @@ export default function Index({ schools }: { schools: any }) {
                 </div>
 
                 {/* FILTROS */}
-                <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card border-border shadow-sm">
+                <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
                     <div className="relative w-full max-w-sm">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
                         <Input

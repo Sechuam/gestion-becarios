@@ -25,16 +25,23 @@ class StoreInternRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'education_center_id' => 'required|exists:education_centers,id',
-            'dni' => 'required|string|unique:interns,dni',
-            'birth_date' => 'required|date', // <--- AÑADE ESTO
+            'dni' => 'required|string|regex:/^[XYZ]?\d{7,8}[A-Z]$/i|unique:interns,dni',
+            'birth_date' => 'required|date', 
             'phone' => 'required|string',
-            'address' => 'required|string',   // <--- AÑADE ESTO
-            'city' => 'required|string',      // <--- AÑADE ESTO
+            'address' => 'required|string', 
+            'city' => 'required|string',   
             'academic_degree' => 'required|string',
             'academic_year' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'total_hours' => 'required|integer|min:1',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'dni.regex' => 'El DNI/NIE no tiene un formato válido.',
         ];
     }
 }

@@ -54,7 +54,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 space-y-4 rounded-xl border bg-card border-border shadow-sm p-6">
+                    <div className="lg:col-span-2 space-y-4 rounded-xl border bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6">
                         <h2 className="text-lg font-semibold text-foreground">Información del centro</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
@@ -116,7 +116,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                         </div>
                     </div>
 
-                    <div className="space-y-4 rounded-xl border bg-card border-border shadow-sm p-6">
+                    <div className="space-y-4 rounded-xl border bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6">
                         <h2 className="text-lg font-semibold text-foreground">Convenio</h2>
                         <div className="space-y-3 text-sm">
                             <div>
@@ -150,7 +150,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card border-border shadow-sm">
+                    <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
                         <div className="relative w-full max-w-sm">
                             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
                             <Input
@@ -208,11 +208,11 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                         </p>
                     </div>
 
-                    <div className="w-full rounded-xl border bg-card border-border shadow-sm overflow-hidden">
+                    <div className="w-full rounded-xl border bg-card border-border dark:border-slate-700/70 dark:bg-slate-900/60 shadow-sm overflow-hidden">
                         <div className="w-full overflow-x-auto">
                             <table className="min-w-[900px] w-full text-sm text-left">
                                 <thead>
-                                    <tr className="border-b bg-muted border-b-border">
+                                    <tr className="border-b bg-muted border-b-border dark:border-slate-700/70 dark:bg-slate-800/70">
                                         <th className="px-4 py-4 text-left font-semibold text-foreground">Becario</th>
                                         <th className="px-4 py-4 text-left font-semibold text-foreground">Email</th>
                                         <th className="px-4 py-4 text-left font-semibold text-foreground">Titulación</th>
@@ -225,7 +225,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                     {interns.data.map((intern: any) => (
                                         <tr
                                             key={intern.id}
-                                            className="border-b border-border hover:bg-muted/60 transition-colors"
+                                            className="border-b border-border dark:border-slate-700/70 hover:bg-muted/60 dark:hover:bg-slate-800/50 transition-colors"
                                         >
                                             <td className="px-4 py-4 text-foreground">
                                                 {intern.user?.name ?? '—'}

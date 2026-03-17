@@ -48,7 +48,7 @@ export default function Create() {
 
                 <form onSubmit={submit} className="space-y-6" >
                     {/* DATOS DEL CENTRO */}
-                    <div className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm">
+                    <div className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="name" className="text-foreground">Nombre del Centro</Label>
@@ -74,7 +74,7 @@ export default function Create() {
                     </div>
 
                     {/* CONTACTO */}
-                    <div className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm">
+                    <div className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="contact_person" className="text-foreground">Persona de Contacto</Label>
@@ -94,7 +94,7 @@ export default function Create() {
                     </div>
 
                     {/* CONTACTO INSTITUCIONAL */}
-                    <div className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm">
+                    <div className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-foreground">Email Institucional</Label>
@@ -115,7 +115,7 @@ export default function Create() {
                     </div>
 
                     {/* CONVENIO */}
-                    <div className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm">
+                    <div className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="agreement_signed_at">Fecha de firma</Label>

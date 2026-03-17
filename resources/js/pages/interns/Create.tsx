@@ -25,10 +25,10 @@ export default function Create({ education_centers }: { education_centers: any[]
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nuevo Becario" />
 
-<div className="p-6 w-full max-w-4xl mx-auto bg-background text-foreground">
+<div className="p-6 w-full bg-background text-foreground">
     <form onSubmit={submit} className="space-y-6">
         <Tabs defaultValue="personal" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 h-auto sm:h-12 bg-muted p-1 rounded-xl gap-1">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 h-auto sm:h-12 bg-muted dark:bg-slate-800/70 border border-border dark:border-slate-700/70 p-1 rounded-xl gap-1">
                 <TabsTrigger value="personal" className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground">
                     Datos Personales
                 </TabsTrigger>
@@ -40,7 +40,7 @@ export default function Create({ education_centers }: { education_centers: any[]
                 </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="personal" className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm mt-4">
+            <TabsContent value="personal" className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm mt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="name" className="text-foreground">Nombre Completo</Label>
@@ -80,7 +80,7 @@ export default function Create({ education_centers }: { education_centers: any[]
                 </div>
             </TabsContent>
 
-            <TabsContent value="academic" className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm mt-4">
+            <TabsContent value="academic" className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm mt-4">
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <Label className="text-foreground">Centro Educativo</Label>
@@ -111,7 +111,7 @@ export default function Create({ education_centers }: { education_centers: any[]
                 </div>
             </TabsContent>
 
-            <TabsContent value="internship" className="space-y-6 pt-6 border border-border rounded-xl p-6 bg-card shadow-sm mt-4">
+            <TabsContent value="internship" className="space-y-6 pt-6 border border-border dark:border-slate-700/70 rounded-xl p-6 bg-card dark:bg-slate-900/60 shadow-sm mt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="start" className="text-foreground">Fecha Inicio</Label>
