@@ -45,91 +45,98 @@ export default function Index({
     };
 
     const columns = [
-        {
-            key: 'name',
-            label: 'Nombre',
-            cellClassName: 'text-foreground',
-            render: (intern: any) => (
-                <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs border border-border">
-                        {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="font-semibold text-foreground">{intern.user?.name}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                            {intern.user?.email ? (
-                                <a href={`mailto:${intern.user.email}`} className="hover:underline">
-                                    {intern.user.email}
-                                </a>
-                            ) : (
-                                '—'
-                            )}
-                        </span>
-                    </div>
+    {
+        key: 'name',
+        label: 'Nombre',
+        cellClassName: 'text-foreground',
+        render: (intern: any) => (
+            <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs border border-border">
+                    {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
                 </div>
-            ),
-        },
-        {
-            key: 'dni',
-            label: 'DNI',
-            cellClassName: 'text-muted-foreground font-mono text-xs italic',
-        },
-        {
-            key: 'education_center',
-            label: 'Centro Educativo',
-            cellClassName: 'text-muted-foreground',
-            render: (intern: any) => intern.education_center?.name,
-        },
-        {
-            key: 'academic_degree',
-            label: 'Grado',
-            cellClassName: 'text-muted-foreground',
-        },
-        {
-            key: 'status',
-            label: 'Estado',
-            cellClassName: 'text-foreground',
-            render: (intern: any) => <StatusBadge status={intern?.status as string} />,
-        },
-        {
-            key: 'actions',
-            label: 'Acciones',
-            cellClassName: 'text-foreground',
-            render: (intern: any) => (
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none"
-                        asChild
-                    >
-                        <Link href={`/interns/${intern.id}`}>
-                            <div className="flex items-center">
-                                <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
-                            </div>
-                        </Link>
-                    </Button>
-                    {canManage && (
-                        <>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none"
-                                asChild
-                            >
-                                <Link href={`/interns/${intern.id}/edit`}>
-                                    <div className="flex items-center">
-                                        <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
-                                    </div>
-                                </Link>
-                            </Button>
-                            <DeleteInternModal intern={intern} />
-                        </>
-                    )}
+                <div className="flex flex-col">
+                    <span className="font-semibold text-foreground">{intern.user?.name}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                        {intern.user?.email ? (
+                            <a href={`mailto:${intern.user.email}`} className="hover:underline">
+                                {intern.user.email}
+                            </a>
+                        ) : (
+                            '—'
+                        )}
+                    </span>
                 </div>
+            </div>
+        ),
+    },
+    {
+        key: 'dni',
+        label: 'DNI',
+        cellClassName: 'text-muted-foreground font-mono text-xs italic',
+    },
+    {
+        key: 'education_center',
+        label: 'Centro Educativo',
+        cellClassName: 'text-muted-foreground',
+        render: (intern: any) =>
+            intern.education_center?.id ? (
+                <Link href={`/schools/${intern.education_center.id}`} className="hover:underline">
+                    {intern.education_center.name}
+                </Link>
+            ) : (
+                '—'
             ),
-        },
-    ];
+    },
+    {
+        key: 'academic_degree',
+        label: 'Grado',
+        cellClassName: 'text-muted-foreground',
+    },
+    {
+        key: 'status',
+        label: 'Estado',
+        cellClassName: 'text-foreground',
+        render: (intern: any) => <StatusBadge status={intern?.status as string} />,
+    },
+    {
+        key: 'actions',
+        label: 'Acciones',
+        cellClassName: 'text-foreground',
+        render: (intern: any) => (
+            <div className="flex gap-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none"
+                    asChild
+                >
+                    <Link href={`/interns/${intern.id}`}>
+                        <div className="flex items-center">
+                            <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
+                        </div>
+                    </Link>
+                </Button>
+                {canManage && (
+                    <>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none"
+                            asChild
+                        >
+                            <Link href={`/interns/${intern.id}/edit`}>
+                                <div className="flex items-center">
+                                    <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
+                                </div>
+                            </Link>
+                        </Button>
+                        <DeleteInternModal intern={intern} />
+                    </>
+                )}
+            </div>
+        ),
+    },
+];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
