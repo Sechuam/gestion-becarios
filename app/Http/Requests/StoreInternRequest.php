@@ -37,6 +37,9 @@ class StoreInternRequest extends FormRequest
             'total_hours' => 'required|integer|min:1',
             'status' => 'required|in:active,completed,abandoned',
             'abandon_reason' => 'nullable|string|max:255',
+            'dni_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'agreement_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'insurance_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ];
     }
 

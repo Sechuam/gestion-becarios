@@ -73,8 +73,9 @@ class EducationCenterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, EducationCenter $school)
+    public function show(Request $request, $school)
     {
+        $school = EducationCenter::withTrashed()->findOrFail($school);
         $internsQuery = $school->interns()->with('user');
 
         if ($request->filled('search')) {

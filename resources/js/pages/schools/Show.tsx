@@ -17,6 +17,7 @@ type Props = {
 };
 
 export default function Show({ educationCenter, agreement_url, interns, filters }: Props) {
+    const isTrashed = !!educationCenter.deleted_at;
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
     const canExport = auth.user?.permissions?.includes('manage interns');
@@ -32,6 +33,12 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
             <Head title={`Centro: ${educationCenter.name}`} />
 
             <div className="flex flex-col gap-6 p-6 bg-background text-foreground">
+                {isTrashed && (
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+                        Este centro está archivado. No admite nuevos becarios.
+                    </div>
+                )}
+
                 <div className="flex flex-wrap items-center gap-3 justify-between">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -42,13 +49,47 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                         </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800" asChild>
+                        <Button
+                            variant="outline"
+                            className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                            asChild
+                        >
                             <Link href="/schools">Volver</Link>
                         </Button>
-                        {canManage && (
-                            <Button className="bg-slate-900 hover:bg-slate-800 text-white" asChild>
-                                <Link href={`/schools/${educationCenter.id}/edit`}>Editar</Link>
-                            </Button>
+
+                        {isTrashed ? (
+                            <>
+                                {canManage && (
+                                    <>
+                                        <Button
+                                            variant="outline"
+                                            className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                                            onClick={() => router.post(`/schools/${educationCenter.id}/restore`)}
+                                        >
+                                            Restaurar centro
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            className="border-red-200 text-red-700 hover:bg-red-50"
+                                            onClick={() => {
+                                                if (confirm('¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.')) {
+                                                    router.delete(`/schools/${educationCenter.id}/force`);
+                                                }
+                                            }}
+                                        >
+                                            Eliminar definitivo
+                                        </Button>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {canManage && (
+                                    <Button className="bg-slate-900 hover:bg-slate-800 text-white" asChild>
+                                        <Link href={`/schools/${educationCenter.id}/edit`}>Editar</Link>
+                                    </Button>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>
@@ -238,15 +279,15 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                                     '—'
                                                 )}
                                             </td>
-                                                <td className="px-4 py-4 text-muted-foreground">
-                                                    {intern.user?.email ? (
-                                                        <a href={`mailto:${intern.user.email}`} className="hover:underline">
-                                                            {intern.user.email}
-                                                        </a>
-                                                    ) : (
-                                                        '—'
-                                                    )}
-                                                </td>
+                                            <td className="px-4 py-4 text-muted-foreground">
+                                                {intern.user?.email ? (
+                                                    <a href={`mailto:${intern.user.email}`} className="hover:underline">
+                                                        {intern.user.email}
+                                                    </a>
+                                                ) : (
+                                                    '—'
+                                                )}
+                                            </td>
                                             <td className="px-4 py-4 text-muted-foreground">{intern.academic_degree || '—'}</td>
                                             <td className="px-4 py-4 text-muted-foreground">{intern.start_date || '—'}</td>
                                             <td className="px-4 py-4 text-muted-foreground">{intern.end_date || '—'}</td>

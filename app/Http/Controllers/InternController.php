@@ -22,12 +22,12 @@ class InternController extends Controller
             ->with(['user', 'educationCenter'])
             ->select('interns.*');
 
-            $trashed = $request->get('trashed');
-            if ($trashed === 'only') {
-                $query->onlyTrashed();
-            } elseif ($trashed === 'with') {
-                $query->withTrashed();
-            }
+        $trashed = $request->get('trashed');
+        if ($trashed === 'only') {
+            $query->onlyTrashed();
+        } elseif ($trashed === 'with') {
+            $query->withTrashed();
+        }
 
         if ($request->filled('search')) {
             $query->where(DB::raw('lower(users.name)'), 'like', '%'.strtolower($request->search).'%');
@@ -82,7 +82,9 @@ class InternController extends Controller
     public function store(StoreInternRequest $request)
     {
         try {
-            DB::transaction(function () use ($request) {
+            $intern = null;
+
+            DB::transaction(function () use ($request, &$intern) {
                 $user = User::create([
                     'name' => $request->name,
                     'email' => $request->email,
@@ -91,8 +93,18 @@ class InternController extends Controller
 
                 $user->assignRole('intern');
 
-                $user->intern()->create($request->validated());
+                $intern = $user->intern()->create($request->validated());
             });
+
+            if ($request->hasFile('dni_file')) {
+                $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
+            }
+            if ($request->hasFile('agreement_file')) {
+                $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
+            }
+            if ($request->hasFile('insurance_file')) {
+                $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
+            }
 
             return redirect()->route('becarios.index')->with('success', 'Becario creado correctamente');
         } catch (\Throwable $e) {
