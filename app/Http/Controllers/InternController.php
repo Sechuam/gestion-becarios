@@ -22,6 +22,13 @@ class InternController extends Controller
             ->with(['user', 'educationCenter'])
             ->select('interns.*');
 
+            $trashed = $request->get('trashed');
+            if ($trashed === 'only') {
+                $query->onlyTrashed();
+            } elseif ($trashed === 'with') {
+                $query->withTrashed();
+            }
+
         if ($request->filled('search')) {
             $query->where(DB::raw('lower(users.name)'), 'like', '%'.strtolower($request->search).'%');
         }
@@ -54,7 +61,7 @@ class InternController extends Controller
 
         return Inertia::render('interns/index', [
             'interns' => $interns,
-            'filters' => $request->only(['search', 'center', 'status', 'order', 'start_from', 'start_to']),
+            'filters' => $request->only(['search', 'center', 'status', 'order', 'start_from', 'start_to', 'trashed']),
             'education_centers' => EducationCenter::all(['id', 'name']),
         ]);
     }
@@ -204,5 +211,21 @@ class InternController extends Controller
 
             return back()->with('error', 'No se pudo exportar el listado de becarios.');
         }
+    }
+
+    public function restore($id)
+    {
+        $intern = Intern::onlyTrashed()->findOrFail($id);
+        $intern->restore();
+
+        return back()->with('success', 'Becario restaurado correctamente');
+    }
+
+    public function forceDelete($id)
+    {
+        $intern = Intern::onlyTrashed()->findOrFail($id);
+        $intern->forceDelete();
+
+        return back()->with('success', 'Becario eliminado permanentemente');
     }
 }

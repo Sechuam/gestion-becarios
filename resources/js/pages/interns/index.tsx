@@ -122,39 +122,75 @@ export default function Index({
             key: 'actions',
             label: 'Acciones',
             cellClassName: 'text-foreground',
-            render: (intern: any) => (
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none"
-                        asChild
-                    >
-                        <Link href={`/interns/${intern.id}`}>
-                            <div className="flex items-center">
-                                <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
-                            </div>
-                        </Link>
-                    </Button>
-                    {canManage && (
-                        <>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none"
-                                asChild
-                            >
-                                <Link href={`/interns/${intern.id}/edit`}>
-                                    <div className="flex items-center">
-                                        <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
-                                    </div>
-                                </Link>
-                            </Button>
-                            <DeleteInternModal intern={intern} />
-                        </>
-                    )}
-                </div>
-            ),
+            render: (intern: any) => {
+                const isTrashed = !!intern.deleted_at;
+
+                return (
+                    <div className="flex gap-2">
+                        {isTrashed ? (
+                            <>
+                                {canManage && (
+                                    <>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 font-medium shadow-none"
+                                            onClick={() => router.post(`/interns/${intern.id}/restore`)}
+                                        >
+                                            Restaurar
+                                        </Button>
+
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium shadow-none"
+                                            onClick={() => {
+                                                if (confirm('¿Seguro que quieres eliminar definitivamente este becario? Esta acción no se puede deshacer.')) {
+                                                    router.delete(`/interns/${intern.id}/force`);
+                                                }
+                                            }}
+                                        >
+                                            Eliminar definitivo
+                                        </Button>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-medium shadow-none"
+                                    asChild
+                                >
+                                    <Link href={`/interns/${intern.id}`}>
+                                        <div className="flex items-center">
+                                            <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
+                                        </div>
+                                    </Link>
+                                </Button>
+                                {canManage && (
+                                    <>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium shadow-none"
+                                            asChild
+                                        >
+                                            <Link href={`/interns/${intern.id}/edit`}>
+                                                <div className="flex items-center">
+                                                    <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
+                                                </div>
+                                            </Link>
+                                        </Button>
+                                        <DeleteInternModal intern={intern} />
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </div>
+                );
+            },
         },
     ];
 
@@ -263,6 +299,28 @@ export default function Index({
                                 <SelectItem value="active">Activos</SelectItem>
                                 <SelectItem value="completed">Completados</SelectItem>
                                 <SelectItem value="abandoned">Abandonados</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="w-[200px]">
+                        <Select
+                            value={filters.trashed || 'none'}
+                            onValueChange={(v) => handleFilter('trashed', v)}
+                        >
+                            <SelectTrigger className="w-full bg-background border-border text-foreground">
+                                <SelectValue>
+                                    {{
+                                        'none': 'Activos',
+                                        'only': 'Archivados',
+                                        'with': 'Todos'
+                                    }[filters.trashed as string] || 'Activos'}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="none">Activos</SelectItem>
+                                <SelectItem value="only">Archivados</SelectItem>
+                                <SelectItem value="with">Todos</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

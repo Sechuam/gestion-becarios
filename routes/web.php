@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\InternController;
+use App\Http\Controllers\EducationCenterController;
+
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
@@ -16,29 +19,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Módulo de Usuarios
     // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
-    Route::get('becarios', [App\Http\Controllers\InternController::class, 'index'])->name('becarios.index');
+    Route::get('becarios', [InternController::class, 'index'])->name('becarios.index');
     Route::inertia('tutores', 'tutors/index')->name('tutores.index');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos
-    Route::get('schools', [\App\Http\Controllers\EducationCenterController::class, 'index'])->name('schools.index');
-    Route::get('schools/{school}', [\App\Http\Controllers\EducationCenterController::class, 'show'])
+    Route::get('schools', [EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('schools/{school}', [EducationCenterController::class, 'show'])
         ->whereNumber('school')
         ->name('schools.show');
-    Route::get('schools/{school}/export', [\App\Http\Controllers\EducationCenterController::class, 'export'])
+    Route::get('schools/{school}/export', [EducationCenterController::class, 'export'])
         ->whereNumber('school')
         ->name('schools.export');
-    Route::get('/interns/export', [\App\Http\Controllers\InternController::class, 'export'])->name('becarios.export');
+    Route::get('/interns/export', [InternController::class, 'export'])->name('becarios.export');
 
     Route::middleware('can:manage interns')->group(function () {
-        Route::resource('interns', App\Http\Controllers\InternController::class)->except(['index', 'show']);
-        Route::get('interns/{intern}', [App\Http\Controllers\InternController::class, 'show'])->name('interns.show');
+        Route::resource('interns', InternController::class)->except(['index', 'show']);
+        Route::get('interns/{intern}', [InternController::class, 'show'])->name('interns.show');
+        Route::post('interns/{intern}/restore', [InternController::class, 'restore'])->name('interns.restore');
+        Route::delete('interns/{intern}/force', [InternController::class, 'forceDelete'])->name('interns.forceDelete');
     });
 
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {
-        Route::resource('schools', \App\Http\Controllers\EducationCenterController::class)->except(['index', 'show']);
+        Route::resource('schools', EducationCenterController::class)->except(['index', 'show']);
     });
     // Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
