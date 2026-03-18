@@ -174,4 +174,17 @@ class EducationCenterController extends Controller
 
         return back()->with('success', 'Centro Educativo eliminado definitivamente');
     }
+
+    public function updateNotes(Request $request, EducationCenter $school)
+    {
+        $request->validate([
+            'internal_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $school->updateQuietly([
+            'internal_notes' => $request->input('internal_notes'),
+        ]);
+
+        return back()->with('success', 'Notas actualizadas correctamente');
+    }
 }

@@ -37,5 +37,6 @@ class EducationCenter extends Model implements HasMedia
         'agreement_signed_at',
         'agreement_expires_at',
         'agreement_slots',
+        'internal_notes',
     ];
 }

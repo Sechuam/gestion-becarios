@@ -42,6 +42,10 @@ class InternController extends Controller
         $order = $request->get('order', 'az');
         if ($order === 'za') {
             $query->orderBy('users.name', 'desc');
+        } elseif ($order === 'recent') {
+            $query->orderBy('interns.updated_at', 'desc');
+        } elseif ($order === 'oldest') {
+            $query->orderBy('interns.updated_at', 'asc');
         } else {
             $query->orderBy('users.name', 'asc');
         }
@@ -239,5 +243,18 @@ class InternController extends Controller
         $intern->forceDelete();
 
         return back()->with('success', 'Becario eliminado permanentemente');
+    }
+
+    public function updateNotes(Request $request, Intern $intern)
+    {
+        $request->validate([
+            'internal_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $intern->updateQuietly([
+            'internal_notes' => $request->input('internal_notes'),
+        ]);
+
+        return back()->with('success', 'Notas actualizadas correctamente');
     }
 }

@@ -1,10 +1,23 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Users, Plus, Search, FileDown, Pencil, Eye } from 'lucide-react';
+import { Users, Plus, Search, FileDown, Pencil, Eye, MessageSquare } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import DeleteInternModal from '@/components/interns/DeleteInternModal';
 import { Button } from '@/components/ui/button';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Input } from '@/components/ui/input';
+import { RowMetaBadges } from '@/components/common/RowMetaBadges';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@/components/ui/dialog';
+import { recentLabelFromDate } from '@/lib/recent-label';
 import {
     Select,
     SelectContent,
@@ -31,6 +44,33 @@ export default function Index({
 }) {
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage interns');
+    const [exportOpen, setExportOpen] = useState(false);
+    const [notesOpen, setNotesOpen] = useState(false);
+    const [activeIntern, setActiveIntern] = useState<any | null>(null);
+    const [noteValue, setNoteValue] = useState('');
+
+    const exportColumns = useMemo(
+        () => [
+            { key: 'id', label: 'ID' },
+            { key: 'name', label: 'Nombre' },
+            { key: 'dni', label: 'DNI / NIE' },
+            { key: 'email', label: 'Email' },
+            { key: 'phone', label: 'Teléfono' },
+            { key: 'education_center', label: 'Centro Educativo' },
+            { key: 'academic_degree', label: 'Titulación' },
+            { key: 'total_hours', label: 'Horas Totales' },
+            { key: 'start_date', label: 'Fecha Inicio' },
+            { key: 'end_date', label: 'Fecha Fin' },
+            { key: 'status', label: 'Estado' },
+            { key: 'created_at', label: 'Fecha de Registro' },
+            { key: 'updated_at', label: 'Última Actualización' },
+            { key: 'internal_notes', label: 'Notas Internas' },
+        ],
+        []
+    );
+    const [selectedColumns, setSelectedColumns] = useState<string[]>(
+        exportColumns.map((column) => column.key)
+    );
 
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
@@ -44,17 +84,54 @@ export default function Index({
         });
     };
 
+    const buildExportParams = () => {
+        const params = new URLSearchParams();
+        Object.entries(filters || {}).forEach(([key, value]) => {
+            if (value === undefined || value === null || value === '') {
+                return;
+            }
+            params.set(key, String(value));
+        });
+        if (selectedColumns.length) {
+            params.set('columns', selectedColumns.join(','));
+        }
+        return params.toString();
+    };
+
+    const handleExport = () => {
+        window.open(`/interns/export?${buildExportParams()}`);
+        setExportOpen(false);
+    };
+
+    const handleOpenNotes = (intern: any) => {
+        setActiveIntern(intern);
+        setNoteValue(intern.internal_notes || '');
+        setNotesOpen(true);
+    };
+
+    const handleSaveNotes = () => {
+        if (!activeIntern) return;
+        router.patch(
+            `/interns/${activeIntern.id}/notes`,
+            { internal_notes: noteValue },
+            { preserveScroll: true, onSuccess: () => setNotesOpen(false) }
+        );
+    };
+
     const columns = [
         {
             key: 'name',
             label: 'Nombre',
             cellClassName: 'text-foreground',
-            render: (intern: any) => (
+            render: (intern: any) => {
+                const recent = recentLabelFromDate(intern.updated_at);
+
+                return (
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs border border-border">
                         {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-1">
                         <span className="font-semibold text-foreground">{intern.user?.name}</span>
                         <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                             {intern.user?.email ? (
@@ -65,9 +142,11 @@ export default function Index({
                                 '—'
                             )}
                         </span>
+                        <RowMetaBadges recentLabel={recent} note={intern.internal_notes} />
                     </div>
                 </div>
-            ),
+            );
+            },
         },
         {
             key: 'dni',
@@ -169,6 +248,17 @@ export default function Index({
                                         </div>
                                     </Link>
                                 </Button>
+                                {canManage && (
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-primary hover:bg-primary/10 font-medium shadow-none"
+                                        onClick={() => handleOpenNotes(intern)}
+                                        title="Notas"
+                                    >
+                                        <MessageSquare className="h-4 w-4" />
+                                    </Button>
+                                )}
                                 {canManage && (
                                     <>
                                         <Button
@@ -325,6 +415,30 @@ export default function Index({
                         </Select>
                     </div>
 
+                    <div className="w-[220px]">
+                        <Select
+                            value={filters.order || 'az'}
+                            onValueChange={(v) => handleFilter('order', v)}
+                        >
+                            <SelectTrigger className="w-full bg-background border-border text-foreground">
+                                <SelectValue>
+                                    {{
+                                        'az': 'Orden: A → Z',
+                                        'za': 'Orden: Z → A',
+                                        'recent': 'Orden: Actualizados primero',
+                                        'oldest': 'Orden: Actualizados últimos'
+                                    }[filters.order as string] || 'Orden: A → Z'}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="az">Orden: A → Z</SelectItem>
+                                <SelectItem value="za">Orden: Z → A</SelectItem>
+                                <SelectItem value="recent">Orden: Actualizados primero</SelectItem>
+                                <SelectItem value="oldest">Orden: Actualizados últimos</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     <div className="w-[180px]">
                         <Input
                             type="date"
@@ -343,16 +457,59 @@ export default function Index({
                     </div>
 
                     {canManage && (
-                        <Button
-                            variant="outline"
-                            className="gap-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-                            onClick={() =>
-                                window.open(`/interns/export?${new URLSearchParams(filters).toString()}`)
-                            }
-                        >
-                            <FileDown className="h-4 w-4" />
-                            Exportar Excel
-                        </Button>
+                        <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="gap-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                                >
+                                    <FileDown className="h-4 w-4" />
+                                    Exportar Excel
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-xl">
+                                <DialogHeader>
+                                    <DialogTitle>Exportación personalizada</DialogTitle>
+                                    <DialogDescription>
+                                        Elige las columnas que quieres incluir en el Excel. Se
+                                        respetarán los filtros actuales.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {exportColumns.map((column) => {
+                                        const isChecked = selectedColumns.includes(column.key);
+                                        return (
+                                            <label
+                                                key={column.key}
+                                                className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                                            >
+                                                <Checkbox
+                                                    checked={isChecked}
+                                                    onCheckedChange={(checked) => {
+                                                        const isOn = checked === true;
+                                                        setSelectedColumns((prev) => {
+                                                            if (isOn) {
+                                                                return [...prev, column.key];
+                                                            }
+                                                            return prev.filter((key) => key !== column.key);
+                                                        });
+                                                    }}
+                                                />
+                                                {column.label}
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setExportOpen(false)}>
+                                        Cancelar
+                                    </Button>
+                                    <Button onClick={handleExport} disabled={selectedColumns.length === 0}>
+                                        Descargar Excel
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     )}
 
                     <p className="text-sm text-muted-foreground ml-auto font-medium">
@@ -394,6 +551,31 @@ export default function Index({
                     </div>
                 </div>
             </div>
+
+            <Dialog open={notesOpen} onOpenChange={setNotesOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Notas internas</DialogTitle>
+                        <DialogDescription>
+                            {activeIntern?.user?.name
+                                ? `Notas privadas para ${activeIntern.user.name}.`
+                                : 'Notas privadas del becario.'}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <textarea
+                        value={noteValue}
+                        onChange={(e) => setNoteValue(e.target.value)}
+                        placeholder="Escribe aquí una nota interna..."
+                        className="min-h-[120px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
+                    />
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setNotesOpen(false)}>
+                            Cancelar
+                        </Button>
+                        <Button onClick={handleSaveNotes}>Guardar nota</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

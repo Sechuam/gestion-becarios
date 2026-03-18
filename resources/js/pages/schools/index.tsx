@@ -1,11 +1,22 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Eye, Pencil, Plus, Search } from 'lucide-react';
+import { Eye, Pencil, Plus, Search, MessageSquare } from 'lucide-react';
+import { useState } from 'react';
 import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { RowMetaBadges } from '@/components/common/RowMetaBadges';
+import { recentLabelFromDate } from '@/lib/recent-label';
 import type { BreadcrumbItem } from '@/types/navigation';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import {
     Select,
     SelectContent,
@@ -28,6 +39,9 @@ export default function Index({
 }) {
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
+    const [notesOpen, setNotesOpen] = useState(false);
+    const [activeSchool, setActiveSchool] = useState<any | null>(null);
+    const [noteValue, setNoteValue] = useState('');
 
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
@@ -41,15 +55,36 @@ export default function Index({
         });
     };
 
+    const handleOpenNotes = (school: any) => {
+        setActiveSchool(school);
+        setNoteValue(school.internal_notes || '');
+        setNotesOpen(true);
+    };
+
+    const handleSaveNotes = () => {
+        if (!activeSchool) return;
+        router.patch(
+            `/schools/${activeSchool.id}/notes`,
+            { internal_notes: noteValue },
+            { preserveScroll: true, onSuccess: () => setNotesOpen(false) }
+        );
+    };
+
     const columns = [
         {
             key: 'name',
             label: 'Nombre',
             cellClassName: 'text-foreground',
             render: (school: any) => (
-                <Link href={`/schools/${school.id}`} className="hover:underline">
-                    {school.name}
-                </Link>
+                <div className="flex flex-col gap-1">
+                    <Link href={`/schools/${school.id}`} className="hover:underline font-semibold text-foreground">
+                        {school.name}
+                    </Link>
+                    <RowMetaBadges
+                        recentLabel={recentLabelFromDate(school.updated_at)}
+                        note={school.internal_notes}
+                    />
+                </div>
             ),
         },
         { key: 'code', label: 'Código' },
@@ -129,6 +164,17 @@ export default function Index({
                                         </div>
                                     </Link>
                                 </Button>
+                                {canManage && (
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="bg-card text-muted-foreground border-border hover:text-primary hover:bg-primary/10 font-medium shadow-none"
+                                        onClick={() => handleOpenNotes(school)}
+                                        title="Notas"
+                                    >
+                                        <MessageSquare className="h-4 w-4" />
+                                    </Button>
+                                )}
                                 {canManage ? (
                                     <>
                                         <Button
@@ -243,6 +289,31 @@ export default function Index({
                     })}
                 </div>
             </div>
+
+            <Dialog open={notesOpen} onOpenChange={setNotesOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Notas internas</DialogTitle>
+                        <DialogDescription>
+                            {activeSchool?.name
+                                ? `Notas privadas para ${activeSchool.name}.`
+                                : 'Notas privadas del centro.'}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <textarea
+                        value={noteValue}
+                        onChange={(e) => setNoteValue(e.target.value)}
+                        placeholder="Escribe aquí una nota interna..."
+                        className="min-h-[120px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
+                    />
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setNotesOpen(false)}>
+                            Cancelar
+                        </Button>
+                        <Button onClick={handleSaveNotes}>Guardar nota</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

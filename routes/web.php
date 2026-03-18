@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('interns/{intern}', [InternController::class, 'show'])->name('interns.show');
         Route::post('interns/{intern}/restore', [InternController::class, 'restore'])->name('interns.restore');
         Route::delete('interns/{intern}/force', [InternController::class, 'forceDelete'])->name('interns.forceDelete');
+        Route::patch('interns/{intern}/notes', [InternController::class, 'updateNotes'])->name('interns.notes');
     });
 
     // Rutas protegidas para administración de centros
@@ -46,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('schools', EducationCenterController::class)->except(['index', 'show']);
         Route::post('schools/{school}/restore', [EducationCenterController::class, 'restore'])->name('schools.restore');
         Route::delete('schools/{school}/force', [EducationCenterController::class, 'forceDelete'])->name('schools.forceDelete');
+        Route::patch('schools/{school}/notes', [EducationCenterController::class, 'updateNotes'])->name('schools.notes');
     });
     // Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
