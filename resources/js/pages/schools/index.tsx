@@ -6,15 +6,40 @@ import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import type { BreadcrumbItem } from '@/types/navigation';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@/components/ui/select';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Centros Educativos', href: '/schools' },
 ];
 
-export default function Index({ schools }: { schools: any }) {
+export default function Index({
+    schools,
+    filters = {}
+}: {
+    schools: any;
+    filters: any;
+}) {
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
+
+    const handleFilter = (key: string, value: string) => {
+        const newFilters = { ...filters, [key]: value };
+        if (value === 'all') {
+            delete newFilters[key];
+        }
+        router.get('/schools', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
 
     const columns = [
         {
@@ -58,39 +83,74 @@ export default function Index({ schools }: { schools: any }) {
             key: 'actions',
             label: 'Acciones',
             cellClassName: 'text-foreground',
-            render: (school: any) => (
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="bg-card text-muted-foreground border-border hover:text-blue-600 hover:bg-blue-50 font-medium shadow-none"
-                        asChild
-                    >
-                        <Link href={`/schools/${school.id}`}>
-                            <div className="flex items-center">
-                                <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
-                            </div>
-                        </Link>
-                    </Button>
-                    {canManage ? (
-                        <>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="bg-card text-muted-foreground border-border hover:text-amber-600 hover:bg-amber-50 font-medium shadow-none"
-                                asChild
-                            >
-                                <Link href={`/schools/${school.id}/edit`}>
-                                    <div className="flex items-center">
-                                        <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
-                                    </div>
-                                </Link>
-                            </Button>
-                            <DeleteCenterModal school={school} />
-                        </>
-                    ) : null}
-                </div>
-            ),
+            render: (school: any) => {
+                const isTrashed = !!school.deleted_at;
+
+                return (
+                    <div className="flex gap-2">
+                        {isTrashed ? (
+                            <>
+                                {canManage && (
+                                    <>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="bg-card text-muted-foreground border-border hover:text-emerald-600 hover:bg-emerald-50 font-medium shadow-none"
+                                            onClick={() => router.post(`/schools/${school.id}/restore`)}
+                                        >
+                                            Restaurar
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="bg-card text-muted-foreground border-border hover:text-red-600 hover:bg-red-50 font-medium shadow-none"
+                                            onClick={() => {
+                                                if (confirm('¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.')) {
+                                                    router.delete(`/schools/${school.id}/force`);
+                                                }
+                                            }}
+                                        >
+                                            Eliminar definitivo
+                                        </Button>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="bg-card text-muted-foreground border-border hover:text-blue-600 hover:bg-blue-50 font-medium shadow-none"
+                                    asChild
+                                >
+                                    <Link href={`/schools/${school.id}`}>
+                                        <div className="flex items-center">
+                                            <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
+                                        </div>
+                                    </Link>
+                                </Button>
+                                {canManage ? (
+                                    <>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="bg-card text-muted-foreground border-border hover:text-amber-600 hover:bg-amber-50 font-medium shadow-none"
+                                            asChild
+                                        >
+                                            <Link href={`/schools/${school.id}/edit`}>
+                                                <div className="flex items-center">
+                                                    <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
+                                                </div>
+                                            </Link>
+                                        </Button>
+                                        <DeleteCenterModal school={school} />
+                                    </>
+                                ) : null}
+                            </>
+                        )}
+                    </div>
+                );
+            },
         },
     ];
 
@@ -128,15 +188,32 @@ export default function Index({ schools }: { schools: any }) {
                         <Input
                             placeholder="Buscar por nombre..."
                             className="pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground"
-                            onChange={(e) =>
-                                router.get(
-                                    '/schools',
-                                    { search: e.target.value },
-                                    { preserveState: true, preserveScroll: true, replace: true }
-                                )
-                            }
+                            onChange={(e) => handleFilter('search', e.target.value)}
                         />
                     </div>
+
+                    <div className="w-[200px]">
+                        <Select
+                            value={filters.trashed || 'none'}
+                            onValueChange={(v) => handleFilter('trashed', v)}
+                        >
+                            <SelectTrigger className="w-full bg-background border-border text-foreground">
+                                <SelectValue>
+                                    {{
+                                        'none': 'Activos',
+                                        'only': 'Archivados',
+                                        'with': 'Todos'
+                                    }[filters.trashed as string] || 'Activos'}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="none">Activos</SelectItem>
+                                <SelectItem value="only">Archivados</SelectItem>
+                                <SelectItem value="with">Todos</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     <p className="text-sm text-muted-foreground ml-auto font-medium">
                         Mostrando {schools.data.length} de {schools.total} centros
                     </p>

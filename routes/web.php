@@ -44,6 +44,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {
         Route::resource('schools', EducationCenterController::class)->except(['index', 'show']);
+        Route::post('schools/{school}/restore', [EducationCenterController::class, 'restore'])->name('schools.restore');
+        Route::delete('schools/{school}/force', [EducationCenterController::class, 'forceDelete'])->name('schools.forceDelete');
     });
     // Ruta para tareas
     Route::inertia('/tareas', 'tasks/index')->name('tasks.index');

@@ -18,6 +18,13 @@ class EducationCenterController extends Controller
     public function index(Request $request)
     {
         $query = EducationCenter::query();
+        $trashed = $request->get('trashed');
+
+        if ($trashed === 'only') {
+            $query->onlyTrashed();
+        } elseif ($trashed === 'with') {
+            $query->withTrashed();
+        }
 
         if ($request->filled('search')) {
             $query->where('name', 'ilike', '%'.$request->search.'%');
@@ -26,7 +33,7 @@ class EducationCenterController extends Controller
 
         return Inertia::render('schools/index', [
             'schools' => $centers,
-            'filters' => $request->only('search'),
+            'filters' => $request->only('search', 'trashed'),
         ]);
     }
 
@@ -118,6 +125,10 @@ class EducationCenterController extends Controller
     public function destroy(EducationCenter $school)
     {
         try {
+            if ($school->interns()->where('status', 'active')->exists()) {
+                return back()->with('error', 'No se puede eliminar un centro educativo con becarios activos.');
+            }
+
             $school->delete();
 
             return to_route('schools.index')->with('success', 'Centro Educativo eliminado');
@@ -145,5 +156,21 @@ class EducationCenterController extends Controller
 
             return back()->with('error', 'No se pudo exportar el histórico de becarios.');
         }
+    }
+
+    public function restore($id)
+    {
+        $school = EducationCenter::onlyTrashed()->findOrFail($id);
+        $school->restore();
+
+        return back()->with('success', 'Centro Educativo restaurado correctamente');
+    }
+
+    public function forceDelete($id)
+    {
+        $school = EducationCenter::onlyTrashed()->findOrFail($id);
+        $school->forceDelete();
+
+        return back()->with('success', 'Centro Educativo eliminado definitivamente');
     }
 }
