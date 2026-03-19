@@ -332,7 +332,7 @@ export default function Index({
                         />
                     </div>
 
-                    <div className="w-[200px]">
+                    <div className="w-50">
                         <Select
                             value={filters.trashed || 'none'}
                             onValueChange={(v) => handleFilter('trashed', v)}
@@ -354,7 +354,7 @@ export default function Index({
                         </Select>
                     </div>
 
-                    <div className="w-[220px]">
+                    <div className="w-55">
                         <Select
                             value={filters.order || 'az'}
                             onValueChange={(v) => handleFilter('order', v)}
@@ -478,7 +478,7 @@ export default function Index({
                         value={noteValue}
                         onChange={(e) => setNoteValue(e.target.value)}
                         placeholder="Escribe aquí una nota interna..."
-                        className="min-h-[120px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
+                        className="min-h-30 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
                     />
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setNotesOpen(false)}>
