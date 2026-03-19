@@ -1,14 +1,11 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Eye, Pencil, Plus, Search, MessageSquare } from 'lucide-react';
-import { useState } from 'react';
+import { Eye, Pencil, Plus, Search, MessageSquare, FileDown } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { RowMetaBadges } from '@/components/common/RowMetaBadges';
+import { SimpleTable } from '@/components/common/SimpleTable';
 import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/app-layout';
-import { SimpleTable } from '@/components/common/SimpleTable';
-import { RowMetaBadges } from '@/components/common/RowMetaBadges';
-import { recentLabelFromDate } from '@/lib/recent-label';
-import type { BreadcrumbItem } from '@/types/navigation';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -16,7 +13,9 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -24,6 +23,9 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
+import AppLayout from '@/layouts/app-layout';
+import { recentLabelFromDate } from '@/lib/recent-label';
+import type { BreadcrumbItem } from '@/types/navigation';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -42,10 +44,42 @@ export default function Index({
     const [notesOpen, setNotesOpen] = useState(false);
     const [activeSchool, setActiveSchool] = useState<any | null>(null);
     const [noteValue, setNoteValue] = useState('');
+    const [exportOpen, setExportOpen] = useState(false);
+
+    const exportColumns = useMemo(
+        () => [
+            { key: 'id', label: 'ID' },
+            { key: 'name', label: 'Nombre' },
+            { key: 'code', label: 'Código' },
+            { key: 'city', label: 'Ciudad' },
+            { key: 'address', label: 'Dirección' },
+            { key: 'contact_person', label: 'Contacto' },
+            { key: 'contact_position', label: 'Cargo contacto' },
+            { key: 'contact_email', label: 'Email del coordinador' },
+            { key: 'email', label: 'Email institucional' },
+            { key: 'phone', label: 'Teléfono' },
+            { key: 'web', label: 'Web' },
+            { key: 'agreement_signed_at', label: 'Fecha firma convenio' },
+            { key: 'agreement_expires_at', label: 'Vencimiento convenio' },
+            { key: 'agreement_slots', label: 'Plazas acordadas' },
+            { key: 'internal_notes', label: 'Notas internas' },
+            { key: 'created_at', label: 'Fecha de registro' },
+            { key: 'updated_at', label: 'Última actualización' },
+        ],
+        []
+    );
+    const [selectedColumns, setSelectedColumns] = useState<string[]>(
+        exportColumns.map((column) => column.key)
+    );
 
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
-        if (value === 'all') {
+        if (
+            value === '' ||
+            value === 'all' ||
+            (key === 'trashed' && value === 'none') ||
+            (key === 'order' && value === 'az')
+        ) {
             delete newFilters[key];
         }
         router.get('/schools', newFilters, {
@@ -53,6 +87,25 @@ export default function Index({
             preserveScroll: true,
             replace: true,
         });
+    };
+
+    const buildExportParams = () => {
+        const params = new URLSearchParams();
+        Object.entries(filters || {}).forEach(([key, value]) => {
+            if (value === undefined || value === null || value === '') {
+                return;
+            }
+            params.set(key, String(value));
+        });
+        if (selectedColumns.length) {
+            params.set('columns', selectedColumns.join(','));
+        }
+        return params.toString();
+    };
+
+    const handleExport = () => {
+        window.open(`/schools/export?${buildExportParams()}`);
+        setExportOpen(false);
     };
 
     const handleOpenNotes = (school: any) => {
@@ -234,6 +287,7 @@ export default function Index({
                         <Input
                             placeholder="Buscar por nombre..."
                             className="pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground"
+                            defaultValue={filters.search}
                             onChange={(e) => handleFilter('search', e.target.value)}
                         />
                     </div>
@@ -259,6 +313,86 @@ export default function Index({
                             </SelectContent>
                         </Select>
                     </div>
+
+                    <div className="w-[220px]">
+                        <Select
+                            value={filters.order || 'az'}
+                            onValueChange={(v) => handleFilter('order', v)}
+                        >
+                            <SelectTrigger className="w-full bg-background border-border text-foreground">
+                                <SelectValue>
+                                    {{
+                                        'az': 'Orden: A → Z',
+                                        'za': 'Orden: Z → A',
+                                        'recent': 'Orden: Actualizados primero',
+                                        'oldest': 'Orden: Actualizados últimos'
+                                    }[filters.order as string] || 'Orden: A → Z'}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="az">Orden: A → Z</SelectItem>
+                                <SelectItem value="za">Orden: Z → A</SelectItem>
+                                <SelectItem value="recent">Orden: Actualizados primero</SelectItem>
+                                <SelectItem value="oldest">Orden: Actualizados últimos</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {canManage && (
+                        <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="gap-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                                >
+                                    <FileDown className="h-4 w-4" />
+                                    Exportar Excel
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-xl">
+                                <DialogHeader>
+                                    <DialogTitle>Exportación personalizada</DialogTitle>
+                                    <DialogDescription>
+                                        Elige las columnas que quieres incluir en el Excel. Se
+                                        respetarán los filtros actuales.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {exportColumns.map((column) => {
+                                        const isChecked = selectedColumns.includes(column.key);
+                                        return (
+                                            <label
+                                                key={column.key}
+                                                className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                                            >
+                                                <Checkbox
+                                                    checked={isChecked}
+                                                    onCheckedChange={(checked) => {
+                                                        const isOn = checked === true;
+                                                        setSelectedColumns((prev) => {
+                                                            if (isOn) {
+                                                                return [...prev, column.key];
+                                                            }
+                                                            return prev.filter((key) => key !== column.key);
+                                                        });
+                                                    }}
+                                                />
+                                                {column.label}
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setExportOpen(false)}>
+                                        Cancelar
+                                    </Button>
+                                    <Button onClick={handleExport} disabled={selectedColumns.length === 0}>
+                                        Descargar Excel
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    )}
 
                     <p className="text-sm text-muted-foreground ml-auto font-medium">
                         Mostrando {schools.data.length} de {schools.total} centros

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\InternsExport;
+use App\Exports\EducationCentersExport;
 
 class EducationCenterController extends Controller
 {
@@ -29,11 +30,23 @@ class EducationCenterController extends Controller
         if ($request->filled('search')) {
             $query->where('name', 'ilike', '%'.$request->search.'%');
         }
+
+        $order = $request->get('order', 'az');
+        if ($order === 'za') {
+            $query->orderBy('name', 'desc');
+        } elseif ($order === 'recent') {
+            $query->orderBy('updated_at', 'desc');
+        } elseif ($order === 'oldest') {
+            $query->orderBy('updated_at', 'asc');
+        } else {
+            $query->orderBy('name', 'asc');
+        }
+
         $centers = $query->paginate(10)->withQueryString();
 
         return Inertia::render('schools/index', [
             'schools' => $centers,
-            'filters' => $request->only('search', 'trashed'),
+            'filters' => $request->only('search', 'trashed', 'order'),
         ]);
     }
 
@@ -76,27 +89,36 @@ class EducationCenterController extends Controller
     public function show(Request $request, $school)
     {
         $school = EducationCenter::withTrashed()->findOrFail($school);
-        $internsQuery = $school->interns()->with('user');
+        $internsQuery = $school->interns()
+            ->join('users', 'users.id', '=', 'interns.user_id')
+            ->with('user')
+            ->select('interns.*');
 
         if ($request->filled('search')) {
-            $internsQuery->whereHas('user', function ($q) {
-                $q->where(DB::raw('lower(name)'), 'like', '%'.strtolower($request->search).'%');
-            });
+            $internsQuery->where(DB::raw('lower(users.name)'), 'like', '%'.strtolower($request->search).'%');
         }
         if ($request->filled('status')) {
             $internsQuery->where('status', $request->status);
         }
 
-        $interns = $internsQuery
-            ->orderBy('start_date', 'desc')
-            ->paginate(10)
-            ->withQueryString();
+        $order = $request->get('order', 'az');
+        if ($order === 'za') {
+            $internsQuery->orderBy('users.name', 'desc');
+        } elseif ($order === 'recent') {
+            $internsQuery->orderBy('interns.updated_at', 'desc');
+        } elseif ($order === 'oldest') {
+            $internsQuery->orderBy('interns.updated_at', 'asc');
+        } else {
+            $internsQuery->orderBy('users.name', 'asc');
+        }
+
+        $interns = $internsQuery->paginate(10)->withQueryString();
 
         return Inertia::render('schools/Show', [
             'educationCenter' => $school,
             'agreement_url' => $school->getFirstMediaUrl('agreement_pdf'),
             'interns' => $interns,
-            'filters' => $request->only(['search', 'status']),
+            'filters' => $request->only(['search', 'status', 'order']),
         ]);
     }
 
@@ -144,7 +166,7 @@ class EducationCenterController extends Controller
     {
         try {
             $filters = array_merge(
-                $request->only(['search', 'status']),
+                $request->only(['search', 'status', 'order', 'columns']),
                 ['center' => $school->id],
             );
 
@@ -156,6 +178,20 @@ class EducationCenterController extends Controller
             report($e);
 
             return back()->with('error', 'No se pudo exportar el histórico de becarios.');
+        }
+    }
+
+    public function exportIndex(Request $request)
+    {
+        try {
+            return Excel::download(
+                new EducationCentersExport($request->all()),
+                'centros_'.date('Y-m-d').'.xlsx'
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'No se pudo exportar el listado de centros.');
         }
     }
 

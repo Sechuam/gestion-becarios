@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('usuarios', 'users/index')->name('users.index');
     // Ruta para los centros educativos
     Route::get('schools', [EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('schools/export', [EducationCenterController::class, 'exportIndex'])
+        ->name('schools.export.index');
     Route::get('schools/{school}', [EducationCenterController::class, 'show'])
         ->whereNumber('school')
         ->name('schools.show');

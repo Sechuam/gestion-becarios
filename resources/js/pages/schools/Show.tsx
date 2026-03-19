@@ -1,10 +1,21 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Search } from 'lucide-react';
+import { Search, FileDown } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@/components/ui/dialog';
 
 type Props = {
     educationCenter: any;
@@ -13,6 +24,7 @@ type Props = {
     filters?: {
         search?: string;
         status?: string;
+        order?: string;
     };
 };
 
@@ -21,6 +33,47 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
     const canExport = auth.user?.permissions?.includes('manage interns');
+    const [exportOpen, setExportOpen] = useState(false);
+
+    const exportColumns = useMemo(
+        () => [
+            { key: 'id', label: 'ID' },
+            { key: 'name', label: 'Nombre' },
+            { key: 'dni', label: 'DNI / NIE' },
+            { key: 'email', label: 'Email' },
+            { key: 'phone', label: 'Teléfono' },
+            { key: 'education_center', label: 'Centro Educativo' },
+            { key: 'academic_degree', label: 'Titulación' },
+            { key: 'total_hours', label: 'Horas Totales' },
+            { key: 'start_date', label: 'Fecha Inicio' },
+            { key: 'end_date', label: 'Fecha Fin' },
+            { key: 'status', label: 'Estado' },
+            { key: 'created_at', label: 'Fecha de Registro' },
+            { key: 'updated_at', label: 'Última Actualización' },
+            { key: 'internal_notes', label: 'Notas Internas' },
+        ],
+        []
+    );
+    const [selectedColumns, setSelectedColumns] = useState<string[]>(
+        exportColumns.map((column) => column.key)
+    );
+
+    const buildExportParams = () => {
+        const params = new URLSearchParams();
+        if (filters?.search) params.set('search', filters.search);
+        if (filters?.status) params.set('status', filters.status);
+        if (filters?.order) params.set('order', filters.order);
+        if (selectedColumns.length) {
+            params.set('columns', selectedColumns.join(','));
+        }
+        return params.toString();
+    };
+
+    const handleExport = () => {
+        const query = buildExportParams();
+        window.open(`/schools/${educationCenter.id}/export${query ? `?${query}` : ''}`);
+        setExportOpen(false);
+    };
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -201,7 +254,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 onChange={(e) =>
                                     router.get(
                                         `/schools/${educationCenter.id}`,
-                                        { search: e.target.value, status: filters?.status },
+                                        { search: e.target.value, status: filters?.status, order: filters?.order },
                                         { preserveState: true, preserveScroll: true, replace: true }
                                     )
                                 }
@@ -215,7 +268,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 onChange={(e) =>
                                     router.get(
                                         `/schools/${educationCenter.id}`,
-                                        { search: filters?.search, status: e.target.value || undefined },
+                                        { search: filters?.search, status: e.target.value || undefined, order: filters?.order },
                                         { preserveState: true, preserveScroll: true, replace: true }
                                     )
                                 }
@@ -226,22 +279,79 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 <option value="abandoned">Abandonado</option>
                             </select>
                         </div>
-                        {canExport && (
-                            <Button
-                                variant="outline"
-                                className="border-border text-foreground hover:bg-muted"
-                                onClick={() => {
-                                    const params = new URLSearchParams();
-                                    if (filters?.search) params.set('search', filters.search);
-                                    if (filters?.status) params.set('status', filters.status);
-                                    const query = params.toString();
-                                    window.open(
-                                        `/schools/${educationCenter.id}/export${query ? `?${query}` : ''}`
-                                    );
-                                }}
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm text-muted-foreground">Orden</label>
+                            <select
+                                className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+                                value={filters?.order ?? 'az'}
+                                onChange={(e) =>
+                                    router.get(
+                                        `/schools/${educationCenter.id}`,
+                                        { search: filters?.search, status: filters?.status, order: e.target.value },
+                                        { preserveState: true, preserveScroll: true, replace: true }
+                                    )
+                                }
                             >
-                                Exportar Excel
-                            </Button>
+                                <option value="az">Orden: A → Z</option>
+                                <option value="za">Orden: Z → A</option>
+                                <option value="recent">Orden: Actualizados primero</option>
+                                <option value="oldest">Orden: Actualizados últimos</option>
+                            </select>
+                        </div>
+                        {canExport && (
+                            <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="gap-2 border-border text-foreground hover:bg-muted"
+                                    >
+                                        <FileDown className="h-4 w-4" />
+                                        Exportar Excel
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-xl">
+                                    <DialogHeader>
+                                        <DialogTitle>Exportación personalizada</DialogTitle>
+                                        <DialogDescription>
+                                            Elige las columnas que quieres incluir en el Excel. Se
+                                            respetarán los filtros actuales.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {exportColumns.map((column) => {
+                                            const isChecked = selectedColumns.includes(column.key);
+                                            return (
+                                                <label
+                                                    key={column.key}
+                                                    className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                                                >
+                                                    <Checkbox
+                                                        checked={isChecked}
+                                                        onCheckedChange={(checked) => {
+                                                            const isOn = checked === true;
+                                                            setSelectedColumns((prev) => {
+                                                                if (isOn) {
+                                                                    return [...prev, column.key];
+                                                                }
+                                                                return prev.filter((key) => key !== column.key);
+                                                            });
+                                                        }}
+                                                    />
+                                                    {column.label}
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                    <DialogFooter>
+                                        <Button variant="outline" onClick={() => setExportOpen(false)}>
+                                            Cancelar
+                                        </Button>
+                                        <Button onClick={handleExport} disabled={selectedColumns.length === 0}>
+                                            Descargar Excel
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         )}
                         <p className="text-sm text-muted-foreground ml-auto font-medium">
                             Mostrando {interns.data.length} de {interns.total} becarios
