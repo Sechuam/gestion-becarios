@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\EducationCenterController;
+use App\Http\Controllers\TaskController;
 
 
 // Ruta de bienvenida
@@ -13,6 +14,13 @@ Route::inertia('/', 'welcome', [
 
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
+    
+    // Rutas del taskController
+    Route::get('tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.status');
 
     // Dashboard principal
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
