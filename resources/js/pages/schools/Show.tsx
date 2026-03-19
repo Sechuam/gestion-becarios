@@ -1,12 +1,13 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Search, FileDown } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
+import { toast } from '@/hooks/use-toast';
 import {
     Dialog,
     DialogContent,
@@ -34,6 +35,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
     const canManage = auth.user?.permissions?.includes('manage schools');
     const canExport = auth.user?.permissions?.includes('manage interns');
     const [exportOpen, setExportOpen] = useState(false);
+    const lastEmptyKeyRef = useRef<string>('');
 
     const exportColumns = useMemo(
         () => [
@@ -73,7 +75,34 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
         const query = buildExportParams();
         window.open(`/schools/${educationCenter.id}/export${query ? `?${query}` : ''}`);
         setExportOpen(false);
+        toast({
+            title: 'Exportación iniciada',
+            description: 'Tu descarga comenzará en breve.',
+        });
     };
+
+    useEffect(() => {
+        const filtersEntries = Object.entries(filters || {}).filter(([key, value]) => {
+            if (value === undefined || value === null || value === '') return false;
+            if (key === 'order' && value === 'az') return false;
+            return true;
+        });
+        const hasFilters = filtersEntries.length > 0;
+        const emptyKey = JSON.stringify(filtersEntries.sort(([a], [b]) => a.localeCompare(b)));
+
+        if (interns.data.length > 0) {
+            lastEmptyKeyRef.current = '';
+            return;
+        }
+
+        if (interns.data.length === 0 && hasFilters && emptyKey !== lastEmptyKeyRef.current) {
+            toast({
+                title: 'Sin resultados',
+                description: 'No hay becarios que coincidan con los filtros actuales.',
+            });
+            lastEmptyKeyRef.current = emptyKey;
+        }
+    }, [filters, interns.data.length]);
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },

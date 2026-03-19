@@ -1,6 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Users, Plus, Search, FileDown, Pencil, Eye, MessageSquare } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import DeleteInternModal from '@/components/interns/DeleteInternModal';
 import { Button } from '@/components/ui/button';
 import { SimpleTable } from '@/components/common/SimpleTable';
@@ -8,6 +8,7 @@ import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Input } from '@/components/ui/input';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from '@/hooks/use-toast';
 import {
     Dialog,
     DialogContent,
@@ -48,6 +49,8 @@ export default function Index({
     const [notesOpen, setNotesOpen] = useState(false);
     const [activeIntern, setActiveIntern] = useState<any | null>(null);
     const [noteValue, setNoteValue] = useState('');
+    const [noteOriginal, setNoteOriginal] = useState('');
+    const lastEmptyKeyRef = useRef<string>('');
 
     const exportColumns = useMemo(
         () => [
@@ -101,22 +104,61 @@ export default function Index({
     const handleExport = () => {
         window.open(`/interns/export?${buildExportParams()}`);
         setExportOpen(false);
+        toast({
+            title: 'Exportación iniciada',
+            description: 'Tu descarga comenzará en breve.',
+        });
     };
 
     const handleOpenNotes = (intern: any) => {
         setActiveIntern(intern);
         setNoteValue(intern.internal_notes || '');
+        setNoteOriginal(intern.internal_notes || '');
         setNotesOpen(true);
     };
 
     const handleSaveNotes = () => {
         if (!activeIntern) return;
+        if ((noteValue || '') === (noteOriginal || '')) {
+            toast({
+                title: 'Sin cambios',
+                description: 'No hay cambios que guardar en las notas.',
+            });
+            setNotesOpen(false);
+            return;
+        }
         router.patch(
             `/interns/${activeIntern.id}/notes`,
             { internal_notes: noteValue },
             { preserveScroll: true, onSuccess: () => setNotesOpen(false) }
         );
     };
+
+    useEffect(() => {
+        const filtersEntries = Object.entries(filters || {}).filter(([key, value]) => {
+            if (value === undefined || value === null || value === '') return false;
+            if (key === 'order' && value === 'az') return false;
+            if (key === 'trashed' && value === 'none') return false;
+            if (key === 'status' && value === 'all') return false;
+            if (key === 'center' && value === 'all') return false;
+            return true;
+        });
+        const hasFilters = filtersEntries.length > 0;
+        const emptyKey = JSON.stringify(filtersEntries.sort(([a], [b]) => a.localeCompare(b)));
+
+        if (interns.data.length > 0) {
+            lastEmptyKeyRef.current = '';
+            return;
+        }
+
+        if (interns.data.length === 0 && hasFilters && emptyKey !== lastEmptyKeyRef.current) {
+            toast({
+                title: 'Sin resultados',
+                description: 'No hay becarios que coincidan con los filtros actuales.',
+            });
+            lastEmptyKeyRef.current = emptyKey;
+        }
+    }, [filters, interns.data.length]);
 
     const columns = [
         {

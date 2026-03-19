@@ -1,11 +1,12 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Eye, Pencil, Plus, Search, MessageSquare, FileDown } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from '@/hooks/use-toast';
 import {
     Dialog,
     DialogContent,
@@ -44,7 +45,9 @@ export default function Index({
     const [notesOpen, setNotesOpen] = useState(false);
     const [activeSchool, setActiveSchool] = useState<any | null>(null);
     const [noteValue, setNoteValue] = useState('');
+    const [noteOriginal, setNoteOriginal] = useState('');
     const [exportOpen, setExportOpen] = useState(false);
+    const lastEmptyKeyRef = useRef<string>('');
 
     const exportColumns = useMemo(
         () => [
@@ -106,22 +109,59 @@ export default function Index({
     const handleExport = () => {
         window.open(`/schools/export?${buildExportParams()}`);
         setExportOpen(false);
+        toast({
+            title: 'Exportación iniciada',
+            description: 'La descarga comenzará en breve.',
+        });
     };
 
     const handleOpenNotes = (school: any) => {
         setActiveSchool(school);
         setNoteValue(school.internal_notes || '');
+        setNoteOriginal(school.internal_notes || '');
         setNotesOpen(true);
     };
 
     const handleSaveNotes = () => {
         if (!activeSchool) return;
+        if ((noteValue || '') === (noteOriginal || '')) {
+            toast({
+                title: 'Sin cambios',
+                description: 'No hay cambios que guardar en las notas.',
+            });
+            setNotesOpen(false);
+            return;
+        }
         router.patch(
             `/schools/${activeSchool.id}/notes`,
             { internal_notes: noteValue },
             { preserveScroll: true, onSuccess: () => setNotesOpen(false) }
         );
     };
+
+    useEffect(() => {
+        const filtersEntries = Object.entries(filters || {}).filter(([key, value]) => {
+            if (value === undefined || value === null || value === '') return false;
+            if (key === 'order' && value === 'az') return false;
+            if (key === 'trashed' && value === 'none') return false;
+            return true;
+        });
+        const hasFilters = filtersEntries.length > 0;
+        const emptyKey = JSON.stringify(filtersEntries.sort(([a], [b]) => a.localeCompare(b)));
+
+        if (schools.data.length > 0) {
+            lastEmptyKeyRef.current = '';
+            return;
+        }
+
+        if (schools.data.length === 0 && hasFilters && emptyKey !== lastEmptyKeyRef.current) {
+            toast({
+                title: 'Sin resultados',
+                description: 'No hay centros que coincidan con los filtros actuales.',
+            });
+            lastEmptyKeyRef.current = emptyKey;
+        }
+    }, [filters, schools.data.length]);
 
     const columns = [
         {
