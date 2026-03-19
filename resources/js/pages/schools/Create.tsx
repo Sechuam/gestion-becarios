@@ -7,8 +7,8 @@ import type { BreadcrumbItem } from '@/types/navigation';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Centros Educativos', href: '/schools' },
-    { title: 'Añadir Centro', href: '/schools/create' },
+    { title: 'Centros Educativos', href: '/centros' },
+    { title: 'Añadir Centro', href: '/centros/create' },
 ];
 
 export default function Create() {
@@ -31,7 +31,7 @@ export default function Create() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/schools', { forceFormData: true });
+        post('/centros', { forceFormData: true });
     };
 
     return (

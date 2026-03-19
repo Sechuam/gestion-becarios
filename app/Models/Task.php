@@ -45,4 +45,9 @@ class Task extends Model implements HasMedia
     {
         return $this->hasMany(TaskStatusLog::class);
     }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments');
+    }
 }

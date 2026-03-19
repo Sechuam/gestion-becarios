@@ -19,7 +19,7 @@ class StoreTaskRequest extends FormRequest
             'status' => 'required|in:pending,in_progress,in_review,completed,rejected',
             'priority' => 'nullable|string|max:50',
             'due_date' => 'nullable|date',
-            'practice_type_id' => 'required|exists:practice_types_id',
+            'practice_type_id' => 'required|exists:practice_types,id',
             'intern_ids' => 'nullable|array',
             'intern_ids.*' => 'exists:interns,id',
         ];

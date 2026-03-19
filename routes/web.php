@@ -14,13 +14,20 @@ Route::inertia('/', 'welcome', [
 
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Rutas del taskController
-    Route::get('tasks', [TaskController::class, 'index'])->name('tasks.index');
-    Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
-    Route::patch('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
-    Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-    Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.status');
+
+    // Rutas para tareas
+    Route::get('tareas', [TaskController::class, 'index'])->name('tasks.index');
+    Route::get('tareas/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::get('tareas/mis', [TaskController::class, 'myTasks'])->name('tasks.mine');
+    Route::get('tareas/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
+    Route::get('tareas/{task}', [TaskController::class, 'show'])->name('tasks.show');
+    Route::post('tareas', [TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('tareas/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('tareas/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::patch('tareas/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.status');
+    Route::post('tareas/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
+    Route::post('tareas/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.comments.store');
+    Route::post('tareas/{task}/attachments', [TaskController::class, 'addAttachment'])->name('tasks.attachments.store');
 
     // Dashboard principal
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
@@ -32,16 +39,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
     Route::inertia('usuarios', 'users/index')->name('users.index');
+
     // Ruta para los centros educativos
-    Route::get('schools', [EducationCenterController::class, 'index'])->name('schools.index');
-    Route::get('schools/export', [EducationCenterController::class, 'exportIndex'])
+    Route::get('centros', [EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('centros/export', [EducationCenterController::class, 'exportIndex'])
         ->name('schools.export.index');
-    Route::get('schools/{school}', [EducationCenterController::class, 'show'])
+    Route::get('centros/{school}', [EducationCenterController::class, 'show'])
         ->whereNumber('school')
         ->name('schools.show');
-    Route::get('schools/{school}/export', [EducationCenterController::class, 'export'])
+    Route::get('centros/{school}/export', [EducationCenterController::class, 'export'])
         ->whereNumber('school')
         ->name('schools.export');
+
     Route::get('/interns/export', [InternController::class, 'export'])->name('becarios.export');
 
     Route::middleware('can:manage interns')->group(function () {
@@ -54,13 +63,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {
-        Route::resource('schools', EducationCenterController::class)->except(['index', 'show']);
-        Route::post('schools/{school}/restore', [EducationCenterController::class, 'restore'])->name('schools.restore');
-        Route::delete('schools/{school}/force', [EducationCenterController::class, 'forceDelete'])->name('schools.forceDelete');
-        Route::patch('schools/{school}/notes', [EducationCenterController::class, 'updateNotes'])->name('schools.notes');
+        Route::resource('centros', EducationCenterController::class)
+            ->parameters(['centros' => 'school'])
+            ->except(['index', 'show']);
+        Route::post('centros/{school}/restore', [EducationCenterController::class, 'restore'])->name('schools.restore');
+        Route::delete('centros/{school}/force', [EducationCenterController::class, 'forceDelete'])->name('schools.forceDelete');
+        Route::patch('centros/{school}/notes', [EducationCenterController::class, 'updateNotes'])->name('schools.notes');
     });
-    // Ruta para tareas
-    Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
+
     // Ruta para evaluaciones
     Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
     // Ruta para asistencia
@@ -71,5 +81,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // rutas públicas o especiales
-
 require __DIR__.'/settings.php';

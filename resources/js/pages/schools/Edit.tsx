@@ -7,7 +7,7 @@ import type { BreadcrumbItem } from '@/types/navigation';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Centros Educativos', href: '/schools' },
+    { title: 'Centros Educativos', href: '/centros' },
     { title: 'Editar Centro', href: '#' },
 ];
 
@@ -32,7 +32,7 @@ export default function Edit({ educationCenter, agreement_url }: { educationCent
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(`/schools/${educationCenter.id}`, { forceFormData: true });
+        post(`/centros/${educationCenter.id}`, { forceFormData: true });
     };
 
     return (

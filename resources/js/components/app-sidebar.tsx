@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users, Building2, Clock, ClipboardList, Kanban, Star, FileText } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -20,79 +20,82 @@ interface NavItem extends BaseNavItem {
     items?: NavItem[];
 }
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
+const buildMainNavItems = (isIntern: boolean): NavItem[] => {
+    const seguimientoItems: NavItem[] = [
+        {
+            title: 'Tareas (Kanban)',
+            href: '/tareas',
+            icon: Kanban,
+        },
+        ...(isIntern
+            ? [
+                {
+                    title: 'Mis tareas',
+                    href: '/tareas/mis',
+                    icon: ClipboardList,
+                },
+            ]
+            : []),
+        {
+            title: 'Evaluaciones',
+            href: '/evaluaciones',
+            icon: Star,
+        },
+    ];
 
-    {
-        title: 'Centros educativos',
-        href: '/schools',
-        icon: Building2,
-    },
-    {
-
-        title: 'Usuarios',
-        href: '#',
-        icon: Users,
-        isActive: false, // Esto lo mantiene abierto por defecto
-        items: [
-
-            {
-                title: 'Becarios',
-                href: '/becarios', // ruta que hemos creado en web.php
-                icon: BookOpen,
-            },
-
-            // Nueva sección para tutores
-
-            {
-                title: 'Tutores',
-                href: '/tutores', // ruta que hemos creado en web.php
-                icon: GraduationCap,
-            },
-
-            // Nueva sección para administradores
-
-            {
-                title: 'Administrador',
-                href: '/administrador', // ruta que hemos creado en web.php
-                icon: ShieldCheck,
-            },
-        ],
-    },
-
-    {
-        title: 'Seguimiento académico',
-        href: '#',
-        icon: ClipboardList,
-        isActive: false,
-        items: [
-            {
-                title: 'Tareas (Kanban)',
-                href: '/tareas',
-                icon: Kanban,
-            },
-            {
-                title: 'Evaluaciones',
-                href: '/evaluaciones',
-                icon: Star,
-            },
-        ],
-    },
-    {
-        title: 'Control horario',
-        href: '/asistencia',
-        icon: Clock,
-    },
-    {
-        title: 'Reportes e informes',
-        href: '/reportes',
-        icon: FileText,
-    }
-];
+    return [
+        {
+            title: 'Dashboard',
+            href: dashboard(),
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Centros educativos',
+            href: '/centros',
+            icon: Building2,
+        },
+        {
+            title: 'Usuarios',
+            href: '#',
+            icon: Users,
+            isActive: false, // Esto lo mantiene abierto por defecto
+            items: [
+                {
+                    title: 'Becarios',
+                    href: '/becarios', // ruta que hemos creado en web.php
+                    icon: BookOpen,
+                },
+                {
+                    title: 'Tutores',
+                    href: '/tutores', // ruta que hemos creado en web.php
+                    icon: GraduationCap,
+                },
+                {
+                    title: 'Administrador',
+                    href: '/administrador', // ruta que hemos creado en web.php
+                    icon: ShieldCheck,
+                },
+            ],
+        },
+        {
+            title: 'Seguimiento académico',
+            href: '#',
+            icon: ClipboardList,
+            isActive: false,
+            items: seguimientoItems,
+        },
+        {
+            title: 'Control horario',
+            href: '/asistencia',
+            icon: Clock,
+        },
+        {
+            title: 'Reportes e informes',
+            href: '/reportes',
+            icon: FileText,
+        },
+    ];
+};
 
 
 const footerNavItems: NavItem[] = [
@@ -109,6 +112,10 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props as any;
+    const isIntern = auth?.user?.roles?.includes('intern');
+    const mainNavItems = buildMainNavItems(!!isIntern);
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

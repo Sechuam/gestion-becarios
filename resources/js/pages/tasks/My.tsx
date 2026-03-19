@@ -24,7 +24,7 @@ type Props = {
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Tareas', href: '/tareas' },
+    { title: 'Mis tareas', href: '/tareas/mis' },
 ];
 
 const KANBAN_COLUMNS = [
@@ -65,22 +65,15 @@ function DraggableTask({ task }: { task: any }) {
     );
 }
 
-export default function Index({ tasks, filters = {}, practice_types = [] }: Props) {
+export default function My({ tasks, filters = {}, practice_types = [] }: Props) {
     const { auth } = usePage().props as any;
     const isIntern = auth?.user?.roles?.includes('intern');
-    const statusLabel = (status: string) => ({
-        pending: 'Pendiente',
-        in_progress: 'En progreso',
-        in_review: 'En revisión',
-        completed: 'Completada',
-        rejected: 'Rechazada',
-    }[status] || status);
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
         if (value === '' || value === 'all') {
             delete newFilters[key];
         }
-        router.get('/tareas', newFilters, {
+        router.get('/tareas/mis', newFilters, {
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -97,6 +90,14 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
         });
         return map;
     }, [tasks.data]);
+
+    const statusLabel = (status: string) => ({
+        pending: 'Pendiente',
+        in_progress: 'En progreso',
+        in_review: 'En revisión',
+        completed: 'Completada',
+        rejected: 'Rechazada',
+    }[status] || status);
 
     const columns = useMemo(
         () => [
@@ -133,14 +134,6 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
                 key: 'due_date',
                 label: 'Entrega',
                 render: (task: any) => task.due_date || '—',
-            },
-            {
-                key: 'interns',
-                label: 'Asignados',
-                render: (task: any) =>
-                    task.interns?.length
-                        ? task.interns.map((i: any) => i.user?.name).join(', ')
-                        : '—',
             },
             {
                 key: 'actions',
@@ -199,19 +192,16 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Tareas" />
+            <Head title="Mis tareas" />
 
             <div className="flex flex-col gap-6 p-6 bg-background text-foreground">
                 <div className="flex flex-wrap items-center gap-3 justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Tareas</h1>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Mis tareas</h1>
                         <p className="text-sm text-muted-foreground">
-                            Gestión de tareas y seguimiento por estado.
+                            Tareas asignadas a tu usuario.
                         </p>
                     </div>
-                    <Button className="bg-slate-900 hover:bg-slate-800 text-white" asChild>
-                        <Link href="/tareas/create">Nueva tarea</Link>
-                    </Button>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">

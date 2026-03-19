@@ -208,7 +208,7 @@ export default function Show({
                                     <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Centro</span>
                                     <span className="col-span-2 text-sm text-slate-700 dark:text-slate-200 font-medium">
                                         {intern.education_center?.id ? (
-                                            <Link href={`/schools/${intern.education_center.id}`} className="hover:underline">
+                                            <Link href={`/centros/${intern.education_center.id}`} className="hover:underline">
                                                 {intern.education_center.name}
                                             </Link>
                                         ) : (

@@ -30,7 +30,7 @@ import type { BreadcrumbItem } from '@/types/navigation';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Centros Educativos', href: '/schools' },
+    { title: 'Centros Educativos', href: '/centros' },
 ];
 
 export default function Index({
@@ -85,7 +85,7 @@ export default function Index({
         ) {
             delete newFilters[key];
         }
-        router.get('/schools', newFilters, {
+        router.get('/centros', newFilters, {
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -107,7 +107,7 @@ export default function Index({
     };
 
     const handleExport = () => {
-        window.open(`/schools/export?${buildExportParams()}`);
+        window.open(`/centros/export?${buildExportParams()}`);
         setExportOpen(false);
         toast({
             title: 'Exportación iniciada',
@@ -133,7 +133,7 @@ export default function Index({
             return;
         }
         router.patch(
-            `/schools/${activeSchool.id}/notes`,
+            `/centros/${activeSchool.id}/notes`,
             { internal_notes: noteValue },
             { preserveScroll: true, onSuccess: () => setNotesOpen(false) }
         );
@@ -170,7 +170,7 @@ export default function Index({
             cellClassName: 'text-foreground',
             render: (school: any) => (
                 <div className="flex flex-col gap-1">
-                    <Link href={`/schools/${school.id}`} className="hover:underline font-semibold text-foreground">
+                    <Link href={`/centros/${school.id}`} className="hover:underline font-semibold text-foreground">
                         {school.name}
                     </Link>
                     <RowMetaBadges
@@ -224,7 +224,7 @@ export default function Index({
                                             variant="outline"
                                             size="sm"
                                             className="bg-card text-muted-foreground border-border hover:text-emerald-600 hover:bg-emerald-50 font-medium shadow-none"
-                                            onClick={() => router.post(`/schools/${school.id}/restore`)}
+                                            onClick={() => router.post(`/centros/${school.id}/restore`)}
                                         >
                                             Restaurar
                                         </Button>
@@ -234,7 +234,7 @@ export default function Index({
                                             className="bg-card text-muted-foreground border-border hover:text-red-600 hover:bg-red-50 font-medium shadow-none"
                                             onClick={() => {
                                                 if (confirm('¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.')) {
-                                                    router.delete(`/schools/${school.id}/force`);
+                                                    router.delete(`/centros/${school.id}/force`);
                                                 }
                                             }}
                                         >
@@ -251,7 +251,7 @@ export default function Index({
                                     className="bg-card text-muted-foreground border-border hover:text-blue-600 hover:bg-blue-50 font-medium shadow-none"
                                     asChild
                                 >
-                                    <Link href={`/schools/${school.id}`}>
+                                    <Link href={`/centros/${school.id}`}>
                                         <div className="flex items-center">
                                             <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
                                         </div>
@@ -276,7 +276,7 @@ export default function Index({
                                             className="bg-card text-muted-foreground border-border hover:text-amber-600 hover:bg-amber-50 font-medium shadow-none"
                                             asChild
                                         >
-                                            <Link href={`/schools/${school.id}/edit`}>
+                                            <Link href={`/centros/${school.id}/edit`}>
                                                 <div className="flex items-center">
                                                     <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
                                                 </div>
@@ -311,7 +311,7 @@ export default function Index({
                     {canManage && (
                         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                             <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white" asChild>
-                                <Link href="/schools/create">
+                                <Link href="/centros/create">
                                     <Plus className="h-4 w-4" />
                                     Añadir Centro
                                 </Link>

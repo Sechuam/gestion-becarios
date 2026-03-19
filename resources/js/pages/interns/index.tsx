@@ -201,7 +201,7 @@ export default function Index({
             cellClassName: 'text-muted-foreground',
             render: (intern: any) =>
                 intern.education_center?.id ? (
-                    <Link href={`/schools/${intern.education_center.id}`} className="hover:underline">
+                    <Link href={`/centros/${intern.education_center.id}`} className="hover:underline">
                         {intern.education_center.name}
                     </Link>
                 ) : (

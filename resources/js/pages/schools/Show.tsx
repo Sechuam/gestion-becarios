@@ -73,7 +73,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
 
     const handleExport = () => {
         const query = buildExportParams();
-        window.open(`/schools/${educationCenter.id}/export${query ? `?${query}` : ''}`);
+        window.open(`/centros/${educationCenter.id}/export${query ? `?${query}` : ''}`);
         setExportOpen(false);
         toast({
             title: 'Exportación iniciada',
@@ -106,8 +106,8 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Centros Educativos', href: '/schools' },
-        { title: educationCenter.name, href: `/schools/${educationCenter.id}` },
+        { title: 'Centros Educativos', href: '/centros' },
+        { title: educationCenter.name, href: `/centros/${educationCenter.id}` },
     ];
 
     return (
@@ -136,7 +136,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                             className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                             asChild
                         >
-                            <Link href="/schools">Volver</Link>
+                            <Link href="/centros">Volver</Link>
                         </Button>
 
                         {isTrashed ? (
@@ -146,7 +146,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                         <Button
                                             variant="outline"
                                             className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                                            onClick={() => router.post(`/schools/${educationCenter.id}/restore`)}
+                                            onClick={() => router.post(`/centros/${educationCenter.id}/restore`)}
                                         >
                                             Restaurar centro
                                         </Button>
@@ -155,7 +155,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                             className="border-red-200 text-red-700 hover:bg-red-50"
                                             onClick={() => {
                                                 if (confirm('¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.')) {
-                                                    router.delete(`/schools/${educationCenter.id}/force`);
+                                                    router.delete(`/centros/${educationCenter.id}/force`);
                                                 }
                                             }}
                                         >
@@ -168,7 +168,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                             <>
                                 {canManage && (
                                     <Button className="bg-slate-900 hover:bg-slate-800 text-white" asChild>
-                                        <Link href={`/schools/${educationCenter.id}/edit`}>Editar</Link>
+                                        <Link href={`/centros/${educationCenter.id}/edit`}>Editar</Link>
                                     </Button>
                                 )}
                             </>
@@ -282,7 +282,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 defaultValue={filters?.search}
                                 onChange={(e) =>
                                     router.get(
-                                        `/schools/${educationCenter.id}`,
+                                        `/centros/${educationCenter.id}`,
                                         { search: e.target.value, status: filters?.status, order: filters?.order },
                                         { preserveState: true, preserveScroll: true, replace: true }
                                     )
@@ -296,7 +296,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 value={filters?.status ?? ''}
                                 onChange={(e) =>
                                     router.get(
-                                        `/schools/${educationCenter.id}`,
+                                        `/centros/${educationCenter.id}`,
                                         { search: filters?.search, status: e.target.value || undefined, order: filters?.order },
                                         { preserveState: true, preserveScroll: true, replace: true }
                                     )
@@ -315,7 +315,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                 value={filters?.order ?? 'az'}
                                 onChange={(e) =>
                                     router.get(
-                                        `/schools/${educationCenter.id}`,
+                                        `/centros/${educationCenter.id}`,
                                         { search: filters?.search, status: filters?.status, order: e.target.value },
                                         { preserveState: true, preserveScroll: true, replace: true }
                                     )
@@ -389,7 +389,7 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
 
                     <div className="w-full rounded-xl border bg-card border-border dark:border-slate-700/70 dark:bg-slate-900/60 shadow-sm overflow-hidden">
                         <div className="w-full overflow-x-auto">
-                            <table className="min-w-[900px] w-full text-sm text-left">
+                            <table className="min-w- w-full text-sm text-left">
                                 <thead>
                                     <tr className="border-b bg-muted border-b-border dark:border-slate-700/70 dark:bg-slate-800/70">
                                         <th className="px-4 py-4 text-left font-semibold text-foreground">Becario</th>
