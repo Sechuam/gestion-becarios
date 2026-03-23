@@ -3,11 +3,6 @@ import { Search, FileDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { StatusBadge } from '@/components/interns/StatusBadge';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types/navigation';
-import { toast } from '@/hooks/use-toast';
 import {
     Dialog,
     DialogContent,
@@ -17,6 +12,12 @@ import {
     DialogTitle,
     DialogTrigger
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { StatusBadge } from '@/components/interns/StatusBadge';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types/navigation';
+import { toast } from '@/hooks/use-toast';
+import { formatDateEs } from '@/lib/date-format';
 
 type Props = {
     educationCenter: any;
@@ -244,11 +245,15 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                         <div className="space-y-3 text-sm">
                             <div>
                                 <p className="text-muted-foreground">Fecha de firma</p>
-                                <p className="text-foreground font-medium">{educationCenter.agreement_signed_at || '—'}</p>
+                                <p className="text-foreground font-medium">
+                                    {formatDateEs(educationCenter.agreement_signed_at)}
+                                </p>
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Fecha de vencimiento</p>
-                                <p className="text-foreground font-medium">{educationCenter.agreement_expires_at || '—'}</p>
+                                <p className="text-foreground font-medium">
+                                    {formatDateEs(educationCenter.agreement_expires_at)}
+                                </p>
                             </div>
                             <div>
                                 <p className="text-muted-foreground">Plazas acordadas</p>
@@ -428,8 +433,8 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                                                 )}
                                             </td>
                                             <td className="px-4 py-4 text-muted-foreground">{intern.academic_degree || '—'}</td>
-                                            <td className="px-4 py-4 text-muted-foreground">{intern.start_date || '—'}</td>
-                                            <td className="px-4 py-4 text-muted-foreground">{intern.end_date || '—'}</td>
+                                            <td className="px-4 py-4 text-muted-foreground">{formatDateEs(intern.start_date)}</td>
+                                            <td className="px-4 py-4 text-muted-foreground">{formatDateEs(intern.end_date)}</td>
                                             <td className="px-4 py-4">
                                                 <StatusBadge status={intern.status} />
                                             </td>

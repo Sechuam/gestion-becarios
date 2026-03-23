@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
 import { StatusBadge } from '@/components/interns/StatusBadge';
+import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 
 export default function Show({
     intern,
@@ -29,13 +30,6 @@ export default function Show({
     if (intern.education_center?.id) {
         centersById[String(intern.education_center.id)] = intern.education_center.name;
     }
-
-    const formatDate = (value: any) => {
-        if (!value) return '—';
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return value;
-        return date.toLocaleDateString('es-ES');
-    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -223,7 +217,7 @@ export default function Show({
                                 <div className="grid grid-cols-3 py-3 border-b border-slate-50 dark:border-slate-800">
                                     <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Fechas</span>
                                     <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">
-                                        {intern.start_date} al {intern.end_date}
+                                        {formatDateEs(intern.start_date)} al {formatDateEs(intern.end_date)}
                                     </span>
                                 </div>
                                 <div className="grid grid-cols-3 py-3 border-b border-slate-50 dark:border-slate-800">
@@ -298,7 +292,7 @@ export default function Show({
                                                 }
 
                                                 if (['birth_date', 'start_date', 'end_date'].includes(field)) {
-                                                    return formatDate(value);
+                                                    return formatDateEs(value);
                                                 }
 
                                                 return value;
@@ -307,7 +301,7 @@ export default function Show({
                                             return (
                                                 <div key={activity.id} className="flex gap-4 text-sm">
                                                     <span className="text-xs text-slate-500 dark:text-slate-400 w-28 shrink-0">
-                                                        {activity.created_at}
+                                                        {formatDateTimeEs(activity.created_at)}
                                                     </span>
                                                     <div className="text-slate-600 dark:text-slate-300">
                                                         {activity.event === 'updated'

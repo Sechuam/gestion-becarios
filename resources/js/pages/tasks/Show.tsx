@@ -4,6 +4,7 @@ import type { BreadcrumbItem } from '@/types/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 
 type Props = {
     task: any;
@@ -102,7 +103,7 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                                         ? 'bg-amber-50 text-amber-700 border-amber-200'
                                         : 'bg-transparent text-muted-foreground border-transparent'
                                 }`}>
-                                    {task.due_date}
+                                    {formatDateEs(task.due_date)}
                                 </span>
                             ) : (
                                 <span className="font-medium">—</span>
@@ -142,7 +143,7 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                                 {task.comments.map((comment: any) => (
                                     <div key={comment.id} className="rounded-lg border border-border/70 p-3 text-sm">
                                         <div className="text-xs text-muted-foreground mb-1">
-                                            {comment.user?.name || 'Usuario'} · {comment.created_at}
+                                            {comment.user?.name || 'Usuario'} · {formatDateTimeEs(comment.created_at)}
                                         </div>
                                         <div>{comment.comment}</div>
                                     </div>
@@ -178,7 +179,7 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                                         <div>
                                             <div className="font-medium">{file.name}</div>
                                             <div className="text-xs text-muted-foreground">
-                                                {file.mime_type} · {file.created_at}
+                                                {file.mime_type} · {formatDateTimeEs(file.created_at)}
                                             </div>
                                         </div>
                                         <a href={file.url} className="text-blue-600 hover:underline" target="_blank" rel="noreferrer">

@@ -8,6 +8,7 @@ import { SimpleTable } from '@/components/common/SimpleTable';
 import DeleteTaskModal from '@/components/tasks/DeleteTaskModal';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
+import { formatDateEs } from '@/lib/date-format';
 import {
     Select,
     SelectContent,
@@ -80,7 +81,7 @@ function DraggableTask({ task }: { task: any }) {
             </Link>
             <p className="text-xs text-muted-foreground">{task.practice_type?.name || '—'}</p>
             {task.due_date && (
-                <p className="text-[11px] mt-1 text-muted-foreground">Entrega: {task.due_date}</p>
+                <p className="text-[11px] mt-1 text-muted-foreground">Entrega: {formatDateEs(task.due_date)}</p>
             )}
         </div>
     );
@@ -163,7 +164,7 @@ export default function My({ tasks, filters = {}, practice_types = [] }: Props) 
                         : 'bg-transparent text-muted-foreground border-transparent';
                     return task.due_date ? (
                         <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${tone}`}>
-                            {task.due_date}
+                            {formatDateEs(task.due_date)}
                         </span>
                     ) : '—';
                 },
