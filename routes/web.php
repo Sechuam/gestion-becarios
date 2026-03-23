@@ -5,6 +5,7 @@ use Laravel\Fortify\Features;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\EducationCenterController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\PracticeTypeController;
 
 
 // Ruta de bienvenida
@@ -28,6 +29,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tareas/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
     Route::post('tareas/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.comments.store');
     Route::post('tareas/{task}/attachments', [TaskController::class, 'addAttachment'])->name('tasks.attachments.store');
+
+    // Catálogo de tipos de práctica (solo admin)
+    Route::get('tipos-practica', [PracticeTypeController::class, 'index'])->name('practice-types.index');
+    Route::get('tipos-practica/create', [PracticeTypeController::class, 'create'])->name('practice-types.create');
+    Route::post('tipos-practica', [PracticeTypeController::class, 'store'])->name('practice-types.store');
+    Route::get('tipos-practica/{practiceType}/edit', [PracticeTypeController::class, 'edit'])->name('practice-types.edit');
+    Route::patch('tipos-practica/{practiceType}', [PracticeTypeController::class, 'update'])->name('practice-types.update');
+    Route::delete('tipos-practica/{practiceType}', [PracticeTypeController::class, 'destroy'])->name('practice-types.destroy');
+    Route::patch('tipos-practica/{practiceType}/toggle', [PracticeTypeController::class, 'toggle'])->name('practice-types.toggle');
 
     // Dashboard principal
     Route::inertia('dashboard', 'dashboard')->name('dashboard');

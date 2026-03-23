@@ -39,15 +39,33 @@ function DroppableColumn({ id, children }: { id: string; children: React.ReactNo
     const { setNodeRef, isOver } = useDroppable({ id });
 
     return (
-        <div ref={setNodeRef} className={`min-h-[200px] ${isOver ? 'bg-muted/40' : ''}`}>
+        <div ref={setNodeRef} className={`min-h-50 ${isOver ? 'bg-muted/40' : ''}`}>
             {children}
         </div>
     );
 }
 
+const dueStatus = (dueDate?: string | null) => {
+    if (!dueDate) return 'none';
+    const today = new Date();
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const due = new Date(`${dueDate}T00:00:00`);
+    if (Number.isNaN(due.getTime())) return 'none';
+    const diffDays = Math.ceil((due.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays < 0) return 'overdue';
+    if (diffDays <= 3) return 'soon';
+    return 'none';
+};
+
 function DraggableTask({ task }: { task: any }) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: task.id });
     const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` } : undefined;
+    const status = dueStatus(task.due_date);
+    const tone = status === 'overdue'
+        ? 'border-red-200 bg-red-50/60'
+        : status === 'soon'
+        ? 'border-amber-200 bg-amber-50/60'
+        : 'border-border bg-background';
 
     return (
         <div
@@ -55,12 +73,15 @@ function DraggableTask({ task }: { task: any }) {
             style={style}
             {...listeners}
             {...attributes}
-            className="rounded-lg border bg-background p-3 text-sm cursor-grab active:cursor-grabbing"
+            className={`rounded-lg border p-3 text-sm cursor-grab active:cursor-grabbing ${tone}`}
         >
             <Link href={`/tareas/${task.id}`} className="font-semibold hover:underline">
                 {task.title}
             </Link>
             <p className="text-xs text-muted-foreground">{task.practice_type?.name || '—'}</p>
+            {task.due_date && (
+                <p className="text-[11px] mt-1 text-muted-foreground">Entrega: {task.due_date}</p>
+            )}
         </div>
     );
 }
@@ -133,7 +154,19 @@ export default function My({ tasks, filters = {}, practice_types = [] }: Props) 
             {
                 key: 'due_date',
                 label: 'Entrega',
-                render: (task: any) => task.due_date || '—',
+                render: (task: any) => {
+                    const status = dueStatus(task.due_date);
+                    const tone = status === 'overdue'
+                        ? 'bg-red-50 text-red-700 border-red-200'
+                        : status === 'soon'
+                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                        : 'bg-transparent text-muted-foreground border-transparent';
+                    return task.due_date ? (
+                        <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${tone}`}>
+                            {task.due_date}
+                        </span>
+                    ) : '—';
+                },
             },
             {
                 key: 'actions',

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users, Building2, Clock, ClipboardList, Kanban, Star, FileText } from 'lucide-react';
+import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users, Building2, Clock, ClipboardList, Kanban, Star, FileText, ListChecks } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -20,7 +20,7 @@ interface NavItem extends BaseNavItem {
     items?: NavItem[];
 }
 
-const buildMainNavItems = (isIntern: boolean): NavItem[] => {
+const buildMainNavItems = (isIntern: boolean, isAdmin: boolean): NavItem[] => {
     const seguimientoItems: NavItem[] = [
         {
             title: 'Tareas (Kanban)',
@@ -33,6 +33,15 @@ const buildMainNavItems = (isIntern: boolean): NavItem[] => {
                     title: 'Mis tareas',
                     href: '/tareas/mis',
                     icon: ClipboardList,
+                },
+            ]
+            : []),
+        ...(isAdmin
+            ? [
+                {
+                    title: 'Tipos de práctica',
+                    href: '/tipos-practica',
+                    icon: ListChecks,
                 },
             ]
             : []),
@@ -114,7 +123,8 @@ const footerNavItems: NavItem[] = [
 export function AppSidebar() {
     const { auth } = usePage().props as any;
     const isIntern = auth?.user?.roles?.includes('intern');
-    const mainNavItems = buildMainNavItems(!!isIntern);
+    const isAdmin = auth?.user?.roles?.includes('admin');
+    const mainNavItems = buildMainNavItems(!!isIntern, !!isAdmin);
 
     return (
         <Sidebar collapsible="icon" variant="inset">

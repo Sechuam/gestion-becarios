@@ -94,7 +94,19 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                         </div>
                         <div className="text-sm">
                             <span className="text-muted-foreground">Entrega:</span>{' '}
-                            <span className="font-medium">{task.due_date || '—'}</span>
+                            {task.due_date ? (
+                                <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
+                                    dueStatus(task.due_date) === 'overdue'
+                                        ? 'bg-red-50 text-red-700 border-red-200'
+                                        : dueStatus(task.due_date) === 'soon'
+                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                        : 'bg-transparent text-muted-foreground border-transparent'
+                                }`}>
+                                    {task.due_date}
+                                </span>
+                            ) : (
+                                <span className="font-medium">—</span>
+                            )}
                         </div>
                         <div className="text-sm">
                             <span className="text-muted-foreground">Tipo:</span>{' '}
@@ -200,3 +212,14 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
         </AppLayout>
     );
 }
+    const dueStatus = (dueDate?: string | null) => {
+        if (!dueDate) return 'none';
+        const today = new Date();
+        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const due = new Date(`${dueDate}T00:00:00`);
+        if (Number.isNaN(due.getTime())) return 'none';
+        const diffDays = Math.ceil((due.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) return 'overdue';
+        if (diffDays <= 3) return 'soon';
+        return 'none';
+    };
