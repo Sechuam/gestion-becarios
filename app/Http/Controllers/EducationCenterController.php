@@ -31,22 +31,39 @@ class EducationCenterController extends Controller
             $query->where('name', 'ilike', '%'.$request->search.'%');
         }
 
-        $order = $request->get('order', 'az');
-        if ($order === 'za') {
-            $query->orderBy('name', 'desc');
-        } elseif ($order === 'recent') {
-            $query->orderBy('updated_at', 'desc');
-        } elseif ($order === 'oldest') {
-            $query->orderBy('updated_at', 'asc');
+        $sort = $request->get('sort');
+        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sortable = [
+            'name' => 'name',
+            'code' => 'code',
+            'city' => 'city',
+            'contact_person' => 'contact_person',
+            'contact_email' => 'contact_email',
+            'email' => 'email',
+            'created_at' => 'created_at',
+            'updated_at' => 'updated_at',
+        ];
+
+        if ($sort && isset($sortable[$sort])) {
+            $query->orderBy($sortable[$sort], $direction);
         } else {
-            $query->orderBy('name', 'asc');
+            $order = $request->get('order', 'az');
+            if ($order === 'za') {
+                $query->orderBy('name', 'desc');
+            } elseif ($order === 'recent') {
+                $query->orderBy('updated_at', 'desc');
+            } elseif ($order === 'oldest') {
+                $query->orderBy('updated_at', 'asc');
+            } else {
+                $query->orderBy('name', 'asc');
+            }
         }
 
         $centers = $query->paginate(10)->withQueryString();
 
         return Inertia::render('schools/index', [
             'schools' => $centers,
-            'filters' => $request->only('search', 'trashed', 'order'),
+            'filters' => $request->only('search', 'trashed', 'sort', 'direction'),
         ]);
     }
 

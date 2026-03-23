@@ -39,15 +39,32 @@ class InternController extends Controller
             $query->where('status', $request->status);
         }
 
-        $order = $request->get('order', 'az');
-        if ($order === 'za') {
-            $query->orderBy('users.name', 'desc');
-        } elseif ($order === 'recent') {
-            $query->orderBy('interns.updated_at', 'desc');
-        } elseif ($order === 'oldest') {
-            $query->orderBy('interns.updated_at', 'asc');
+        $sort = $request->get('sort');
+        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sortable = [
+            'name' => 'users.name',
+            'dni' => 'interns.dni',
+            'education_center' => 'education_centers.name',
+            'academic_degree' => 'interns.academic_degree',
+            'status' => 'interns.status',
+        ];
+
+        if ($sort && isset($sortable[$sort])) {
+            if ($sort === 'education_center') {
+                $query->leftJoin('education_centers', 'education_centers.id', '=', 'interns.education_center_id');
+            }
+            $query->orderBy($sortable[$sort], $direction);
         } else {
-            $query->orderBy('users.name', 'asc');
+            $order = $request->get('order', 'az');
+            if ($order === 'za') {
+                $query->orderBy('users.name', 'desc');
+            } elseif ($order === 'recent') {
+                $query->orderBy('interns.updated_at', 'desc');
+            } elseif ($order === 'oldest') {
+                $query->orderBy('interns.updated_at', 'asc');
+            } else {
+                $query->orderBy('users.name', 'asc');
+            }
         }
         if ($request->filled('start_from')) {
             $query->whereDate('start_date', '>=', $request->start_from);
@@ -65,7 +82,7 @@ class InternController extends Controller
 
         return Inertia::render('interns/index', [
             'interns' => $interns,
-            'filters' => $request->only(['search', 'center', 'status', 'order', 'start_from', 'start_to', 'trashed']),
+            'filters' => $request->only(['search', 'center', 'status', 'start_from', 'start_to', 'trashed', 'sort', 'direction']),
             'education_centers' => EducationCenter::all(['id', 'name']),
         ]);
     }

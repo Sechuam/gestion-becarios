@@ -109,6 +109,17 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
         });
     };
 
+    const handleSort = (key: string) => {
+        const currentKey = filters.sort;
+        const currentDir = filters.direction || 'asc';
+        const nextDir = currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
+        router.get(
+            '/tareas',
+            { ...filters, sort: key, direction: nextDir },
+            { preserveState: true, preserveScroll: true, replace: true }
+        );
+    };
+
     const tasksByStatus = useMemo(() => {
         const map: Record<string, any[]> = {};
         KANBAN_COLUMNS.forEach((col) => (map[col.key] = []));
@@ -125,6 +136,7 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
             {
                 key: 'title',
                 label: 'Tarea',
+                sortKey: 'title',
                 render: (task: any) => (
                     <div className="flex flex-col gap-1">
                         <Link href={`/tareas/${task.id}`} className="font-semibold text-foreground hover:underline">
@@ -139,21 +151,25 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
             {
                 key: 'practice_type',
                 label: 'Tipo',
+                sortKey: 'practice_type',
                 render: (task: any) => task.practice_type?.name || '—',
             },
             {
                 key: 'status',
                 label: 'Estado',
+                sortKey: 'status',
                 render: (task: any) => statusLabel(task.status) || '—',
             },
             {
                 key: 'priority',
                 label: 'Prioridad',
+                sortKey: 'priority',
                 render: (task: any) => task.priority || '—',
             },
             {
                 key: 'due_date',
                 label: 'Entrega',
+                sortKey: 'due_date',
                 render: (task: any) => {
                     const status = dueStatus(task.due_date);
                     const tone = status === 'overdue'
@@ -358,7 +374,14 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
                     </div>
                 </DndContext>
 
-                <SimpleTable columns={columns} rows={tasks.data} rowKey={(row) => row.id} />
+                <SimpleTable
+                    columns={columns}
+                    rows={tasks.data}
+                    rowKey={(row) => row.id}
+                    sortKey={filters.sort}
+                    sortDirection={filters.direction}
+                    onSort={handleSort}
+                />
 
                 <div className="flex items-center gap-2">
                     {tasks.links.map((link: any, i: number) => {

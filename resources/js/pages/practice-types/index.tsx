@@ -40,13 +40,25 @@ export default function Index({ practice_types, filters = {} }: Props) {
         });
     };
 
+    const handleSort = (key: string) => {
+        const currentKey = filters.sort;
+        const currentDir = filters.direction || 'asc';
+        const nextDir = currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
+        router.get(
+            '/tipos-practica',
+            { ...filters, sort: key, direction: nextDir },
+            { preserveState: true, preserveScroll: true, replace: true }
+        );
+    };
+
     const columns = [
-        { key: 'name', label: 'Nombre', cellClassName: 'text-foreground' },
-        { key: 'description', label: 'Descripción' },
-        { key: 'priority', label: 'Prioridad' },
+        { key: 'name', label: 'Nombre', cellClassName: 'text-foreground', sortKey: 'name' },
+        { key: 'description', label: 'Descripción', sortKey: 'description' },
+        { key: 'priority', label: 'Prioridad', sortKey: 'priority' },
         {
             key: 'color',
             label: 'Color',
+            sortKey: 'color',
                 render: (row: any) => row.color ? (
                     <span className="inline-flex items-center gap-2">
                         <span
@@ -61,6 +73,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
         {
             key: 'is_active',
             label: 'Estado',
+            sortKey: 'is_active',
             render: (row: any) => (
                 <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
                     row.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'
@@ -162,6 +175,9 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     columns={columns}
                     rows={practice_types.data}
                     rowKey={(row) => row.id}
+                    sortKey={filters.sort}
+                    sortDirection={filters.direction}
+                    onSort={handleSort}
                 />
 
                 <div className="flex items-center gap-2">

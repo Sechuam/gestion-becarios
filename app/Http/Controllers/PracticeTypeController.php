@@ -36,11 +36,25 @@ class PracticeTypeController extends Controller
             }
         }
 
-        $types = $query->orderBy('priority')->orderBy('name')->paginate(10)->withQueryString();
+        $sort = $request->get('sort');
+        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sortable = [
+            'name' => 'name',
+            'description' => 'description',
+            'priority' => 'priority',
+            'color' => 'color',
+            'is_active' => 'is_active',
+        ];
+
+        if ($sort && isset($sortable[$sort])) {
+            $types = $query->orderBy($sortable[$sort], $direction)->paginate(10)->withQueryString();
+        } else {
+            $types = $query->orderBy('priority')->orderBy('name')->paginate(10)->withQueryString();
+        }
 
         return Inertia::render('practice-types/index', [
             'practice_types' => $types,
-            'filters' => $request->only(['search', 'status']),
+            'filters' => $request->only(['search', 'status', 'sort', 'direction']),
         ]);
     }
 

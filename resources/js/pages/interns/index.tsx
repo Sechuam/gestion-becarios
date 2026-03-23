@@ -87,6 +87,18 @@ export default function Index({
         });
     };
 
+    const handleSort = (key: string) => {
+        const currentKey = filters.sort;
+        const currentDir = filters.direction || 'asc';
+        const nextDir = currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
+        const newFilters = { ...filters, sort: key, direction: nextDir };
+        router.get('/becarios', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
     const buildExportParams = () => {
         const params = new URLSearchParams();
         Object.entries(filters || {}).forEach(([key, value]) => {
@@ -137,7 +149,6 @@ export default function Index({
     useEffect(() => {
         const filtersEntries = Object.entries(filters || {}).filter(([key, value]) => {
             if (value === undefined || value === null || value === '') return false;
-            if (key === 'order' && value === 'az') return false;
             if (key === 'trashed' && value === 'none') return false;
             if (key === 'status' && value === 'all') return false;
             if (key === 'center' && value === 'all') return false;
@@ -165,6 +176,7 @@ export default function Index({
             key: 'name',
             label: 'Nombre',
             cellClassName: 'text-foreground',
+            sortKey: 'name',
             render: (intern: any) => {
                 const recent = recentLabelFromDate(intern.updated_at);
 
@@ -194,11 +206,13 @@ export default function Index({
             key: 'dni',
             label: 'DNI',
             cellClassName: 'text-muted-foreground font-mono text-xs italic',
+            sortKey: 'dni',
         },
         {
             key: 'education_center',
             label: 'Centro Educativo',
             cellClassName: 'text-muted-foreground',
+            sortKey: 'education_center',
             render: (intern: any) =>
                 intern.education_center?.id ? (
                     <Link href={`/centros/${intern.education_center.id}`} className="hover:underline">
@@ -212,6 +226,7 @@ export default function Index({
             key: 'academic_degree',
             label: 'Grado',
             cellClassName: 'text-muted-foreground',
+            sortKey: 'academic_degree',
         },
         {
             key: 'progress',
@@ -237,6 +252,7 @@ export default function Index({
             key: 'status',
             label: 'Estado',
             cellClassName: 'text-foreground',
+            sortKey: 'status',
             render: (intern: any) => <StatusBadge status={intern?.status as string} />,
         },
         {
@@ -457,30 +473,6 @@ export default function Index({
                         </Select>
                     </div>
 
-                    <div className="w-[220px]">
-                        <Select
-                            value={filters.order || 'az'}
-                            onValueChange={(v) => handleFilter('order', v)}
-                        >
-                            <SelectTrigger className="w-full bg-background border-border text-foreground">
-                                <SelectValue>
-                                    {{
-                                        'az': 'Orden: A → Z',
-                                        'za': 'Orden: Z → A',
-                                        'recent': 'Orden: Actualizados primero',
-                                        'oldest': 'Orden: Actualizados últimos'
-                                    }[filters.order as string] || 'Orden: A → Z'}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="az">Orden: A → Z</SelectItem>
-                                <SelectItem value="za">Orden: Z → A</SelectItem>
-                                <SelectItem value="recent">Orden: Actualizados primero</SelectItem>
-                                <SelectItem value="oldest">Orden: Actualizados últimos</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
                     <div className="w-[180px]">
                         <Input
                             type="date"
@@ -563,6 +555,9 @@ export default function Index({
                     columns={columns}
                     rows={interns.data}
                     rowKey={(row) => row.id}
+                    sortKey={filters.sort}
+                    sortDirection={filters.direction}
+                    onSort={handleSort}
                 />
 
                 {/* PAGINACIÓN */}

@@ -80,11 +80,22 @@ export default function Index({
         if (
             value === '' ||
             value === 'all' ||
-            (key === 'trashed' && value === 'none') ||
-            (key === 'order' && value === 'az')
+            (key === 'trashed' && value === 'none')
         ) {
             delete newFilters[key];
         }
+        router.get('/centros', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const handleSort = (key: string) => {
+        const currentKey = filters.sort;
+        const currentDir = filters.direction || 'asc';
+        const nextDir = currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
+        const newFilters = { ...filters, sort: key, direction: nextDir };
         router.get('/centros', newFilters, {
             preserveState: true,
             preserveScroll: true,
@@ -142,7 +153,6 @@ export default function Index({
     useEffect(() => {
         const filtersEntries = Object.entries(filters || {}).filter(([key, value]) => {
             if (value === undefined || value === null || value === '') return false;
-            if (key === 'order' && value === 'az') return false;
             if (key === 'trashed' && value === 'none') return false;
             return true;
         });
@@ -168,6 +178,7 @@ export default function Index({
             key: 'name',
             label: 'Nombre',
             cellClassName: 'text-foreground',
+            sortKey: 'name',
             render: (school: any) => (
                 <div className="flex flex-col gap-1">
                     <Link href={`/centros/${school.id}`} className="hover:underline font-semibold text-foreground">
@@ -180,12 +191,13 @@ export default function Index({
                 </div>
             ),
         },
-        { key: 'code', label: 'Código' },
-        { key: 'city', label: 'Ciudad' },
-        { key: 'contact_person', label: 'Contacto' },
+        { key: 'code', label: 'Código', sortKey: 'code' },
+        { key: 'city', label: 'Ciudad', sortKey: 'city' },
+        { key: 'contact_person', label: 'Contacto', sortKey: 'contact_person' },
         {
             key: 'contact_email',
             label: 'Email Coordinador',
+            sortKey: 'contact_email',
             render: (school: any) =>
                 school.contact_email ? (
                     <a href={`mailto:${school.contact_email}`} className="hover:underline">
@@ -198,6 +210,7 @@ export default function Index({
         {
             key: 'email',
             label: 'Email Institucional',
+            sortKey: 'email',
             render: (school: any) =>
                 school.email ? (
                     <a href={`mailto:${school.email}`} className="hover:underline">
@@ -354,30 +367,6 @@ export default function Index({
                         </Select>
                     </div>
 
-                    <div className="w-55">
-                        <Select
-                            value={filters.order || 'az'}
-                            onValueChange={(v) => handleFilter('order', v)}
-                        >
-                            <SelectTrigger className="w-full bg-background border-border text-foreground">
-                                <SelectValue>
-                                    {{
-                                        'az': 'Orden: A → Z',
-                                        'za': 'Orden: Z → A',
-                                        'recent': 'Orden: Actualizados primero',
-                                        'oldest': 'Orden: Actualizados últimos'
-                                    }[filters.order as string] || 'Orden: A → Z'}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="az">Orden: A → Z</SelectItem>
-                                <SelectItem value="za">Orden: Z → A</SelectItem>
-                                <SelectItem value="recent">Orden: Actualizados primero</SelectItem>
-                                <SelectItem value="oldest">Orden: Actualizados últimos</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
                     {canManage && (
                         <Dialog open={exportOpen} onOpenChange={setExportOpen}>
                             <DialogTrigger asChild>
@@ -443,6 +432,9 @@ export default function Index({
                     columns={columns}
                     rows={schools.data}
                     rowKey={(row) => row.id}
+                    sortKey={filters.sort}
+                    sortDirection={filters.direction}
+                    onSort={handleSort}
                 />
 
                 {/* PAGINACIÓN */}

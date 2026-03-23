@@ -47,11 +47,33 @@ class TaskController extends Controller
             $query->whereDate('due_date', '<=', $request->due_to);
         }
 
-        $tasks = $query->latest()->paginate(10)->withQueryString();
+        $sort = $request->get('sort');
+        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sortable = [
+            'title' => 'tasks.title',
+            'practice_type' => 'practice_types.name',
+            'status' => 'tasks.status',
+            'priority' => 'tasks.priority',
+            'due_date' => 'tasks.due_date',
+            'created_at' => 'tasks.created_at',
+            'updated_at' => 'tasks.updated_at',
+        ];
+
+        if ($sort && isset($sortable[$sort])) {
+            if ($sort === 'practice_type') {
+                $query->leftJoin('practice_types', 'practice_types.id', '=', 'tasks.practice_type_id')
+                    ->select('tasks.*');
+            }
+            $query->orderBy($sortable[$sort], $direction);
+        } else {
+            $query->latest();
+        }
+
+        $tasks = $query->paginate(10)->withQueryString();
 
         return Inertia::render('tasks/index', [
             'tasks' => $tasks,
-            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search']),
+            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search', 'sort', 'direction']),
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
         ]);
     }
@@ -86,11 +108,33 @@ class TaskController extends Controller
             $query->whereDate('due_date', '<=', $request->due_to);
         }
 
-        $tasks = $query->latest()->paginate(10)->withQueryString();
+        $sort = $request->get('sort');
+        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sortable = [
+            'title' => 'tasks.title',
+            'practice_type' => 'practice_types.name',
+            'status' => 'tasks.status',
+            'priority' => 'tasks.priority',
+            'due_date' => 'tasks.due_date',
+            'created_at' => 'tasks.created_at',
+            'updated_at' => 'tasks.updated_at',
+        ];
+
+        if ($sort && isset($sortable[$sort])) {
+            if ($sort === 'practice_type') {
+                $query->leftJoin('practice_types', 'practice_types.id', '=', 'tasks.practice_type_id')
+                    ->select('tasks.*');
+            }
+            $query->orderBy($sortable[$sort], $direction);
+        } else {
+            $query->latest();
+        }
+
+        $tasks = $query->paginate(10)->withQueryString();
 
         return Inertia::render('tasks/My', [
             'tasks' => $tasks,
-            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search']),
+            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search', 'sort', 'direction']),
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
         ]);
     }

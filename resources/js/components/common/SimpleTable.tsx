@@ -6,21 +6,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 
 type Column<T> = {
   key: keyof T | string;
   label: string;
   render?: (row: T) => React.ReactNode;
   cellClassName?: string;
+  sortKey?: string;
 };
 
 type SimpleTableProps<T> = {
   columns: Column<T>[];
   rows: T[];
   rowKey: (row: T) => string | number;
+  sortKey?: string;
+  sortDirection?: "asc" | "desc";
+  onSort?: (key: string) => void;
 };
 
-export function SimpleTable<T>({ columns, rows, rowKey }: SimpleTableProps<T>) {
+export function SimpleTable<T>({
+  columns,
+  rows,
+  rowKey,
+  sortKey,
+  sortDirection = "asc",
+  onSort,
+}: SimpleTableProps<T>) {
   return (
     <div className="w-full rounded-xl border bg-card border-border dark:border-slate-700/70 dark:bg-slate-900/60 shadow-sm overflow-hidden">
       <div className="w-full overflow-x-auto">
@@ -32,7 +44,26 @@ export function SimpleTable<T>({ columns, rows, rowKey }: SimpleTableProps<T>) {
                   key={col.label}
                   className="px-4 py-4 text-left font-semibold text-foreground"
                 >
-                  {col.label}
+                  {col.sortKey && onSort ? (
+                    <button
+                      type="button"
+                      onClick={() => onSort(col.sortKey as string)}
+                      className="inline-flex items-center gap-1 hover:text-foreground"
+                    >
+                      <span>{col.label}</span>
+                      {sortKey === col.sortKey ? (
+                        sortDirection === "desc" ? (
+                          <ChevronDown className="h-4 w-4 text-foreground" />
+                        ) : (
+                          <ChevronUp className="h-4 w-4 text-foreground" />
+                        )
+                      ) : (
+                        <ArrowUpDown className="h-4 w-4 text-muted-foreground/70" />
+                      )}
+                    </button>
+                  ) : (
+                    col.label
+                  )}
                 </TableHead>
               ))}
             </TableRow>
