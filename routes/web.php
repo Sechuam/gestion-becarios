@@ -15,6 +15,9 @@ Route::inertia('/', 'welcome', [
 
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Ruta para que el centro concreto del becario en cuestion
+    Route::get('mi-centro', [EducationCenterController::class, 'myCenter'])
+    ->name('schools.my');
 
     // Rutas para tareas
     Route::get('tareas', [TaskController::class, 'index'])->name('tasks.index');

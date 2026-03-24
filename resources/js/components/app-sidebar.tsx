@@ -20,13 +20,17 @@ interface NavItem extends BaseNavItem {
     items?: NavItem[];
 }
 
-const buildMainNavItems = (isIntern: boolean, isAdmin: boolean): NavItem[] => {
+const buildMainNavItems = (isIntern: boolean, isAdmin: boolean, isStaff: boolean): NavItem[] => {
     const seguimientoItems: NavItem[] = [
-        {
-            title: 'Tareas (Kanban)',
-            href: '/tareas',
-            icon: Kanban,
-        },
+        ...(isIntern
+            ? []
+            : [
+                {
+                    title: 'Tareas (Kanban)',
+                    href: '/tareas',
+                    icon: Kanban,
+                },
+            ]),
         ...(isIntern
             ? [
                 {
@@ -58,34 +62,51 @@ const buildMainNavItems = (isIntern: boolean, isAdmin: boolean): NavItem[] => {
             href: dashboard(),
             icon: LayoutGrid,
         },
-        {
-            title: 'Centros educativos',
-            href: '/centros',
-            icon: Building2,
-        },
-        {
-            title: 'Usuarios',
-            href: '#',
-            icon: Users,
-            isActive: false, // Esto lo mantiene abierto por defecto
-            items: [
+        ...(isIntern
+            ? [
                 {
-                    title: 'Becarios',
-                    href: '/becarios', // ruta que hemos creado en web.php
-                    icon: BookOpen,
+                    title: 'Mi centro',
+                    href: '/mi-centro',
+                    icon: Building2,
                 },
+            ]
+        : []),
+        ...(isStaff
+            ? [
                 {
-                    title: 'Tutores',
-                    href: '/tutores', // ruta que hemos creado en web.php
-                    icon: GraduationCap,
+                    title: 'Centros educativos',
+                    href: '/centros',
+                    icon: Building2,
                 },
+            ]
+            : []),
+        ...(isAdmin
+            ? [
                 {
-                    title: 'Administrador',
-                    href: '/administrador', // ruta que hemos creado en web.php
-                    icon: ShieldCheck,
+                    title: 'Usuarios',
+                    href: '#',
+                    icon: Users,
+                    isActive: false,
+                    items: [
+                        {
+                            title: 'Becarios',
+                            href: '/becarios',
+                            icon: BookOpen,
+                        },
+                        {
+                            title: 'Tutores',
+                            href: '/tutores',
+                            icon: GraduationCap,
+                        },
+                        {
+                            title: 'Administrador',
+                            href: '/administrador',
+                            icon: ShieldCheck,
+                        },
+                    ],
                 },
-            ],
-        },
+            ]
+            : []),
         {
             title: 'Seguimiento académico',
             href: '#',
@@ -98,14 +119,17 @@ const buildMainNavItems = (isIntern: boolean, isAdmin: boolean): NavItem[] => {
             href: '/asistencia',
             icon: Clock,
         },
-        {
-            title: 'Reportes e informes',
-            href: '/reportes',
-            icon: FileText,
-        },
+        ...(isAdmin
+            ? [
+                {
+                    title: 'Reportes e informes',
+                    href: '/reportes',
+                    icon: FileText,
+                },
+            ]
+            : []),
     ];
 };
-
 
 const footerNavItems: NavItem[] = [
     {
@@ -124,7 +148,10 @@ export function AppSidebar() {
     const { auth } = usePage().props as any;
     const isIntern = auth?.user?.roles?.includes('intern');
     const isAdmin = auth?.user?.roles?.includes('admin');
-    const mainNavItems = buildMainNavItems(!!isIntern, !!isAdmin);
+    const isTutor = auth?.user?.roles?.includes('tutor');
+    const isStaff = !!isAdmin || !!isTutor;
+
+    const mainNavItems = buildMainNavItems(!!isIntern, !!isAdmin, !!isStaff);
 
     return (
         <Sidebar collapsible="icon" variant="inset">

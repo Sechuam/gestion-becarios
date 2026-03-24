@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\InternsExport;
 use App\Exports\EducationCentersExport;
+use Illuminate\Support\Facades\Auth;
 
 class EducationCenterController extends Controller
 {
@@ -19,7 +20,7 @@ class EducationCenterController extends Controller
     public function index(Request $request)
     {
         $query = EducationCenter::query();
-        $trashed = $request->get('trashed');
+        $trashed = $request->input('trashed');
 
         if ($trashed === 'only') {
             $query->onlyTrashed();
@@ -31,8 +32,8 @@ class EducationCenterController extends Controller
             $query->where('name', 'ilike', '%'.$request->search.'%');
         }
 
-        $sort = $request->get('sort');
-        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sort = $request->input('sort');
+        $direction = strtolower($request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
         $sortable = [
             'name' => 'name',
             'code' => 'code',
@@ -47,7 +48,7 @@ class EducationCenterController extends Controller
         if ($sort && isset($sortable[$sort])) {
             $query->orderBy($sortable[$sort], $direction);
         } else {
-            $order = $request->get('order', 'az');
+            $order = $request->input('order', 'az');
             if ($order === 'za') {
                 $query->orderBy('name', 'desc');
             } elseif ($order === 'recent') {
@@ -118,7 +119,7 @@ class EducationCenterController extends Controller
             $internsQuery->where('status', $request->status);
         }
 
-        $order = $request->get('order', 'az');
+        $order = $request->input('order', 'az');
         if ($order === 'za') {
             $internsQuery->orderBy('users.name', 'desc');
         } elseif ($order === 'recent') {
@@ -239,5 +240,23 @@ class EducationCenterController extends Controller
         ]);
 
         return back()->with('success', 'Notas actualizadas correctamente');
+    }
+
+    public function myCenter(){
+        $user = Auth::user();
+
+        if (! $user?->hasRole('intern')) {
+            return back()->with('error', 'Solo los becarios pueden acceder a su centro');
+        }
+
+        $centerId = $user->intern?->education_center_id;
+
+        if (! $centerId) {
+            return back()->with('error', 'No tienes un centro asignado');
+        }
+
+        $school = EducationCenter::withTrashed()->findOrFail($centerId);
+
+        return $this->show(request(), $school->id);
     }
 }
