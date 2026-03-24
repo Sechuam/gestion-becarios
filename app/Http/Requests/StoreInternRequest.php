@@ -40,6 +40,10 @@ class StoreInternRequest extends FormRequest
             'dni_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'agreement_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'insurance_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'center_tutor_name' => 'nullable|string|max:255',
+            'center_tutor_phone' => 'nullable|string|max:50',
+            'center_tutor_email' => 'nullable|email|max:255',
+            'company_tutor_user_id' => 'nullable|exists:users,id',
         ];
     }
 

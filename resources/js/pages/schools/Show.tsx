@@ -28,15 +28,20 @@ type Props = {
         status?: string;
         order?: string;
     };
+    is_intern?: boolean;
+    current_intern?: any;
 };
 
-export default function Show({ educationCenter, agreement_url, interns, filters }: Props) {
+export default function Show({ educationCenter, agreement_url, interns, filters, is_intern, current_intern }: Props) {
     const isTrashed = !!educationCenter.deleted_at;
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
     const canExport = auth.user?.permissions?.includes('manage interns');
     const [exportOpen, setExportOpen] = useState(false);
     const lastEmptyKeyRef = useRef<string>('');
+
+    const isIntern = !!is_intern;
+    const currentIntern = current_intern;
 
     const exportColumns = useMemo(
         () => [
@@ -277,191 +282,214 @@ export default function Show({ educationCenter, agreement_url, interns, filters 
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                    <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
-                        <div className="relative w-full max-w-sm">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
-                            <Input
-                                placeholder="Buscar becario por nombre..."
-                                className="pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground"
-                                defaultValue={filters?.search}
-                                onChange={(e) =>
-                                    router.get(
-                                        `/centros/${educationCenter.id}`,
-                                        { search: e.target.value, status: filters?.status, order: filters?.order },
-                                        { preserveState: true, preserveScroll: true, replace: true }
-                                    )
-                                }
-                            />
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <label className="text-sm text-muted-foreground">Estado</label>
-                            <select
-                                className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
-                                value={filters?.status ?? ''}
-                                onChange={(e) =>
-                                    router.get(
-                                        `/centros/${educationCenter.id}`,
-                                        { search: filters?.search, status: e.target.value || undefined, order: filters?.order },
-                                        { preserveState: true, preserveScroll: true, replace: true }
-                                    )
-                                }
-                            >
-                                <option value="">Todos</option>
-                                <option value="active">Activo</option>
-                                <option value="completed">Finalizado</option>
-                                <option value="abandoned">Abandonado</option>
-                            </select>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <label className="text-sm text-muted-foreground">Orden</label>
-                            <select
-                                className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
-                                value={filters?.order ?? 'az'}
-                                onChange={(e) =>
-                                    router.get(
-                                        `/centros/${educationCenter.id}`,
-                                        { search: filters?.search, status: filters?.status, order: e.target.value },
-                                        { preserveState: true, preserveScroll: true, replace: true }
-                                    )
-                                }
-                            >
-                                <option value="az">Orden: A → Z</option>
-                                <option value="za">Orden: Z → A</option>
-                                <option value="recent">Orden: Actualizados primero</option>
-                                <option value="oldest">Orden: Actualizados últimos</option>
-                            </select>
-                        </div>
-                        {canExport && (
-                            <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-                                <DialogTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="gap-2 border-border text-foreground hover:bg-muted"
-                                    >
-                                        <FileDown className="h-4 w-4" />
-                                        Exportar Excel
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-xl">
-                                    <DialogHeader>
-                                        <DialogTitle>Exportación personalizada</DialogTitle>
-                                        <DialogDescription>
-                                            Elige las columnas que quieres incluir en el Excel. Se
-                                            respetarán los filtros actuales.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        {exportColumns.map((column) => {
-                                            const isChecked = selectedColumns.includes(column.key);
-                                            return (
-                                                <label
-                                                    key={column.key}
-                                                    className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
-                                                >
-                                                    <Checkbox
-                                                        checked={isChecked}
-                                                        onCheckedChange={(checked) => {
-                                                            const isOn = checked === true;
-                                                            setSelectedColumns((prev) => {
-                                                                if (isOn) {
-                                                                    return [...prev, column.key];
-                                                                }
-                                                                return prev.filter((key) => key !== column.key);
-                                                            });
-                                                        }}
-                                                    />
-                                                    {column.label}
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
-                                    <DialogFooter>
-                                        <Button variant="outline" onClick={() => setExportOpen(false)}>
-                                            Cancelar
-                                        </Button>
-                                        <Button onClick={handleExport} disabled={selectedColumns.length === 0}>
-                                            Descargar Excel
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        )}
-                        <p className="text-sm text-muted-foreground ml-auto font-medium">
-                            Mostrando {interns.data.length} de {interns.total} becarios
-                        </p>
-                    </div>
+                {isIntern && (
+                    <div className="space-y-4 rounded-xl border bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6">
+                        <h2 className="text-lg font-semibold text-foreground">Tutores</h2>
 
-                    <div className="w-full rounded-xl border bg-card border-border dark:border-slate-700/70 dark:bg-slate-900/60 shadow-sm overflow-hidden">
-                        <div className="w-full overflow-x-auto">
-                            <table className="min-w- w-full text-sm text-left">
-                                <thead>
-                                    <tr className="border-b bg-muted border-b-border dark:border-slate-700/70 dark:bg-slate-800/70">
-                                        <th className="px-4 py-4 text-left font-semibold text-foreground">Becario</th>
-                                        <th className="px-4 py-4 text-left font-semibold text-foreground">Email</th>
-                                        <th className="px-4 py-4 text-left font-semibold text-foreground">Titulación</th>
-                                        <th className="px-4 py-4 text-left font-semibold text-foreground">Inicio</th>
-                                        <th className="px-4 py-4 text-left font-semibold text-foreground">Fin</th>
-                                        <th className="px-4 py-4 text-left font-semibold text-foreground">Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {interns.data.map((intern: any) => (
-                                        <tr
-                                            key={intern.id}
-                                            className="border-b border-border dark:border-slate-700/70 hover:bg-muted/60 dark:hover:bg-slate-800/50 transition-colors"
-                                        >
-                                            <td className="px-4 py-4 text-foreground">
-                                                {intern.user?.name ? (
-                                                    <Link
-                                                        href={`/interns/${intern.id}`}
-                                                        className="font-medium hover:underline"
-                                                    >
-                                                        {intern.user.name}
-                                                    </Link>
-                                                ) : (
-                                                    '—'
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-muted-foreground">
-                                                {intern.user?.email ? (
-                                                    <a href={`mailto:${intern.user.email}`} className="hover:underline">
-                                                        {intern.user.email}
-                                                    </a>
-                                                ) : (
-                                                    '—'
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-muted-foreground">{intern.academic_degree || '—'}</td>
-                                            <td className="px-4 py-4 text-muted-foreground">{formatDateEs(intern.start_date)}</td>
-                                            <td className="px-4 py-4 text-muted-foreground">{formatDateEs(intern.end_date)}</td>
-                                            <td className="px-4 py-4">
-                                                <StatusBadge status={intern.status} />
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p className="text-muted-foreground">Tutor del Centro</p>
+                                <p className="text-foreground font-medium">{currentIntern?.center_tutor_name || '—'}</p>
+                                <p className="text-foreground">{currentIntern?.center_tutor_email || '—'}</p>
+                                <p className="text-foreground">{currentIntern?.center_tutor_phone || '—'}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-muted-foreground">Tutor de Empresa</p>
+                                <p className="text-foreground font-medium">{currentIntern?.company_tutor?.name || '—'}</p>
+                                <p className="text-foreground">{currentIntern?.company_tutor?.email || '—'}</p>
+                            </div>
                         </div>
                     </div>
+                )}
 
-                    <div className="flex items-center gap-2">
-                        {interns.links.map((link: any, i: number) => {
-                            const label = link.label.replace('Previous', 'Anterior').replace('Next', 'Siguiente');
-                            return (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    className={`px-3 py-1 text-sm rounded border border-border ${
-                                        link.active ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
-                                    } ${!link.url ? 'opacity-40 pointer-events-none' : ''}`}
-                                    dangerouslySetInnerHTML={{ __html: label }}
-                                    preserveState
+                {!isIntern && (
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
+                            <div className="relative w-full max-w-sm">
+                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
+                                <Input
+                                    placeholder="Buscar becario por nombre..."
+                                    className="pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground"
+                                    defaultValue={filters?.search}
+                                    onChange={(e) =>
+                                        router.get(
+                                            `/centros/${educationCenter.id}`,
+                                            { search: e.target.value, status: filters?.status, order: filters?.order },
+                                            { preserveState: true, preserveScroll: true, replace: true }
+                                        )
+                                    }
                                 />
-                            );
-                        })}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <label className="text-sm text-muted-foreground">Estado</label>
+                                <select
+                                    className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+                                    value={filters?.status ?? ''}
+                                    onChange={(e) =>
+                                        router.get(
+                                            `/centros/${educationCenter.id}`,
+                                            { search: filters?.search, status: e.target.value || undefined, order: filters?.order },
+                                            { preserveState: true, preserveScroll: true, replace: true }
+                                        )
+                                    }
+                                >
+                                    <option value="">Todos</option>
+                                    <option value="active">Activo</option>
+                                    <option value="completed">Finalizado</option>
+                                    <option value="abandoned">Abandonado</option>
+                                </select>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <label className="text-sm text-muted-foreground">Orden</label>
+                                <select
+                                    className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+                                    value={filters?.order ?? 'az'}
+                                    onChange={(e) =>
+                                        router.get(
+                                            `/centros/${educationCenter.id}`,
+                                            { search: filters?.search, status: filters?.status, order: e.target.value },
+                                            { preserveState: true, preserveScroll: true, replace: true }
+                                        )
+                                    }
+                                >
+                                    <option value="az">Orden: A → Z</option>
+                                    <option value="za">Orden: Z → A</option>
+                                    <option value="recent">Orden: Actualizados primero</option>
+                                    <option value="oldest">Orden: Actualizados últimos</option>
+                                </select>
+                            </div>
+                            {canExport && (
+                                <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="gap-2 border-border text-foreground hover:bg-muted"
+                                        >
+                                            <FileDown className="h-4 w-4" />
+                                            Exportar Excel
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-xl">
+                                        <DialogHeader>
+                                            <DialogTitle>Exportación personalizada</DialogTitle>
+                                            <DialogDescription>
+                                                Elige las columnas que quieres incluir en el Excel. Se
+                                                respetarán los filtros actuales.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {exportColumns.map((column) => {
+                                                const isChecked = selectedColumns.includes(column.key);
+                                                return (
+                                                    <label
+                                                        key={column.key}
+                                                        className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                                                    >
+                                                        <Checkbox
+                                                            checked={isChecked}
+                                                            onCheckedChange={(checked) => {
+                                                                const isOn = checked === true;
+                                                                setSelectedColumns((prev) => {
+                                                                    if (isOn) {
+                                                                        return [...prev, column.key];
+                                                                    }
+                                                                    return prev.filter((key) => key !== column.key);
+                                                                });
+                                                            }}
+                                                        />
+                                                        {column.label}
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                        <DialogFooter>
+                                            <Button variant="outline" onClick={() => setExportOpen(false)}>
+                                                Cancelar
+                                            </Button>
+                                            <Button onClick={handleExport} disabled={selectedColumns.length === 0}>
+                                                Descargar Excel
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                            <p className="text-sm text-muted-foreground ml-auto font-medium">
+                                Mostrando {interns.data.length} de {interns.total} becarios
+                            </p>
+                        </div>
+
+                        <div className="w-full rounded-xl border bg-card border-border dark:border-slate-700/70 dark:bg-slate-900/60 shadow-sm overflow-hidden">
+                            <div className="w-full overflow-x-auto">
+                                <table className="min-w- w-full text-sm text-left">
+                                    <thead>
+                                        <tr className="border-b bg-muted border-b-border dark:border-slate-700/70 dark:bg-slate-800/70">
+                                            <th className="px-4 py-4 text-left font-semibold text-foreground">Becario</th>
+                                            <th className="px-4 py-4 text-left font-semibold text-foreground">Email</th>
+                                            <th className="px-4 py-4 text-left font-semibold text-foreground">Titulación</th>
+                                            <th className="px-4 py-4 text-left font-semibold text-foreground">Inicio</th>
+                                            <th className="px-4 py-4 text-left font-semibold text-foreground">Fin</th>
+                                            <th className="px-4 py-4 text-left font-semibold text-foreground">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {interns.data.map((intern: any) => (
+                                            <tr
+                                                key={intern.id}
+                                                className="border-b border-border dark:border-slate-700/70 hover:bg-muted/60 dark:hover:bg-slate-800/50 transition-colors"
+                                            >
+                                                <td className="px-4 py-4 text-foreground">
+                                                    {intern.user?.name ? (
+                                                        <Link
+                                                            href={`/interns/${intern.id}`}
+                                                            className="font-medium hover:underline"
+                                                        >
+                                                            {intern.user.name}
+                                                        </Link>
+                                                    ) : (
+                                                        '—'
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-4 text-muted-foreground">
+                                                    {intern.user?.email ? (
+                                                        <a href={`mailto:${intern.user.email}`} className="hover:underline">
+                                                            {intern.user.email}
+                                                        </a>
+                                                    ) : (
+                                                        '—'
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-4 text-muted-foreground">{intern.academic_degree || '—'}</td>
+                                                <td className="px-4 py-4 text-muted-foreground">{formatDateEs(intern.start_date)}</td>
+                                                <td className="px-4 py-4 text-muted-foreground">{formatDateEs(intern.end_date)}</td>
+                                                <td className="px-4 py-4">
+                                                    <StatusBadge status={intern.status} />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {interns.links.map((link: any, i: number) => {
+                                const label = link.label.replace('Previous', 'Anterior').replace('Next', 'Siguiente');
+                                return (
+                                    <Link
+                                        key={i}
+                                        href={link.url ?? '#'}
+                                        className={`px-3 py-1 text-sm rounded border border-border ${
+                                            link.active ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                                        } ${!link.url ? 'opacity-40 pointer-events-none' : ''}`}
+                                        dangerouslySetInnerHTML={{ __html: label }}
+                                        preserveState
+                                    />
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </AppLayout>
     );

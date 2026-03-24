@@ -26,16 +26,19 @@ type FormData = {
     academic_year: string;
     start_date: string;
     end_date: string;
-    tutor_name: string;
     total_hours: string;
     status: string;
     abandon_reason: string;
     dni_file: File | null;
     agreement_file: File | null;
     insurance_file: File | null;
+    center_tutor_name: string;
+    center_tutor_email: string;
+    center_tutor_phone: string;
+    company_tutor_user_id: string;
 };
 
-export default function Create({ education_centers }: { education_centers: any[] }) {
+export default function Create({ education_centers, tutors }: { education_centers: any[]; tutors: any[] }) {
     const { data, setData, post, processing, errors } = useForm<FormData>({
         name: '',
         email: '',
@@ -49,13 +52,16 @@ export default function Create({ education_centers }: { education_centers: any[]
         academic_year: '2025-2026',
         start_date: '',
         end_date: '',
-        tutor_name: '',
         total_hours: '',
         status: 'active',
         abandon_reason: '',
         dni_file: null,
         agreement_file: null,
         insurance_file: null,
+        center_tutor_name: '',
+        center_tutor_email: '',
+        center_tutor_phone: '',
+        company_tutor_user_id: '',
     });
 
     const submit = (e: React.FormEvent) => {
@@ -165,10 +171,36 @@ export default function Create({ education_centers }: { education_centers: any[]
                                     <Input id="end" type="date" className="bg-background border-border text-foreground" value={data.end_date} onChange={e => setData('end_date', e.target.value)} />
                                     {errors.end_date && <p className="text-red-500 text-xs">{errors.end_date}</p>}
                                 </div>
+
                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="tutor" className="text-foreground">Tutor Académico (Centro)</Label>
-                                    <Input id="tutor" className="bg-background border-border text-foreground" value={data.tutor_name} onChange={e => setData('tutor_name', e.target.value)} />
+                                    <Label htmlFor="center_tutor_name" className="text-foreground">Tutor del Centro (Nombre)</Label>
+                                    <Input id="center_tutor_name" className="bg-background border-border text-foreground" value={data.center_tutor_name} onChange={e => setData('center_tutor_name', e.target.value)} />
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="center_tutor_email" className="text-foreground">Tutor del Centro (Email)</Label>
+                                    <Input id="center_tutor_email" type="email" className="bg-background border-border text-foreground" value={data.center_tutor_email} onChange={e => setData('center_tutor_email', e.target.value)} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="center_tutor_phone" className="text-foreground">Tutor del Centro (Teléfono)</Label>
+                                    <Input id="center_tutor_phone" className="bg-background border-border text-foreground" value={data.center_tutor_phone} onChange={e => setData('center_tutor_phone', e.target.value)} />
+                                </div>
+
+                                <div className="space-y-2 md:col-span-2">
+                                    <Label className="text-foreground">Tutor de Empresa</Label>
+                                    <Select value={data.company_tutor_user_id} onValueChange={(val) => setData('company_tutor_user_id', val)}>
+                                        <SelectTrigger className="bg-background border-border text-foreground">
+                                            <SelectValue placeholder="Selecciona un tutor de empresa" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {tutors.map((t: any) => (
+                                                <SelectItem key={t.id} value={String(t.id)}>
+                                                    {t.name} ({t.email})
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
                                 <div className="space-y-2">
                                     <Label htmlFor="total_hours" className="text-foreground">Horas Totales Requeridas</Label>
                                     <div className="relative">

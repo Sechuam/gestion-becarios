@@ -106,6 +106,11 @@ class EducationCenterController extends Controller
      */
     public function show(Request $request, $school)
     {
+        $user = Auth::user();
+        $isIntern = $user?->hasRole('intern');
+        $currentIntern = $isIntern
+        ? $user->intern()->with('companyTutor')->first()
+        : null;
         $school = EducationCenter::withTrashed()->findOrFail($school);
         $internsQuery = $school->interns()
             ->join('users', 'users.id', '=', 'interns.user_id')
@@ -137,7 +142,10 @@ class EducationCenterController extends Controller
             'agreement_url' => $school->getFirstMediaUrl('agreement_pdf'),
             'interns' => $interns,
             'filters' => $request->only(['search', 'status', 'order']),
+            'is_intern' => $isIntern,
+            'current_intern' => $currentIntern,
         ]);
+
     }
 
     /**

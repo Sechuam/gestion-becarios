@@ -224,9 +224,37 @@ export default function Show({
                                     <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Horas</span>
                                     <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">{intern.total_hours}h</span>
                                 </div>
+
+                                <div className="grid grid-cols-3 py-3 border-b border-slate-50 dark:border-slate-800">
+                                    <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Tutor del Centro</span>
+                                    <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">
+                                        {intern.center_tutor_name || 'Sin asignar'}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-3 py-3 border-b border-slate-50 dark:border-slate-800">
+                                    <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Email tutor centro</span>
+                                    <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">
+                                        {intern.center_tutor_email || '—'}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-3 py-3 border-b border-slate-50 dark:border-slate-800">
+                                    <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Teléfono tutor centro</span>
+                                    <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">
+                                        {intern.center_tutor_phone || '—'}
+                                    </span>
+                                </div>
+
                                 <div className="grid grid-cols-3 py-3">
-                                    <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Tutor Centro</span>
-                                    <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">{intern.tutor_name || 'Sin asignar'}</span>
+                                    <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Tutor de Empresa</span>
+                                    <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">
+                                        {intern.company_tutor?.name || 'Sin asignar'}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-3 py-3">
+                                    <span className="col-span-1 text-xs text-slate-500 dark:text-slate-400">Email tutor empresa</span>
+                                    <span className="col-span-2 text-sm text-slate-600 dark:text-slate-300">
+                                        {intern.company_tutor?.email || '—'}
+                                    </span>
                                 </div>
                             </CardContent>
                         </Card>
@@ -257,7 +285,11 @@ export default function Show({
                                                 academic_year: 'Curso',
                                                 start_date: 'Fecha inicio',
                                                 end_date: 'Fecha fin',
-                                                tutor_name: 'Tutor centro',
+                                                tutor_name: 'Tutor centro (antiguo)',
+                                                center_tutor_name: 'Tutor centro (nombre)',
+                                                center_tutor_email: 'Tutor centro (email)',
+                                                center_tutor_phone: 'Tutor centro (teléfono)',
+                                                company_tutor_user_id: 'Tutor empresa (ID)',
                                                 total_hours: 'Horas totales',
                                                 status: 'Estado',
                                                 abandon_reason: 'Motivo abandono',

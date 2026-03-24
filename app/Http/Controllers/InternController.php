@@ -22,7 +22,7 @@ class InternController extends Controller
             ->with(['user', 'educationCenter'])
             ->select('interns.*');
 
-        $trashed = $request->get('trashed');
+        $trashed = $request->input('trashed');
         if ($trashed === 'only') {
             $query->onlyTrashed();
         } elseif ($trashed === 'with') {
@@ -39,8 +39,8 @@ class InternController extends Controller
             $query->where('status', $request->status);
         }
 
-        $sort = $request->get('sort');
-        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sort = $request->input('sort');
+        $direction = strtolower($request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
         $sortable = [
             'name' => 'users.name',
             'dni' => 'interns.dni',
@@ -55,7 +55,7 @@ class InternController extends Controller
             }
             $query->orderBy($sortable[$sort], $direction);
         } else {
-            $order = $request->get('order', 'az');
+            $order = $request->input('order', 'az');
             if ($order === 'za') {
                 $query->orderBy('users.name', 'desc');
             } elseif ($order === 'recent') {
@@ -94,6 +94,7 @@ class InternController extends Controller
     {
         return Inertia::render('interns/Create', [
             'education_centers' => EducationCenter::all(['id', 'name']),
+            'tutors' => User::role('tutor')->get(['id', 'name', 'email']),
         ]);
     }
 
@@ -115,17 +116,17 @@ class InternController extends Controller
                 $user->assignRole('intern');
 
                 $intern = $user->intern()->create($request->validated());
-            });
 
-            if ($request->hasFile('dni_file')) {
-                $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
-            }
-            if ($request->hasFile('agreement_file')) {
-                $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
-            }
-            if ($request->hasFile('insurance_file')) {
-                $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
-            }
+                if ($request->hasFile('dni_file')) {
+                    $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
+                }
+                if ($request->hasFile('agreement_file')) {
+                    $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
+                }
+                if ($request->hasFile('insurance_file')) {
+                    $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
+                }
+            });
 
             return redirect()->route('becarios.index')->with('success', 'Becario creado correctamente');
         } catch (\Throwable $e) {
@@ -169,6 +170,7 @@ class InternController extends Controller
         return Inertia::render('interns/Edit', [
             'intern' => $intern->load('user'),
             'education_centers' => EducationCenter::all(['id', 'name']),
+            'tutors' => User::role('tutor')->get(['id', 'name', 'email']),
         ]);
     }
 
@@ -186,6 +188,10 @@ class InternController extends Controller
             'total_hours' => 'required|integer',
             'status' => 'required|in:active,completed,abandoned',
             'abandon_reason' => 'nullable|string|max:255',
+            'center_tutor_name' => 'nullable|string|max:255',
+            'center_tutor_email' => 'nullable|email|max:255',
+            'center_tutor_phone' => 'nullable|string|max:50',
+            'company_tutor_user_id' => 'nullable|exists:users,id',
         ],
         [
             'dni.regex' => 'El DNI/NIE no tiene un formato válido.',

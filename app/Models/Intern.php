@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,6 +52,10 @@ class Intern extends Model implements HasMedia
         'total_hours',
         'abandon_reason',
         'internal_notes',
+        'center_tutor_name',
+        'center_tutor_email',
+        'center_tutor_phone',
+        'company_tutor_user_id',
     ];
 
     public function user(): BelongsTo
@@ -117,5 +122,9 @@ class Intern extends Model implements HasMedia
             ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    public function companyTutor(): BelongsTo {
+        return $this->belongsTo(User::class, 'company_tutor_user_id');
     }
 }
