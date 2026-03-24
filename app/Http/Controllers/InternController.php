@@ -142,7 +142,7 @@ class InternController extends Controller
     public function show(Intern $intern)
     {
         return Inertia::render('interns/Show', [
-            'intern' => $intern->load(['user', 'educationCenter'])->append(['progress', 'is_delayed']),
+            'intern' => $intern->load(['user', 'educationCenter', 'companyTutor'])->append(['progress', 'is_delayed']),
             'dni_url' => $intern->getFirstMediaUrl('dni'),
             'agreement_url' => $intern->getFirstMediaUrl('agreement'),
             'insurance_url' => $intern->getFirstMediaUrl('insurance'),
