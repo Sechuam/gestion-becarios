@@ -47,8 +47,8 @@ class TaskController extends Controller
             $query->whereDate('due_date', '<=', $request->due_to);
         }
 
-        $sort = $request->get('sort');
-        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sort = $request->input('sort');
+        $direction = strtolower($request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
         $sortable = [
             'title' => 'tasks.title',
             'practice_type' => 'practice_types.name',
@@ -108,8 +108,8 @@ class TaskController extends Controller
             $query->whereDate('due_date', '<=', $request->due_to);
         }
 
-        $sort = $request->get('sort');
-        $direction = strtolower($request->get('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sort = $request->input('sort');
+        $direction = strtolower($request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
         $sortable = [
             'title' => 'tasks.title',
             'practice_type' => 'practice_types.name',
@@ -141,6 +141,9 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
+        if (! Auth::user()?->hasRole('tutor')) {
+            return back()->with('error', 'Solo los tutores pueden crear tareas.');
+        }
         $task = Task::create([
             ...$request->validated(),
             'created_by' => Auth::id(),
@@ -163,6 +166,10 @@ class TaskController extends Controller
 
     public function create()
     {
+        if (! Auth::user()?->hasRole('tutor')) {
+            return back()->with('error', 'Solo los tutores pueden crear tareas.');
+        }
+
         return Inertia::render('tasks/Create', [
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
             'interns' => Intern::with('user')->get(),

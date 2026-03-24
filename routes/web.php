@@ -18,11 +18,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rutas para tareas
     Route::get('tareas', [TaskController::class, 'index'])->name('tasks.index');
-    Route::get('tareas/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::get('tareas/create', [TaskController::class, 'create'])
+    ->name('tasks.create')
+    ->middleware('tutor');
     Route::get('tareas/mis', [TaskController::class, 'myTasks'])->name('tasks.mine');
     Route::get('tareas/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
     Route::get('tareas/{task}', [TaskController::class, 'show'])->name('tasks.show');
-    Route::post('tareas', [TaskController::class, 'store'])->name('tasks.store');
+    Route::post('tareas', [TaskController::class, 'store'])
+    ->name('tasks.store')
+    ->middleware('tutor');
     Route::patch('tareas/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('tareas/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::patch('tareas/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.status');
@@ -31,37 +35,64 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tareas/{task}/attachments', [TaskController::class, 'addAttachment'])->name('tasks.attachments.store');
 
     // Catálogo de tipos de práctica (solo admin)
-    Route::get('tipos-practica', [PracticeTypeController::class, 'index'])->name('practice-types.index');
-    Route::get('tipos-practica/create', [PracticeTypeController::class, 'create'])->name('practice-types.create');
-    Route::post('tipos-practica', [PracticeTypeController::class, 'store'])->name('practice-types.store');
-    Route::get('tipos-practica/{practiceType}/edit', [PracticeTypeController::class, 'edit'])->name('practice-types.edit');
-    Route::patch('tipos-practica/{practiceType}', [PracticeTypeController::class, 'update'])->name('practice-types.update');
-    Route::delete('tipos-practica/{practiceType}', [PracticeTypeController::class, 'destroy'])->name('practice-types.destroy');
-    Route::patch('tipos-practica/{practiceType}/toggle', [PracticeTypeController::class, 'toggle'])->name('practice-types.toggle');
+    Route::get('tipos-practica', [PracticeTypeController::class, 'index'])
+    ->name('practice-types.index')
+    ->middleware('admin');
+    Route::get('tipos-practica/create', [PracticeTypeController::class, 'create'])
+    ->name('practice-types.create')
+    ->middleware('admin');
+    Route::post('tipos-practica', [PracticeTypeController::class, 'store'])
+    ->name('practice-types.store')
+    ->middleware('admin');
+    Route::get('tipos-practica/{practiceType}/edit', [PracticeTypeController::class, 'edit'])
+    ->name('practice-types.edit')
+    ->middleware('admin');
+    Route::patch('tipos-practica/{practiceType}', [PracticeTypeController::class, 'update'])
+    ->name('practice-types.update')
+    ->middleware('admin');
+    Route::delete('tipos-practica/{practiceType}', [PracticeTypeController::class, 'destroy'])
+    ->name('practice-types.destroy')
+    ->middleware('admin');
+    Route::patch('tipos-practica/{practiceType}/toggle', [PracticeTypeController::class, 'toggle'])
+    ->name('practice-types.toggle')
+    ->middleware('admin');
 
     // Dashboard principal
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
     // Módulo de Usuarios
     // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
-    Route::get('becarios', [InternController::class, 'index'])->name('becarios.index');
-    Route::inertia('tutores', 'tutors/index')->name('tutores.index');
+    Route::get('becarios', [InternController::class, 'index'])
+    ->name('becarios.index')
+    ->middleware('staff');
+    Route::inertia('tutores', 'tutors/index')
+    ->name('tutores.index')
+    ->middleware('admin');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
-    Route::inertia('usuarios', 'users/index')->name('users.index');
+    Route::inertia('usuarios', 'users/index')
+    ->name('users.index')
+    ->middleware('admin');
 
     // Ruta para los centros educativos
-    Route::get('centros', [EducationCenterController::class, 'index'])->name('schools.index');
+    Route::get('centros', [EducationCenterController::class, 'index'])
+    ->name('schools.index')
+    ->middleware('admin');
     Route::get('centros/export', [EducationCenterController::class, 'exportIndex'])
-        ->name('schools.export.index');
+        ->name('schools.export.index')
+        ->middleware('admin');
     Route::get('centros/{school}', [EducationCenterController::class, 'show'])
         ->whereNumber('school')
-        ->name('schools.show');
+        ->name('schools.show')
+        ->middleware('admin');
     Route::get('centros/{school}/export', [EducationCenterController::class, 'export'])
         ->whereNumber('school')
-        ->name('schools.export');
+        ->name('schools.export')
+        ->middleware('admin');
 
-    Route::get('/interns/export', [InternController::class, 'export'])->name('becarios.export');
+    Route::get('/interns/export', [InternController::class, 'export'])
+    ->name('becarios.export')
+    ->middleware('staff');
 
     Route::middleware('can:manage interns')->group(function () {
         Route::resource('interns', InternController::class)->except(['index', 'show']);

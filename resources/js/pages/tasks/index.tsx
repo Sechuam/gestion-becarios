@@ -120,6 +120,14 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
         );
     };
 
+    const isTutor = auth?.user?.roles?.includes('tutor');
+
+    const priorityLabel = (p?: string) => ({
+        high: 'Alta',
+        medium: 'Media',
+        low: 'Baja',
+    }[String(p).toLowerCase()] || '—');
+
     const tasksByStatus = useMemo(() => {
         const map: Record<string, any[]> = {};
         KANBAN_COLUMNS.forEach((col) => (map[col.key] = []));
@@ -164,7 +172,7 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
                 key: 'priority',
                 label: 'Prioridad',
                 sortKey: 'priority',
-                render: (task: any) => task.priority || '—',
+                render: (task: any) => priorityLabel(task.priority),
             },
             {
                 key: 'due_date',
@@ -259,9 +267,11 @@ export default function Index({ tasks, filters = {}, practice_types = [] }: Prop
                             Gestión de tareas y seguimiento por estado.
                         </p>
                     </div>
+                    {isTutor && (
                     <Button className="bg-slate-900 hover:bg-slate-800 text-white" asChild>
                         <Link href="/tareas/create">Nueva tarea</Link>
                     </Button>
+                    )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
