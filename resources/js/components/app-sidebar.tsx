@@ -103,6 +103,11 @@ const buildMainNavItems = (isIntern: boolean, isAdmin: boolean, isStaff: boolean
                             href: '/administrador',
                             icon: ShieldCheck,
                         },
+                        {
+                            title: 'Gestión de roles',
+                            href: '/usuarios',
+                            icon: Users,
+                        },
                     ],
                 },
             ]

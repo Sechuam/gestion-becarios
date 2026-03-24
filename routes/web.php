@@ -6,6 +6,7 @@ use App\Http\Controllers\InternController;
 use App\Http\Controllers\EducationCenterController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\PracticeTypeController;
+use App\Http\Controllers\UsersController;
 
 
 // Ruta de bienvenida
@@ -73,8 +74,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->middleware('admin');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
-    Route::inertia('usuarios', 'users/index')
+    Route::get('usuarios', [UsersController::class, 'index'])
     ->name('users.index')
+    ->middleware('admin');
+    Route::patch('usuarios/{user}/role', [UsersController::class, 'updateRole'])
+    ->name('users.role')
     ->middleware('admin');
 
     // Ruta para los centros educativos

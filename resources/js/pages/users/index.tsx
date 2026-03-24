@@ -1,11 +1,149 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { SimpleTable } from '@/components/common/SimpleTable';
+import { useMemo, useState } from 'react';
 
-export default function UsersIndex() {
+type UserRow = {
+    id: number;
+    name: string;
+    email: string;
+    roles: string[];
+};
+
+const roleLabel = (role?: string) => ({
+    admin: 'Administrador',
+    tutor: 'Tutor',
+    intern: 'Becario',
+}[String(role).toLowerCase()] || '—');
+
+export default function UsersIndex({ users = [] as UserRow[], roles = [] as string[] }: { users: UserRow[]; roles: string[] }) {
+    const [savingId, setSavingId] = useState<number | null>(null);
+    const [query, setQuery] = useState('');
+    const [roleFilter, setRoleFilter] = useState('all');
+    const roleOptions = roles.length ? roles : ['admin', 'tutor', 'intern'];
+
+    const filteredUsers = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        return users.filter((user) => {
+            const matchesQuery = !q
+                || user.name.toLowerCase().includes(q)
+                || user.email.toLowerCase().includes(q);
+            const matchesRole = roleFilter === 'all' || user.roles?.[0] === roleFilter;
+            return matchesQuery && matchesRole;
+        });
+    }, [users, query, roleFilter]);
+
+    const columns = useMemo(
+        () => [
+            {
+                key: 'name',
+                label: 'Nombre',
+                render: (user: UserRow) => user.name,
+            },
+            {
+                key: 'email',
+                label: 'Email',
+                render: (user: UserRow) => user.email,
+            },
+            {
+                key: 'role',
+                label: 'Rol',
+                render: (user: UserRow) => (
+                    <Badge variant="outline" className="font-medium bg-transparent text-foreground">
+                        {roleLabel(user.roles?.[0])}
+                    </Badge>
+                ),
+            },
+            {
+                key: 'actions',
+                label: 'Cambiar Rol',
+                render: (user: UserRow) => (
+                    <div className="flex items-center gap-3">
+                        <Select
+                            value={user.roles?.[0] ?? ''}
+                            onValueChange={(value) => {
+                                const currentRole = user.roles?.[0] ?? '';
+                                if (value === currentRole) return;
+                                const confirmed = confirm(
+                                    `¿Quieres cambiar el rol de ${user.name} a ${roleLabel(value)}?`
+                                );
+                                if (!confirmed) return;
+                                setSavingId(user.id);
+                                router.patch(
+                                    `/usuarios/${user.id}/role`,
+                                    { role: value },
+                                    {
+                                        preserveScroll: true,
+                                        onFinish: () => setSavingId(null),
+                                    }
+                                );
+                            }}
+                        >
+                            <SelectTrigger className="w-44 bg-background border-border text-foreground">
+                                <SelectValue placeholder="Selecciona rol" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {roleOptions.map((role) => (
+                                    <SelectItem key={role} value={role}>
+                                        {roleLabel(role)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {savingId === user.id && (
+                            <Button variant="outline" size="sm" className="opacity-60" disabled>
+                                Guardando...
+                            </Button>
+                        )}
+                    </div>
+                ),
+            },
+        ],
+        [roleOptions, savingId]
+    );
+
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Usuarios', href: '/usuarios' }]}>
             <Head title="Usuarios" />
-            <div className="p-4"><h1>Gestión General de Usuarios</h1></div>
+            <div className="p-6 space-y-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-foreground">Usuarios</h1>
+                    <p className="text-sm text-muted-foreground">Asigna roles a los usuarios del sistema.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-4">
+                    <div className="w-full max-w-sm">
+                        <Input
+                            placeholder="Buscar por nombre o email..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className="w-56">
+                        <Select value={roleFilter} onValueChange={setRoleFilter}>
+                            <SelectTrigger className="w-full bg-background border-border text-foreground">
+                                <SelectValue placeholder="Filtrar por rol" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Todos los roles</SelectItem>
+                                {roleOptions.map((role) => (
+                                    <SelectItem key={role} value={role}>
+                                        {roleLabel(role)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <SimpleTable
+                    columns={columns}
+                    rows={filteredUsers}
+                    rowKey={(row) => row.id}
+                />
+            </div>
         </AppLayout>
     );
 }
