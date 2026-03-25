@@ -135,13 +135,13 @@ export default function Index({ practice_types, filters = {} }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Tipos de práctica" />
 
-            <div className="flex flex-col gap-6 bg-background p-6 text-foreground">
+            <div className="flex flex-col gap-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                        <h1 className="page-title">
                             Tipos de práctica
                         </h1>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="page-subtitle">
                             Catálogo configurable por el administrador.
                         </p>
                     </div>

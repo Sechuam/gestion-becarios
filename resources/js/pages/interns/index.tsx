@@ -397,15 +397,15 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestión de Becarios" />
 
-            <div className="flex flex-col gap-6 bg-background p-6 text-foreground">
+            <div className="flex flex-col gap-6">
                 {/* HEADER */}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
+                        <h1 className="page-title flex items-center gap-2">
                             <Users className="h-6 w-6" />
                             Gestión de Becarios
                         </h1>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="page-subtitle">
                             Administra los becarios, sus centros y estados de
                             prácticas.
                         </p>

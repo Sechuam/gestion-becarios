@@ -351,14 +351,14 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Centros Educativos" />
 
-            <div className="flex flex-col gap-6 bg-background p-6 text-foreground">
+            <div className="flex flex-col gap-6">
                 {/* HEADER */}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                        <h1 className="page-title">
                             Centros Educativos
                         </h1>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="page-subtitle">
                             Gestiona las instituciones, universidades y centros
                             de formación.
                         </p>

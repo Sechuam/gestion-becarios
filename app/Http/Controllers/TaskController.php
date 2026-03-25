@@ -11,6 +11,7 @@ use App\Models\TaskComment;
 use App\Models\TaskStatusLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use App\Models\EducationCenter;
 
@@ -151,13 +152,39 @@ class TaskController extends Controller
         if (! Auth::user()?->hasRole('tutor')) {
             return back()->with('error', 'Solo los tutores pueden crear tareas.');
         }
+        $validated = $request->validated();
         $task = Task::create([
-            ...$request->validated(),
+            ...Arr::only($validated, [
+                'title',
+                'description',
+                'status',
+                'priority',
+                'due_date',
+                'practice_type_id',
+            ]),
             'created_by' => Auth::id(),
         ]);
 
-        if ($request->has('intern_ids')) {
-            $task->interns()->sync($request->intern_ids);
+        $internIds = $validated['intern_ids'] ?? [];
+        $assignmentType = $validated['assignment_type'] ?? 'user';
+
+        if ($assignmentType === 'module' && ! empty($validated['module_id'])) {
+            $module = strtolower((string) $validated['module_id']);
+            $internIds = Intern::whereRaw('lower(academic_degree) = ?', [$module])
+                ->pluck('id')
+                ->all();
+        }
+
+        if ($assignmentType === 'center' && ! empty($validated['education_center_id'])) {
+            $internIds = ! empty($internIds)
+                ? $internIds
+                : Intern::where('education_center_id', $validated['education_center_id'])
+                    ->pluck('id')
+                    ->all();
+        }
+
+        if (! empty($internIds)) {
+            $task->interns()->sync($internIds);
         }
 
         TaskStatusLog::create([
@@ -180,6 +207,7 @@ class TaskController extends Controller
         return Inertia::render('tasks/Create', [
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
             'interns' => Intern::with('user')->get(),
+            'centers' => EducationCenter::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -200,6 +228,7 @@ class TaskController extends Controller
             'task' => $task,
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
             'interns' => Intern::with('user')->get(),
+            'centers' => EducationCenter::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -215,10 +244,18 @@ class TaskController extends Controller
         }
 
         $fromStatus = $task->status;
-        $task->update($request->validated());
+        $validated = $request->validated();
+        $task->update(Arr::only($validated, [
+            'title',
+            'description',
+            'status',
+            'priority',
+            'due_date',
+            'practice_type_id',
+        ]));
 
         if ($request->has('intern_ids')) {
-            $task->interns()->sync($request->intern_ids);
+            $task->interns()->sync($validated['intern_ids'] ?? []);
         }
 
         if ($request->filled('status') && $fromStatus !== $task->status) {

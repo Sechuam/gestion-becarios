@@ -49,12 +49,10 @@ export default function Create() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Añadir Centro Educativo" />
 
-            <div className="w-full bg-background p-6 text-foreground">
+            <div className="page-surface">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-foreground">
-                        Nuevo Centro Educativo
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
+                    <h1 className="page-title">Nuevo Centro Educativo</h1>
+                    <p className="page-subtitle">
                         Completa los datos para dar de alta una nueva
                         institución.
                     </p>

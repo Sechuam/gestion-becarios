@@ -77,7 +77,7 @@ export default function Edit({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Editar Becario - ${intern.user.name}`} />
 
-            <div className="w-full bg-background p-6 text-foreground">
+            <div className="page-surface">
                 {/* CABECERA */}
                 <div className="mb-6 flex items-center gap-4 border-b border-border pb-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted text-lg font-semibold text-muted-foreground">
@@ -86,10 +86,8 @@ export default function Edit({
                             : 'B'}
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-foreground">
-                            Editar perfil
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
+                        <h1 className="page-title">Editar perfil</h1>
+                        <p className="page-subtitle">
                             Actualiza los datos, documentos y prácticas del
                             becario.
                         </p>

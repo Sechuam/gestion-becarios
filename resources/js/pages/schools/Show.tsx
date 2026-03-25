@@ -139,7 +139,7 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Centro: ${educationCenter.name}`} />
 
-            <div className="flex flex-col gap-6 bg-background p-6 text-foreground">
+            <div className="flex flex-col gap-6">
                 {isTrashed && (
                     <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
                         Este centro está archivado. No admite nuevos becarios.
@@ -148,10 +148,10 @@ export default function Show({
 
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                        <h1 className="page-title">
                             {educationCenter.name}
                         </h1>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="page-subtitle">
                             Detalle del centro educativo y su histórico de
                             becarios.
                         </p>

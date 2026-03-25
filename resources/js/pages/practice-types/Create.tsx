@@ -29,19 +29,17 @@ export default function Create() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nuevo tipo de práctica" />
 
-            <div className="w-full bg-background p-6 text-foreground">
+            <div className="page-surface">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-foreground">
-                        Nuevo tipo de práctica
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
+                    <h1 className="page-title">Nuevo tipo de práctica</h1>
+                    <p className="page-subtitle">
                         Crea un nuevo tipo para clasificar tareas.
                     </p>
                 </div>
 
                 <form
                     onSubmit={submit}
-                    className="space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                    className="space-y-6 rounded-xl border border-border/60 bg-card/90 p-6 shadow-sm"
                 >
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="space-y-2">

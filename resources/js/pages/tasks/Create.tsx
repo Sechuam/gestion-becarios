@@ -54,12 +54,13 @@ export default function Create({ practice_types = [], interns = [], centers = []
 
         assignment_type: 'user',
         module_id: '',
-        education_centers_id: '',
+        education_center_id: '',
     });
 
     const [assignmentType, setAssignmentType] = useState<'user' | 'module' | 'center'>('user');
     const [selectedModule, setSelectedModule] = useState<string>('');
     const [selectedCenter, setSelectedCenter] = useState<string>('');
+    const [centerQuery, setCenterQuery] = useState<string>('');
 
     const toggleIntern = (id: number) => {
         setData(
@@ -79,92 +80,135 @@ export default function Create({ practice_types = [], interns = [], centers = []
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nueva tarea" />
 
-            <div className="w-full bg-background p-6 text-foreground">
+            <div className="page-surface">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold">Nueva tarea</h1>
-                    <p className="text-sm text-muted-foreground">
+                    <h1 className="page-title">Nueva tarea</h1>
+                    <p className="page-subtitle">
                         Crea una tarea y asígnala de forma flexible.
                     </p>
                 </div>
 
                 <form
                     onSubmit={submit}
-                    className="space-y-6 rounded-xl border bg-card p-6 shadow-sm"
+                    className="rounded-xl border border-border/60 bg-card/90 p-6 shadow-sm"
                 >
-                    {/* TÍTULO + TIPO */}
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label>Título</Label>
-                            <Input
-                                value={data.title}
-                                onChange={(e) => setData('title', e.target.value)}
-                            />
-                            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <div className="space-y-6 lg:col-span-2">
+                            <section className="space-y-4 rounded-lg border border-border/70 bg-background/60 p-4">
+                                <div>
+                                    <h2 className="text-sm font-semibold text-foreground">Detalles</h2>
+                                    <p className="text-xs text-muted-foreground">
+                                        Información principal de la tarea.
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label>Título</Label>
+                                        <Input
+                                            value={data.title}
+                                            onChange={(e) => setData('title', e.target.value)}
+                                        />
+                                        {errors.title && (
+                                            <p className="text-xs text-red-500">{errors.title}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label>Tipo de práctica</Label>
+                                        <Select
+                                            value={
+                                                data.practice_type_id
+                                                    ? String(data.practice_type_id)
+                                                    : ''
+                                            }
+                                            onValueChange={(v) =>
+                                                setData('practice_type_id', v)
+                                            }
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Seleccionar tipo" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {practice_types.map((type) => (
+                                                    <SelectItem
+                                                        key={type.id}
+                                                        value={String(type.id)}
+                                                    >
+                                                        {type.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Descripción</Label>
+                                    <textarea
+                                        value={data.description}
+                                        onChange={(e) => setData('description', e.target.value)}
+                                        className="min-h-28 w-full rounded-lg border px-3 py-2 text-sm"
+                                    />
+                                </div>
+                            </section>
+
+                            <section className="space-y-4 rounded-lg border border-border/70 bg-background/60 p-4">
+                                <div>
+                                    <h2 className="text-sm font-semibold text-foreground">
+                                        Planificación
+                                    </h2>
+                                    <p className="text-xs text-muted-foreground">
+                                        Estado, prioridad y fecha de entrega.
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                    <Select
+                                        value={data.status}
+                                        onValueChange={(v) => setData('status', v)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Estado" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {STATUS_OPTIONS.map((opt) => (
+                                                <SelectItem key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+
+                                    <Select
+                                        value={data.priority}
+                                        onValueChange={(v) => setData('priority', v)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Prioridad" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {PRIORITY_OPTIONS.map((opt) => (
+                                                <SelectItem key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+
+                                    <DatePicker
+                                        value={data.due_date}
+                                        onChange={(value) => setData('due_date', value)}
+                                    />
+                                </div>
+                            </section>
                         </div>
 
-                        <div className="space-y-2">
-                            <Label>Tipo de práctica</Label>
-                            <Select
-                                value={data.practice_type_id ? String(data.practice_type_id) : ''}
-                                onValueChange={(v) => setData('practice_type_id', v)}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Seleccionar tipo" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {practice_types.map((type) => (
-                                        <SelectItem key={type.id} value={String(type.id)}>
-                                            {type.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    {/* DESCRIPCIÓN */}
-                    <div className="space-y-2">
-                        <Label>Descripción</Label>
-                        <textarea
-                            value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
-                            className="min-h-28 w-full rounded-lg border px-3 py-2 text-sm"
-                        />
-                    </div>
-
-                    {/* ESTADO / PRIORIDAD / FECHA */}
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <Select value={data.status} onValueChange={(v) => setData('status', v)}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                                {STATUS_OPTIONS.map((opt) => (
-                                    <SelectItem key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-
-                        <Select value={data.priority} onValueChange={(v) => setData('priority', v)}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                                {PRIORITY_OPTIONS.map((opt) => (
-                                    <SelectItem key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-
-                        <DatePicker
-                            value={data.due_date}
-                            onChange={(value) => setData('due_date', value)}
-                        />
-                    </div>
-
-                    {/* 🔥 NUEVO SISTEMA DE ASIGNACIÓN */}
-                    <div className="space-y-4">
-                        <Label>Asignación</Label>
+                        <section className="space-y-4 rounded-lg border border-border/70 bg-background/60 p-4">
+                            <div>
+                                <h2 className="text-sm font-semibold text-foreground">Asignación</h2>
+                                <p className="text-xs text-muted-foreground">
+                                    Decide cómo se asigna la tarea.
+                                </p>
+                            </div>
 
                         <Select
                             value={assignmentType}
@@ -174,7 +218,7 @@ export default function Create({ practice_types = [], interns = [], centers = []
                             }}
                         >
                             <SelectTrigger>
-                                <SelectValue />
+                                <SelectValue placeholder="Selecciona un modo" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="user">Por becario</SelectItem>
@@ -221,43 +265,115 @@ export default function Create({ practice_types = [], interns = [], centers = []
 
                         {/* POR CENTRO */}
                         {assignmentType === 'center' && (
-                            <Select
-                                value={selectedCenter}
-                                onValueChange={(v) => {
-                                    setSelectedCenter(v);
-                                    setData('education_centers_id', v);
-                                }}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Seleccionar centro" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {centers.length > 0 ? (
-                                        centers.map((c) => (
-                                            <SelectItem key={c.id} value={String(c.id)}>
-                                                {c.name}
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <>
-                                            <SelectItem value="1">Centro 1</SelectItem>
-                                            <SelectItem value="2">Centro 2</SelectItem>
-                                        </>
-                                    )}
-                                </SelectContent>
-                            </Select>
+                            <div className="space-y-3">
+                                <Select
+                                    value={selectedCenter}
+                                    onValueChange={(v) => {
+                                        setSelectedCenter(v);
+                                        setData('education_center_id', v);
+                                        setData('intern_ids', []);
+                                    }}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Seleccionar centro" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <div className="sticky top-0 z-10 bg-popover px-2 pb-2 pt-2">
+                                            <Input
+                                                value={centerQuery}
+                                                onChange={(e) => setCenterQuery(e.target.value)}
+                                                placeholder="Buscar centro..."
+                                                className="h-8"
+                                                onKeyDown={(e) => e.stopPropagation()}
+                                                onKeyUp={(e) => e.stopPropagation()}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        </div>
+                                        {(centers || [])
+                                            .filter((c) =>
+                                                centerQuery
+                                                    ? c.name
+                                                          ?.toLowerCase()
+                                                          .includes(centerQuery.toLowerCase())
+                                                    : true,
+                                            )
+                                            .map((c) => (
+                                                <SelectItem key={c.id} value={String(c.id)}>
+                                                    {c.name}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectContent>
+                                </Select>
+
+                                {selectedCenter && (
+                                    <div className="space-y-2">
+                                        <div className="flex flex-wrap items-center justify-between gap-2">
+                                            <Label>Becarios del centro</Label>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => {
+                                                    const allIds = interns
+                                                        .filter(
+                                                            (intern) =>
+                                                                String(intern.education_center_id) ===
+                                                                String(selectedCenter),
+                                                        )
+                                                        .map((intern) => intern.id);
+                                                    setData('intern_ids', allIds);
+                                                }}
+                                            >
+                                                Seleccionar todos
+                                            </Button>
+                                        </div>
+                                        <ToggleGroup
+                                            type="multiple"
+                                            className="flex flex-wrap gap-2"
+                                            value={data.intern_ids.map((id) => String(id))}
+                                            onValueChange={(values) =>
+                                                setData(
+                                                    'intern_ids',
+                                                    values.map((v) => Number(v)),
+                                                )
+                                            }
+                                        >
+                                            {interns
+                                                .filter(
+                                                    (intern) =>
+                                                        String(intern.education_center_id) ===
+                                                        String(selectedCenter),
+                                                )
+                                                .map((intern) => (
+                                                    <ToggleGroupItem
+                                                        key={intern.id}
+                                                        value={String(intern.id)}
+                                                        className="text-xs"
+                                                    >
+                                                        {intern.user?.name ||
+                                                            `Becario #${intern.id}`}
+                                                    </ToggleGroupItem>
+                                                ))}
+                                        </ToggleGroup>
+                                    </div>
+                                )}
+                            </div>
                         )}
 
                         {/* INFO UX */}
                         <p className="text-xs text-muted-foreground">
                             {assignmentType === 'user' && `${data.intern_ids.length} becarios seleccionados`}
                             {assignmentType === 'module' && 'Se asignará a todo el módulo'}
-                            {assignmentType === 'center' && 'Se asignará a todo el centro'}
+                            {assignmentType === 'center' &&
+                                (selectedCenter
+                                    ? `${data.intern_ids.length} becarios seleccionados`
+                                    : 'Selecciona un centro')}
                         </p>
 
                         {errors.intern_ids && (
                             <p className="text-xs text-red-500">{errors.intern_ids}</p>
                         )}
+                        </section>
                     </div>
 
                     {/* BOTONES */}

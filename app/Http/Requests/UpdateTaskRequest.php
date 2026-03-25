@@ -22,6 +22,9 @@ class UpdateTaskRequest extends FormRequest
             'practice_type_id' => 'sometimes|required|exists:practice_types,id',
             'intern_ids' => 'nullable|array',
             'intern_ids.*' => 'exists:interns,id',
+            'assignment_type' => 'nullable|in:user,module,center',
+            'module_id' => 'nullable|string|max:50',
+            'education_center_id' => 'nullable|exists:education_centers,id',
         ];
     }
 }

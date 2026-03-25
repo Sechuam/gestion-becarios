@@ -58,13 +58,13 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Tarea: ${task.title}`} />
 
-            <div className="w-full space-y-6 bg-background p-6 text-foreground">
+            <div className="w-full space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-foreground">
+                        <h1 className="page-title">
                             {task.title}
                         </h1>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="page-subtitle">
                             {task.description || 'Sin descripción'}
                         </p>
                     </div>

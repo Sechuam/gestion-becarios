@@ -56,12 +56,12 @@ export default function Edit({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editar Centro Educativo" />
 
-            <div className="w-full bg-background p-6 text-foreground">
+            <div className="page-surface">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-foreground">
+                    <h1 className="page-title">
                         Editar: {educationCenter.name}
                     </h1>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="page-subtitle">
                         Modifica los campos necesarios y guarda los cambios.
                     </p>
                 </div>

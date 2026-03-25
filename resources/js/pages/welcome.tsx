@@ -50,7 +50,7 @@ export default function Welcome({
                                             <Link href={register()}>
                                                 <Button
                                                     variant="outline"
-                                                    className="bg-emerald-500 text-white hover:bg-emerald-400"
+                                                    className="border-white/70 bg-transparent text-white hover:bg-white/10 hover:text-white"
                                                 >
                                                     Crear cuenta
                                                 </Button>

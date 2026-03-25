@@ -96,7 +96,13 @@ export default function Create({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nuevo Becario" />
 
-            <div className="w-full bg-background p-6 text-foreground">
+            <div className="page-surface">
+                <div className="mb-6">
+                    <h1 className="page-title">Nuevo becario</h1>
+                    <p className="page-subtitle">
+                        Crea un nuevo becario y completa su información.
+                    </p>
+                </div>
                 <form onSubmit={submit} className="space-y-6" noValidate>
                     <Tabs defaultValue="personal" className="w-full">
                         <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-border bg-muted p-1 sm:h-12 sm:grid-cols-3 dark:border-slate-700/70 dark:bg-slate-800/70">
