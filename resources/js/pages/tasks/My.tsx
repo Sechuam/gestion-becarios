@@ -130,7 +130,9 @@ export default function My({
     practice_types = [],
 }: Props) {
     const { auth } = usePage().props as any;
-    const isIntern = auth?.user?.roles?.includes('intern');
+    const isIntern =
+        auth?.user?.roles?.includes('intern') ||
+        auth?.user?.roles?.includes('becario');
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
         if (value === '' || value === 'all') {

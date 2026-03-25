@@ -20,6 +20,7 @@ class RolesController extends Controller
             ->map(fn (Role $role) => [
                 'id' => $role->id,
                 'name' => $role->name,
+                'display_name' => $role->display_name,
                 'is_active' => (bool) ($role->is_active ?? true),
                 'users_count' => $role->users_count ?? 0,
                 'is_protected' => $role->name === 'admin',
@@ -51,6 +52,7 @@ class RolesController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')],
+            'display_name' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
         ], [
             'name.required' => 'El nombre del rol es obligatorio.',
@@ -59,6 +61,7 @@ class RolesController extends Controller
 
         $role = Role::create([
             'name' => $validated['name'],
+            'display_name' => $validated['display_name'] ?? null,
             'guard_name' => 'web',
             'is_active' => $validated['is_active'] ?? true,
         ]);
@@ -73,19 +76,14 @@ class RolesController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($role->id)],
+            'display_name' => ['nullable', 'string', 'max:255'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'name.required' => 'El nombre del rol es obligatorio.',
-            'name.unique' => 'Ya existe un rol con ese nombre.',
+            'display_name.max' => 'El nombre mostrado no debe superar 255 caracteres.',
         ]);
 
-        if ($role->name === 'admin' && $validated['name'] !== 'admin') {
-            return back()->with('error', 'No puedes renombrar el rol admin.');
-        }
-
         $role->update([
-            'name' => $validated['name'],
+            'display_name' => $validated['display_name'] ?? null,
             'is_active' => $validated['is_active'],
         ]);
 

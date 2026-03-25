@@ -2,6 +2,14 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { Check, Copy, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -13,6 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 type Role = {
     id: number;
     name: string;
+    display_name?: string | null;
     is_active: boolean;
     users_count: number;
     is_protected: boolean;
@@ -25,6 +34,15 @@ type Permission = {
 
 type RolePermissions = Record<string, number[]>;
 
+const roleLabel = (role: string, displayName?: string | null) =>
+    displayName ||
+    ({
+        admin: 'Admin',
+        tutor: 'Tutor',
+        intern: 'Becario',
+        becario: 'Becario',
+    })[role.toLowerCase()] || role;
+
 export default function RolesIndex({
     roles,
     permissions,
@@ -35,9 +53,10 @@ export default function RolesIndex({
     rolePermissions: RolePermissions;
 }) {
     const [editingRoleId, setEditingRoleId] = useState<number | null>(null);
-    const createForm = useForm({ name: '' });
-    const editForm = useForm<{ name: string; is_active: boolean }>({
-        name: '',
+    const [createOpen, setCreateOpen] = useState(false);
+    const createForm = useForm({ name: '', display_name: '' });
+    const editForm = useForm<{ display_name: string; is_active: boolean }>({
+        display_name: '',
         is_active: true,
     });
 
@@ -52,7 +71,7 @@ export default function RolesIndex({
     const startEdit = (role: Role) => {
         setEditingRoleId(role.id);
         editForm.setData({
-            name: role.name,
+            display_name: role.display_name ?? '',
             is_active: role.is_active,
         });
     };
@@ -66,7 +85,10 @@ export default function RolesIndex({
         if (!createForm.data.name.trim()) return;
         createForm.post('/roles', {
             preserveScroll: true,
-            onSuccess: () => createForm.reset(),
+            onSuccess: () => {
+                createForm.reset();
+                setCreateOpen(false);
+            },
         });
     };
 
@@ -124,27 +146,62 @@ export default function RolesIndex({
                                 estado.
                             </p>
                         </div>
-                        <div className="flex flex-wrap items-center gap-2">
-                            <input
-                                className="h-10 w-56 rounded-md border border-border bg-background px-3 text-sm text-foreground"
-                                placeholder="Nuevo rol (ej: Tutor senior)"
-                                value={createForm.data.name}
-                                onChange={(e) =>
-                                    createForm.setData(
-                                        'name',
-                                        e.target.value
-                                    )
-                                }
-                            />
-                            <Button
-                                className="gap-2"
-                                onClick={handleCreateRole}
-                                disabled={createForm.processing}
-                            >
-                                <Plus className="h-4 w-4" />
-                                Crear rol
-                            </Button>
-                        </div>
+                        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="gap-2">
+                                    <Plus className="h-4 w-4" />
+                                    Crear rol
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle>Crear rol</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">
+                                        Nombre del rol
+                                    </label>
+                                    <input
+                                        className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground"
+                                        placeholder="Slug (ej: tutor_senior)"
+                                        value={createForm.data.name}
+                                        onChange={(e) =>
+                                            createForm.setData(
+                                                'name',
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                    <input
+                                        className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground"
+                                        placeholder="Nombre visible (ej: Tutor senior)"
+                                        value={createForm.data.display_name}
+                                        onChange={(e) =>
+                                            createForm.setData(
+                                                'display_name',
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                </div>
+                                <DialogFooter className="gap-2">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setCreateOpen(false)}
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        className="gap-2"
+                                        onClick={handleCreateRole}
+                                        disabled={createForm.processing}
+                                    >
+                                        <Plus className="h-4 w-4" />
+                                        Crear rol
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-3">
@@ -161,17 +218,20 @@ export default function RolesIndex({
                                         {editingRoleId === role.id ? (
                                             <input
                                                 className="mt-1 h-9 w-full rounded-md border border-border bg-background px-2 text-sm text-foreground"
-                                                value={editForm.data.name}
+                                                value={editForm.data.display_name}
                                                 onChange={(e) =>
                                                     editForm.setData(
-                                                        'name',
+                                                        'display_name',
                                                         e.target.value
                                                     )
                                                 }
                                             />
                                         ) : (
                                             <h3 className="text-lg font-semibold text-foreground">
-                                                {role.name}
+                                                {roleLabel(
+                                                    role.name,
+                                                    role.display_name
+                                                )}
                                             </h3>
                                         )}
                                     </div>
@@ -280,15 +340,17 @@ export default function RolesIndex({
                                     <th className="py-3 pr-4 font-medium">
                                         Permiso ↓ / Rol →
                                     </th>
-                                    <th className="py-3 pr-4 font-medium">
-                                        Admin
-                                    </th>
-                                    <th className="py-3 pr-4 font-medium">
-                                        Tutor
-                                    </th>
-                                    <th className="py-3 pr-4 font-medium">
-                                        Becario
-                                    </th>
+                                    {roles.map((role) => (
+                                        <th
+                                            key={role.id}
+                                            className="py-3 pr-4 font-medium"
+                                        >
+                                            {roleLabel(
+                                                role.name,
+                                                role.display_name
+                                            )}
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody>

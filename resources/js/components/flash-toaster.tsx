@@ -11,27 +11,26 @@ type FlashProps = {
 
 export function FlashToaster() {
     const { flash } = usePage().props as FlashProps;
-    const lastShownRef = useRef<{ success?: string; error?: string }>({});
+    const lastFlashRef = useRef<FlashProps['flash']>();
 
     useEffect(() => {
-        if (flash?.success && flash.success !== lastShownRef.current.success) {
+        if (flash?.success && flash !== lastFlashRef.current) {
             toast({
                 title: 'Éxito',
                 description: flash.success,
                 variant: 'default',
             });
-            lastShownRef.current.success = flash.success;
         }
 
-        if (flash?.error && flash.error !== lastShownRef.current.error) {
+        if (flash?.error && flash !== lastFlashRef.current) {
             toast({
                 title: 'Error',
                 description: flash.error,
                 variant: 'destructive',
             });
-            lastShownRef.current.error = flash.error;
         }
-    }, [flash?.success, flash?.error]);
+        lastFlashRef.current = flash;
+    }, [flash]);
 
     return null;
 }

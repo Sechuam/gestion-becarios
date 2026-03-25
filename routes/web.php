@@ -84,14 +84,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para los centros educativos
     Route::get('centros', [EducationCenterController::class, 'index'])
         ->name('schools.index')
-        ->middleware('admin');
+        ->middleware('staff');
     Route::get('centros/export', [EducationCenterController::class, 'exportIndex'])
         ->name('schools.export.index')
         ->middleware('admin');
     Route::get('centros/{school}', [EducationCenterController::class, 'show'])
         ->whereNumber('school')
         ->name('schools.show')
-        ->middleware('admin');
+        ->middleware('staff');
     Route::get('centros/{school}/export', [EducationCenterController::class, 'export'])
         ->whereNumber('school')
         ->name('schools.export')
@@ -103,11 +103,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('can:manage interns')->group(function () {
         Route::resource('interns', InternController::class)->except(['index', 'show']);
-        Route::get('interns/{intern}', [InternController::class, 'show'])->name('interns.show');
         Route::post('interns/{intern}/restore', [InternController::class, 'restore'])->name('interns.restore');
         Route::delete('interns/{intern}/force', [InternController::class, 'forceDelete'])->name('interns.forceDelete');
         Route::patch('interns/{intern}/notes', [InternController::class, 'updateNotes'])->name('interns.notes');
     });
+    Route::get('interns/{intern}', [InternController::class, 'show'])
+        ->name('interns.show')
+        ->middleware('staff');
 
     // Rutas protegidas para administración de centros
     Route::middleware('can:manage schools')->group(function () {

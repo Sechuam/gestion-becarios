@@ -36,7 +36,9 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const { auth } = usePage().props as any;
-    const isIntern = auth?.user?.roles?.includes('intern');
+    const isIntern =
+        auth?.user?.roles?.includes('intern') ||
+        auth?.user?.roles?.includes('becario');
     const isAdmin = auth?.user?.roles?.includes('admin');
     const isTutor = auth?.user?.roles?.includes('tutor');
     const role = isAdmin ? 'admin' : isTutor ? 'tutor' : 'intern';

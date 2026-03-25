@@ -556,14 +556,17 @@ export default function Index({
                             <SelectTrigger className="w-full border-border bg-background text-foreground">
                                 <SelectValue>
                                     {{
-                                        none: 'Activos',
+                                        none: 'No archivados',
                                         only: 'Archivados',
                                         with: 'Todos',
-                                    }[filters.trashed as string] || 'Activos'}
+                                    }[filters.trashed as string] ||
+                                        'No archivados'}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="none">Activos</SelectItem>
+                                <SelectItem value="none">
+                                    No archivados
+                                </SelectItem>
                                 <SelectItem value="only">Archivados</SelectItem>
                                 <SelectItem value="with">Todos</SelectItem>
                             </SelectContent>

@@ -107,7 +107,12 @@ class EducationCenterController extends Controller
     public function show(Request $request, $school)
     {
         $user = Auth::user();
-        $isIntern = $user?->hasRole('intern');
+        $isIntern = $user
+            ? $user->getRoleNames()
+                ->map(fn ($role) => strtolower($role))
+                ->intersect(['intern', 'becario'])
+                ->isNotEmpty()
+            : false;
         $currentIntern = $isIntern
         ? $user->intern()->with('companyTutor')->first()
         : null;
@@ -254,7 +259,14 @@ class EducationCenterController extends Controller
     {
         $user = Auth::user();
 
-        if (! $user?->hasRole('intern')) {
+        $isIntern = $user
+            ? $user->getRoleNames()
+                ->map(fn ($role) => strtolower($role))
+                ->intersect(['intern', 'becario'])
+                ->isNotEmpty()
+            : false;
+
+        if (! $isIntern) {
             return back()->with('error', 'Solo los becarios pueden acceder a su centro');
         }
 
