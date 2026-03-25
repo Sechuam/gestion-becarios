@@ -209,174 +209,174 @@ export default function Create({ practice_types = [], interns = [], centers = []
                                     Decide cómo se asigna la tarea.
                                 </p>
                             </div>
-
-                        <Select
-                            value={assignmentType}
-                            onValueChange={(v) => {
-                                setAssignmentType(v as any);
-                                setData('assignment_type', v);
-                            }}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Selecciona un modo" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="user">Por becario</SelectItem>
-                                <SelectItem value="module">Por módulo</SelectItem>
-                                <SelectItem value="center">Por centro</SelectItem>
-                            </SelectContent>
-                        </Select>
-
-                        {/* POR USUARIO */}
-                        {assignmentType === 'user' && (
-                            <ToggleGroup type="multiple" className="flex flex-wrap gap-2">
-                                {interns.map((intern) => (
-                                    <ToggleGroupItem
-                                        key={intern.id}
-                                        value={String(intern.id)}
-                                        onClick={() => toggleIntern(intern.id)}
-                                        className="text-xs"
-                                    >
-                                        {intern.user?.name || `Becario #${intern.id}`}
-                                    </ToggleGroupItem>
-                                ))}
-                            </ToggleGroup>
-                        )}
-
-                        {/* POR MÓDULO */}
-                        {assignmentType === 'module' && (
                             <Select
-                                value={selectedModule}
+                                value={assignmentType}
                                 onValueChange={(v) => {
-                                    setSelectedModule(v);
-                                    setData('module_id', v);
+                                    setAssignmentType(v as any);
+                                    setData('assignment_type', v);
                                 }}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Seleccionar módulo" />
+                                    <SelectValue placeholder="Selecciona un modo" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="daw">DAW</SelectItem>
-                                    <SelectItem value="dam">DAM</SelectItem>
-                                    <SelectItem value="asir">ASIR</SelectItem>
+                                    <SelectItem value="user">Por becario</SelectItem>
+                                    <SelectItem value="module">Por módulo</SelectItem>
+                                    <SelectItem value="center">Por centro</SelectItem>
                                 </SelectContent>
                             </Select>
-                        )}
 
-                        {/* POR CENTRO */}
-                        {assignmentType === 'center' && (
-                            <div className="space-y-3">
+                            {assignmentType === 'user' && (
+                                <ToggleGroup type="multiple" className="flex flex-wrap gap-2">
+                                    {interns.map((intern) => (
+                                        <ToggleGroupItem
+                                            key={intern.id}
+                                            value={String(intern.id)}
+                                            onClick={() => toggleIntern(intern.id)}
+                                            className="text-xs"
+                                        >
+                                            {intern.user?.name || `Becario #${intern.id}`}
+                                        </ToggleGroupItem>
+                                    ))}
+                                </ToggleGroup>
+                            )}
+
+                            {assignmentType === 'module' && (
                                 <Select
-                                    value={selectedCenter}
+                                    value={selectedModule}
                                     onValueChange={(v) => {
-                                        setSelectedCenter(v);
-                                        setData('education_center_id', v);
-                                        setData('intern_ids', []);
+                                        setSelectedModule(v);
+                                        setData('module_id', v);
                                     }}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Seleccionar centro" />
+                                        <SelectValue placeholder="Seleccionar módulo" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <div className="sticky top-0 z-10 bg-popover px-2 pb-2 pt-2">
-                                            <Input
-                                                value={centerQuery}
-                                                onChange={(e) => setCenterQuery(e.target.value)}
-                                                placeholder="Buscar centro..."
-                                                className="h-8"
-                                                onKeyDown={(e) => e.stopPropagation()}
-                                                onKeyUp={(e) => e.stopPropagation()}
-                                                onClick={(e) => e.stopPropagation()}
-                                            />
-                                        </div>
-                                        {(centers || [])
-                                            .filter((c) =>
-                                                centerQuery
-                                                    ? c.name
-                                                          ?.toLowerCase()
-                                                          .includes(centerQuery.toLowerCase())
-                                                    : true,
-                                            )
-                                            .map((c) => (
-                                                <SelectItem key={c.id} value={String(c.id)}>
-                                                    {c.name}
-                                                </SelectItem>
-                                            ))}
+                                        <SelectItem value="daw">DAW</SelectItem>
+                                        <SelectItem value="dam">DAM</SelectItem>
+                                        <SelectItem value="asir">ASIR</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            )}
 
-                                {selectedCenter && (
-                                    <div className="space-y-2">
-                                        <div className="flex flex-wrap items-center justify-between gap-2">
-                                            <Label>Becarios del centro</Label>
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => {
-                                                    const allIds = interns
-                                                        .filter(
-                                                            (intern) =>
-                                                                String(intern.education_center_id) ===
-                                                                String(selectedCenter),
-                                                        )
-                                                        .map((intern) => intern.id);
-                                                    setData('intern_ids', allIds);
-                                                }}
-                                            >
-                                                Seleccionar todos
-                                            </Button>
-                                        </div>
-                                        <ToggleGroup
-                                            type="multiple"
-                                            className="flex flex-wrap gap-2"
-                                            value={data.intern_ids.map((id) => String(id))}
-                                            onValueChange={(values) =>
-                                                setData(
-                                                    'intern_ids',
-                                                    values.map((v) => Number(v)),
+                            {assignmentType === 'center' && (
+                                <div className="space-y-3">
+                                    <Select
+                                        value={selectedCenter}
+                                        onValueChange={(v) => {
+                                            setSelectedCenter(v);
+                                            setData('education_center_id', v);
+                                            setData('intern_ids', []);
+                                        }}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Seleccionar centro" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <div className="sticky top-0 z-10 bg-popover px-2 pb-2 pt-2">
+                                                <Input
+                                                    value={centerQuery}
+                                                    onChange={(e) =>
+                                                        setCenterQuery(e.target.value)
+                                                    }
+                                                    placeholder="Buscar centro..."
+                                                    className="h-8"
+                                                    onKeyDown={(e) => e.stopPropagation()}
+                                                    onKeyUp={(e) => e.stopPropagation()}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                />
+                                            </div>
+                                            {(centers || [])
+                                                .filter((c) =>
+                                                    centerQuery
+                                                        ? c.name
+                                                              ?.toLowerCase()
+                                                              .includes(centerQuery.toLowerCase())
+                                                        : true,
                                                 )
-                                            }
-                                        >
-                                            {interns
-                                                .filter(
-                                                    (intern) =>
-                                                        String(intern.education_center_id) ===
-                                                        String(selectedCenter),
-                                                )
-                                                .map((intern) => (
-                                                    <ToggleGroupItem
-                                                        key={intern.id}
-                                                        value={String(intern.id)}
-                                                        className="text-xs"
-                                                    >
-                                                        {intern.user?.name ||
-                                                            `Becario #${intern.id}`}
-                                                    </ToggleGroupItem>
+                                                .map((c) => (
+                                                    <SelectItem key={c.id} value={String(c.id)}>
+                                                        {c.name}
+                                                    </SelectItem>
                                                 ))}
-                                        </ToggleGroup>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                                        </SelectContent>
+                                    </Select>
 
-                        {/* INFO UX */}
-                        <p className="text-xs text-muted-foreground">
-                            {assignmentType === 'user' && `${data.intern_ids.length} becarios seleccionados`}
-                            {assignmentType === 'module' && 'Se asignará a todo el módulo'}
-                            {assignmentType === 'center' &&
-                                (selectedCenter
-                                    ? `${data.intern_ids.length} becarios seleccionados`
-                                    : 'Selecciona un centro')}
-                        </p>
+                                    {selectedCenter && (
+                                        <div className="space-y-2">
+                                            <div className="flex flex-wrap items-center justify-between gap-2">
+                                                <Label>Becarios del centro</Label>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        const allIds = interns
+                                                            .filter(
+                                                                (intern) =>
+                                                                    String(
+                                                                        intern.education_center_id,
+                                                                    ) === String(selectedCenter),
+                                                            )
+                                                            .map((intern) => intern.id);
+                                                        setData('intern_ids', allIds);
+                                                    }}
+                                                >
+                                                    Seleccionar todos
+                                                </Button>
+                                            </div>
+                                            <ToggleGroup
+                                                type="multiple"
+                                                className="flex flex-wrap gap-2"
+                                                value={data.intern_ids.map((id) => String(id))}
+                                                onValueChange={(values) =>
+                                                    setData(
+                                                        'intern_ids',
+                                                        values.map((v) => Number(v)),
+                                                    )
+                                                }
+                                            >
+                                                {interns
+                                                    .filter(
+                                                        (intern) =>
+                                                            String(intern.education_center_id) ===
+                                                            String(selectedCenter),
+                                                    )
+                                                    .map((intern) => (
+                                                        <ToggleGroupItem
+                                                            key={intern.id}
+                                                            value={String(intern.id)}
+                                                            className="text-xs"
+                                                        >
+                                                            {intern.user?.name ||
+                                                                `Becario #${intern.id}`}
+                                                        </ToggleGroupItem>
+                                                    ))}
+                                            </ToggleGroup>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
-                        {errors.intern_ids && (
-                            <p className="text-xs text-red-500">{errors.intern_ids}</p>
-                        )}
+                            <p className="text-xs text-muted-foreground">
+                                {assignmentType === 'user' &&
+                                    `${data.intern_ids.length} becarios seleccionados`}
+                                {assignmentType === 'module' &&
+                                    'Se asignará a todo el módulo'}
+                                {assignmentType === 'center' &&
+                                    (selectedCenter
+                                        ? `${data.intern_ids.length} becarios seleccionados`
+                                        : 'Selecciona un centro')}
+                            </p>
+
+                            {errors.intern_ids && (
+                                <p className="text-xs text-red-500">
+                                    {errors.intern_ids}
+                                </p>
+                            )}
                         </section>
                     </div>
-
-                    {/* BOTONES */}
                     <div className="flex justify-end gap-3 border-t pt-6">
                         <Button variant="outline" asChild>
                             <Link href="/tareas">Cancelar</Link>

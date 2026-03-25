@@ -22,7 +22,7 @@ export default function AuthCardLayout({
     return (
         <div className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-[#e7f4f7] p-6 md:p-10">
             <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0c2f4d]/80 via-[#1b6d7a]/70 to-[#29b3a1]/70" />
+            <div className="absolute inset-0 bg-linear-to-br from-[#0c2f4d]/80 via-[#1b6d7a]/70 to-[#29b3a1]/70" />
             <div className="relative flex w-full max-w-md flex-col gap-6">
                 <Link
                     href={home()}

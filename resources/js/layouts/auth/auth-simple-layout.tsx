@@ -14,18 +14,17 @@ export default function AuthSimpleLayout({
                 <div className="relative hidden flex-1 items-center px-12 py-10 md:flex">
                     <div className="max-w-lg text-white">
                         <h2 className="text-4xl font-semibold leading-tight text-white">
-                            Gestión clara y humana de becarios
+                            Gestiona becarios sin complicaciones
                         </h2>
                         <p className="mt-3 text-base text-white/85">
-                            Gestiona becarios de forma clara, rápida y en un
-                            solo lugar.
+                            Todo el control en un solo lugar, de forma clara y rápida.
                         </p>
                         <div className="mt-8 grid gap-4 text-sm">
                             <div className="flex items-start gap-3">
                                 <span className="mt-1 h-2 w-2 rounded-full bg-white" />
                                 <div>
                                     <p className="font-medium">
-                                        Asignación de tareas rápida
+                                        Asignación de tareas ágil
                                     </p>
                                     <p className="text-white/70">
                                         Kanban, filtros y prioridades para cada
@@ -40,8 +39,8 @@ export default function AuthSimpleLayout({
                                         Seguimiento con historial
                                     </p>
                                     <p className="text-white/70">
-                                        Estados con trazabilidad y comentarios
-                                        por tarea.
+                                        Estados, trazabilidad y comentarios
+                                        en cada tarea.
                                     </p>
                                 </div>
                             </div>
@@ -49,11 +48,10 @@ export default function AuthSimpleLayout({
                                 <span className="mt-1 h-2 w-2 rounded-full bg-white" />
                                 <div>
                                     <p className="font-medium">
-                                        Reportes listos
+                                        Reportes listos para usar
                                     </p>
                                     <p className="text-white/70">
-                                        Exportación y métricas para decisiones
-                                        rápidas.
+                                        Exporta datos y obtén métricas al instante.
                                     </p>
                                 </div>
                             </div>
