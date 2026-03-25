@@ -15,7 +15,7 @@ export default function DeleteCenterModal({ school }: { school: any }) {
         router.delete(`/centros/${school.id}`, {
             onSuccess: () => {
                 // El servidor nos redirigirá al index automáticamente
-            }
+            },
         });
     };
     return (
@@ -24,15 +24,19 @@ export default function DeleteCenterModal({ school }: { school: any }) {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="bg-card text-muted-foreground border-border hover:text-red-600 hover:bg-red-50 font-medium shadow-none"
+                    className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-red-50 hover:text-red-600"
                 >
-                    <Trash2 className="w-4 h-4 mr-1.5 text-red-500/70" /> Borrar
+                    <Trash2 className="mr-1.5 h-4 w-4 text-red-500/70" /> Borrar
                 </Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle>¿Estás seguro de eliminar este centro?</DialogTitle>
+                <DialogTitle>
+                    ¿Estás seguro de eliminar este centro?
+                </DialogTitle>
                 <DialogDescription>
-                    Esta acción no se puede deshacer. Se eliminará el centro **{school.name}** y todos los datos asociados de forma permanente.
+                    Esta acción no se puede deshacer. Se eliminará el centro **
+                    {school.name}** y todos los datos asociados de forma
+                    permanente.
                 </DialogDescription>
                 <DialogFooter className="gap-2">
                     <DialogClose asChild>

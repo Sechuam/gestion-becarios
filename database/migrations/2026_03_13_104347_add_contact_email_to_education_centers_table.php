@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -20,7 +20,7 @@ return new class extends Migration
         DB::table('education_centers')
             ->whereNull('contact_email')
             ->update([
-                'contact_email' => DB::raw("'coordinator_' || id || '@example.com'")
+                'contact_email' => DB::raw("'coordinator_' || id || '@example.com'"),
             ]);
 
         // Enforce not-null and uniqueness after backfill.

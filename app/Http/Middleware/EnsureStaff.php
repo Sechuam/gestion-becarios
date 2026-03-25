@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class EnsureStaff
 {
@@ -21,7 +21,7 @@ class EnsureStaff
         if (! $user?->hasRole('tutor') && ! $user?->hasRole('admin')) {
             return back()->with('error', 'No tienes permiso para acceder');
         }
-        
+
         return $next($request);
     }
 }

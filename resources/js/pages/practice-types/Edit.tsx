@@ -1,9 +1,9 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
     practiceType: any;
@@ -33,36 +33,55 @@ export default function Edit({ practiceType }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editar tipo de práctica" />
 
-            <div className="p-6 w-full bg-background text-foreground">
+            <div className="w-full bg-background p-6 text-foreground">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-foreground">Editar tipo</h1>
+                    <h1 className="text-2xl font-bold text-foreground">
+                        Editar tipo
+                    </h1>
                     <p className="text-sm text-muted-foreground">
                         Actualiza los datos del tipo de práctica.
                     </p>
                 </div>
 
-                <form onSubmit={submit} className="space-y-6 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form
+                    onSubmit={submit}
+                    className="space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                >
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="name">Nombre</Label>
                             <Input
                                 id="name"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
-                                className="bg-background border-border text-foreground"
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
+                                className="border-border bg-background text-foreground"
                             />
-                            {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
+                            {errors.name && (
+                                <p className="text-xs text-red-500">
+                                    {errors.name}
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="priority">Prioridad (opcional)</Label>
+                            <Label htmlFor="priority">
+                                Prioridad (opcional)
+                            </Label>
                             <Input
                                 id="priority"
                                 value={data.priority}
-                                onChange={(e) => setData('priority', e.target.value)}
-                                className="bg-background border-border text-foreground"
+                                onChange={(e) =>
+                                    setData('priority', e.target.value)
+                                }
+                                className="border-border bg-background text-foreground"
                             />
-                            {errors.priority && <p className="text-red-500 text-xs">{errors.priority}</p>}
+                            {errors.priority && (
+                                <p className="text-xs text-red-500">
+                                    {errors.priority}
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -71,40 +90,63 @@ export default function Edit({ practiceType }: Props) {
                         <textarea
                             id="description"
                             value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
+                            onChange={(e) =>
+                                setData('description', e.target.value)
+                            }
                             className="min-h-[120px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
                         />
-                        {errors.description && <p className="text-red-500 text-xs">{errors.description}</p>}
+                        {errors.description && (
+                            <p className="text-xs text-red-500">
+                                {errors.description}
+                            </p>
+                        )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="color">Color (hex opcional)</Label>
                             <Input
                                 id="color"
                                 placeholder="#3b82f6"
                                 value={data.color}
-                                onChange={(e) => setData('color', e.target.value)}
-                                className="bg-background border-border text-foreground"
+                                onChange={(e) =>
+                                    setData('color', e.target.value)
+                                }
+                                className="border-border bg-background text-foreground"
                             />
-                            {errors.color && <p className="text-red-500 text-xs">{errors.color}</p>}
+                            {errors.color && (
+                                <p className="text-xs text-red-500">
+                                    {errors.color}
+                                </p>
+                            )}
                         </div>
                         <div className="flex items-center gap-2">
                             <input
                                 id="is_active"
                                 type="checkbox"
                                 checked={data.is_active}
-                                onChange={(e) => setData('is_active', e.target.checked)}
+                                onChange={(e) =>
+                                    setData('is_active', e.target.checked)
+                                }
                             />
                             <Label htmlFor="is_active">Activo</Label>
                         </div>
                     </div>
 
                     <div className="flex justify-end gap-3 border-t border-border pt-6">
-                        <Button type="button" variant="outline" className="border-border text-foreground hover:bg-muted" asChild>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-border text-foreground hover:bg-muted"
+                            asChild
+                        >
                             <Link href="/tipos-practica">Cancelar</Link>
                         </Button>
-                        <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={processing}>
+                        <Button
+                            type="submit"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90"
+                            disabled={processing}
+                        >
                             Guardar cambios
                         </Button>
                     </div>

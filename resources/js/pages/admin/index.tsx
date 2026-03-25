@@ -15,7 +15,9 @@ export default function Index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Administrador" />
             <div className="p-4">
-                <h1 className="text-2xl font-bold">Estás en la pestaña de administradores</h1>
+                <h1 className="text-2xl font-bold">
+                    Estás en la pestaña de administradores
+                </h1>
                 <p className="text-gray-600">
                     Aquí verás todo lo que puedes hacer como administrador.
                 </p>

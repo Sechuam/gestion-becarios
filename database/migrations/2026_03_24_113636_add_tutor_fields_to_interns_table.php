@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('center_tutor_phone')->nullable()->after('center_tutor_email');
 
             $table->foreignId('company_tutor_user_id')
-            ->nullable()
-            ->constrained('users')
-            ->nullOnDelete()
-            ->after('center_tutor_phone');
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->after('center_tutor_phone');
         });
     }
 

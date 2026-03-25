@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EducationCentersExport;
+use App\Exports\InternsExport;
 use App\Http\Requests\StoreEducationCenterRequest;
 use App\Models\EducationCenter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\InternsExport;
-use App\Exports\EducationCentersExport;
-use Illuminate\Support\Facades\Auth;
 
 class EducationCenterController extends Controller
 {
@@ -250,7 +250,8 @@ class EducationCenterController extends Controller
         return back()->with('success', 'Notas actualizadas correctamente');
     }
 
-    public function myCenter(){
+    public function myCenter()
+    {
         $user = Auth::user();
 
         if (! $user?->hasRole('intern')) {

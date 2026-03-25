@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class InternsExport implements FromQuery, WithHeadings, WithMapping
 {
     protected $filters;
+
     protected array $columns;
 
     public function __construct(array $filters = [])

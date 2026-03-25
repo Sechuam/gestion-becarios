@@ -1,11 +1,17 @@
 import { Head, router } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
+import { SimpleTable } from '@/components/common/SimpleTable';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { SimpleTable } from '@/components/common/SimpleTable';
-import { useMemo, useState } from 'react';
 
 type UserRow = {
     id: number;
@@ -14,25 +20,37 @@ type UserRow = {
     roles: string[];
 };
 
-const roleLabel = (role?: string) => ({
-    admin: 'Administrador',
-    tutor: 'Tutor',
-    intern: 'Becario',
-}[String(role).toLowerCase()] || '—');
+const roleLabel = (role?: string) =>
+    ({
+        admin: 'Administrador',
+        tutor: 'Tutor',
+        intern: 'Becario',
+    })[String(role).toLowerCase()] || '—';
 
-export default function UsersIndex({ users = [] as UserRow[], roles = [] as string[] }: { users: UserRow[]; roles: string[] }) {
+export default function UsersIndex({
+    users = [] as UserRow[],
+    roles = [] as string[],
+}: {
+    users: UserRow[];
+    roles: string[];
+}) {
     const [savingId, setSavingId] = useState<number | null>(null);
     const [query, setQuery] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
-    const roleOptions = roles.length ? roles : ['admin', 'tutor', 'intern'];
+    const roleOptions = useMemo(
+        () => (roles.length ? roles : ['admin', 'tutor', 'intern']),
+        [roles],
+    );
 
     const filteredUsers = useMemo(() => {
         const q = query.trim().toLowerCase();
         return users.filter((user) => {
-            const matchesQuery = !q
-                || user.name.toLowerCase().includes(q)
-                || user.email.toLowerCase().includes(q);
-            const matchesRole = roleFilter === 'all' || user.roles?.[0] === roleFilter;
+            const matchesQuery =
+                !q ||
+                user.name.toLowerCase().includes(q) ||
+                user.email.toLowerCase().includes(q);
+            const matchesRole =
+                roleFilter === 'all' || user.roles?.[0] === roleFilter;
             return matchesQuery && matchesRole;
         });
     }, [users, query, roleFilter]);
@@ -53,7 +71,10 @@ export default function UsersIndex({ users = [] as UserRow[], roles = [] as stri
                 key: 'role',
                 label: 'Rol',
                 render: (user: UserRow) => (
-                    <Badge variant="outline" className="font-medium bg-transparent text-foreground">
+                    <Badge
+                        variant="outline"
+                        className="bg-transparent font-medium text-foreground"
+                    >
                         {roleLabel(user.roles?.[0])}
                     </Badge>
                 ),
@@ -69,7 +90,7 @@ export default function UsersIndex({ users = [] as UserRow[], roles = [] as stri
                                 const currentRole = user.roles?.[0] ?? '';
                                 if (value === currentRole) return;
                                 const confirmed = confirm(
-                                    `¿Quieres cambiar el rol de ${user.name} a ${roleLabel(value)}?`
+                                    `¿Quieres cambiar el rol de ${user.name} a ${roleLabel(value)}?`,
                                 );
                                 if (!confirmed) return;
                                 setSavingId(user.id);
@@ -79,11 +100,11 @@ export default function UsersIndex({ users = [] as UserRow[], roles = [] as stri
                                     {
                                         preserveScroll: true,
                                         onFinish: () => setSavingId(null),
-                                    }
+                                    },
                                 );
                             }}
                         >
-                            <SelectTrigger className="w-44 bg-background border-border text-foreground">
+                            <SelectTrigger className="w-44 border-border bg-background text-foreground">
                                 <SelectValue placeholder="Selecciona rol" />
                             </SelectTrigger>
                             <SelectContent>
@@ -95,7 +116,12 @@ export default function UsersIndex({ users = [] as UserRow[], roles = [] as stri
                             </SelectContent>
                         </Select>
                         {savingId === user.id && (
-                            <Button variant="outline" size="sm" className="opacity-60" disabled>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="opacity-60"
+                                disabled
+                            >
                                 Guardando...
                             </Button>
                         )}
@@ -103,16 +129,25 @@ export default function UsersIndex({ users = [] as UserRow[], roles = [] as stri
                 ),
             },
         ],
-        [roleOptions, savingId]
+        [roleOptions, savingId],
     );
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'Usuarios', href: '/usuarios' }]}>
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Dashboard', href: '/dashboard' },
+                { title: 'Usuarios', href: '/usuarios' },
+            ]}
+        >
             <Head title="Usuarios" />
-            <div className="p-6 space-y-6">
+            <div className="space-y-6 p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Usuarios</h1>
-                    <p className="text-sm text-muted-foreground">Asigna roles a los usuarios del sistema.</p>
+                    <h1 className="text-2xl font-bold text-foreground">
+                        Usuarios
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Asigna roles a los usuarios del sistema.
+                    </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="w-full max-w-sm">
@@ -123,12 +158,17 @@ export default function UsersIndex({ users = [] as UserRow[], roles = [] as stri
                         />
                     </div>
                     <div className="w-56">
-                        <Select value={roleFilter} onValueChange={setRoleFilter}>
-                            <SelectTrigger className="w-full bg-background border-border text-foreground">
+                        <Select
+                            value={roleFilter}
+                            onValueChange={setRoleFilter}
+                        >
+                            <SelectTrigger className="w-full border-border bg-background text-foreground">
                                 <SelectValue placeholder="Filtrar por rol" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Todos los roles</SelectItem>
+                                <SelectItem value="all">
+                                    Todos los roles
+                                </SelectItem>
                                 {roleOptions.map((role) => (
                                     <SelectItem key={role} value={role}>
                                         {roleLabel(role)}

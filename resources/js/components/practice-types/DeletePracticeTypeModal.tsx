@@ -11,7 +11,11 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 
-export default function DeletePracticeTypeModal({ practiceType }: { practiceType: any }) {
+export default function DeletePracticeTypeModal({
+    practiceType,
+}: {
+    practiceType: any;
+}) {
     const handleDelete = () => {
         router.delete(`/tipos-practica/${practiceType.id}`);
     };
@@ -22,15 +26,17 @@ export default function DeletePracticeTypeModal({ practiceType }: { practiceType
                 <Button
                     variant="outline"
                     size="sm"
-                    className="bg-card text-muted-foreground border-border hover:text-red-600 hover:bg-red-50 font-medium shadow-none"
+                    className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-red-50 hover:text-red-600"
                 >
-                    <Trash2 className="w-4 h-4 mr-1.5 text-red-500/70" /> Eliminar
+                    <Trash2 className="mr-1.5 h-4 w-4 text-red-500/70" />{' '}
+                    Eliminar
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle>¿Eliminar tipo de práctica?</DialogTitle>
                 <DialogDescription>
-                    Esta acción no se puede deshacer. Se eliminará el tipo **{practiceType.name}**.
+                    Esta acción no se puede deshacer. Se eliminará el tipo **
+                    {practiceType.name}**.
                 </DialogDescription>
                 <DialogFooter className="gap-2">
                     <DialogClose asChild>

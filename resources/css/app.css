@@ -9,9 +9,8 @@
 
 @theme {
     --font-sans:
-        'Manrope', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -140,8 +139,16 @@
     body {
         @apply bg-background text-foreground;
         background-image:
-            radial-gradient(60rem 40rem at 10% -10%, rgba(45, 212, 191, 0.18), transparent 60%),
-            radial-gradient(60rem 40rem at 110% 10%, rgba(14, 165, 164, 0.14), transparent 55%);
+            radial-gradient(
+                60rem 40rem at 10% -10%,
+                rgba(45, 212, 191, 0.18),
+                transparent 60%
+            ),
+            radial-gradient(
+                60rem 40rem at 110% 10%,
+                rgba(14, 165, 164, 0.14),
+                transparent 55%
+            );
         font-size: 15px;
         line-height: 1.6;
         letter-spacing: 0.01em;

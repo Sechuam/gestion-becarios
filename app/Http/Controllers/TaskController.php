@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Intern;
 use App\Models\PracticeType;
 use App\Models\Task;
-use App\Models\TaskStatusLog;
-use App\Models\Intern;
 use App\Models\TaskComment;
+use App\Models\TaskStatusLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -224,6 +224,7 @@ class TaskController extends Controller
         }
 
         $task->delete();
+
         return back()->with('success', 'Tarea eliminada correctamente.');
     }
 

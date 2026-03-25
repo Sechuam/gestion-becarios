@@ -40,4 +40,41 @@ class StoreEducationCenterRequest extends FormRequest
             'agreement_file' => 'nullable|file|mimes:pdf|max:5120',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'El campo :attribute es obligatorio.',
+            'email' => 'El campo :attribute debe ser un correo válido.',
+            'unique' => 'El campo :attribute ya está en uso.',
+            'date' => 'El campo :attribute no es una fecha válida.',
+            'after_or_equal' => 'El campo :attribute debe ser posterior o igual a :date.',
+            'integer' => 'El campo :attribute debe ser un número entero.',
+            'min.numeric' => 'El campo :attribute debe ser al menos :min.',
+            'max.string' => 'El campo :attribute no debe superar :max caracteres.',
+            'file' => 'El campo :attribute debe ser un archivo.',
+            'mimes' => 'El campo :attribute debe ser un archivo de tipo: :values.',
+            'max.file' => 'El campo :attribute no debe superar :max kilobytes.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'nombre del centro',
+            'code' => 'código',
+            'address' => 'dirección',
+            'city' => 'ciudad',
+            'contact_person' => 'persona de contacto',
+            'contact_email' => 'correo de contacto',
+            'contact_position' => 'cargo de contacto',
+            'email' => 'correo electrónico',
+            'phone' => 'teléfono',
+            'web' => 'web',
+            'agreement_signed_at' => 'fecha de firma del convenio',
+            'agreement_expires_at' => 'fecha de expiración del convenio',
+            'agreement_slots' => 'plazas del convenio',
+            'agreement_file' => 'archivo de convenio',
+        ];
+    }
 }

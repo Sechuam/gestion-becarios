@@ -14,10 +14,10 @@ return new class extends Migration
     {
         Schema::table('interns', function (Blueprint $table) {
             $table->string('abandon_reason')->nullable()->after('status');
-            
+
         });
 
-        DB::statement("ALTER TABLE interns DROP CONSTRAINT interns_status_check");
+        DB::statement('ALTER TABLE interns DROP CONSTRAINT interns_status_check');
         DB::statement("ALTER TABLE interns ADD CONSTRAINT interns_status_check CHECK (status IN ('active','completed','abandoned'))");
         DB::statement("ALTER TABLE interns ALTER COLUMN status SET DEFAULT 'active'");
     }
@@ -27,13 +27,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE interns DROP CONSTRAINT interns_status_check");
+        DB::statement('ALTER TABLE interns DROP CONSTRAINT interns_status_check');
         DB::statement("ALTER TABLE interns ADD CONSTRAINT interns_status_check CHECK (status IN ('pending','active','completed','cancelled'))");
         DB::statement("ALTER TABLE interns ALTER COLUMN status SET DEFAULT 'pending'");
 
         Schema::table('interns', function (Blueprint $table) {
             $table->dropColumn('abandon_reason');
-            
+
         });
     }
 };

@@ -26,15 +26,17 @@ export default function DeleteTaskModal({ task }: { task: any }) {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="bg-card text-muted-foreground border-border hover:text-red-600 hover:bg-red-50 font-medium shadow-none"
+                    className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-red-50 hover:text-red-600"
                 >
-                    <Trash2 className="w-4 h-4 mr-1.5 text-red-500/70" /> Eliminar
+                    <Trash2 className="mr-1.5 h-4 w-4 text-red-500/70" />{' '}
+                    Eliminar
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle>¿Estás seguro de eliminar esta tarea?</DialogTitle>
                 <DialogDescription>
-                    Esta acción no se puede deshacer. Se eliminará la tarea **{task.title}** de forma permanente.
+                    Esta acción no se puede deshacer. Se eliminará la tarea **
+                    {task.title}** de forma permanente.
                 </DialogDescription>
                 <DialogFooter className="gap-2">
                     <DialogClose asChild>

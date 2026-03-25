@@ -1,10 +1,10 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
+import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
     task: any;
@@ -58,10 +58,12 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Tarea: ${task.title}`} />
 
-            <div className="p-6 w-full bg-background text-foreground space-y-6">
+            <div className="w-full space-y-6 bg-background p-6 text-foreground">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-foreground">{task.title}</h1>
+                        <h1 className="text-2xl font-bold text-foreground">
+                            {task.title}
+                        </h1>
                         <p className="text-sm text-muted-foreground">
                             {task.description || 'Sin descripción'}
                         </p>
@@ -71,7 +73,7 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                             <Button
                                 onClick={markCompleted}
                                 disabled={completeForm.processing}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                className="bg-emerald-600 text-white hover:bg-emerald-700"
                             >
                                 Marcar como completada
                             </Button>
@@ -82,27 +84,42 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="rounded-xl border bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6 space-y-3">
-                        <h2 className="text-sm font-semibold text-foreground">Detalles</h2>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div className="space-y-3 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                        <h2 className="text-sm font-semibold text-foreground">
+                            Detalles
+                        </h2>
                         <div className="text-sm">
-                            <span className="text-muted-foreground">Estado:</span>{' '}
-                            <span className="font-medium">{statusLabels[task.status] || task.status}</span>
+                            <span className="text-muted-foreground">
+                                Estado:
+                            </span>{' '}
+                            <span className="font-medium">
+                                {statusLabels[task.status] || task.status}
+                            </span>
                         </div>
                         <div className="text-sm">
-                            <span className="text-muted-foreground">Prioridad:</span>{' '}
-                            <span className="font-medium">{task.priority || '—'}</span>
+                            <span className="text-muted-foreground">
+                                Prioridad:
+                            </span>{' '}
+                            <span className="font-medium">
+                                {task.priority || '—'}
+                            </span>
                         </div>
                         <div className="text-sm">
-                            <span className="text-muted-foreground">Entrega:</span>{' '}
+                            <span className="text-muted-foreground">
+                                Entrega:
+                            </span>{' '}
                             {task.due_date ? (
-                                <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
-                                    dueStatus(task.due_date) === 'overdue'
-                                        ? 'bg-red-50 text-red-700 border-red-200'
-                                        : dueStatus(task.due_date) === 'soon'
-                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                        : 'bg-transparent text-muted-foreground border-transparent'
-                                }`}>
+                                <span
+                                    className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
+                                        dueStatus(task.due_date) === 'overdue'
+                                            ? 'border-red-200 bg-red-50 text-red-700'
+                                            : dueStatus(task.due_date) ===
+                                                'soon'
+                                              ? 'border-amber-200 bg-amber-50 text-amber-700'
+                                              : 'border-transparent bg-transparent text-muted-foreground'
+                                    }`}
+                                >
                                     {formatDateEs(task.due_date)}
                                 </span>
                             ) : (
@@ -111,46 +128,70 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                         </div>
                         <div className="text-sm">
                             <span className="text-muted-foreground">Tipo:</span>{' '}
-                            <span className="font-medium">{task.practice_type?.name || '—'}</span>
+                            <span className="font-medium">
+                                {task.practice_type?.name || '—'}
+                            </span>
                         </div>
                         <div className="text-sm">
-                            <span className="text-muted-foreground">Creada por:</span>{' '}
-                            <span className="font-medium">{task.creator?.name || '—'}</span>
+                            <span className="text-muted-foreground">
+                                Creada por:
+                            </span>{' '}
+                            <span className="font-medium">
+                                {task.creator?.name || '—'}
+                            </span>
                         </div>
                     </div>
 
-                    <div className="md:col-span-2 rounded-xl border bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6">
-                        <h2 className="text-sm font-semibold text-foreground mb-3">Becarios asignados</h2>
+                    <div className="rounded-xl border border-border bg-card p-6 shadow-sm md:col-span-2 dark:border-slate-700/70 dark:bg-slate-900/60">
+                        <h2 className="mb-3 text-sm font-semibold text-foreground">
+                            Becarios asignados
+                        </h2>
                         {task.interns?.length ? (
                             <div className="flex flex-wrap gap-2">
                                 {task.interns.map((intern: any) => (
-                                    <span key={intern.id} className="rounded-full border px-3 py-1 text-xs">
-                                        {intern.user?.name || `Becario #${intern.id}`}
+                                    <span
+                                        key={intern.id}
+                                        className="rounded-full border px-3 py-1 text-xs"
+                                    >
+                                        {intern.user?.name ||
+                                            `Becario #${intern.id}`}
                                     </span>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-sm text-muted-foreground">Sin asignados</p>
+                            <p className="text-sm text-muted-foreground">
+                                Sin asignados
+                            </p>
                         )}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="rounded-xl border bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6 space-y-4">
-                        <h2 className="text-sm font-semibold text-foreground">Comentarios</h2>
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                        <h2 className="text-sm font-semibold text-foreground">
+                            Comentarios
+                        </h2>
                         {task.comments?.length ? (
                             <div className="space-y-3">
                                 {task.comments.map((comment: any) => (
-                                    <div key={comment.id} className="rounded-lg border border-border/70 p-3 text-sm">
-                                        <div className="text-xs text-muted-foreground mb-1">
-                                            {comment.user?.name || 'Usuario'} · {formatDateTimeEs(comment.created_at)}
+                                    <div
+                                        key={comment.id}
+                                        className="rounded-lg border border-border/70 p-3 text-sm"
+                                    >
+                                        <div className="mb-1 text-xs text-muted-foreground">
+                                            {comment.user?.name || 'Usuario'} ·{' '}
+                                            {formatDateTimeEs(
+                                                comment.created_at,
+                                            )}
                                         </div>
                                         <div>{comment.comment}</div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-sm text-muted-foreground">Aún no hay comentarios.</p>
+                            <p className="text-sm text-muted-foreground">
+                                Aún no hay comentarios.
+                            </p>
                         )}
 
                         <form onSubmit={submitComment} className="space-y-3">
@@ -158,52 +199,92 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                             <textarea
                                 id="comment"
                                 value={commentForm.data.comment}
-                                onChange={(e) => commentForm.setData('comment', e.target.value)}
+                                onChange={(e) =>
+                                    commentForm.setData(
+                                        'comment',
+                                        e.target.value,
+                                    )
+                                }
                                 className="min-h-[100px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
                             />
                             {commentForm.errors.comment && (
-                                <p className="text-red-500 text-xs">{commentForm.errors.comment}</p>
+                                <p className="text-xs text-red-500">
+                                    {commentForm.errors.comment}
+                                </p>
                             )}
-                            <Button type="submit" disabled={commentForm.processing}>
+                            <Button
+                                type="submit"
+                                disabled={commentForm.processing}
+                            >
                                 Publicar comentario
                             </Button>
                         </form>
                     </div>
 
-                    <div className="rounded-xl border bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm p-6 space-y-4">
-                        <h2 className="text-sm font-semibold text-foreground">Adjuntos</h2>
+                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                        <h2 className="text-sm font-semibold text-foreground">
+                            Adjuntos
+                        </h2>
                         {attachments.length ? (
                             <div className="space-y-2 text-sm">
                                 {attachments.map((file) => (
-                                    <div key={file.id} className="flex items-center justify-between rounded-lg border border-border/70 p-3">
+                                    <div
+                                        key={file.id}
+                                        className="flex items-center justify-between rounded-lg border border-border/70 p-3"
+                                    >
                                         <div>
-                                            <div className="font-medium">{file.name}</div>
+                                            <div className="font-medium">
+                                                {file.name}
+                                            </div>
                                             <div className="text-xs text-muted-foreground">
-                                                {file.mime_type} · {formatDateTimeEs(file.created_at)}
+                                                {file.mime_type} ·{' '}
+                                                {formatDateTimeEs(
+                                                    file.created_at,
+                                                )}
                                             </div>
                                         </div>
-                                        <a href={file.url} className="text-blue-600 hover:underline" target="_blank" rel="noreferrer">
+                                        <a
+                                            href={file.url}
+                                            className="text-blue-600 hover:underline"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
                                             Ver
                                         </a>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-sm text-muted-foreground">Sin adjuntos.</p>
+                            <p className="text-sm text-muted-foreground">
+                                Sin adjuntos.
+                            </p>
                         )}
 
-                        <form onSubmit={submitAttachments} className="space-y-3">
+                        <form
+                            onSubmit={submitAttachments}
+                            className="space-y-3"
+                        >
                             <Label htmlFor="attachments">Subir archivos</Label>
                             <Input
                                 id="attachments"
                                 type="file"
                                 multiple
-                                onChange={(e) => attachmentForm.setData('attachments', Array.from(e.target.files || []))}
+                                onChange={(e) =>
+                                    attachmentForm.setData(
+                                        'attachments',
+                                        Array.from(e.target.files || []),
+                                    )
+                                }
                             />
                             {attachmentForm.errors.attachments && (
-                                <p className="text-red-500 text-xs">{attachmentForm.errors.attachments}</p>
+                                <p className="text-xs text-red-500">
+                                    {attachmentForm.errors.attachments}
+                                </p>
                             )}
-                            <Button type="submit" disabled={attachmentForm.processing}>
+                            <Button
+                                type="submit"
+                                disabled={attachmentForm.processing}
+                            >
                                 Subir archivos
                             </Button>
                         </form>
@@ -213,14 +294,20 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
         </AppLayout>
     );
 }
-    const dueStatus = (dueDate?: string | null) => {
-        if (!dueDate) return 'none';
-        const today = new Date();
-        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        const due = new Date(`${dueDate}T00:00:00`);
-        if (Number.isNaN(due.getTime())) return 'none';
-        const diffDays = Math.ceil((due.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24));
-        if (diffDays < 0) return 'overdue';
-        if (diffDays <= 3) return 'soon';
-        return 'none';
-    };
+const dueStatus = (dueDate?: string | null) => {
+    if (!dueDate) return 'none';
+    const today = new Date();
+    const startOfToday = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+    );
+    const due = new Date(`${dueDate}T00:00:00`);
+    if (Number.isNaN(due.getTime())) return 'none';
+    const diffDays = Math.ceil(
+        (due.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    if (diffDays < 0) return 'overdue';
+    if (diffDays <= 3) return 'soon';
+    return 'none';
+};

@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class EducationCentersExport implements FromQuery, WithHeadings, WithMapping
 {
     protected $filters;
+
     protected array $columns;
 
     public function __construct(array $filters = [])

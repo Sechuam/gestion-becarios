@@ -1,12 +1,18 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Eye, Pencil, Plus, Search, MessageSquare, FileDown } from 'lucide-react';
+import {
+    Eye,
+    Pencil,
+    Plus,
+    Search,
+    MessageSquare,
+    FileDown,
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from '@/hooks/use-toast';
 import {
     Dialog,
     DialogContent,
@@ -22,8 +28,9 @@ import {
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue
+    SelectValue,
 } from '@/components/ui/select';
+import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { recentLabelFromDate } from '@/lib/recent-label';
 import type { BreadcrumbItem } from '@/types/navigation';
@@ -35,7 +42,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Index({
     schools,
-    filters = {}
+    filters = {},
 }: {
     schools: any;
     filters: any;
@@ -69,10 +76,10 @@ export default function Index({
             { key: 'created_at', label: 'Fecha de registro' },
             { key: 'updated_at', label: 'Última actualización' },
         ],
-        []
+        [],
     );
     const [selectedColumns, setSelectedColumns] = useState<string[]>(
-        exportColumns.map((column) => column.key)
+        exportColumns.map((column) => column.key),
     );
 
     const handleFilter = (key: string, value: string) => {
@@ -94,7 +101,8 @@ export default function Index({
     const handleSort = (key: string) => {
         const currentKey = filters.sort;
         const currentDir = filters.direction || 'asc';
-        const nextDir = currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
+        const nextDir =
+            currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
         const newFilters = { ...filters, sort: key, direction: nextDir };
         router.get('/centros', newFilters, {
             preserveState: true,
@@ -146,28 +154,38 @@ export default function Index({
         router.patch(
             `/centros/${activeSchool.id}/notes`,
             { internal_notes: noteValue },
-            { preserveScroll: true, onSuccess: () => setNotesOpen(false) }
+            { preserveScroll: true, onSuccess: () => setNotesOpen(false) },
         );
     };
 
     useEffect(() => {
-        const filtersEntries = Object.entries(filters || {}).filter(([key, value]) => {
-            if (value === undefined || value === null || value === '') return false;
-            if (key === 'trashed' && value === 'none') return false;
-            return true;
-        });
+        const filtersEntries = Object.entries(filters || {}).filter(
+            ([key, value]) => {
+                if (value === undefined || value === null || value === '')
+                    return false;
+                if (key === 'trashed' && value === 'none') return false;
+                return true;
+            },
+        );
         const hasFilters = filtersEntries.length > 0;
-        const emptyKey = JSON.stringify(filtersEntries.sort(([a], [b]) => a.localeCompare(b)));
+        const emptyKey = JSON.stringify(
+            filtersEntries.sort(([a], [b]) => a.localeCompare(b)),
+        );
 
         if (schools.data.length > 0) {
             lastEmptyKeyRef.current = '';
             return;
         }
 
-        if (schools.data.length === 0 && hasFilters && emptyKey !== lastEmptyKeyRef.current) {
+        if (
+            schools.data.length === 0 &&
+            hasFilters &&
+            emptyKey !== lastEmptyKeyRef.current
+        ) {
             toast({
                 title: 'Sin resultados',
-                description: 'No hay centros que coincidan con los filtros actuales.',
+                description:
+                    'No hay centros que coincidan con los filtros actuales.',
             });
             lastEmptyKeyRef.current = emptyKey;
         }
@@ -181,7 +199,10 @@ export default function Index({
             sortKey: 'name',
             render: (school: any) => (
                 <div className="flex flex-col gap-1">
-                    <Link href={`/centros/${school.id}`} className="hover:underline font-semibold text-foreground">
+                    <Link
+                        href={`/centros/${school.id}`}
+                        className="font-semibold text-foreground hover:underline"
+                    >
                         {school.name}
                     </Link>
                     <RowMetaBadges
@@ -200,7 +221,10 @@ export default function Index({
             sortKey: 'contact_email',
             render: (school: any) =>
                 school.contact_email ? (
-                    <a href={`mailto:${school.contact_email}`} className="hover:underline">
+                    <a
+                        href={`mailto:${school.contact_email}`}
+                        className="hover:underline"
+                    >
                         {school.contact_email}
                     </a>
                 ) : (
@@ -213,7 +237,10 @@ export default function Index({
             sortKey: 'email',
             render: (school: any) =>
                 school.email ? (
-                    <a href={`mailto:${school.email}`} className="hover:underline">
+                    <a
+                        href={`mailto:${school.email}`}
+                        className="hover:underline"
+                    >
                         {school.email}
                     </a>
                 ) : (
@@ -236,18 +263,28 @@ export default function Index({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="bg-card text-muted-foreground border-border hover:text-emerald-600 hover:bg-emerald-50 font-medium shadow-none"
-                                            onClick={() => router.post(`/centros/${school.id}/restore`)}
+                                            className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-emerald-50 hover:text-emerald-600"
+                                            onClick={() =>
+                                                router.post(
+                                                    `/centros/${school.id}/restore`,
+                                                )
+                                            }
                                         >
                                             Restaurar
                                         </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="bg-card text-muted-foreground border-border hover:text-red-600 hover:bg-red-50 font-medium shadow-none"
+                                            className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-red-50 hover:text-red-600"
                                             onClick={() => {
-                                                if (confirm('¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.')) {
-                                                    router.delete(`/centros/${school.id}/force`);
+                                                if (
+                                                    confirm(
+                                                        '¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.',
+                                                    )
+                                                ) {
+                                                    router.delete(
+                                                        `/centros/${school.id}/force`,
+                                                    );
                                                 }
                                             }}
                                         >
@@ -261,12 +298,13 @@ export default function Index({
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="bg-card text-muted-foreground border-border hover:text-blue-600 hover:bg-blue-50 font-medium shadow-none"
+                                    className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-blue-50 hover:text-blue-600"
                                     asChild
                                 >
                                     <Link href={`/centros/${school.id}`}>
                                         <div className="flex items-center">
-                                            <Eye className="w-4 h-4 mr-1.5 text-blue-500/70" /> Ver
+                                            <Eye className="mr-1.5 h-4 w-4 text-blue-500/70" />{' '}
+                                            Ver
                                         </div>
                                     </Link>
                                 </Button>
@@ -274,7 +312,7 @@ export default function Index({
                                     <Button
                                         variant="outline"
                                         size="icon"
-                                        className="bg-card text-muted-foreground border-border hover:text-primary hover:bg-primary/10 font-medium shadow-none"
+                                        className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-primary/10 hover:text-primary"
                                         onClick={() => handleOpenNotes(school)}
                                         title="Notas"
                                     >
@@ -286,12 +324,15 @@ export default function Index({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="bg-card text-muted-foreground border-border hover:text-amber-600 hover:bg-amber-50 font-medium shadow-none"
+                                            className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-amber-50 hover:text-amber-600"
                                             asChild
                                         >
-                                            <Link href={`/centros/${school.id}/edit`}>
+                                            <Link
+                                                href={`/centros/${school.id}/edit`}
+                                            >
                                                 <div className="flex items-center">
-                                                    <Pencil className="w-4 h-4 mr-1.5 text-amber-500/70" /> Editar
+                                                    <Pencil className="mr-1.5 h-4 w-4 text-amber-500/70" />{' '}
+                                                    Editar
                                                 </div>
                                             </Link>
                                         </Button>
@@ -310,20 +351,24 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Centros Educativos" />
 
-            <div className="flex flex-col gap-6 p-6 bg-background text-foreground">
+            <div className="flex flex-col gap-6 bg-background p-6 text-foreground">
                 {/* HEADER */}
-                <div className="flex flex-wrap items-center gap-3 justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-foreground">
                             Centros Educativos
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Gestiona las instituciones, universidades y centros de formación.
+                            Gestiona las instituciones, universidades y centros
+                            de formación.
                         </p>
                     </div>
                     {canManage && (
-                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                            <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white" asChild>
+                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                            <Button
+                                className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
+                                asChild
+                            >
                                 <Link href="/centros/create">
                                     <Plus className="h-4 w-4" />
                                     Añadir Centro
@@ -334,14 +379,16 @@ export default function Index({
                 </div>
 
                 {/* FILTROS */}
-                <div className="flex flex-wrap items-center gap-4 p-5 border rounded-xl bg-card dark:bg-slate-900/60 border-border dark:border-slate-700/70 shadow-sm">
+                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
                     <div className="relative w-full max-w-sm">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
                         <Input
                             placeholder="Buscar por nombre..."
-                            className="pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground"
+                            className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
                             defaultValue={filters.search}
-                            onChange={(e) => handleFilter('search', e.target.value)}
+                            onChange={(e) =>
+                                handleFilter('search', e.target.value)
+                            }
                         />
                     </div>
 
@@ -350,12 +397,12 @@ export default function Index({
                             value={filters.trashed || 'none'}
                             onValueChange={(v) => handleFilter('trashed', v)}
                         >
-                            <SelectTrigger className="w-full bg-background border-border text-foreground">
+                            <SelectTrigger className="w-full border-border bg-background text-foreground">
                                 <SelectValue>
                                     {{
-                                        'none': 'Activos',
-                                        'only': 'Archivados',
-                                        'with': 'Todos'
+                                        none: 'Activos',
+                                        only: 'Archivados',
+                                        with: 'Todos',
                                     }[filters.trashed as string] || 'Activos'}
                                 </SelectValue>
                             </SelectTrigger>
@@ -372,7 +419,7 @@ export default function Index({
                             <DialogTrigger asChild>
                                 <Button
                                     variant="outline"
-                                    className="gap-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                                    className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                                 >
                                     <FileDown className="h-4 w-4" />
                                     Exportar Excel
@@ -380,15 +427,21 @@ export default function Index({
                             </DialogTrigger>
                             <DialogContent className="max-w-xl">
                                 <DialogHeader>
-                                    <DialogTitle>Exportación personalizada</DialogTitle>
+                                    <DialogTitle>
+                                        Exportación personalizada
+                                    </DialogTitle>
                                     <DialogDescription>
-                                        Elige las columnas que quieres incluir en el Excel. Se
-                                        respetarán los filtros actuales.
+                                        Elige las columnas que quieres incluir
+                                        en el Excel. Se respetarán los filtros
+                                        actuales.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     {exportColumns.map((column) => {
-                                        const isChecked = selectedColumns.includes(column.key);
+                                        const isChecked =
+                                            selectedColumns.includes(
+                                                column.key,
+                                            );
                                         return (
                                             <label
                                                 key={column.key}
@@ -396,14 +449,26 @@ export default function Index({
                                             >
                                                 <Checkbox
                                                     checked={isChecked}
-                                                    onCheckedChange={(checked) => {
-                                                        const isOn = checked === true;
-                                                        setSelectedColumns((prev) => {
-                                                            if (isOn) {
-                                                                return [...prev, column.key];
-                                                            }
-                                                            return prev.filter((key) => key !== column.key);
-                                                        });
+                                                    onCheckedChange={(
+                                                        checked,
+                                                    ) => {
+                                                        const isOn =
+                                                            checked === true;
+                                                        setSelectedColumns(
+                                                            (prev) => {
+                                                                if (isOn) {
+                                                                    return [
+                                                                        ...prev,
+                                                                        column.key,
+                                                                    ];
+                                                                }
+                                                                return prev.filter(
+                                                                    (key) =>
+                                                                        key !==
+                                                                        column.key,
+                                                                );
+                                                            },
+                                                        );
                                                     }}
                                                 />
                                                 {column.label}
@@ -412,10 +477,16 @@ export default function Index({
                                     })}
                                 </div>
                                 <DialogFooter>
-                                    <Button variant="outline" onClick={() => setExportOpen(false)}>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setExportOpen(false)}
+                                    >
                                         Cancelar
                                     </Button>
-                                    <Button onClick={handleExport} disabled={selectedColumns.length === 0}>
+                                    <Button
+                                        onClick={handleExport}
+                                        disabled={selectedColumns.length === 0}
+                                    >
                                         Descargar Excel
                                     </Button>
                                 </DialogFooter>
@@ -423,8 +494,9 @@ export default function Index({
                         </Dialog>
                     )}
 
-                    <p className="text-sm text-muted-foreground ml-auto font-medium">
-                        Mostrando {schools.data.length} de {schools.total} centros
+                    <p className="ml-auto text-sm font-medium text-muted-foreground">
+                        Mostrando {schools.data.length} de {schools.total}{' '}
+                        centros
                     </p>
                 </div>
 
@@ -440,14 +512,18 @@ export default function Index({
                 {/* PAGINACIÓN */}
                 <div className="flex items-center gap-2">
                     {schools.links.map((link: any, i: number) => {
-                        const label = link.label.replace('Previous', 'Anterior').replace('Next', 'Siguiente');
+                        const label = link.label
+                            .replace('Previous', 'Anterior')
+                            .replace('Next', 'Siguiente');
                         return (
                             <Link
                                 key={i}
                                 href={link.url ?? '#'}
-                                className={`px-3 py-1 text-sm rounded border border-border ${
-                                    link.active ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
-                                } ${!link.url ? 'opacity-40 pointer-events-none' : ''}`}
+                                className={`rounded border border-border px-3 py-1 text-sm ${
+                                    link.active
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'hover:bg-muted'
+                                } ${!link.url ? 'pointer-events-none opacity-40' : ''}`}
                                 dangerouslySetInnerHTML={{ __html: label }}
                                 preserveState
                             />
@@ -473,7 +549,10 @@ export default function Index({
                         className="min-h-30 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
                     />
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setNotesOpen(false)}>
+                        <Button
+                            variant="outline"
+                            onClick={() => setNotesOpen(false)}
+                        >
                             Cancelar
                         </Button>
                         <Button onClick={handleSaveNotes}>Guardar nota</Button>

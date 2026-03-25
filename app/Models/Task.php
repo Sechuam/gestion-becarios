@@ -9,7 +9,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Task extends Model implements HasMedia
 {
-    use SoftDeletes, InteractsWithMedia;
+    use InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
         'title',

@@ -179,6 +179,34 @@ class InternController extends Controller
      */
     public function update(Request $request, Intern $intern)
     {
+        $messages = [
+            'dni.regex' => 'El DNI/NIE no tiene un formato válido.',
+            'required' => 'El campo :attribute es obligatorio.',
+            'email' => 'El campo :attribute debe ser un correo válido.',
+            'unique' => 'El campo :attribute ya está en uso.',
+            'exists' => 'El campo :attribute no es válido.',
+            'date' => 'El campo :attribute no es una fecha válida.',
+            'in' => 'El valor seleccionado en :attribute no es válido.',
+            'integer' => 'El campo :attribute debe ser un número entero.',
+            'max.string' => 'El campo :attribute no debe superar :max caracteres.',
+            'regex' => 'El campo :attribute no tiene un formato válido.',
+        ];
+
+        $attributes = [
+            'name' => 'nombre',
+            'email' => 'correo electrónico',
+            'education_center_id' => 'centro educativo',
+            'dni' => 'DNI/NIE',
+            'birth_date' => 'fecha de nacimiento',
+            'total_hours' => 'horas totales',
+            'status' => 'estado',
+            'abandon_reason' => 'motivo de abandono',
+            'center_tutor_name' => 'nombre del tutor del centro',
+            'center_tutor_email' => 'correo del tutor del centro',
+            'center_tutor_phone' => 'teléfono del tutor del centro',
+            'company_tutor_user_id' => 'tutor de empresa',
+        ];
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$intern->user_id,
@@ -192,10 +220,7 @@ class InternController extends Controller
             'center_tutor_email' => 'nullable|email|max:255',
             'center_tutor_phone' => 'nullable|string|max:50',
             'company_tutor_user_id' => 'nullable|exists:users,id',
-        ],
-        [
-            'dni.regex' => 'El DNI/NIE no tiene un formato válido.',
-        ]);
+        ], $messages, $attributes);
 
         try {
             DB::transaction(function () use ($request, $intern) {

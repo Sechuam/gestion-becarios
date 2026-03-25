@@ -1,5 +1,20 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, GraduationCap, LayoutGrid, ShieldCheck, Users, Building2, Clock, ClipboardList, Kanban, Star, FileText, ListChecks } from 'lucide-react';
+import {
+    BookOpen,
+    FolderGit2,
+    GraduationCap,
+    LayoutGrid,
+    ShieldCheck,
+    Users,
+    Building2,
+    Clock,
+    ClipboardList,
+    Kanban,
+    Star,
+    FileText,
+    ListChecks,
+    UserCog,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -20,34 +35,38 @@ interface NavItem extends BaseNavItem {
     items?: NavItem[];
 }
 
-const buildMainNavItems = (isIntern: boolean, isAdmin: boolean, isStaff: boolean): NavItem[] => {
+const buildMainNavItems = (
+    isIntern: boolean,
+    isAdmin: boolean,
+    isStaff: boolean,
+): NavItem[] => {
     const seguimientoItems: NavItem[] = [
         ...(isIntern
             ? []
             : [
-                {
-                    title: 'Tareas (Kanban)',
-                    href: '/tareas',
-                    icon: Kanban,
-                },
-            ]),
+                  {
+                      title: 'Tareas (Kanban)',
+                      href: '/tareas',
+                      icon: Kanban,
+                  },
+              ]),
         ...(isIntern
             ? [
-                {
-                    title: 'Mis tareas',
-                    href: '/tareas/mis',
-                    icon: ClipboardList,
-                },
-            ]
+                  {
+                      title: 'Mis tareas',
+                      href: '/tareas/mis',
+                      icon: ClipboardList,
+                  },
+              ]
             : []),
         ...(isAdmin
             ? [
-                {
-                    title: 'Tipos de práctica',
-                    href: '/tipos-practica',
-                    icon: ListChecks,
-                },
-            ]
+                  {
+                      title: 'Tipos de práctica',
+                      href: '/tipos-practica',
+                      icon: ListChecks,
+                  },
+              ]
             : []),
         {
             title: 'Evaluaciones',
@@ -64,53 +83,57 @@ const buildMainNavItems = (isIntern: boolean, isAdmin: boolean, isStaff: boolean
         },
         ...(isIntern
             ? [
-                {
-                    title: 'Mi centro',
-                    href: '/mi-centro',
-                    icon: Building2,
-                },
-            ]
-        : []),
+                  {
+                      title: 'Mi centro',
+                      href: '/mi-centro',
+                      icon: Building2,
+                  },
+              ]
+            : []),
         ...(isStaff
             ? [
-                {
-                    title: 'Centros educativos',
-                    href: '/centros',
-                    icon: Building2,
-                },
-            ]
+                  {
+                      title: 'Centros educativos',
+                      href: '/centros',
+                      icon: Building2,
+                  },
+              ]
             : []),
         ...(isAdmin
             ? [
-                {
-                    title: 'Usuarios',
-                    href: '#',
-                    icon: Users,
-                    isActive: false,
-                    items: [
-                        {
-                            title: 'Becarios',
-                            href: '/becarios',
-                            icon: BookOpen,
-                        },
-                        {
-                            title: 'Tutores',
-                            href: '/tutores',
-                            icon: GraduationCap,
-                        },
-                        {
-                            title: 'Administrador',
-                            href: '/administrador',
-                            icon: ShieldCheck,
-                        },
-                        {
-                            title: 'Gestión de roles',
-                            href: '/usuarios',
-                            icon: Users,
-                        },
-                    ],
-                },
-            ]
+                  {
+                      title: 'Usuarios',
+                      href: '#',
+                      icon: Users,
+                      isActive: false,
+                      items: [
+                          {
+                              title: 'Becarios',
+                              href: '/becarios',
+                              icon: BookOpen,
+                          },
+                          {
+                              title: 'Tutores',
+                              href: '/tutores',
+                              icon: GraduationCap,
+                          },
+                          {
+                              title: 'Administrador',
+                              href: '/administrador',
+                              icon: ShieldCheck,
+                          },
+                      ],
+                  },
+              ]
+            : []),
+        ...(isAdmin
+            ? [
+                  {
+                      title: 'Gestión de usuarios',
+                      href: '/usuarios',
+                      icon: UserCog,
+                  },
+              ]
             : []),
         {
             title: 'Seguimiento académico',
@@ -126,12 +149,12 @@ const buildMainNavItems = (isIntern: boolean, isAdmin: boolean, isStaff: boolean
         },
         ...(isAdmin
             ? [
-                {
-                    title: 'Reportes e informes',
-                    href: '/reportes',
-                    icon: FileText,
-                },
-            ]
+                  {
+                      title: 'Reportes e informes',
+                      href: '/reportes',
+                      icon: FileText,
+                  },
+              ]
             : []),
     ];
 };

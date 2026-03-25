@@ -1,6 +1,10 @@
 import { Link } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react'; // Importamos la flechita
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -55,7 +59,9 @@ export function NavMain({ items = [] }: { items: NavMainItem[] }) {
                         >
                             <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
-                                    <SidebarMenuButton tooltip={{ children: item.title }}>
+                                    <SidebarMenuButton
+                                        tooltip={{ children: item.title }}
+                                    >
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>
                                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -64,10 +70,19 @@ export function NavMain({ items = [] }: { items: NavMainItem[] }) {
                                 <CollapsibleContent>
                                     <SidebarMenuSub>
                                         {item.items.map((subItem) => (
-                                            <SidebarMenuSubItem key={subItem.title}>
-                                                <SidebarMenuSubButton asChild isActive={isCurrentUrl(subItem.href)}>
+                                            <SidebarMenuSubItem
+                                                key={subItem.title}
+                                            >
+                                                <SidebarMenuSubButton
+                                                    asChild
+                                                    isActive={isCurrentUrl(
+                                                        subItem.href,
+                                                    )}
+                                                >
                                                     <Link href={subItem.href}>
-                                                        <span>{subItem.title}</span>
+                                                        <span>
+                                                            {subItem.title}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuSubButton>
                                             </SidebarMenuSubItem>

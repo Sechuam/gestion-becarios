@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class EnsureTutor
 {
@@ -19,6 +19,7 @@ class EnsureTutor
         if (! Auth::user()?->hasRole('tutor')) {
             return back()->with('error', 'Solo los tutores pueden crear tareas');
         }
+
         return $next($request);
     }
 }

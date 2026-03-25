@@ -18,7 +18,7 @@ export function FlashToaster() {
             toast({
                 title: 'Éxito',
                 description: flash.success,
-                variant: 'success',
+                variant: 'default',
             });
             lastShownRef.current.success = flash.success;
         }
