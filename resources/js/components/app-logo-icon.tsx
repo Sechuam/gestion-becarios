@@ -1,13 +1,14 @@
-import { GraduationCap } from 'lucide-react';
-import type { HTMLAttributes } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 
-export default function AppLogoIcon(props: HTMLAttributes<HTMLDivElement>) {
+export default function AppLogoIcon(props: ComponentPropsWithoutRef<'img'>) {
+    const { className, ...rest } = props;
+
     return (
-        <div
-            {...props}
-            className="flex items-center justify-center rounded-md bg-black p-1 text-white dark:bg-white dark:text-black"
-        >
-            <GraduationCap className="h-full w-full" />
-        </div>
+        <img
+            src="/images/becagest-logo.png"
+            alt="BecaGest"
+            className={className}
+            {...rest}
+        />
     );
 }
