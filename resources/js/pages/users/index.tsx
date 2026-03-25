@@ -22,9 +22,11 @@ type UserRow = {
 
 const roleLabel = (role?: string) =>
     ({
+        administrador: 'Administrador',
         admin: 'Administrador',
         tutor: 'Tutor',
         intern: 'Becario',
+        becario: 'Becario',
     })[String(role).toLowerCase()] || '—';
 
 export default function UsersIndex({

@@ -3,6 +3,7 @@
 use App\Http\Controllers\EducationCenterController;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\PracticeTypeController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
@@ -124,6 +125,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('/asistencia', 'attendance/index')->name('attendance.index');
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
+    // Roles y permisos (admin)
+    Route::get('/roles', [RolesController::class, 'index'])
+        ->name('roles.index')
+        ->middleware('admin');
+    Route::post('/roles', [RolesController::class, 'store'])
+        ->name('roles.store')
+        ->middleware('admin');
+    Route::patch('/roles/{role}', [RolesController::class, 'update'])
+        ->name('roles.update')
+        ->middleware('admin');
+    Route::delete('/roles/{role}', [RolesController::class, 'destroy'])
+        ->name('roles.destroy')
+        ->middleware('admin');
+    Route::post('/roles/{role}/permissions/{permission}', [RolesController::class, 'togglePermission'])
+        ->name('roles.permissions.toggle')
+        ->middleware('admin');
 
 });
 
