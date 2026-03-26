@@ -31,7 +31,8 @@ export default function Edit({
         { title: `Editar: ${intern.user.name}`, href: '#' },
     ];
 
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
+        _method: 'put' as const,
         name: intern.user.name,
         email: intern.user.email,
         education_center_id: intern.education_center_id.toString(),
@@ -65,7 +66,8 @@ export default function Edit({
         e?.preventDefault();
         if (processing || submitLock.current) return;
         submitLock.current = true;
-        put(`/interns/${intern.id}`, {
+        post(`/interns/${intern.id}`, {
+            forceFormData: true,
             preserveScroll: true,
             onFinish: () => {
                 submitLock.current = false;

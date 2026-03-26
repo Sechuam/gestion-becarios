@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\InternsExport;
 use App\Http\Requests\StoreInternRequest;
+use App\Http\Requests\UpdateInternRequest;
 use App\Models\EducationCenter;
 use App\Models\Intern;
 use App\Models\User;
@@ -116,16 +117,7 @@ class InternController extends Controller
                 $user->assignRole('intern');
 
                 $intern = $user->intern()->create($request->validated());
-
-                if ($request->hasFile('dni_file')) {
-                    $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
-                }
-                if ($request->hasFile('agreement_file')) {
-                    $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
-                }
-                if ($request->hasFile('insurance_file')) {
-                    $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
-                }
+                $this->syncInternMedia($intern, $request);
             });
 
             return redirect()->route('becarios.index')->with('success', 'Becario creado correctamente');
@@ -177,70 +169,21 @@ class InternController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Intern $intern)
+    public function update(UpdateInternRequest $request, Intern $intern)
     {
-        $messages = [
-            'dni.regex' => 'El DNI/NIE no tiene un formato válido.',
-            'required' => 'El campo :attribute es obligatorio.',
-            'email' => 'El campo :attribute debe ser un correo válido.',
-            'unique' => 'El campo :attribute ya está en uso.',
-            'exists' => 'El campo :attribute no es válido.',
-            'date' => 'El campo :attribute no es una fecha válida.',
-            'in' => 'El valor seleccionado en :attribute no es válido.',
-            'integer' => 'El campo :attribute debe ser un número entero.',
-            'max.string' => 'El campo :attribute no debe superar :max caracteres.',
-            'regex' => 'El campo :attribute no tiene un formato válido.',
-        ];
-
-        $attributes = [
-            'name' => 'nombre',
-            'email' => 'correo electrónico',
-            'education_center_id' => 'centro educativo',
-            'dni' => 'DNI/NIE',
-            'birth_date' => 'fecha de nacimiento',
-            'total_hours' => 'horas totales',
-            'status' => 'estado',
-            'abandon_reason' => 'motivo de abandono',
-            'center_tutor_name' => 'nombre del tutor del centro',
-            'center_tutor_email' => 'correo del tutor del centro',
-            'center_tutor_phone' => 'teléfono del tutor del centro',
-            'company_tutor_user_id' => 'tutor de empresa',
-        ];
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$intern->user_id,
-            'education_center_id' => 'required|exists:education_centers,id',
-            'dni' => 'required|string|regex:/^[XYZ]?\d{7,8}[A-Z]$/i|unique:interns,dni,'.$intern->id,
-            'birth_date' => 'required|date',
-            'total_hours' => 'required|integer',
-            'status' => 'required|in:active,completed,abandoned',
-            'abandon_reason' => 'nullable|string|max:255',
-            'center_tutor_name' => 'nullable|string|max:255',
-            'center_tutor_email' => 'nullable|email|max:255',
-            'center_tutor_phone' => 'nullable|string|max:50',
-            'company_tutor_user_id' => 'nullable|exists:users,id',
-        ], $messages, $attributes);
-
         try {
             DB::transaction(function () use ($request, $intern) {
+                $validated = $request->validated();
+
                 $intern->user->update([
-                    'name' => $request->name,
-                    'email' => $request->email,
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
                 ]);
 
-                $intern->update($request->all());
+                $intern->update($validated);
             });
 
-            if ($request->hasFile('dni_file')) {
-                $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
-            }
-            if ($request->hasFile('agreement_file')) {
-                $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
-            }
-            if ($request->hasFile('insurance_file')) {
-                $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
-            }
+            $this->syncInternMedia($intern, $request);
 
             return redirect()->route('becarios.index')->with('success', 'Becario actualizado correctamente');
         } catch (\Throwable $e) {
@@ -304,5 +247,20 @@ class InternController extends Controller
         ]);
 
         return back()->with('success', 'Notas actualizadas correctamente');
+    }
+
+    protected function syncInternMedia(Intern $intern, Request $request): void
+    {
+        if ($request->hasFile('dni_file')) {
+            $intern->addMediaFromRequest('dni_file')->toMediaCollection('dni');
+        }
+
+        if ($request->hasFile('agreement_file')) {
+            $intern->addMediaFromRequest('agreement_file')->toMediaCollection('agreement');
+        }
+
+        if ($request->hasFile('insurance_file')) {
+            $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
+        }
     }
 }
