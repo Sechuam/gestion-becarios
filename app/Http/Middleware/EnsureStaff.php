@@ -18,7 +18,7 @@ class EnsureStaff
     {
         $user = Auth::user();
 
-        if (! $user?->hasRole('tutor') && ! $user?->hasRole('admin')) {
+        if (! $user?->isStaff()) {
             return back()->with('error', 'No tienes permiso para acceder');
         }
 

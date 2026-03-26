@@ -10,44 +10,17 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { permissionLabel, roleLabel } from '@/lib/roles';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
+import type { Permission, Role } from '@/types';
+
+type RolePermissions = Record<string, number[]>;
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Roles y permisos', href: '/roles' },
 ];
-
-type Role = {
-    id: number;
-    name: string;
-    display_name?: string | null;
-    is_active: boolean;
-    users_count: number;
-    is_protected: boolean;
-};
-
-type Permission = {
-    id: number;
-    name: string;
-};
-
-type RolePermissions = Record<string, number[]>;
-
-const roleLabel = (role: string, displayName?: string | null) =>
-    displayName ||
-    ({
-        admin: 'Admin',
-        tutor: 'Tutor',
-        intern: 'Becario',
-    })[role.toLowerCase()] ||
-    role;
-
-const permissionLabel = (permission: string) =>
-    ({
-        'manage interns': 'Gestionar becarios',
-        'manage schools': 'Gestionar centros',
-    })[permission] || permission;
 
 export default function RolesIndex({
     roles,

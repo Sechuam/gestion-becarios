@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { fadeInHorizontal } from '@/lib/animations';
 import type { AuthLayoutProps } from '@/types';
 
 export default function AuthSimpleLayout({
@@ -6,11 +7,6 @@ export default function AuthSimpleLayout({
     title,
     description,
 }: AuthLayoutProps) {
-    const fadeInHorizontal = {
-        initial: { opacity: 0, x: -36 },
-        animate: { opacity: 1, x: 0 },
-    };
-
     return (
         <div className="relative min-h-dvh bg-[#e7f4f7]">
             <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-40" />

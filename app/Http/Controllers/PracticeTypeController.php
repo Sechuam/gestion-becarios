@@ -13,7 +13,7 @@ class PracticeTypeController extends Controller
 {
     protected function ensureAdmin()
     {
-        if (! Auth::user()?->hasRole('admin')) {
+        if (! Auth::user()?->isAdmin()) {
             abort(403);
         }
     }

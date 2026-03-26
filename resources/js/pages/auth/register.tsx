@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { fadeInUp } from '@/lib/animations';
 import AuthLayout from '@/layouts/auth-layout';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
@@ -15,12 +16,6 @@ import { motion } from 'framer-motion';
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-
-    // Animación base
-    const fadeInUp = {
-        initial: { opacity: 0, y: 25 },
-        animate: { opacity: 1, y: 0 },
-    };
 
     return (
         <AuthLayout

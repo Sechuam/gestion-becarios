@@ -16,7 +16,7 @@ class EnsureAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::user()?->hasRole('admin')) {
+        if (! Auth::user()?->isAdmin()) {
             return back()->with('error', 'No tienes permiso para acceder');
         }
 

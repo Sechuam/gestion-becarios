@@ -16,7 +16,7 @@ class EnsureTutor
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::user()?->hasRole('tutor')) {
+        if (! Auth::user()?->isTutor()) {
             return back()->with('error', 'Solo los tutores pueden crear tareas');
         }
 

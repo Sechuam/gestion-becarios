@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -59,6 +60,33 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function intern(): HasOne
     {
         return $this->hasOne(Intern::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isTutor(): bool
+    {
+        return $this->hasRole('tutor');
+    }
+
+    public function isIntern(): bool
+    {
+        return $this->normalizedRoleNames()
+            ->intersect(['intern', 'becario'])
+            ->isNotEmpty();
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->isAdmin() || $this->isTutor();
+    }
+
+    protected function normalizedRoleNames(): Collection
+    {
+        return $this->getRoleNames()->map(fn (string $role) => strtolower($role));
     }
 
     public function getActivitylogOptions(): LogOptions

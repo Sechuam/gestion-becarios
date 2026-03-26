@@ -11,47 +11,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { roleLabel } from '@/lib/roles';
 import AppLayout from '@/layouts/app-layout';
-
-type RoleOption = {
-    name: string;
-    display_name?: string | null;
-};
+import type { RoleOption } from '@/types';
 
 type UserRow = {
     id: number;
     name: string;
     email: string;
     roles: RoleOption[];
-};
-
-const roleLabel = (role?: RoleOption | string) => {
-    if (!role) return '—';
-
-    if (typeof role === 'object') {
-        return (
-            role.display_name ||
-            ({
-                admin: 'Administrador',
-                tutor: 'Tutor',
-                intern: 'Becario',
-            })[String(role.name).toLowerCase()] ||
-            String(role.name)
-                .replace(/_/g, ' ')
-                .replace(/\b\w/g, (char) => char.toUpperCase())
-        );
-    }
-
-    return (
-        ({
-            admin: 'Administrador',
-            tutor: 'Tutor',
-            intern: 'Becario',
-        })[String(role).toLowerCase()] ||
-        String(role)
-            .replace(/_/g, ' ')
-            .replace(/\b\w/g, (char) => char.toUpperCase())
-    );
 };
 
 export default function UsersIndex({

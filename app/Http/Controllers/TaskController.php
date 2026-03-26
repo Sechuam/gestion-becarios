@@ -23,13 +23,7 @@ class TaskController extends Controller
             ->with(['practiceType', 'creator', 'interns.user']);
 
         $user = Auth::user();
-        if (
-            $user &&
-            $user->getRoleNames()
-                ->map(fn ($role) => strtolower($role))
-                ->intersect(['intern', 'becario'])
-                ->isNotEmpty()
-        ) {
+        if ($user?->isIntern()) {
             $query->whereHas('interns', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
@@ -149,7 +143,7 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
-        if (! Auth::user()?->hasRole('tutor')) {
+        if (! Auth::user()?->isTutor()) {
             return back()->with('error', 'Solo los tutores pueden crear tareas.');
         }
         $validated = $request->validated();
@@ -200,7 +194,7 @@ class TaskController extends Controller
 
     public function create()
     {
-        if (! Auth::user()?->hasRole('tutor')) {
+        if (! Auth::user()?->isTutor()) {
             return back()->with('error', 'Solo los tutores pueden crear tareas.');
         }
 
@@ -213,12 +207,7 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
-        if (
-            Auth::user()?->getRoleNames()
-                ->map(fn ($role) => strtolower($role))
-                ->intersect(['intern', 'becario'])
-                ->isNotEmpty()
-        ) {
+        if (Auth::user()?->isIntern()) {
             return back()->with('error', 'No tienes permiso para editar tareas.');
         }
 
@@ -234,12 +223,7 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        if (
-            Auth::user()?->getRoleNames()
-                ->map(fn ($role) => strtolower($role))
-                ->intersect(['intern', 'becario'])
-                ->isNotEmpty()
-        ) {
+        if (Auth::user()?->isIntern()) {
             return back()->with('error', 'No tienes permiso para editar tareas.');
         }
 
@@ -284,12 +268,7 @@ class TaskController extends Controller
 
     public function updateStatus(Request $request, Task $task)
     {
-        if (
-            Auth::user()?->getRoleNames()
-                ->map(fn ($role) => strtolower($role))
-                ->intersect(['intern', 'becario'])
-                ->isNotEmpty()
-        ) {
+        if (Auth::user()?->isIntern()) {
             return back()->with('error', 'No tienes permiso para editar tareas.');
         }
 
@@ -316,12 +295,7 @@ class TaskController extends Controller
         $task->load(['practiceType', 'creator', 'interns.user', 'comments.user']);
 
         $user = Auth::user();
-        $isIntern = $user
-            ? $user->getRoleNames()
-                ->map(fn ($role) => strtolower($role))
-                ->intersect(['intern', 'becario'])
-                ->isNotEmpty()
-            : false;
+        $isIntern = $user?->isIntern() ?? false;
         $isAssigned = $isIntern
             ? $task->interns()->where('user_id', $user->id)->exists()
             : false;
@@ -360,13 +334,7 @@ class TaskController extends Controller
     public function complete(Task $task)
     {
         $user = Auth::user();
-
-        $isIntern = $user
-            ? $user->getRoleNames()
-                ->map(fn ($role) => strtolower($role))
-                ->intersect(['intern', 'becario'])
-                ->isNotEmpty()
-            : false;
+        $isIntern = $user?->isIntern() ?? false;
 
         if (! $isIntern) {
             return back()->with('error', 'Solo un becario puede completar una tarea.');
