@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import type { AuthLayoutProps } from '@/types';
 
 export default function AuthSimpleLayout({
@@ -5,6 +6,11 @@ export default function AuthSimpleLayout({
     title,
     description,
 }: AuthLayoutProps) {
+    const fadeInHorizontal = {
+        initial: { opacity: 0, x: -36 },
+        animate: { opacity: 1, x: 0 },
+    };
+
     return (
         <div className="relative min-h-dvh bg-[#e7f4f7]">
             <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-40" />
@@ -12,7 +18,13 @@ export default function AuthSimpleLayout({
 
             <div className="relative flex min-h-dvh">
                 <div className="relative hidden flex-1 items-center px-12 py-10 md:flex">
-                    <div className="max-w-lg text-white">
+                    <motion.div
+                        className="max-w-lg text-white"
+                        variants={fadeInHorizontal}
+                        initial="initial"
+                        animate="animate"
+                        transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+                    >
                         <h2 className="text-4xl font-semibold leading-tight text-white">
                             Gestiona becarios sin complicaciones
                         </h2>
@@ -56,7 +68,7 @@ export default function AuthSimpleLayout({
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
                 <aside className="relative ml-auto flex min-h-dvh w-full max-w-md flex-col justify-center bg-white/95 px-8 py-10 shadow-2xl backdrop-blur md:rounded-l-3xl">
                     <div className="mb-6 space-y-2">
