@@ -21,12 +21,20 @@ class UsersController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'roles' => $user->roles->pluck('name')->values(),
+                'roles' => $user->roles->map(fn ($role) => [
+                    'name' => $role->name,
+                    'display_name' => $role->display_name,
+                ])->values(),
             ]);
 
         $roles = Role::query()
             ->orderBy('name')
-            ->pluck('name');
+            ->get()
+            ->map(fn (Role $role) => [
+                'name' => $role->name,
+                'display_name' => $role->display_name,
+            ])
+            ->values();
 
         return Inertia::render('users/index', [
             'users' => $users,

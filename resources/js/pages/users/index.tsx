@@ -13,46 +13,82 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 
+type RoleOption = {
+    name: string;
+    display_name?: string | null;
+};
+
 type UserRow = {
     id: number;
     name: string;
     email: string;
-    roles: string[];
+    roles: RoleOption[];
 };
 
-const roleLabel = (role?: string) =>
-    ({
-        administrador: 'Administrador',
-        admin: 'Administrador',
-        tutor: 'Tutor',
-        intern: 'Becario',
-        becario: 'Becario',
-    })[String(role).toLowerCase()] || '—';
+const roleLabel = (role?: RoleOption | string) => {
+    if (!role) return '—';
+
+    if (typeof role === 'object') {
+        return (
+            role.display_name ||
+            ({
+                admin: 'Administrador',
+                tutor: 'Tutor',
+                intern: 'Becario',
+            })[String(role.name).toLowerCase()] ||
+            String(role.name)
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, (char) => char.toUpperCase())
+        );
+    }
+
+    return (
+        ({
+            admin: 'Administrador',
+            tutor: 'Tutor',
+            intern: 'Becario',
+        })[String(role).toLowerCase()] ||
+        String(role)
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (char) => char.toUpperCase())
+    );
+};
 
 export default function UsersIndex({
     users = [] as UserRow[],
-    roles = [] as string[],
+    roles = [] as RoleOption[],
 }: {
     users: UserRow[];
-    roles: string[];
+    roles: RoleOption[];
 }) {
     const [savingId, setSavingId] = useState<number | null>(null);
     const [query, setQuery] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
+
     const roleOptions = useMemo(
-        () => (roles.length ? roles : ['admin', 'tutor', 'intern']),
-        [roles],
+        () =>
+            roles.length
+                ? roles
+                : [
+                      { name: 'admin', display_name: 'Administrador' },
+                      { name: 'tutor', display_name: 'Tutor' },
+                      { name: 'intern', display_name: 'Becario' },
+                  ],
+        [roles]
     );
 
     const filteredUsers = useMemo(() => {
         const q = query.trim().toLowerCase();
+
         return users.filter((user) => {
             const matchesQuery =
                 !q ||
                 user.name.toLowerCase().includes(q) ||
                 user.email.toLowerCase().includes(q);
+
             const matchesRole =
-                roleFilter === 'all' || user.roles?.[0] === roleFilter;
+                roleFilter === 'all' || user.roles?.[0]?.name === roleFilter;
+
             return matchesQuery && matchesRole;
         });
     }, [users, query, roleFilter]);
@@ -87,22 +123,30 @@ export default function UsersIndex({
                 render: (user: UserRow) => (
                     <div className="flex items-center gap-3">
                         <Select
-                            value={user.roles?.[0] ?? ''}
+                            value={user.roles?.[0]?.name ?? ''}
                             onValueChange={(value) => {
-                                const currentRole = user.roles?.[0] ?? '';
-                                if (value === currentRole) return;
-                                const confirmed = confirm(
-                                    `¿Quieres cambiar el rol de ${user.name} a ${roleLabel(value)}?`,
+                                const currentRole = user.roles?.[0]?.name ?? '';
+                                const selectedRole = roleOptions.find(
+                                    (role) => role.name === value
                                 );
+
+                                if (value === currentRole) return;
+
+                                const confirmed = confirm(
+                                    `¿Quieres cambiar el rol de ${user.name} a ${roleLabel(selectedRole)}?`
+                                );
+
                                 if (!confirmed) return;
+
                                 setSavingId(user.id);
+
                                 router.patch(
                                     `/usuarios/${user.id}/role`,
                                     { role: value },
                                     {
                                         preserveScroll: true,
                                         onFinish: () => setSavingId(null),
-                                    },
+                                    }
                                 );
                             }}
                         >
@@ -111,12 +155,16 @@ export default function UsersIndex({
                             </SelectTrigger>
                             <SelectContent>
                                 {roleOptions.map((role) => (
-                                    <SelectItem key={role} value={role}>
+                                    <SelectItem
+                                        key={role.name}
+                                        value={role.name}
+                                    >
                                         {roleLabel(role)}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
+
                         {savingId === user.id && (
                             <Button
                                 variant="outline"
@@ -131,7 +179,7 @@ export default function UsersIndex({
                 ),
             },
         ],
-        [roleOptions, savingId],
+        [roleOptions, savingId]
     );
 
     return (
@@ -142,6 +190,7 @@ export default function UsersIndex({
             ]}
         >
             <Head title="Usuarios" />
+
             <div className="space-y-6 p-6">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">
@@ -151,6 +200,7 @@ export default function UsersIndex({
                         Asigna roles a los usuarios del sistema.
                     </p>
                 </div>
+
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="w-full max-w-sm">
                         <Input
@@ -159,6 +209,7 @@ export default function UsersIndex({
                             onChange={(e) => setQuery(e.target.value)}
                         />
                     </div>
+
                     <div className="w-56">
                         <Select
                             value={roleFilter}
@@ -172,7 +223,10 @@ export default function UsersIndex({
                                     Todos los roles
                                 </SelectItem>
                                 {roleOptions.map((role) => (
-                                    <SelectItem key={role} value={role}>
+                                    <SelectItem
+                                        key={role.name}
+                                        value={role.name}
+                                    >
                                         {roleLabel(role)}
                                     </SelectItem>
                                 ))}
@@ -180,6 +234,7 @@ export default function UsersIndex({
                         </Select>
                     </div>
                 </div>
+
                 <SimpleTable
                     columns={columns}
                     rows={filteredUsers}
