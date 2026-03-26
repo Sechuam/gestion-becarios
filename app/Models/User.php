@@ -75,7 +75,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function isIntern(): bool
     {
         return $this->normalizedRoleNames()
-            ->intersect(['intern', 'becario'])
+            ->intersect(['intern'])
             ->isNotEmpty();
     }
 

@@ -24,8 +24,8 @@ export default function Appearance() {
                 <div className="space-y-6">
                     <Heading
                         variant="small"
-                        title="Appearance settings"
-                        description="Update your account's appearance settings"
+                        title="Ajustes de apariencia"
+                        description="Actualiza la apariencia de tu cuenta"
                     />
                     <AppearanceTabs />
                 </div>

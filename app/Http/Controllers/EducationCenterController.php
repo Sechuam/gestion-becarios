@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\User;
 
 class EducationCenterController extends Controller
 {
@@ -106,6 +107,7 @@ class EducationCenterController extends Controller
      */
     public function show(Request $request, $school)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         $isIntern = $user?->isIntern() ?? false;
         $currentIntern = $isIntern
