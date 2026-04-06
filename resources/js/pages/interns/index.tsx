@@ -4,14 +4,13 @@ import {
     Plus,
     Search,
     FileDown,
-    Pencil,
-    Eye,
-    MessageSquare,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
-import DeleteInternModal from '@/components/interns/DeleteInternModal';
+import { TableActionMenu } from '@/components/common/TableActionMenu';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -33,8 +32,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateEs } from '@/lib/date-format';
 import { recentLabelFromDate } from '@/lib/recent-label';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -103,6 +104,24 @@ export default function Index({
             currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
         const newFilters = { ...filters, sort: key, direction: nextDir };
         router.get('/becarios', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const clearFilter = (key: string) => {
+        const newFilters = { ...filters };
+        delete newFilters[key];
+        router.get('/becarios', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const clearAllFilters = () => {
+        router.get('/becarios', {}, {
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -245,12 +264,19 @@ export default function Index({
             sortKey: 'education_center',
             render: (intern: any) =>
                 intern.education_center?.id ? (
-                    <Link
-                        href={`/centros/${intern.education_center.id}`}
-                        className="hover:underline"
-                    >
-                        {intern.education_center.name}
-                    </Link>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Link
+                                href={`/centros/${intern.education_center.id}`}
+                                className="block max-w-[220px] truncate hover:underline"
+                            >
+                                {intern.education_center.name}
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {intern.education_center.name}
+                        </TooltipContent>
+                    </Tooltip>
                 ) : (
                     '—'
                 ),
@@ -300,118 +326,152 @@ export default function Index({
                 const isTrashed = !!intern.deleted_at;
 
                 return (
-                    <div className="flex gap-2">
-                        {isTrashed ? (
-                            <>
-                                {canManage && (
-                                    <>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-slate-200 bg-white font-medium text-slate-600 shadow-none hover:bg-emerald-50 hover:text-emerald-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-emerald-900/20"
-                                            onClick={() =>
-                                                router.post(
-                                                    `/interns/${intern.id}/restore`,
-                                                )
-                                            }
-                                        >
-                                            Restaurar
-                                        </Button>
-
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-slate-200 bg-white font-medium text-slate-600 shadow-none hover:bg-red-50 hover:text-red-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-red-900/20"
-                                            onClick={() => {
-                                                if (
-                                                    confirm(
-                                                        '¿Seguro que quieres eliminar definitivamente este becario? Esta acción no se puede deshacer.',
-                                                    )
-                                                ) {
-                                                    router.delete(
-                                                        `/interns/${intern.id}/force`,
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            Eliminar definitivo
-                                        </Button>
-                                    </>
-                                )}
-                            </>
-                        ) : (
-                            <>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-slate-200 bg-white font-medium text-slate-600 shadow-none hover:bg-blue-50 hover:text-blue-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-blue-900/20"
-                                    asChild
-                                >
-                                    <Link href={`/interns/${intern.id}`}>
-                                        <div className="flex items-center">
-                                            <Eye className="mr-1.5 h-4 w-4 text-blue-500/70" />{' '}
-                                            Ver
-                                        </div>
-                                    </Link>
-                                </Button>
-                                {canManage && (
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="border-slate-200 bg-white font-medium text-slate-600 shadow-none hover:bg-primary/10 hover:text-primary dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400"
-                                        onClick={() => handleOpenNotes(intern)}
-                                        title="Notas"
-                                    >
-                                        <MessageSquare className="h-4 w-4" />
-                                    </Button>
-                                )}
-                                {canManage && (
-                                    <>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-slate-200 bg-white font-medium text-slate-600 shadow-none hover:bg-amber-50 hover:text-amber-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-amber-900/20"
-                                            asChild
-                                        >
-                                            <Link
-                                                href={`/interns/${intern.id}/edit`}
-                                            >
-                                                <div className="flex items-center">
-                                                    <Pencil className="mr-1.5 h-4 w-4 text-amber-500/70" />{' '}
-                                                    Editar
-                                                </div>
-                                            </Link>
-                                        </Button>
-                                        <DeleteInternModal intern={intern} />
-                                    </>
-                                )}
-                            </>
-                        )}
-                    </div>
+                    <TableActionMenu
+                        actions={
+                            isTrashed
+                                ? canManage
+                                    ? [
+                                          {
+                                              label: 'Restaurar',
+                                              icon: 'restore',
+                                              onClick: () =>
+                                                  router.post(
+                                                      `/interns/${intern.id}/restore`,
+                                                  ),
+                                          },
+                                          {
+                                              label: 'Eliminar definitivo',
+                                              icon: 'delete',
+                                              variant: 'destructive',
+                                              onClick: () => {
+                                                  if (
+                                                      confirm(
+                                                          '¿Seguro que quieres eliminar definitivamente este becario? Esta acción no se puede deshacer.',
+                                                      )
+                                                  ) {
+                                                      router.delete(
+                                                          `/interns/${intern.id}/force`,
+                                                      );
+                                                  }
+                                              },
+                                          },
+                                      ]
+                                    : []
+                                : [
+                                      {
+                                          label: 'Ver becario',
+                                          icon: 'view',
+                                          href: `/interns/${intern.id}`,
+                                      },
+                                      ...(canManage
+                                          ? [
+                                                {
+                                                    label: 'Editar becario',
+                                                    icon: 'edit' as const,
+                                                    href: `/interns/${intern.id}/edit`,
+                                                    confirm: {
+                                                        title: 'Confirmar edición',
+                                                        description: `Vas a editar el perfil de ${intern.user?.name ?? 'este becario'}.`,
+                                                        confirmLabel: 'Ir a editar',
+                                                    },
+                                                },
+                                                {
+                                                    label: 'Notas internas',
+                                                    icon: 'notes' as const,
+                                                    onClick: () =>
+                                                        handleOpenNotes(intern),
+                                                },
+                                                {
+                                                    label: 'Archivar becario',
+                                                    icon: 'delete' as const,
+                                                    variant: 'destructive' as const,
+                                                    onClick: () =>
+                                                        router.delete(
+                                                            `/interns/${intern.id}`,
+                                                        ),
+                                                },
+                                            ]
+                                          : []),
+                                  ]
+                        }
+                    />
                 );
             },
         },
     ];
+
+    const activeFilterChips = useMemo(() => {
+        const chips = [];
+
+        if (filters.search) chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
+        if (filters.center) {
+            const centerName = education_centers.find(
+                (center: any) => String(center.id) === String(filters.center),
+            )?.name;
+            if (centerName) {
+                chips.push({ key: 'center', label: `Centro: ${centerName}` });
+            }
+        }
+        if (filters.status) chips.push({ key: 'status', label: `Estado: ${filters.status}` });
+        if (filters.start_from) chips.push({ key: 'start_from', label: `Desde: ${formatDateEs(filters.start_from)}` });
+        if (filters.start_to) chips.push({ key: 'start_to', label: `Hasta: ${formatDateEs(filters.start_to)}` });
+        if (filters.trashed) {
+            const trashedLabel =
+                filters.trashed === 'only'
+                    ? 'Archivados'
+                    : filters.trashed === 'with'
+                      ? 'Todos'
+                      : null;
+            if (trashedLabel) {
+                chips.push({ key: 'trashed', label: `Vista: ${trashedLabel}` });
+            }
+        }
+
+        return chips;
+    }, [education_centers, filters]);
+
+    const headerMetrics = useMemo(
+        () => [
+            {
+                label: 'Resultados',
+                value: interns.total,
+                hint: 'Total según filtros actuales',
+            },
+            {
+                label: 'Activos',
+                value: interns.data.filter((i: any) => i.status === 'active')
+                    .length,
+                hint: 'En esta página',
+            },
+            {
+                label: 'Retrasados',
+                value: interns.data.filter((i: any) => i.is_delayed).length,
+                hint: 'Prácticas fuera de fecha',
+            },
+            {
+                label: 'Filtros activos',
+                value: activeFilterChips.length,
+                hint:
+                    activeFilterChips.length > 0
+                        ? 'Puedes limpiarlos arriba'
+                        : 'Sin restricciones aplicadas',
+            },
+        ],
+        [activeFilterChips.length, interns.data, interns.total],
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestión de Becarios" />
 
             <div className="flex flex-col gap-6">
-                {/* HEADER */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h1 className="page-title flex items-center gap-2">
-                            <Users className="h-6 w-6" />
-                            Gestión de Becarios
-                        </h1>
-                        <p className="page-subtitle">
-                            Administra los becarios, sus centros y estados de
-                            prácticas.
-                        </p>
-                    </div>
-                    {canManage && (
-                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                <ModuleHeader
+                    title="Gestión de Becarios"
+                    description="Administra los becarios, sus centros y estados de prácticas con una vista rápida de carga y seguimiento."
+                    icon={<Users className="h-6 w-6" />}
+                    metrics={headerMetrics}
+                    actions={
+                        canManage ? (
                             <Button
                                 className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
                                 asChild
@@ -421,57 +481,9 @@ export default function Index({
                                     Añadir Becario
                                 </Link>
                             </Button>
-                        </div>
-                    )}
-                </div>
-
-                {/* STATS */}
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-                    <div className="rounded-xl border border-border bg-card p-3 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
-                            Total becarios
-                        </p>
-                        <p className="mt-1 text-lg font-semibold text-foreground">
-                            {interns.total}
-                        </p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-card p-3 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
-                            Activos
-                        </p>
-                        <p className="mt-1 text-lg font-semibold text-foreground">
-                            {
-                                interns.data.filter(
-                                    (i: any) => i.status === 'active',
-                                ).length
-                            }
-                        </p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-card p-3 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
-                            Abandonados
-                        </p>
-                        <p className="mt-1 text-lg font-semibold text-foreground">
-                            {
-                                interns.data.filter(
-                                    (i: any) => i.status === 'abandoned',
-                                ).length
-                            }
-                        </p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-card p-3 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
-                            Completados
-                        </p>
-                        <p className="mt-1 text-lg font-semibold text-foreground">
-                            {
-                                interns.data.filter(
-                                    (i: any) => i.status === 'completed',
-                                ).length
-                            }
-                        </p>
-                    </div>
-                </div>
+                        ) : undefined
+                    }
+                />
 
                 {/* FILTROS */}
                 <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
@@ -675,6 +687,12 @@ export default function Index({
                         becarios
                     </p>
                 </div>
+
+                <ActiveFilterChips
+                    chips={activeFilterChips}
+                    onRemove={clearFilter}
+                    onClearAll={clearAllFilters}
+                />
 
                 <SimpleTable
                     columns={columns}

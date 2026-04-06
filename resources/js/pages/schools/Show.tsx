@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Search, FileDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -181,8 +182,8 @@ export default function Show({
                                             Restaurar centro
                                         </Button>
                                         <Button
-                                            variant="outline"
-                                            className="border-red-200 text-red-700 hover:bg-red-50"
+                                            variant="destructive"
+                                            className="shadow-md shadow-red-500/20"
                                             onClick={() => {
                                                 if (
                                                     confirm(
@@ -203,16 +204,15 @@ export default function Show({
                         ) : (
                             <>
                                 {canManage && (
-                                    <Button
+                                    <ConfirmNavigationButton
+                                        href={`/centros/${educationCenter.id}/edit`}
+                                        title="Confirmar edición"
+                                        description={`Vas a editar la ficha de ${educationCenter.name}.`}
+                                        confirmLabel="Ir a editar"
                                         className="bg-slate-900 text-white hover:bg-slate-800"
-                                        asChild
                                     >
-                                        <Link
-                                            href={`/centros/${educationCenter.id}/edit`}
-                                        >
-                                            Editar
-                                        </Link>
-                                    </Button>
+                                        Editar
+                                    </ConfirmNavigationButton>
                                 )}
                             </>
                         )}

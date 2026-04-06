@@ -20,7 +20,8 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $query = Task::query()
-            ->with(['practiceType', 'creator', 'interns.user']);
+            ->with(['practiceType', 'creator', 'interns.user'])
+            ->withCount('comments');
 
         $user = Auth::user();
         if ($user?->isIntern()) {
@@ -86,6 +87,7 @@ class TaskController extends Controller
 
         $query = Task::query()
             ->with(['practiceType', 'creator', 'interns.user'])
+            ->withCount('comments')
             ->whereHas('interns', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             });

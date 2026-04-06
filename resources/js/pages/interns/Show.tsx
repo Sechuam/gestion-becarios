@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { FileText, ArrowLeft } from 'lucide-react';
+import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,14 +49,15 @@ export default function Show({
                             <ArrowLeft className="h-4 w-4" /> Volver
                         </Link>
                     </Button>
-                    <Button
+                    <ConfirmNavigationButton
+                        href={`/interns/${intern.id}/edit`}
+                        title="Confirmar edición"
+                        description={`Vas a editar el perfil de ${intern.user.name}.`}
+                        confirmLabel="Ir a editar"
                         className="bg-slate-900 text-white hover:bg-slate-800"
-                        asChild
                     >
-                        <Link href={`/interns/${intern.id}/edit`}>
-                            Editar perfil
-                        </Link>
-                    </Button>
+                        Editar perfil
+                    </ConfirmNavigationButton>
                 </div>
 
                 {/* HERO */}

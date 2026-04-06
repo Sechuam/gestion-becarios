@@ -22,11 +22,11 @@ export default function DeleteCenterModal({ school }: { school: any }) {
         <Dialog>
             <DialogTrigger asChild>
                 <Button
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
-                    className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-red-50 hover:text-red-600"
+                    className="shadow-md shadow-red-500/20"
                 >
-                    <Trash2 className="mr-1.5 h-4 w-4 text-red-500/70" /> Borrar
+                    <Trash2 className="mr-1.5 h-4 w-4" /> Eliminar
                 </Button>
             </DialogTrigger>
             <DialogContent>

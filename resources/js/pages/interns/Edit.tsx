@@ -1,8 +1,16 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import { useRef } from 'react';
 import { FileText } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -61,6 +69,7 @@ export default function Edit({
     });
 
     const submitLock = useRef(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const submit = (e?: React.FormEvent | React.MouseEvent) => {
         e?.preventDefault();
@@ -73,6 +82,12 @@ export default function Edit({
                 submitLock.current = false;
             },
         });
+    };
+
+    const requestConfirmation = (e?: React.FormEvent | React.MouseEvent) => {
+        e?.preventDefault();
+        if (processing) return;
+        setConfirmOpen(true);
     };
 
     return (
@@ -96,7 +111,7 @@ export default function Edit({
                     </div>
                 </div>
 
-                <form onSubmit={submit} className="space-y-6" noValidate>
+                <form onSubmit={requestConfirmation} className="space-y-6" noValidate>
                     <Tabs defaultValue="personal" className="w-full">
                         <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-border bg-muted p-1 sm:h-12 sm:grid-cols-4 dark:border-slate-700/70 dark:bg-slate-800/70">
                             <TabsTrigger
@@ -710,15 +725,38 @@ export default function Edit({
                             <Link href={`/interns/${intern.id}`}>Cancelar</Link>
                         </Button>
                         <Button
-                            type="submit"
+                            type="button"
                             className="bg-primary text-primary-foreground hover:bg-primary/90"
                             disabled={processing}
-                            onClick={submit}
+                            onClick={requestConfirmation}
                         >
                             Guardar Cambios
                         </Button>
                     </div>
                 </form>
+
+                <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                    <DialogContent>
+                        <DialogTitle>Confirmar cambios</DialogTitle>
+                        <DialogDescription>
+                            Vas a guardar los cambios del perfil de {intern.user.name}.
+                        </DialogDescription>
+                        <DialogFooter className="gap-2">
+                            <DialogClose asChild>
+                                <Button variant="secondary">Cancelar</Button>
+                            </DialogClose>
+                            <Button
+                                onClick={() => {
+                                    setConfirmOpen(false);
+                                    submit();
+                                }}
+                                disabled={processing}
+                            >
+                                Guardar cambios
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );

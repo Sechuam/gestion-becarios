@@ -1,16 +1,16 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
-    Eye,
-    Pencil,
+    Building2,
     Plus,
     Search,
-    MessageSquare,
     FileDown,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
-import DeleteCenterModal from '@/components/schools/DeleteCenterModal';
+import { TableActionMenu } from '@/components/common/TableActionMenu';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -30,6 +30,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { recentLabelFromDate } from '@/lib/recent-label';
@@ -105,6 +106,24 @@ export default function Index({
             currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
         const newFilters = { ...filters, sort: key, direction: nextDir };
         router.get('/centros', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const clearFilter = (key: string) => {
+        const newFilters = { ...filters };
+        delete newFilters[key];
+        router.get('/centros', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const clearAllFilters = () => {
+        router.get('/centros', {}, {
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -214,19 +233,50 @@ export default function Index({
         },
         { key: 'code', label: 'Código', sortKey: 'code' },
         { key: 'city', label: 'Ciudad', sortKey: 'city' },
-        { key: 'contact_person', label: 'Contacto', sortKey: 'contact_person' },
+        {
+            key: 'contact_person',
+            label: 'Contacto',
+            sortKey: 'contact_person',
+            render: (school: any) =>
+                school.contact_person ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="max-w-[180px] truncate">
+                                {school.contact_person}
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <div className="space-y-1">
+                                <p className="font-medium">{school.contact_person}</p>
+                                {school.contact_position && (
+                                    <p>{school.contact_position}</p>
+                                )}
+                            </div>
+                        </TooltipContent>
+                    </Tooltip>
+                ) : (
+                    '—'
+                ),
+        },
         {
             key: 'contact_email',
             label: 'Email Coordinador',
             sortKey: 'contact_email',
             render: (school: any) =>
                 school.contact_email ? (
-                    <a
-                        href={`mailto:${school.contact_email}`}
-                        className="hover:underline"
-                    >
-                        {school.contact_email}
-                    </a>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <a
+                                href={`mailto:${school.contact_email}`}
+                                className="block max-w-[220px] truncate hover:underline"
+                            >
+                                {school.contact_email}
+                            </a>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {school.contact_email}
+                        </TooltipContent>
+                    </Tooltip>
                 ) : (
                     '—'
                 ),
@@ -255,116 +305,139 @@ export default function Index({
                 const isTrashed = !!school.deleted_at;
 
                 return (
-                    <div className="flex gap-2">
-                        {isTrashed ? (
-                            <>
-                                {canManage && (
-                                    <>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-emerald-50 hover:text-emerald-600"
-                                            onClick={() =>
-                                                router.post(
-                                                    `/centros/${school.id}/restore`,
-                                                )
-                                            }
-                                        >
-                                            Restaurar
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-red-50 hover:text-red-600"
-                                            onClick={() => {
-                                                if (
-                                                    confirm(
-                                                        '¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.',
-                                                    )
-                                                ) {
-                                                    router.delete(
-                                                        `/centros/${school.id}/force`,
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            Eliminar definitivo
-                                        </Button>
-                                    </>
-                                )}
-                            </>
-                        ) : (
-                            <>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-blue-50 hover:text-blue-600"
-                                    asChild
-                                >
-                                    <Link href={`/centros/${school.id}`}>
-                                        <div className="flex items-center">
-                                            <Eye className="mr-1.5 h-4 w-4 text-blue-500/70" />{' '}
-                                            Ver
-                                        </div>
-                                    </Link>
-                                </Button>
-                                {canManage && (
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-primary/10 hover:text-primary"
-                                        onClick={() => handleOpenNotes(school)}
-                                        title="Notas"
-                                    >
-                                        <MessageSquare className="h-4 w-4" />
-                                    </Button>
-                                )}
-                                {canManage ? (
-                                    <>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-amber-50 hover:text-amber-600"
-                                            asChild
-                                        >
-                                            <Link
-                                                href={`/centros/${school.id}/edit`}
-                                            >
-                                                <div className="flex items-center">
-                                                    <Pencil className="mr-1.5 h-4 w-4 text-amber-500/70" />{' '}
-                                                    Editar
-                                                </div>
-                                            </Link>
-                                        </Button>
-                                        <DeleteCenterModal school={school} />
-                                    </>
-                                ) : null}
-                            </>
-                        )}
-                    </div>
+                    <TableActionMenu
+                        actions={
+                            isTrashed
+                                ? canManage
+                                    ? [
+                                          {
+                                              label: 'Restaurar centro',
+                                              icon: 'restore',
+                                              onClick: () =>
+                                                  router.post(
+                                                      `/centros/${school.id}/restore`,
+                                                  ),
+                                          },
+                                          {
+                                              label: 'Eliminar definitivo',
+                                              icon: 'delete',
+                                              variant: 'destructive',
+                                              onClick: () => {
+                                                  if (
+                                                      confirm(
+                                                          '¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.',
+                                                      )
+                                                  ) {
+                                                      router.delete(
+                                                          `/centros/${school.id}/force`,
+                                                      );
+                                                  }
+                                              },
+                                          },
+                                      ]
+                                    : []
+                                : [
+                                      {
+                                          label: 'Ver centro',
+                                          icon: 'view',
+                                          href: `/centros/${school.id}`,
+                                      },
+                                      ...(canManage
+                                          ? [
+                                                {
+                                                    label: 'Editar centro',
+                                                    icon: 'edit' as const,
+                                                    href: `/centros/${school.id}/edit`,
+                                                    confirm: {
+                                                        title: 'Confirmar edición',
+                                                        description: `Vas a editar la ficha de ${school.name}.`,
+                                                        confirmLabel: 'Ir a editar',
+                                                    },
+                                                },
+                                                {
+                                                    label: 'Notas internas',
+                                                    icon: 'notes' as const,
+                                                    onClick: () =>
+                                                        handleOpenNotes(school),
+                                                },
+                                                {
+                                                    label: 'Archivar centro',
+                                                    icon: 'delete' as const,
+                                                    variant: 'destructive' as const,
+                                                    onClick: () =>
+                                                        router.delete(
+                                                            `/centros/${school.id}`,
+                                                        ),
+                                                },
+                                            ]
+                                          : []),
+                                  ]
+                        }
+                    />
                 );
             },
         },
     ];
+
+    const activeFilterChips = useMemo(() => {
+        const chips = [];
+
+        if (filters.search) chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
+        if (filters.trashed && filters.trashed !== 'none') {
+            chips.push({
+                key: 'trashed',
+                label: `Vista: ${filters.trashed === 'only' ? 'Archivados' : 'Todos'}`,
+            });
+        }
+
+        return chips;
+    }, [filters]);
+
+    const headerMetrics = useMemo(
+        () => [
+            {
+                label: 'Resultados',
+                value: schools.total,
+                hint: 'Total según filtros actuales',
+            },
+            {
+                label: 'Archivados',
+                value: schools.data.filter((school: any) => !!school.deleted_at)
+                    .length,
+                hint: 'En esta página',
+            },
+            {
+                label: 'Con contacto',
+                value: schools.data.filter(
+                    (school: any) =>
+                        school.contact_person || school.contact_email,
+                ).length,
+                hint: 'Centros con referencia directa',
+            },
+            {
+                label: 'Filtros activos',
+                value: activeFilterChips.length,
+                hint:
+                    activeFilterChips.length > 0
+                        ? 'Puedes limpiarlos arriba'
+                        : 'Sin restricciones aplicadas',
+            },
+        ],
+        [activeFilterChips.length, schools.data, schools.total],
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Centros Educativos" />
 
             <div className="flex flex-col gap-6">
-                {/* HEADER */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h1 className="page-title">
-                            Centros Educativos
-                        </h1>
-                        <p className="page-subtitle">
-                            Gestiona las instituciones, universidades y centros
-                            de formación.
-                        </p>
-                    </div>
-                    {canManage && (
-                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                <ModuleHeader
+                    title="Centros Educativos"
+                    description="Gestiona instituciones, universidades y centros de formación con una visión rápida del estado de tu red."
+                    icon={<Building2 className="h-6 w-6" />}
+                    metrics={headerMetrics}
+                    actions={
+                        canManage ? (
                             <Button
                                 className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
                                 asChild
@@ -374,9 +447,9 @@ export default function Index({
                                     Añadir Centro
                                 </Link>
                             </Button>
-                        </div>
-                    )}
-                </div>
+                        ) : undefined
+                    }
+                />
 
                 {/* FILTROS */}
                 <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
@@ -499,6 +572,12 @@ export default function Index({
                         centros
                     </p>
                 </div>
+
+                <ActiveFilterChips
+                    chips={activeFilterChips}
+                    onRemove={clearFilter}
+                    onClearAll={clearAllFilters}
+                />
 
                 <SimpleTable
                     columns={columns}
