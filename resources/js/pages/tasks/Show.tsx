@@ -4,20 +4,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
+import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
     task: any;
     attachments: any[];
     is_assigned: boolean;
-};
-
-const statusLabels: Record<string, string> = {
-    pending: 'Pendiente',
-    in_progress: 'En progreso',
-    in_review: 'En revisión',
-    completed: 'Completada',
-    rejected: 'Rechazada',
 };
 
 export default function Show({ task, attachments = [], is_assigned }: Props) {
@@ -94,7 +87,7 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                                 Estado:
                             </span>{' '}
                             <span className="font-medium">
-                                {statusLabels[task.status] || task.status}
+                                {getTaskStatusLabel(task.status)}
                             </span>
                         </div>
                         <div className="text-sm">
@@ -102,7 +95,7 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                                 Prioridad:
                             </span>{' '}
                             <span className="font-medium">
-                                {task.priority || '—'}
+                                {getTaskPriorityLabel(task.priority)}
                             </span>
                         </div>
                         <div className="text-sm">

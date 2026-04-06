@@ -1,7 +1,7 @@
 import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Eye, Pencil, Trash2 } from 'lucide-react';
-import { useMemo } from 'react';
+import { Eye, LayoutGrid, List, Pencil, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import DeleteTaskModal from '@/components/tasks/DeleteTaskModal';
 import { Button } from '@/components/ui/button';
@@ -14,8 +14,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
+import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
@@ -36,6 +38,8 @@ const KANBAN_COLUMNS = [
     { key: 'completed', label: 'Completada' },
     { key: 'rejected', label: 'Rechazada' },
 ];
+
+type TaskViewMode = 'kanban' | 'table';
 
 function DroppableColumn({
     id,
@@ -73,22 +77,6 @@ const dueStatus = (dueDate?: string | null) => {
     if (diffDays <= 3) return 'soon';
     return 'none';
 };
-
-const statusLabel = (status: string) =>
-    ({
-        pending: 'Pendiente',
-        in_progress: 'En progreso',
-        in_review: 'En revisión',
-        completed: 'Completada',
-        rejected: 'Rechazada',
-    })[status] || status;
-
-const priorityLabel = (p?: string) =>
-    ({
-        high: 'Alta',
-        medium: 'Media',
-        low: 'Baja',
-    })[String(p).toLowerCase()] || '—';
 
 function DraggableTask({ task }: { task: any }) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -136,10 +124,26 @@ export default function Index({
     filters = {},
     practice_types = [],
 }: Props) {
+    const [viewMode, setViewMode] = useState<TaskViewMode>(() => {
+        if (typeof window === 'undefined') return 'kanban';
+
+        const savedView = window.localStorage.getItem(
+            'tasks-index-view-mode',
+        );
+
+        return savedView === 'table' ? 'table' : 'kanban';
+    });
     const { auth } = usePage().props as any;
     const isIntern =
         auth?.user?.roles?.includes('intern') ||
         auth?.user?.roles?.includes('becario');
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        window.localStorage.setItem('tasks-index-view-mode', viewMode);
+    }, [viewMode]);
+
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
         if (value === '' || value === 'all') {
@@ -207,13 +211,13 @@ export default function Index({
                 key: 'status',
                 label: 'Estado',
                 sortKey: 'status',
-                render: (task: any) => statusLabel(task.status) || '—',
+                render: (task: any) => getTaskStatusLabel(task.status),
             },
             {
                 key: 'priority',
                 label: 'Prioridad',
                 sortKey: 'priority',
-                render: (task: any) => priorityLabel(task.priority),
+                render: (task: any) => getTaskPriorityLabel(task.priority),
             },
             {
                 key: 'due_date',
@@ -325,12 +329,75 @@ export default function Index({
                         </p>
                     </div>
                     {isTutor && (
-                        <Button
-                            className="bg-slate-900 text-white hover:bg-slate-800"
-                            asChild
+                        <div className="flex items-center gap-2">
+                            <ToggleGroup
+                                type="single"
+                                value={viewMode}
+                                onValueChange={(value) => {
+                                    if (value === 'kanban' || value === 'table') {
+                                        setViewMode(value);
+                                    }
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="rounded-lg border border-border bg-card/80 p-0.5 shadow-sm"
+                            >
+                                <ToggleGroupItem
+                                    value="kanban"
+                                    className="rounded-md px-2"
+                                    aria-label="Vista kanban"
+                                    title="Vista kanban"
+                                >
+                                    <LayoutGrid className="h-4 w-4" />
+                                </ToggleGroupItem>
+                                <ToggleGroupItem
+                                    value="table"
+                                    className="rounded-md px-2"
+                                    aria-label="Vista tabla"
+                                    title="Vista tabla"
+                                >
+                                    <List className="h-4 w-4" />
+                                </ToggleGroupItem>
+                            </ToggleGroup>
+
+                            <Button
+                                className="bg-slate-900 text-white hover:bg-slate-800"
+                                asChild
+                            >
+                                <Link href="/tareas/create">Nueva tarea</Link>
+                            </Button>
+                        </div>
+                    )}
+                    {!isTutor && (
+                        <ToggleGroup
+                            type="single"
+                            value={viewMode}
+                            onValueChange={(value) => {
+                                if (value === 'kanban' || value === 'table') {
+                                    setViewMode(value);
+                                }
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="rounded-lg border border-border bg-card/80 p-0.5 shadow-sm"
                         >
-                            <Link href="/tareas/create">Nueva tarea</Link>
-                        </Button>
+                            <ToggleGroupItem
+                                value="kanban"
+                                className="rounded-md px-2"
+                                aria-label="Vista kanban"
+                                title="Vista kanban"
+                            >
+                                <LayoutGrid className="h-4 w-4" />
+                            </ToggleGroupItem>
+                            <ToggleGroupItem
+                                value="table"
+                                className="rounded-md px-2"
+                                aria-label="Vista tabla"
+                                title="Vista tabla"
+                            >
+                                <List className="h-4 w-4" />
+                            </ToggleGroupItem>
+                        </ToggleGroup>
                     )}
                 </div>
 
@@ -443,56 +510,58 @@ export default function Index({
                     </p>
                 </div>
 
-                <DndContext
-                    onDragEnd={(event) => {
-                        if (isIntern) return;
-                        const { active, over } = event;
-                        if (!over) return;
+                {viewMode === 'kanban' ? (
+                    <DndContext
+                        onDragEnd={(event) => {
+                            if (isIntern) return;
+                            const { active, over } = event;
+                            if (!over) return;
 
-                        const taskId = active.id;
-                        const newStatus = over.id;
+                            const taskId = active.id;
+                            const newStatus = over.id;
 
-                        router.patch(
-                            `/tareas/${taskId}/status`,
-                            { status: newStatus },
-                            { preserveScroll: true },
-                        );
-                    }}
-                >
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-                        {KANBAN_COLUMNS.map((col) => (
-                            <div
-                                key={col.key}
-                                className="rounded-xl border bg-card p-3"
-                            >
-                                <h3 className="mb-3 text-sm font-semibold text-foreground">
-                                    {col.label}
-                                </h3>
-                                <DroppableColumn id={col.key}>
-                                    <div className="space-y-3">
-                                        {tasksByStatus[col.key].map(
-                                            (task: any) => (
-                                                <DraggableTask
-                                                    key={task.id}
-                                                    task={task}
-                                                />
-                                            ),
-                                        )}
-                                    </div>
-                                </DroppableColumn>
-                            </div>
-                        ))}
-                    </div>
-                </DndContext>
-
-                <SimpleTable
-                    columns={columns}
-                    rows={tasks.data}
-                    rowKey={(row) => row.id}
-                    sortKey={filters.sort}
-                    sortDirection={filters.direction}
-                    onSort={handleSort}
-                />
+                            router.patch(
+                                `/tareas/${taskId}/status`,
+                                { status: newStatus },
+                                { preserveScroll: true },
+                            );
+                        }}
+                    >
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+                            {KANBAN_COLUMNS.map((col) => (
+                                <div
+                                    key={col.key}
+                                    className="rounded-xl border bg-card p-3"
+                                >
+                                    <h3 className="mb-3 text-sm font-semibold text-foreground">
+                                        {col.label}
+                                    </h3>
+                                    <DroppableColumn id={col.key}>
+                                        <div className="space-y-3">
+                                            {tasksByStatus[col.key].map(
+                                                (task: any) => (
+                                                    <DraggableTask
+                                                        key={task.id}
+                                                        task={task}
+                                                    />
+                                                ),
+                                            )}
+                                        </div>
+                                    </DroppableColumn>
+                                </div>
+                            ))}
+                        </div>
+                    </DndContext>
+                ) : (
+                    <SimpleTable
+                        columns={columns}
+                        rows={tasks.data}
+                        rowKey={(row) => row.id}
+                        sortKey={filters.sort}
+                        sortDirection={filters.direction}
+                        onSort={handleSort}
+                    />
+                )}
 
                 <div className="flex items-center gap-2">
                     {tasks.links.map((link: any, i: number) => {
