@@ -412,7 +412,14 @@ export default function Index({
                 chips.push({ key: 'center', label: `Centro: ${centerName}` });
             }
         }
-        if (filters.status) chips.push({ key: 'status', label: `Estado: ${filters.status}` });
+        if (filters.status) {
+            const statusLabel: Record<string, string> = {
+                active: 'Activos',
+                completed: 'Completados',
+                abandoned: 'Abandonados',
+            };
+            chips.push({ key: 'status', label: `Estado: ${statusLabel[filters.status] || filters.status}` });
+        }
         if (filters.start_from) chips.push({ key: 'start_from', label: `Desde: ${formatDateEs(filters.start_from)}` });
         if (filters.start_to) chips.push({ key: 'start_to', label: `Hasta: ${formatDateEs(filters.start_to)}` });
         if (filters.trashed) {
@@ -448,16 +455,8 @@ export default function Index({
                 value: interns.data.filter((i: any) => i.is_delayed).length,
                 hint: 'Prácticas fuera de fecha',
             },
-            {
-                label: 'Filtros activos',
-                value: activeFilterChips.length,
-                hint:
-                    activeFilterChips.length > 0
-                        ? 'Puedes limpiarlos arriba'
-                        : 'Sin restricciones aplicadas',
-            },
         ],
-        [activeFilterChips.length, interns.data, interns.total],
+        [interns.data, interns.total],
     );
 
     return (
