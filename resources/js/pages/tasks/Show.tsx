@@ -17,6 +17,8 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
     const commentForm = useForm({ comment: '' });
     const attachmentForm = useForm({ attachments: [] as File[] });
     const completeForm = useForm({});
+    const canSubmitTask =
+        is_assigned && ['pending', 'in_progress'].includes(String(task.status));
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -41,7 +43,7 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
         });
     };
 
-    const markCompleted = () => {
+    const submitTask = () => {
         completeForm.post(`/tareas/${task.id}/complete`, {
             preserveScroll: true,
         });
@@ -62,13 +64,13 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
-                        {is_assigned && task.status !== 'completed' && (
+                        {canSubmitTask && (
                             <Button
-                                onClick={markCompleted}
+                                onClick={submitTask}
                                 disabled={completeForm.processing}
                                 className="bg-emerald-600 text-white hover:bg-emerald-700"
                             >
-                                Marcar como completada
+                                Entregar
                             </Button>
                         )}
                         <Button variant="outline" asChild>

@@ -44,6 +44,7 @@ type Props = {
     tasks: any;
     filters: any;
     practice_types: any[];
+    interns: Array<{ id: number; name: string }>;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -117,6 +118,7 @@ export default function Index({
     tasks,
     filters = {},
     practice_types = [],
+    interns = [],
 }: Props) {
     const [viewMode, setViewMode] = useState<TaskViewMode>(() => {
         if (typeof window === 'undefined') return 'kanban';
@@ -436,11 +438,22 @@ export default function Index({
                 });
             }
         }
+        if (filters.intern_id) {
+            const internName = interns.find(
+                (intern) => String(intern.id) === String(filters.intern_id),
+            )?.name;
+            if (internName) {
+                chips.push({
+                    key: 'intern_id',
+                    label: `Becario: ${internName}`,
+                });
+            }
+        }
         if (filters.due_from) chips.push({ key: 'due_from', label: `Desde: ${formatDateEs(filters.due_from)}` });
         if (filters.due_to) chips.push({ key: 'due_to', label: `Hasta: ${formatDateEs(filters.due_to)}` });
 
         return chips;
-    }, [filters, practice_types]);
+    }, [filters, interns, practice_types]);
 
     const boardQuickFilters = useMemo(
         () => [
@@ -643,6 +656,38 @@ export default function Index({
                                         value={type.id.toString()}
                                     >
                                         {type.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="w-60">
+                        <Select
+                            value={filters.intern_id || 'all'}
+                            onValueChange={(v) => handleFilter('intern_id', v)}
+                        >
+                            <SelectTrigger className="w-full border-border bg-background text-foreground">
+                                <SelectValue>
+                                    {filters.intern_id && filters.intern_id !== 'all'
+                                        ? interns.find(
+                                              (intern) =>
+                                                  String(intern.id) ===
+                                                  String(filters.intern_id),
+                                          )?.name || 'Todos los becarios'
+                                        : 'Todos los becarios'}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">
+                                    Todos los becarios
+                                </SelectItem>
+                                {interns.map((intern) => (
+                                    <SelectItem
+                                        key={intern.id}
+                                        value={String(intern.id)}
+                                    >
+                                        {intern.name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>

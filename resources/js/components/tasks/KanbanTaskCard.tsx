@@ -26,6 +26,7 @@ type Props = {
     canDrag?: boolean;
     canEdit?: boolean;
     canComplete?: boolean;
+    completeLabel?: string;
     onComplete?: (task: any) => void;
     onOpenDetails?: (task: any) => void;
     highlightMove?: boolean;
@@ -83,6 +84,7 @@ export default function KanbanTaskCard({
     canDrag = true,
     canEdit = false,
     canComplete = false,
+    completeLabel = 'Completar',
     onComplete,
     onOpenDetails,
     highlightMove = false,
@@ -241,7 +243,9 @@ export default function KanbanTaskCard({
                         </Link>
                     </Button>
                 )}
-                {canComplete && onComplete && task.status !== 'completed' && (
+                {canComplete &&
+                    onComplete &&
+                    ['pending', 'in_progress'].includes(String(task.status)) && (
                     <Button
                         size="sm"
                         className="ml-auto h-8 gap-1.5 px-3"
@@ -252,9 +256,9 @@ export default function KanbanTaskCard({
                         }}
                     >
                         <CheckCircle2 className="h-4 w-4" />
-                        Completar
+                        {completeLabel}
                     </Button>
-                )}
+                    )}
             </div>
         </div>
     );

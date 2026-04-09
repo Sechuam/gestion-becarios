@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Search, FileDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ClearFiltersButton } from '@/components/common/ClearFiltersButton';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,11 @@ export default function Show({
 
     const isIntern = !!is_intern;
     const currentIntern = current_intern;
+    const hasActiveFilters = Boolean(
+        filters?.search ||
+            filters?.status ||
+            (filters?.order && filters.order !== 'az'),
+    );
 
     const exportColumns = useMemo(
         () => [
@@ -94,6 +100,14 @@ export default function Show({
         toast({
             title: 'Exportación iniciada',
             description: 'Tu descarga comenzará en breve.',
+        });
+    };
+
+    const clearAllFilters = () => {
+        router.get(`/centros/${educationCenter.id}`, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
         });
     };
 

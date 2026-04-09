@@ -42,6 +42,12 @@ class TaskController extends Controller
             $query->where('practice_type_id', $request->practice_type);
         }
 
+        if ($request->filled('intern_id')) {
+            $query->whereHas('interns', function ($q) use ($request) {
+                $q->where('interns.id', $request->intern_id);
+            });
+        }
+
         if ($request->filled('due_from')) {
             $query->whereDate('due_date', '>=', $request->due_from);
         }
@@ -76,8 +82,18 @@ class TaskController extends Controller
 
         return Inertia::render('tasks/index', [
             'tasks' => $tasks,
-            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search', 'sort', 'direction']),
+            'filters' => $request->only(['status', 'practice_type', 'intern_id', 'due_from', 'due_to', 'search', 'sort', 'direction']),
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
+            'interns' => Intern::query()
+                ->with('user:id,name')
+                ->join('users', 'users.id', '=', 'interns.user_id')
+                ->orderBy('users.name')
+                ->select('interns.id', 'interns.user_id')
+                ->get()
+                ->map(fn (Intern $intern) => [
+                    'id' => $intern->id,
+                    'name' => $intern->user?->name ?? "Becario #{$intern->id}",
+                ]),
         ]);
     }
 
@@ -339,7 +355,7 @@ class TaskController extends Controller
         $isIntern = $user?->isIntern() ?? false;
 
         if (! $isIntern) {
-            return back()->with('error', 'Solo un becario puede completar una tarea.');
+            return back()->with('error', 'Solo un becario puede entregar una tarea.');
         }
 
         $isAssigned = $task->interns()->where('user_id', $user->id)->exists();
@@ -351,18 +367,26 @@ class TaskController extends Controller
             return back()->with('success', 'La tarea ya está completada.');
         }
 
+        if ($task->status === 'in_review') {
+            return back()->with('success', 'La tarea ya está entregada y en revisión.');
+        }
+
+        if (! in_array($task->status, ['pending', 'in_progress'], true)) {
+            return back()->with('error', 'Solo puedes entregar tareas pendientes o en progreso.');
+        }
+
         $fromStatus = $task->status;
-        $task->update(['status' => 'completed']);
+        $task->update(['status' => 'in_review']);
 
         TaskStatusLog::create([
             'task_id' => $task->id,
             'from_status' => $fromStatus,
-            'to_status' => 'completed',
+            'to_status' => 'in_review',
             'changed_by' => $user->id,
             'changed_at' => now(),
         ]);
 
-        return back()->with('success', 'Tarea marcada como completada.');
+        return back()->with('success', 'Tarea entregada y enviada a revisión.');
     }
 
     public function storeComment(Request $request, Task $task)

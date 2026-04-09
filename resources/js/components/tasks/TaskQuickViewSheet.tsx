@@ -35,6 +35,7 @@ type Props = {
     onOpenChange: (open: boolean) => void;
     canEdit?: boolean;
     canComplete?: boolean;
+    completeLabel?: string;
     onComplete?: (task: any) => void;
     onMoveTask?: (task: any, status: string) => void;
     availableStatuses?: Array<{ key: string; label: string }>;
@@ -99,6 +100,7 @@ export default function TaskQuickViewSheet({
     onOpenChange,
     canEdit = false,
     canComplete = false,
+    completeLabel = 'Completar',
     onComplete,
     onMoveTask,
     availableStatuses = [],
@@ -291,13 +293,15 @@ export default function TaskQuickViewSheet({
                                 )}
                                 {canComplete &&
                                     onComplete &&
-                                    task.status !== 'completed' && (
+                                    ['pending', 'in_progress'].includes(
+                                        String(task.status),
+                                    ) && (
                                         <Button
                                             onClick={() => onComplete(task)}
                                             className="gap-2"
                                         >
                                             <CheckCircle2 className="h-4 w-4" />
-                                            Marcar completada
+                                            {completeLabel}
                                         </Button>
                                     )}
                             </div>

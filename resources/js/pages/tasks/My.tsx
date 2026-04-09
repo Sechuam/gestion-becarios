@@ -398,7 +398,7 @@ export default function My({
         [tasks.data],
     );
 
-    const completeTask = (selectedTask: any) =>
+    const submitTask = (selectedTask: any) =>
         router.post(
             `/tareas/${selectedTask.id}/complete`,
             {},
@@ -408,8 +408,8 @@ export default function My({
                     {
                         setSelectedTask(null);
                         toast({
-                            title: 'Tarea completada',
-                            description: `"${selectedTask.title}" se ha marcado como completada.`,
+                            title: 'Tarea entregada',
+                            description: `"${selectedTask.title}" se ha enviado a revisión.`,
                         });
                     },
             },
@@ -723,8 +723,9 @@ export default function My({
                                                                 task={task}
                                                                 canDrag={!isIntern}
                                                                 canComplete={isIntern}
+                                                                completeLabel="Entregar"
                                                                 onComplete={
-                                                                    completeTask
+                                                                    submitTask
                                                                 }
                                                                 onOpenDetails={
                                                                     setSelectedTask
@@ -790,7 +791,8 @@ export default function My({
                     if (!open) setSelectedTask(null);
                 }}
                 canComplete={isIntern}
-                onComplete={completeTask}
+                completeLabel="Entregar"
+                onComplete={submitTask}
                 onMoveTask={
                     !isIntern
                         ? (task, status) =>
