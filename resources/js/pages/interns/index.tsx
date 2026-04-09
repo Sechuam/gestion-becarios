@@ -1,10 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
-    Users,
-    Plus,
-    Search,
-    FileDown,
-} from 'lucide-react';
+import { Users, Plus, Search, FileDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
@@ -32,7 +27,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
@@ -121,11 +120,15 @@ export default function Index({
     };
 
     const clearAllFilters = () => {
-        router.get('/becarios', {}, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
-        });
+        router.get(
+            '/becarios',
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
     };
 
     const buildExportParams = () => {
@@ -372,7 +375,8 @@ export default function Index({
                                                     confirm: {
                                                         title: 'Confirmar edición',
                                                         description: `Vas a editar el perfil de ${intern.user?.name ?? 'este becario'}.`,
-                                                        confirmLabel: 'Ir a editar',
+                                                        confirmLabel:
+                                                            'Ir a editar',
                                                     },
                                                 },
                                                 {
@@ -384,7 +388,8 @@ export default function Index({
                                                 {
                                                     label: 'Archivar becario',
                                                     icon: 'delete' as const,
-                                                    variant: 'destructive' as const,
+                                                    variant:
+                                                        'destructive' as const,
                                                     onClick: () =>
                                                         router.delete(
                                                             `/interns/${intern.id}`,
@@ -403,7 +408,8 @@ export default function Index({
     const activeFilterChips = useMemo(() => {
         const chips = [];
 
-        if (filters.search) chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
+        if (filters.search)
+            chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
         if (filters.center) {
             const centerName = education_centers.find(
                 (center: any) => String(center.id) === String(filters.center),
@@ -418,10 +424,21 @@ export default function Index({
                 completed: 'Completados',
                 abandoned: 'Abandonados',
             };
-            chips.push({ key: 'status', label: `Estado: ${statusLabel[filters.status] || filters.status}` });
+            chips.push({
+                key: 'status',
+                label: `Estado: ${statusLabel[filters.status] || filters.status}`,
+            });
         }
-        if (filters.start_from) chips.push({ key: 'start_from', label: `Desde: ${formatDateEs(filters.start_from)}` });
-        if (filters.start_to) chips.push({ key: 'start_to', label: `Hasta: ${formatDateEs(filters.start_to)}` });
+        if (filters.start_from)
+            chips.push({
+                key: 'start_from',
+                label: `Desde: ${formatDateEs(filters.start_from)}`,
+            });
+        if (filters.start_to)
+            chips.push({
+                key: 'start_to',
+                label: `Hasta: ${formatDateEs(filters.start_to)}`,
+            });
         if (filters.trashed) {
             const trashedLabel =
                 filters.trashed === 'only'
@@ -473,12 +490,10 @@ export default function Index({
                         canManage ? (
                             <Button
                                 className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
-                                asChild
+                                onClick={() => router.get('/interns/create')}
                             >
-                                <Link href="/interns/create">
-                                    <Plus className="h-4 w-4" />
-                                    Añadir Becario
-                                </Link>
+                                <Plus className="h-4 w-4" />
+                                Añadir Becario
                             </Button>
                         ) : undefined
                     }
@@ -488,7 +503,7 @@ export default function Index({
                 <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
                     {/* Fila 1: Búsqueda y Exportar */}
                     <div className="flex flex-wrap items-center gap-4">
-                        <div className="relative flex-1 min-w-[200px] max-w-md">
+                        <div className="relative max-w-md min-w-[200px] flex-1">
                             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por nombre..."
@@ -500,7 +515,10 @@ export default function Index({
                         </div>
 
                         {canManage && (
-                            <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                            <Dialog
+                                open={exportOpen}
+                                onOpenChange={setExportOpen}
+                            >
                                 <DialogTrigger asChild>
                                     <Button
                                         variant="outline"
@@ -516,9 +534,9 @@ export default function Index({
                                             Exportación personalizada
                                         </DialogTitle>
                                         <DialogDescription>
-                                            Elige las columnas que quieres incluir
-                                            en el Excel. Se respetarán los filtros
-                                            actuales.
+                                            Elige las columnas que quieres
+                                            incluir en el Excel. Se respetarán
+                                            los filtros actuales.
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -538,7 +556,8 @@ export default function Index({
                                                             checked,
                                                         ) => {
                                                             const isOn =
-                                                                checked === true;
+                                                                checked ===
+                                                                true;
                                                             setSelectedColumns(
                                                                 (prev) => {
                                                                     if (isOn) {
@@ -570,7 +589,9 @@ export default function Index({
                                         </Button>
                                         <Button
                                             onClick={handleExport}
-                                            disabled={selectedColumns.length === 0}
+                                            disabled={
+                                                selectedColumns.length === 0
+                                            }
                                         >
                                             Descargar Excel
                                         </Button>
@@ -579,15 +600,16 @@ export default function Index({
                             </Dialog>
                         )}
 
-                        <p className="ml-auto text-sm font-medium text-muted-foreground whitespace-nowrap">
-                            Mostrando {interns.data.length} de {interns.total} becarios
+                        <p className="ml-auto text-sm font-medium whitespace-nowrap text-muted-foreground">
+                            Mostrando {interns.data.length} de {interns.total}{' '}
+                            becarios
                         </p>
                     </div>
 
                     {/* Fila 2: Filtros */}
                     <div className="flex flex-wrap items-center gap-3">
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Centro
                             </label>
                             <Select
@@ -596,7 +618,8 @@ export default function Index({
                             >
                                 <SelectTrigger className="w-[220px] border-border bg-background text-foreground [&>span]:truncate">
                                     <SelectValue>
-                                        {filters.center && filters.center !== 'all'
+                                        {filters.center &&
+                                        filters.center !== 'all'
                                             ? education_centers.find(
                                                   (c) =>
                                                       c.id.toString() ===
@@ -622,7 +645,7 @@ export default function Index({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Estado
                             </label>
                             <Select
@@ -640,7 +663,9 @@ export default function Index({
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">Todos</SelectItem>
-                                    <SelectItem value="active">Activos</SelectItem>
+                                    <SelectItem value="active">
+                                        Activos
+                                    </SelectItem>
                                     <SelectItem value="completed">
                                         Completados
                                     </SelectItem>
@@ -652,12 +677,14 @@ export default function Index({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Vista
                             </label>
                             <Select
                                 value={filters.trashed || 'none'}
-                                onValueChange={(v) => handleFilter('trashed', v)}
+                                onValueChange={(v) =>
+                                    handleFilter('trashed', v)
+                                }
                             >
                                 <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
                                     <SelectValue>
@@ -665,19 +692,24 @@ export default function Index({
                                             none: 'Activos',
                                             only: 'Archivados',
                                             with: 'Todos',
-                                        }[filters.trashed as string] || 'Activos'}
+                                        }[filters.trashed as string] ||
+                                            'Activos'}
                                     </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="none">Activos</SelectItem>
-                                    <SelectItem value="only">Archivados</SelectItem>
+                                    <SelectItem value="none">
+                                        Activos
+                                    </SelectItem>
+                                    <SelectItem value="only">
+                                        Archivados
+                                    </SelectItem>
                                     <SelectItem value="with">Todos</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Desde
                             </label>
                             <DatePicker
@@ -689,7 +721,7 @@ export default function Index({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Hasta
                             </label>
                             <DatePicker

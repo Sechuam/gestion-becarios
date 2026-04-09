@@ -13,6 +13,7 @@ type Column<T> = {
     label: string;
     render?: (row: T) => React.ReactNode;
     cellClassName?: string;
+    headClassName?: string;
     sortKey?: string;
 };
 
@@ -42,7 +43,7 @@ export function SimpleTable<T>({
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.label}
-                                    className="px-4 py-4 text-left font-semibold text-foreground"
+                                    className={`px-4 py-4 text-left font-semibold text-foreground ${col.headClassName ?? ''}`}
                                 >
                                     {col.sortKey && onSort ? (
                                         <button

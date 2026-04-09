@@ -36,6 +36,7 @@ type Props = {
     canEdit?: boolean;
     canComplete?: boolean;
     completeLabel?: string;
+    completeStatuses?: string[];
     onComplete?: (task: any) => void;
     onMoveTask?: (task: any, status: string) => void;
     availableStatuses?: Array<{ key: string; label: string }>;
@@ -101,6 +102,7 @@ export default function TaskQuickViewSheet({
     canEdit = false,
     canComplete = false,
     completeLabel = 'Completar',
+    completeStatuses = ['pending', 'in_progress'],
     onComplete,
     onMoveTask,
     availableStatuses = [],
@@ -125,7 +127,9 @@ export default function TaskQuickViewSheet({
                                 </Badge>
                                 <Badge
                                     variant="outline"
-                                    className={getTaskPriorityTone(task.priority)}
+                                    className={getTaskPriorityTone(
+                                        task.priority,
+                                    )}
                                 >
                                     {getTaskPriorityLabel(task.priority)}
                                 </Badge>
@@ -141,7 +145,8 @@ export default function TaskQuickViewSheet({
                                     {task.title}
                                 </SheetTitle>
                                 <SheetDescription className="text-sm leading-6">
-                                    {task.description || 'Sin descripción disponible.'}
+                                    {task.description ||
+                                        'Sin descripción disponible.'}
                                 </SheetDescription>
                             </div>
                         </SheetHeader>
@@ -149,7 +154,7 @@ export default function TaskQuickViewSheet({
                         <div className="space-y-6 p-4">
                             <section className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
-                                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Contexto
                                     </p>
                                     <div className="space-y-3 text-sm">
@@ -160,7 +165,8 @@ export default function TaskQuickViewSheet({
                                                     Tipo
                                                 </p>
                                                 <p className="font-medium text-foreground">
-                                                    {task.practice_type?.name || 'Sin tipo'}
+                                                    {task.practice_type?.name ||
+                                                        'Sin tipo'}
                                                 </p>
                                             </div>
                                         </div>
@@ -171,7 +177,8 @@ export default function TaskQuickViewSheet({
                                                     Creada por
                                                 </p>
                                                 <p className="font-medium text-foreground">
-                                                    {task.creator?.name || 'Sin creador visible'}
+                                                    {task.creator?.name ||
+                                                        'Sin creador visible'}
                                                 </p>
                                             </div>
                                         </div>
@@ -183,7 +190,9 @@ export default function TaskQuickViewSheet({
                                                 </p>
                                                 <p className="font-medium text-foreground">
                                                     {task.due_date
-                                                        ? formatDateEs(task.due_date)
+                                                        ? formatDateEs(
+                                                              task.due_date,
+                                                          )
                                                         : 'Sin fecha de entrega'}
                                                 </p>
                                             </div>
@@ -192,7 +201,7 @@ export default function TaskQuickViewSheet({
                                 </div>
 
                                 <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
-                                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Señales rápidas
                                     </p>
                                     <div className="grid grid-cols-2 gap-3">
@@ -202,7 +211,9 @@ export default function TaskQuickViewSheet({
                                             </p>
                                             <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-foreground">
                                                 <MessageSquareText className="h-4 w-4 text-muted-foreground" />
-                                                {Number(task.comments_count ?? 0)}
+                                                {Number(
+                                                    task.comments_count ?? 0,
+                                                )}
                                             </p>
                                         </div>
                                         <div className="rounded-lg border border-border/70 bg-background px-3 py-2">
@@ -211,7 +222,9 @@ export default function TaskQuickViewSheet({
                                             </p>
                                             <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-foreground">
                                                 <Paperclip className="h-4 w-4 text-muted-foreground" />
-                                                {Number(task.attachments_count ?? 0)}
+                                                {Number(
+                                                    task.attachments_count ?? 0,
+                                                )}
                                             </p>
                                         </div>
                                     </div>
@@ -226,7 +239,9 @@ export default function TaskQuickViewSheet({
                                             Becarios asignados
                                         </h3>
                                     </div>
-                                    <AssignedInternsStack interns={task.interns || []} />
+                                    <AssignedInternsStack
+                                        interns={task.interns || []}
+                                    />
                                 </div>
                                 {task.interns?.length ? (
                                     <div className="flex flex-wrap gap-2">
@@ -235,44 +250,58 @@ export default function TaskQuickViewSheet({
                                                 key={intern.id}
                                                 className="rounded-full border border-border/70 bg-muted/20 px-3 py-1 text-xs text-foreground"
                                             >
-                                                {intern.user?.name || `Becario #${intern.id}`}
+                                                {intern.user?.name ||
+                                                    `Becario #${intern.id}`}
                                             </span>
                                         ))}
                                     </div>
                                 ) : (
                                     <p className="text-sm text-muted-foreground">
-                                        Esta tarea todavía no tiene becarios asignados.
+                                        Esta tarea todavía no tiene becarios
+                                        asignados.
                                     </p>
                                 )}
                             </section>
 
-                            {task && onMoveTask && availableStatuses.length > 0 && (
-                                <section className="rounded-xl border border-border/70 bg-card p-4">
-                                    <div className="mb-3">
-                                        <h3 className="text-sm font-semibold text-foreground">
-                                            Mover a otra columna
-                                        </h3>
-                                        <p className="text-xs text-muted-foreground">
-                                            Cambio rápido de estado sin arrastrar.
-                                        </p>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {availableStatuses
-                                            .filter((status) => status.key !== task.status)
-                                            .map((status) => (
-                                                <Button
-                                                    key={status.key}
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => onMoveTask(task, status.key)}
-                                                >
-                                                    {status.label}
-                                                </Button>
-                                            ))}
-                                    </div>
-                                </section>
-                            )}
+                            {task &&
+                                onMoveTask &&
+                                availableStatuses.length > 0 && (
+                                    <section className="rounded-xl border border-border/70 bg-card p-4">
+                                        <div className="mb-3">
+                                            <h3 className="text-sm font-semibold text-foreground">
+                                                Mover a otra columna
+                                            </h3>
+                                            <p className="text-xs text-muted-foreground">
+                                                Cambio rápido de estado sin
+                                                arrastrar.
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {availableStatuses
+                                                .filter(
+                                                    (status) =>
+                                                        status.key !==
+                                                        task.status,
+                                                )
+                                                .map((status) => (
+                                                    <Button
+                                                        key={status.key}
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            onMoveTask(
+                                                                task,
+                                                                status.key,
+                                                            )
+                                                        }
+                                                    >
+                                                        {status.label}
+                                                    </Button>
+                                                ))}
+                                        </div>
+                                    </section>
+                                )}
                         </div>
 
                         <SheetFooter className="border-t border-border/70 bg-background/95">
@@ -293,7 +322,7 @@ export default function TaskQuickViewSheet({
                                 )}
                                 {canComplete &&
                                     onComplete &&
-                                    ['pending', 'in_progress'].includes(
+                                    completeStatuses.includes(
                                         String(task.status),
                                     ) && (
                                         <Button

@@ -33,8 +33,8 @@ export function getTutorSidebar(): SidebarSection[] {
                     isActive: false,
                     items: [
                         {
-                            title: 'Becarios',
-                            href: '/becarios',
+                            title: 'Mis becarios',
+                            href: '/mis-becarios',
                             icon: BookOpen,
                         },
                     ],

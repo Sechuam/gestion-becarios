@@ -75,12 +75,16 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function isAdmin(): bool
     {
-        return $this->hasRole('admin');
+        return $this->normalizedRoleNames()
+            ->intersect(['admin'])
+            ->isNotEmpty();
     }
 
     public function isTutor(): bool
     {
-        return $this->hasRole('tutor');
+        return $this->normalizedRoleNames()
+            ->intersect(['tutor'])
+            ->isNotEmpty();
     }
 
     public function isIntern(): bool

@@ -138,9 +138,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
             <div className="flex flex-col gap-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h1 className="page-title">
-                            Tipos de práctica
-                        </h1>
+                        <h1 className="page-title">Tipos de práctica</h1>
                         <p className="page-subtitle">
                             Catálogo configurable por el administrador.
                         </p>
@@ -148,12 +146,10 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     {isAdmin && (
                         <Button
                             className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
-                            asChild
+                            onClick={() => router.get('/tipos-practica/create')}
                         >
-                            <Link href="/tipos-practica/create">
-                                <Plus className="h-4 w-4" />
-                                Nuevo tipo
-                            </Link>
+                            <Plus className="h-4 w-4" />
+                            Nuevo tipo
                         </Button>
                     )}
                 </div>

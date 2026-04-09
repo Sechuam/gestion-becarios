@@ -1,4 +1,4 @@
-import { useDraggable } from '@dnd-kit/core';
+import { useSortable } from '@dnd-kit/sortable';
 import { Link } from '@inertiajs/react';
 import {
     ArrowUpRight,
@@ -12,7 +12,11 @@ import {
 import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { formatDateEs } from '@/lib/date-format';
 import {
     getTaskPriorityLabel,
@@ -20,6 +24,7 @@ import {
     getTaskStatusLabel,
     getTaskStatusTone,
 } from '@/lib/task-labels';
+import { CSS } from '@dnd-kit/utilities';
 
 type Props = {
     task: any;
@@ -27,6 +32,7 @@ type Props = {
     canEdit?: boolean;
     canComplete?: boolean;
     completeLabel?: string;
+    completeStatuses?: string[];
     onComplete?: (task: any) => void;
     onOpenDetails?: (task: any) => void;
     highlightMove?: boolean;
@@ -85,19 +91,32 @@ export default function KanbanTaskCard({
     canEdit = false,
     canComplete = false,
     completeLabel = 'Completar',
+    completeStatuses = ['pending', 'in_progress'],
     onComplete,
     onOpenDetails,
     highlightMove = false,
 }: Props) {
-    const { attributes, listeners, setNodeRef, transform, isDragging } =
-        useDraggable({
-            id: task.id,
-            disabled: !canDrag,
-        });
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({
+        id: `task-${task.id}`,
+        disabled: !canDrag,
+        data: {
+            type: 'task',
+            taskId: Number(task.id),
+            status: task.status,
+        },
+    });
 
-    const style = transform
-        ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
-        : undefined;
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
 
     const dueBadge = getDueBadge(task.due_date);
     const commentsCount = Number(task.comments_count ?? 0);
@@ -226,7 +245,12 @@ export default function KanbanTaskCard({
                         <Eye className="h-4 w-4" />
                     </Button>
                 )}
-                <Button variant="outline" size="sm" className="h-8 px-2.5" asChild>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-2.5"
+                    asChild
+                >
                     <Link href={`/tareas/${task.id}`}>
                         <ArrowUpRight className="h-4 w-4" />
                     </Link>
@@ -245,19 +269,19 @@ export default function KanbanTaskCard({
                 )}
                 {canComplete &&
                     onComplete &&
-                    ['pending', 'in_progress'].includes(String(task.status)) && (
-                    <Button
-                        size="sm"
-                        className="ml-auto h-8 gap-1.5 px-3"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            onComplete(task);
-                        }}
-                    >
-                        <CheckCircle2 className="h-4 w-4" />
-                        {completeLabel}
-                    </Button>
+                    completeStatuses.includes(String(task.status)) && (
+                        <Button
+                            size="sm"
+                            className="ml-auto h-8 gap-1.5 px-3"
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                onComplete(task);
+                            }}
+                        >
+                            <CheckCircle2 className="h-4 w-4" />
+                            {completeLabel}
+                        </Button>
                     )}
             </div>
         </div>

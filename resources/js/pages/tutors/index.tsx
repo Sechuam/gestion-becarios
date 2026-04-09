@@ -224,10 +224,16 @@ export default function Index({
         {
             key: 'actions',
             label: 'Acciones',
-            cellClassName: 'text-right',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
             render: (tutor: TutorRow) => (
-                <div className="flex justify-end">
-                    <Button variant="outline" size="sm" asChild>
+                <div className="w-full text-center">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="mx-auto flex w-fit"
+                        asChild
+                    >
                         <Link href={`/tutores/${tutor.id}`}>
                             <Eye className="h-4 w-4" />
                             Ver tutor

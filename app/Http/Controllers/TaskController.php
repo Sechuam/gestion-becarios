@@ -353,40 +353,60 @@ class TaskController extends Controller
     {
         $user = Auth::user();
         $isIntern = $user?->isIntern() ?? false;
+        $isTutor = $user?->isTutor() ?? false;
 
-        if (! $isIntern) {
-            return back()->with('error', 'Solo un becario puede entregar una tarea.');
-        }
-
-        $isAssigned = $task->interns()->where('user_id', $user->id)->exists();
-        if (! $isAssigned) {
-            return back()->with('error', 'No tienes esta tarea asignada.');
+        if (! $isIntern && ! $isTutor) {
+            return back()->with('error', 'Solo un becario o tutor puede completar una tarea.');
         }
 
         if ($task->status === 'completed') {
             return back()->with('success', 'La tarea ya está completada.');
         }
 
-        if ($task->status === 'in_review') {
-            return back()->with('success', 'La tarea ya está entregada y en revisión.');
+        if ($isIntern) {
+            $isAssigned = $task->interns()->where('user_id', $user->id)->exists();
+            if (! $isAssigned) {
+                return back()->with('error', 'No tienes esta tarea asignada.');
+            }
+
+            if ($task->status === 'in_review') {
+                return back()->with('success', 'La tarea ya está entregada y en revisión.');
+            }
+
+            if (! in_array($task->status, ['pending', 'in_progress'], true)) {
+                return back()->with('error', 'Solo puedes entregar tareas pendientes o en progreso.');
+            }
+
+            $fromStatus = $task->status;
+            $task->update(['status' => 'in_review']);
+
+            TaskStatusLog::create([
+                'task_id' => $task->id,
+                'from_status' => $fromStatus,
+                'to_status' => 'in_review',
+                'changed_by' => $user->id,
+                'changed_at' => now(),
+            ]);
+
+            return back()->with('success', 'Tarea entregada y enviada a revisión.');
         }
 
-        if (! in_array($task->status, ['pending', 'in_progress'], true)) {
-            return back()->with('error', 'Solo puedes entregar tareas pendientes o en progreso.');
+        if ($task->status !== 'in_review') {
+            return back()->with('error', 'Solo puedes completar tareas que ya estén en revisión.');
         }
 
         $fromStatus = $task->status;
-        $task->update(['status' => 'in_review']);
+        $task->update(['status' => 'completed']);
 
         TaskStatusLog::create([
             'task_id' => $task->id,
             'from_status' => $fromStatus,
-            'to_status' => 'in_review',
+            'to_status' => 'completed',
             'changed_by' => $user->id,
             'changed_at' => now(),
         ]);
 
-        return back()->with('success', 'Tarea entregada y enviada a revisión.');
+        return back()->with('success', 'Tarea marcada como completada.');
     }
 
     public function storeComment(Request $request, Task $task)

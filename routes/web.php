@@ -27,6 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('tasks.create')
         ->middleware('tutor');
     Route::get('tareas/mis', [TaskController::class, 'myTasks'])->name('tasks.mine');
+    Route::get('mis-becarios', [TutorController::class, 'mine'])
+        ->name('tutors.mine')
+        ->middleware('tutor');
     Route::get('tareas/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
     Route::get('tareas/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::post('tareas', [TaskController::class, 'store'])

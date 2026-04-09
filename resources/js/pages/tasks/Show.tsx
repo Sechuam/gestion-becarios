@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,11 +14,14 @@ type Props = {
 };
 
 export default function Show({ task, attachments = [], is_assigned }: Props) {
+    const { auth } = usePage().props as any;
     const commentForm = useForm({ comment: '' });
     const attachmentForm = useForm({ attachments: [] as File[] });
     const completeForm = useForm({});
+    const isTutor = auth?.user?.roles?.includes('tutor');
     const canSubmitTask =
         is_assigned && ['pending', 'in_progress'].includes(String(task.status));
+    const canTutorComplete = isTutor && String(task.status) === 'in_review';
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -56,21 +59,21 @@ export default function Show({ task, attachments = [], is_assigned }: Props) {
             <div className="w-full space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="page-title">
-                            {task.title}
-                        </h1>
+                        <h1 className="page-title">{task.title}</h1>
                         <p className="page-subtitle">
                             {task.description || 'Sin descripción'}
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
-                        {canSubmitTask && (
+                        {(canSubmitTask || canTutorComplete) && (
                             <Button
                                 onClick={submitTask}
                                 disabled={completeForm.processing}
                                 className="bg-emerald-600 text-white hover:bg-emerald-700"
                             >
-                                Entregar
+                                {canTutorComplete
+                                    ? 'Marcar completada'
+                                    : 'Entregar'}
                             </Button>
                         )}
                         <Button variant="outline" asChild>

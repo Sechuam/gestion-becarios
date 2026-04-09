@@ -1,4 +1,17 @@
-import { DndContext, useDroppable } from '@dnd-kit/core';
+import {
+    closestCorners,
+    DndContext,
+    PointerSensor,
+    useDroppable,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+    type DragOverEvent,
+} from '@dnd-kit/core';
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     AlertTriangle,
@@ -29,7 +42,11 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
@@ -60,6 +77,7 @@ const KANBAN_COLUMNS = [
     { key: 'completed', label: 'Completada' },
     { key: 'rejected', label: 'Rechazada' },
 ];
+const KANBAN_ORDER_STORAGE_KEY = 'tasks-index-kanban-order';
 
 type TaskViewMode = 'kanban' | 'table';
 type BoardQuickFilter = 'all' | 'urgent' | 'high' | 'review' | 'unassigned';
@@ -82,9 +100,7 @@ function DroppableColumn({
         <div
             ref={setNodeRef}
             className={`flex min-h-[24rem] flex-1 flex-col rounded-xl transition-colors ${
-                isOver || hovered
-                    ? 'bg-primary/10 ring-2 ring-primary/40'
-                    : ''
+                isOver || hovered ? 'bg-primary/10 ring-2 ring-primary/40' : ''
             }`}
         >
             {(isOver || hovered) && (
@@ -115,6 +131,132 @@ const dueStatus = (dueDate?: string | null) => {
     return 'none';
 };
 
+const getTaskSortableId = (taskId: number | string) => `task-${taskId}`;
+const getColumnDropId = (status: string) => `column-${status}`;
+
+const parseTaskSortableId = (value: unknown) => {
+    if (typeof value !== 'string' || !value.startsWith('task-')) return null;
+    const id = Number(value.slice(5));
+    return Number.isNaN(id) ? null : id;
+};
+
+const parseColumnDropId = (value: unknown) => {
+    if (typeof value !== 'string' || !value.startsWith('column-')) return null;
+    return value.slice(7);
+};
+
+const applyStoredKanbanOrder = (tasks: any[]) => {
+    if (typeof window === 'undefined') return tasks;
+
+    const raw = window.localStorage.getItem(KANBAN_ORDER_STORAGE_KEY);
+    if (!raw) return tasks;
+
+    try {
+        const saved = JSON.parse(raw) as Record<string, number[]>;
+        const grouped = Object.fromEntries(
+            KANBAN_COLUMNS.map((column) => [column.key, [] as any[]]),
+        ) as Record<string, any[]>;
+
+        tasks.forEach((task) => {
+            const status = String(task.status || 'pending');
+            if (!grouped[status]) grouped[status] = [];
+            grouped[status].push(task);
+        });
+
+        KANBAN_COLUMNS.forEach((column) => {
+            const order = saved[column.key] || [];
+            const indexMap = new Map(
+                order.map((id, index) => [Number(id), index]),
+            );
+
+            grouped[column.key].sort((left, right) => {
+                const leftIndex = indexMap.get(Number(left.id));
+                const rightIndex = indexMap.get(Number(right.id));
+
+                if (leftIndex === undefined && rightIndex === undefined)
+                    return 0;
+                if (leftIndex === undefined) return 1;
+                if (rightIndex === undefined) return -1;
+
+                return leftIndex - rightIndex;
+            });
+        });
+
+        return KANBAN_COLUMNS.flatMap((column) => grouped[column.key] || []);
+    } catch {
+        return tasks;
+    }
+};
+
+const persistKanbanOrder = (tasks: any[]) => {
+    if (typeof window === 'undefined') return;
+
+    const payload = Object.fromEntries(
+        KANBAN_COLUMNS.map((column) => [
+            column.key,
+            tasks
+                .filter((task) => String(task.status) === column.key)
+                .map((task) => Number(task.id)),
+        ]),
+    );
+
+    window.localStorage.setItem(
+        KANBAN_ORDER_STORAGE_KEY,
+        JSON.stringify(payload),
+    );
+};
+
+const reorderBoardTasks = (
+    currentTasks: any[],
+    activeTaskId: number,
+    overId: string,
+) => {
+    const activeTask = currentTasks.find(
+        (task) => Number(task.id) === activeTaskId,
+    );
+    if (!activeTask) return currentTasks;
+
+    const overTaskId = parseTaskSortableId(overId);
+    const targetStatus =
+        (overTaskId !== null
+            ? currentTasks.find((task) => Number(task.id) === overTaskId)
+                  ?.status
+            : parseColumnDropId(overId)) ?? activeTask.status;
+
+    const grouped = Object.fromEntries(
+        KANBAN_COLUMNS.map((column) => [column.key, [] as any[]]),
+    ) as Record<string, any[]>;
+
+    currentTasks.forEach((task) => {
+        const status = String(task.status || 'pending');
+        if (!grouped[status]) grouped[status] = [];
+        if (Number(task.id) !== activeTaskId) {
+            grouped[status].push(task);
+        }
+    });
+
+    const movedTask =
+        String(activeTask.status) === String(targetStatus)
+            ? activeTask
+            : { ...activeTask, status: targetStatus };
+
+    const targetList = grouped[String(targetStatus)] || [];
+
+    if (overTaskId !== null) {
+        const overIndex = targetList.findIndex(
+            (task) => Number(task.id) === overTaskId,
+        );
+        if (overIndex >= 0) targetList.splice(overIndex, 0, movedTask);
+        else targetList.push(movedTask);
+    } else {
+        targetList.push(movedTask);
+    }
+
+    grouped[String(targetStatus)] = targetList;
+
+    return KANBAN_COLUMNS.flatMap((column) => grouped[column.key] || []);
+};
+
 export default function Index({
     tasks,
     filters = {},
@@ -124,9 +266,7 @@ export default function Index({
     const [viewMode, setViewMode] = useState<TaskViewMode>(() => {
         if (typeof window === 'undefined') return 'kanban';
 
-        const savedView = window.localStorage.getItem(
-            'tasks-index-view-mode',
-        );
+        const savedView = window.localStorage.getItem('tasks-index-view-mode');
 
         return savedView === 'table' ? 'table' : 'kanban';
     });
@@ -138,7 +278,19 @@ export default function Index({
     const [lastMoveMessage, setLastMoveMessage] = useState<string | null>(null);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
     const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-    const [highlightedTaskId, setHighlightedTaskId] = useState<number | null>(null);
+    const [highlightedTaskId, setHighlightedTaskId] = useState<number | null>(
+        null,
+    );
+    const [boardTasks, setBoardTasks] = useState<any[]>(() =>
+        applyStoredKanbanOrder(tasks.data),
+    );
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+    );
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -155,6 +307,14 @@ export default function Index({
 
         return () => window.clearTimeout(timeoutId);
     }, [highlightedTaskId]);
+
+    useEffect(() => {
+        setBoardTasks(applyStoredKanbanOrder(tasks.data));
+    }, [tasks.data]);
+
+    useEffect(() => {
+        persistKanbanOrder(boardTasks);
+    }, [boardTasks]);
 
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
@@ -191,17 +351,40 @@ export default function Index({
     };
 
     const clearAllFilters = () => {
-        router.get('/tareas', {}, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
-        });
+        router.get(
+            '/tareas',
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
     };
 
     const isTutor = auth?.user?.roles?.includes('tutor');
 
+    const completeTask = (task: any, closePanel = false) => {
+        router.post(
+            `/tareas/${task.id}/complete`,
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    if (closePanel) {
+                        setSelectedTask(null);
+                    }
+                    toast({
+                        title: 'Tarea completada',
+                        description: `"${task.title}" se ha marcado como completada.`,
+                    });
+                },
+            },
+        );
+    };
+
     const filteredBoardTasks = useMemo(() => {
-        return tasks.data.filter((task: any) => {
+        return boardTasks.filter((task: any) => {
             if (boardFilter === 'urgent') {
                 const due = dueStatus(task.due_date);
                 return due === 'overdue' || due === 'soon';
@@ -221,7 +404,7 @@ export default function Index({
 
             return true;
         });
-    }, [boardFilter, tasks.data]);
+    }, [boardFilter, boardTasks]);
 
     const tasksByStatus = useMemo(() => {
         const map: Record<string, any[]> = {};
@@ -245,6 +428,13 @@ export default function Index({
         setLastMoveMessage(`"${task.title}" pasa a ${nextStatusLabel}.`);
         setHoveredColumn(null);
         setHighlightedTaskId(Number(task.id));
+        setBoardTasks((currentTasks) =>
+            currentTasks.map((currentTask) =>
+                Number(currentTask.id) === Number(task.id)
+                    ? { ...currentTask, status: newStatus }
+                    : currentTask,
+            ),
+        );
 
         router.patch(
             `/tareas/${task.id}/status`,
@@ -421,7 +611,8 @@ export default function Index({
     const activeFilterChips = useMemo(() => {
         const chips = [];
 
-        if (filters.search) chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
+        if (filters.search)
+            chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
         if (filters.status)
             chips.push({
                 key: 'status',
@@ -450,8 +641,16 @@ export default function Index({
                 });
             }
         }
-        if (filters.due_from) chips.push({ key: 'due_from', label: `Desde: ${formatDateEs(filters.due_from)}` });
-        if (filters.due_to) chips.push({ key: 'due_to', label: `Hasta: ${formatDateEs(filters.due_to)}` });
+        if (filters.due_from)
+            chips.push({
+                key: 'due_from',
+                label: `Desde: ${formatDateEs(filters.due_from)}`,
+            });
+        if (filters.due_to)
+            chips.push({
+                key: 'due_to',
+                label: `Hasta: ${formatDateEs(filters.due_to)}`,
+            });
 
         return chips;
     }, [filters, interns, practice_types]);
@@ -470,8 +669,9 @@ export default function Index({
             {
                 key: 'high' as const,
                 label: 'Alta prioridad',
-                count: tasks.data.filter((task: any) => task.priority === 'high')
-                    .length,
+                count: tasks.data.filter(
+                    (task: any) => task.priority === 'high',
+                ).length,
             },
             {
                 key: 'review' as const,
@@ -499,14 +699,16 @@ export default function Index({
             },
             {
                 label: 'Pendientes',
-                value: tasks.data.filter((task: any) => task.status === 'pending')
-                    .length,
+                value: tasks.data.filter(
+                    (task: any) => task.status === 'pending',
+                ).length,
                 hint: 'En esta página',
             },
             {
                 label: 'En revisión',
-                value: tasks.data.filter((task: any) => task.status === 'in_review')
-                    .length,
+                value: tasks.data.filter(
+                    (task: any) => task.status === 'in_review',
+                ).length,
                 hint: 'Esperando validación',
             },
             {
@@ -536,19 +738,20 @@ export default function Index({
                             {isTutor && (
                                 <Button
                                     className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
-                                    asChild
+                                    onClick={() => router.get('/tareas/create')}
                                 >
-                                    <Link href="/tareas/create">
-                                        <PlusCircle className="h-4 w-4" />
-                                        Nueva tarea
-                                    </Link>
+                                    <PlusCircle className="h-4 w-4" />
+                                    Nueva tarea
                                 </Button>
                             )}
                             <ToggleGroup
                                 type="single"
                                 value={viewMode}
                                 onValueChange={(value) => {
-                                    if (value === 'kanban' || value === 'table') {
+                                    if (
+                                        value === 'kanban' ||
+                                        value === 'table'
+                                    ) {
                                         setViewMode(value);
                                     }
                                 }}
@@ -580,7 +783,7 @@ export default function Index({
                 <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
                     {/* Fila 1: Búsqueda */}
                     <div className="flex flex-wrap items-center gap-4">
-                        <div className="relative flex-1 min-w-[200px] max-w-md">
+                        <div className="relative max-w-md min-w-[200px] flex-1">
                             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por título..."
@@ -591,15 +794,16 @@ export default function Index({
                             />
                         </div>
 
-                        <p className="ml-auto text-sm font-medium text-muted-foreground whitespace-nowrap">
-                            Mostrando {tasks.data.length} de {tasks.total} tareas
+                        <p className="ml-auto text-sm font-medium whitespace-nowrap text-muted-foreground">
+                            Mostrando {tasks.data.length} de {tasks.total}{' '}
+                            tareas
                         </p>
                     </div>
 
                     {/* Fila 2: Filtros */}
                     <div className="flex flex-wrap items-center gap-3">
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Estado
                             </label>
                             <Select
@@ -614,8 +818,7 @@ export default function Index({
                                             in_review: 'En revisión',
                                             completed: 'Completada',
                                             rejected: 'Rechazada',
-                                        }[filters.status as string] ||
-                                            'Todos'}
+                                        }[filters.status as string] || 'Todos'}
                                     </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
@@ -642,7 +845,7 @@ export default function Index({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Tipo
                             </label>
                             <Select
@@ -680,16 +883,19 @@ export default function Index({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Becario
                             </label>
                             <Select
                                 value={filters.intern_id || 'all'}
-                                onValueChange={(v) => handleFilter('intern_id', v)}
+                                onValueChange={(v) =>
+                                    handleFilter('intern_id', v)
+                                }
                             >
                                 <SelectTrigger className="w-[200px] border-border bg-background text-foreground [&>span]:truncate">
                                     <SelectValue>
-                                        {filters.intern_id && filters.intern_id !== 'all'
+                                        {filters.intern_id &&
+                                        filters.intern_id !== 'all'
                                             ? interns.find(
                                                   (intern) =>
                                                       String(intern.id) ===
@@ -715,7 +921,7 @@ export default function Index({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Desde
                             </label>
                             <DatePicker
@@ -727,7 +933,7 @@ export default function Index({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Hasta
                             </label>
                             <DatePicker
@@ -761,7 +967,9 @@ export default function Index({
                                         }
                                         size="sm"
                                         className="gap-2"
-                                        onClick={() => setBoardFilter(filter.key)}
+                                        onClick={() =>
+                                            setBoardFilter(filter.key)
+                                        }
                                     >
                                         {filter.label}
                                         <span className="rounded-full bg-black/10 px-1.5 py-0.5 text-[10px] dark:bg-white/10">
@@ -785,15 +993,30 @@ export default function Index({
                         )}
 
                         <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCorners}
                             onDragStart={() => setHoveredColumn(null)}
-                            onDragOver={(event) => {
-                                setHoveredColumn(
-                                    typeof event.over?.id === 'string'
-                                        ? String(event.over.id)
-                                        : null,
-                                );
+                            onDragOver={(event: DragOverEvent) => {
+                                const overId = event.over?.id;
+                                const nextHoveredColumn =
+                                    parseColumnDropId(overId) ??
+                                    (() => {
+                                        const overTaskId =
+                                            parseTaskSortableId(overId);
+                                        if (overTaskId === null) return null;
+
+                                        return (
+                                            boardTasks.find(
+                                                (task) =>
+                                                    Number(task.id) ===
+                                                    overTaskId,
+                                            )?.status ?? null
+                                        );
+                                    })();
+
+                                setHoveredColumn(nextHoveredColumn);
                             }}
-                            onDragEnd={(event) => {
+                            onDragEnd={(event: DragEndEvent) => {
                                 if (isIntern) return;
                                 const { active, over } = event;
                                 if (!over) {
@@ -801,17 +1024,55 @@ export default function Index({
                                     return;
                                 }
 
-                                const taskId = active.id;
-                                const newStatus = over.id;
-                                const movedTask = tasks.data.find(
-                                    (task: any) => task.id === taskId,
+                                const activeTaskId = parseTaskSortableId(
+                                    active.id,
                                 );
-
-                                if (!movedTask || movedTask.status === newStatus) {
+                                if (activeTaskId === null) {
                                     setHoveredColumn(null);
                                     return;
                                 }
-                                updateTaskStatus(movedTask, String(newStatus));
+
+                                const overId = String(over.id);
+                                const movedTask = boardTasks.find(
+                                    (task: any) =>
+                                        Number(task.id) === activeTaskId,
+                                );
+                                const targetStatus =
+                                    parseColumnDropId(overId) ??
+                                    (() => {
+                                        const overTaskId =
+                                            parseTaskSortableId(overId);
+                                        if (overTaskId === null) return null;
+
+                                        return (
+                                            boardTasks.find(
+                                                (task: any) =>
+                                                    Number(task.id) ===
+                                                    overTaskId,
+                                            )?.status ?? null
+                                        );
+                                    })();
+
+                                setBoardTasks(
+                                    reorderBoardTasks(
+                                        boardTasks,
+                                        activeTaskId,
+                                        overId,
+                                    ),
+                                );
+                                setHoveredColumn(null);
+
+                                if (
+                                    movedTask &&
+                                    targetStatus &&
+                                    String(movedTask.status) !==
+                                        String(targetStatus)
+                                ) {
+                                    updateTaskStatus(
+                                        movedTask,
+                                        String(targetStatus),
+                                    );
+                                }
                             }}
                             onDragCancel={() => setHoveredColumn(null)}
                         >
@@ -820,7 +1081,8 @@ export default function Index({
                                     <div
                                         key={col.key}
                                         className={`flex min-h-[32rem] flex-col rounded-2xl border bg-card p-3 shadow-sm ${
-                                            tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
+                                            tasksByStatus[col.key].length >
+                                            KANBAN_WIP_LIMIT
                                                 ? 'border-amber-300/70'
                                                 : 'border-border'
                                         }`}
@@ -831,7 +1093,10 @@ export default function Index({
                                                     {col.label}
                                                 </h3>
                                                 <p className="text-[11px] text-muted-foreground">
-                                                    {tasksByStatus[col.key].length}{' '}
+                                                    {
+                                                        tasksByStatus[col.key]
+                                                            .length
+                                                    }{' '}
                                                     tareas
                                                 </p>
                                             </div>
@@ -854,15 +1119,26 @@ export default function Index({
                                             ) : null}
                                         </div>
                                         <DroppableColumn
-                                            id={col.key}
+                                            id={getColumnDropId(col.key)}
                                             label={col.label}
                                             hovered={hoveredColumn === col.key}
                                         >
-                                            <div className="flex flex-1 flex-col gap-3">
-                                                {tasksByStatus[col.key].length >
-                                                0 ? (
-                                                    tasksByStatus[col.key].map(
-                                                        (task: any) => (
+                                            <SortableContext
+                                                items={tasksByStatus[
+                                                    col.key
+                                                ].map((task: any) =>
+                                                    getTaskSortableId(task.id),
+                                                )}
+                                                strategy={
+                                                    verticalListSortingStrategy
+                                                }
+                                            >
+                                                <div className="flex flex-1 flex-col gap-3">
+                                                    {tasksByStatus[col.key]
+                                                        .length > 0 ? (
+                                                        tasksByStatus[
+                                                            col.key
+                                                        ].map((task: any) => (
                                                             <KanbanTaskCard
                                                                 key={task.id}
                                                                 task={task}
@@ -872,24 +1148,36 @@ export default function Index({
                                                                 canEdit={
                                                                     !isIntern
                                                                 }
+                                                                canComplete={
+                                                                    isTutor
+                                                                }
+                                                                completeLabel="Completar"
+                                                                completeStatuses={[
+                                                                    'in_review',
+                                                                ]}
+                                                                onComplete={
+                                                                    completeTask
+                                                                }
                                                                 onOpenDetails={
                                                                     setSelectedTask
                                                                 }
                                                                 highlightMove={
                                                                     highlightedTaskId ===
-                                                                    Number(task.id)
+                                                                    Number(
+                                                                        task.id,
+                                                                    )
                                                                 }
                                                             />
-                                                        ),
-                                                    )
-                                                ) : (
-                                                    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-4 py-8 text-center text-sm text-muted-foreground">
-                                                        No hay tareas en{' '}
-                                                        {col.label.toLowerCase()}
-                                                        .
-                                                    </div>
-                                                )}
-                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-4 py-8 text-center text-sm text-muted-foreground">
+                                                            No hay tareas en{' '}
+                                                            {col.label.toLowerCase()}
+                                                            .
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </SortableContext>
                                         </DroppableColumn>
                                     </div>
                                 ))}
@@ -936,10 +1224,13 @@ export default function Index({
                     if (!open) setSelectedTask(null);
                 }}
                 canEdit={!isIntern}
+                canComplete={isTutor}
+                completeLabel="Completar"
+                completeStatuses={['in_review']}
+                onComplete={(task) => completeTask(task, true)}
                 onMoveTask={
                     !isIntern
-                        ? (task, status) =>
-                              updateTaskStatus(task, status, true)
+                        ? (task, status) => updateTaskStatus(task, status, true)
                         : undefined
                 }
                 availableStatuses={KANBAN_COLUMNS}
