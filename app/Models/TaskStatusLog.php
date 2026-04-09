@@ -6,7 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskStatusLog extends Model
 {
-    protected $fillable = ['task_id', 'from_status', 'to_status', 'changed_by', 'changed_at'];
+    protected $fillable = [
+        'task_id',
+        'from_status',
+        'to_status',
+        'reason',
+        'changed_by',
+        'changed_at',
+    ];
+
+    protected $casts = [
+        'changed_at' => 'datetime',
+    ];
 
     public function task()
     {

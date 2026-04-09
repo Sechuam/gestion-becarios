@@ -1,7 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Search, FileDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ClearFiltersButton } from '@/components/common/ClearFiltersButton';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
-import { formatDateEs } from '@/lib/date-format';
+import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
@@ -32,6 +31,7 @@ type Props = {
     };
     is_intern?: boolean;
     current_intern?: any;
+    activities?: any[];
 };
 
 export default function Show({
@@ -41,22 +41,21 @@ export default function Show({
     filters,
     is_intern,
     current_intern,
+    activities = [],
 }: Props) {
     const isTrashed = !!educationCenter.deleted_at;
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
     const canExport = auth.user?.permissions?.includes('manage interns');
     const [exportOpen, setExportOpen] = useState(false);
+    const [editingNotes, setEditingNotes] = useState(false);
+    const [notesValue, setNotesValue] = useState(
+        educationCenter.internal_notes || '',
+    );
     const lastEmptyKeyRef = useRef<string>('');
 
     const isIntern = !!is_intern;
     const currentIntern = current_intern;
-    const hasActiveFilters = Boolean(
-        filters?.search ||
-            filters?.status ||
-            (filters?.order && filters.order !== 'az'),
-    );
-
     const exportColumns = useMemo(
         () => [
             { key: 'id', label: 'ID' },
@@ -100,14 +99,6 @@ export default function Show({
         toast({
             title: 'Exportación iniciada',
             description: 'Tu descarga comenzará en breve.',
-        });
-    };
-
-    const clearAllFilters = () => {
-        router.get(`/centros/${educationCenter.id}`, {}, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
         });
     };
 
@@ -163,9 +154,7 @@ export default function Show({
 
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h1 className="page-title">
-                            {educationCenter.name}
-                        </h1>
+                        <h1 className="page-title">{educationCenter.name}</h1>
                         <p className="page-subtitle">
                             Detalle del centro educativo y su histórico de
                             becarios.
@@ -392,6 +381,113 @@ export default function Show({
                             )}
                         </div>
                     </div>
+
+                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                        <div className="flex items-center justify-between gap-3">
+                            <h2 className="text-lg font-semibold text-foreground">
+                                Notas internas
+                            </h2>
+                            {canManage && !editingNotes && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setEditingNotes(true)}
+                                >
+                                    Editar
+                                </Button>
+                            )}
+                        </div>
+                        {editingNotes ? (
+                            <div className="space-y-3">
+                                <textarea
+                                    value={notesValue}
+                                    onChange={(e) =>
+                                        setNotesValue(e.target.value)
+                                    }
+                                    className="min-h-[140px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm"
+                                    placeholder="Escribe una nota interna del centro..."
+                                />
+                                <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        type="button"
+                                        onClick={() =>
+                                            router.patch(
+                                                `/centros/${educationCenter.id}/notes`,
+                                                {
+                                                    internal_notes: notesValue,
+                                                },
+                                                {
+                                                    preserveScroll: true,
+                                                    onSuccess: () =>
+                                                        setEditingNotes(false),
+                                                },
+                                            )
+                                        }
+                                    >
+                                        Guardar nota
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => {
+                                            setNotesValue(
+                                                educationCenter.internal_notes ||
+                                                    '',
+                                            );
+                                            setEditingNotes(false);
+                                        }}
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    {educationCenter.internal_notes && (
+                                        <Button
+                                            type="button"
+                                            variant="destructive"
+                                            onClick={() =>
+                                                router.patch(
+                                                    `/centros/${educationCenter.id}/notes`,
+                                                    {
+                                                        internal_notes: null,
+                                                    },
+                                                    {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => {
+                                                            setNotesValue('');
+                                                            setEditingNotes(
+                                                                false,
+                                                            );
+                                                        },
+                                                    },
+                                                )
+                                            }
+                                        >
+                                            Borrar nota
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-2 text-sm">
+                                <p className="text-foreground">
+                                    {educationCenter.internal_notes ||
+                                        'Sin notas internas.'}
+                                </p>
+                                {(educationCenter.notes_updated_by ||
+                                    educationCenter.internal_notes_updated_at) && (
+                                    <p className="text-xs text-muted-foreground">
+                                        Última edición:{' '}
+                                        {educationCenter.notes_updated_by
+                                            ?.name || 'Usuario'}{' '}
+                                        ·{' '}
+                                        {formatDateTimeEs(
+                                            educationCenter.internal_notes_updated_at,
+                                        )}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {isIntern && (
@@ -428,6 +524,118 @@ export default function Show({
                                 </p>
                             </div>
                         </div>
+                    </div>
+                )}
+
+                {!isIntern && (
+                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                        <h2 className="text-lg font-semibold text-foreground">
+                            Historial de actividad
+                        </h2>
+                        {activities.length > 0 ? (
+                            <div className="space-y-4">
+                                {activities.map((activity) => {
+                                    const changes =
+                                        activity.properties?.attributes ?? {};
+                                    const old = activity.properties?.old ?? {};
+
+                                    const labels: Record<string, string> = {
+                                        name: 'Nombre',
+                                        code: 'Código',
+                                        address: 'Dirección',
+                                        city: 'Ciudad',
+                                        contact_person: 'Contacto',
+                                        contact_email: 'Email del coordinador',
+                                        contact_position: 'Cargo',
+                                        email: 'Email institucional',
+                                        phone: 'Teléfono',
+                                        web: 'Web',
+                                        agreement_signed_at: 'Fecha de firma',
+                                        agreement_expires_at:
+                                            'Fecha de vencimiento',
+                                        agreement_slots: 'Plazas acordadas',
+                                        internal_notes: 'Notas internas',
+                                        internal_notes_updated_by:
+                                            'Editor de notas',
+                                        internal_notes_updated_at:
+                                            'Fecha edición de notas',
+                                    };
+
+                                    const visibleFields = Object.keys(changes)
+                                        .filter((key) => key in labels)
+                                        .filter(
+                                            (key) => old[key] !== changes[key],
+                                        );
+
+                                    return (
+                                        <div
+                                            key={activity.id}
+                                            className="rounded-xl border border-border/70 p-4"
+                                        >
+                                            <div className="flex flex-wrap items-center justify-between gap-2">
+                                                <div>
+                                                    <p className="text-sm font-medium text-foreground">
+                                                        {activity.causer_name}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {activity.event ===
+                                                        'created'
+                                                            ? 'Creó el centro'
+                                                            : activity.event ===
+                                                                'updated'
+                                                              ? 'Actualizó la ficha del centro'
+                                                              : activity.description}
+                                                    </p>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {activity.created_at}
+                                                </p>
+                                            </div>
+
+                                            {visibleFields.length > 0 && (
+                                                <div className="mt-3 space-y-2 text-sm">
+                                                    {visibleFields.map(
+                                                        (field) => (
+                                                            <div
+                                                                key={field}
+                                                                className="rounded-lg bg-muted/30 px-3 py-2"
+                                                            >
+                                                                <span className="font-medium text-foreground">
+                                                                    {
+                                                                        labels[
+                                                                            field
+                                                                        ]
+                                                                    }
+                                                                    :
+                                                                </span>{' '}
+                                                                <span className="text-muted-foreground">
+                                                                    {old[
+                                                                        field
+                                                                    ] ?? '—'}
+                                                                </span>{' '}
+                                                                <span className="text-muted-foreground">
+                                                                    →
+                                                                </span>{' '}
+                                                                <span className="text-foreground">
+                                                                    {changes[
+                                                                        field
+                                                                    ] ?? '—'}
+                                                                </span>
+                                                            </div>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">
+                                Aún no hay actividad registrada para este
+                                centro.
+                            </p>
+                        )}
                     </div>
                 )}
 

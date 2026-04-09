@@ -1,5 +1,6 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { FileText, ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,10 @@ export default function Show({
     insurance_url: string;
     activities: any[];
 }) {
+    const { auth } = usePage().props as any;
+    const canManage = auth.user?.permissions?.includes('manage interns');
+    const [editingNotes, setEditingNotes] = useState(false);
+    const [notesValue, setNotesValue] = useState(intern.internal_notes || '');
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Becarios', href: '/becarios' },
@@ -237,6 +242,126 @@ export default function Show({
                                         </span>
                                     )}
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="rounded-xl border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <CardHeader className="border-b border-slate-100 pb-3 dark:border-slate-800">
+                                <div className="flex items-center justify-between gap-3">
+                                    <CardTitle className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                        Notas internas
+                                    </CardTitle>
+                                    {canManage && !editingNotes && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() =>
+                                                setEditingNotes(true)
+                                            }
+                                        >
+                                            Editar
+                                        </Button>
+                                    )}
+                                </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3 px-6 pt-4">
+                                {editingNotes ? (
+                                    <>
+                                        <textarea
+                                            value={notesValue}
+                                            onChange={(e) =>
+                                                setNotesValue(e.target.value)
+                                            }
+                                            className="min-h-[120px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm"
+                                            placeholder="Escribe una nota interna..."
+                                        />
+                                        <div className="flex flex-wrap gap-2">
+                                            <Button
+                                                type="button"
+                                                onClick={() =>
+                                                    router.patch(
+                                                        `/interns/${intern.id}/notes`,
+                                                        {
+                                                            internal_notes:
+                                                                notesValue,
+                                                        },
+                                                        {
+                                                            preserveScroll: true,
+                                                            onSuccess: () =>
+                                                                setEditingNotes(
+                                                                    false,
+                                                                ),
+                                                        },
+                                                    )
+                                                }
+                                            >
+                                                Guardar nota
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => {
+                                                    setNotesValue(
+                                                        intern.internal_notes ||
+                                                            '',
+                                                    );
+                                                    setEditingNotes(false);
+                                                }}
+                                            >
+                                                Cancelar
+                                            </Button>
+                                            {intern.internal_notes && (
+                                                <Button
+                                                    type="button"
+                                                    variant="destructive"
+                                                    onClick={() =>
+                                                        router.patch(
+                                                            `/interns/${intern.id}/notes`,
+                                                            {
+                                                                internal_notes:
+                                                                    null,
+                                                            },
+                                                            {
+                                                                preserveScroll: true,
+                                                                onSuccess:
+                                                                    () => {
+                                                                        setNotesValue(
+                                                                            '',
+                                                                        );
+                                                                        setEditingNotes(
+                                                                            false,
+                                                                        );
+                                                                    },
+                                                            },
+                                                        )
+                                                    }
+                                                >
+                                                    Borrar nota
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-sm text-slate-600 dark:text-slate-300">
+                                            {intern.internal_notes ||
+                                                'Sin notas internas.'}
+                                        </p>
+                                        {(intern.notes_updated_by ||
+                                            intern.internal_notes_updated_at) && (
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                Última edición:{' '}
+                                                {intern.notes_updated_by
+                                                    ?.name || 'Usuario'}{' '}
+                                                ·{' '}
+                                                {formatDateTimeEs(
+                                                    intern.internal_notes_updated_at,
+                                                )}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
@@ -495,6 +620,7 @@ export default function Show({
                                                                                     {labelFor(
                                                                                         field,
                                                                                     )}
+
                                                                                     :
                                                                                 </span>{' '}
                                                                                 <span className="line-through opacity-70">

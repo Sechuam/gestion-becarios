@@ -12,6 +12,7 @@ use App\Models\TaskStatusLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\EducationCenter;
 
@@ -75,7 +76,9 @@ class TaskController extends Controller
             }
             $query->orderBy($sortable[$sort], $direction);
         } else {
-            $query->latest();
+            $query
+                ->orderByRaw('COALESCE(tasks.kanban_position, 2147483647)')
+                ->latest();
         }
 
         $tasks = $query->paginate(10)->withQueryString();
@@ -147,7 +150,9 @@ class TaskController extends Controller
             }
             $query->orderBy($sortable[$sort], $direction);
         } else {
-            $query->latest();
+            $query
+                ->orderByRaw('COALESCE(tasks.kanban_position, 2147483647)')
+                ->latest();
         }
 
         $tasks = $query->paginate(10)->withQueryString();
@@ -175,6 +180,7 @@ class TaskController extends Controller
                 'practice_type_id',
             ]),
             'created_by' => Auth::id(),
+            'kanban_position' => $this->nextKanbanPosition(),
         ]);
 
         $internIds = $validated['intern_ids'] ?? [];
@@ -254,6 +260,7 @@ class TaskController extends Controller
             'priority',
             'due_date',
             'practice_type_id',
+            'reject_reason',
         ]));
 
         if ($request->has('intern_ids')) {
@@ -292,15 +299,30 @@ class TaskController extends Controller
 
         $request->validate([
             'status' => 'required|in:pending,in_progress,in_review,completed,rejected',
+            'reject_reason' => 'nullable|string|max:2000',
         ]);
 
+        if ($request->input('status') === 'rejected') {
+            $request->validate([
+                'reject_reason' => 'required|string|max:2000',
+            ]);
+        }
+
         $fromStatus = $task->status;
-        $task->update(['status' => $request->status]);
+        $task->update([
+            'status' => $request->status,
+            'reject_reason' => $request->input('status') === 'rejected'
+                ? $request->input('reject_reason')
+                : null,
+        ]);
 
         TaskStatusLog::create([
             'task_id' => $task->id,
             'from_status' => $fromStatus,
             'to_status' => $task->status,
+            'reason' => $request->input('status') === 'rejected'
+                ? $request->input('reject_reason')
+                : null,
             'changed_by' => Auth::id(),
             'changed_at' => now(),
         ]);
@@ -310,8 +332,6 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        $task->load(['practiceType', 'creator', 'interns.user', 'comments.user']);
-
         $user = Auth::user();
         $isIntern = $user?->isIntern() ?? false;
         $isAssigned = $isIntern
@@ -326,10 +346,20 @@ class TaskController extends Controller
                 'task_id' => $task->id,
                 'from_status' => $fromStatus,
                 'to_status' => 'in_progress',
+                'reason' => null,
                 'changed_by' => $user->id,
                 'changed_at' => now(),
             ]);
         }
+
+        $task->load([
+            'practiceType',
+            'creator',
+            'interns.user',
+            'comments.user',
+            'comments.replies.user',
+            'statusLogs.user',
+        ]);
 
         $attachments = $task->getMedia('attachments')->map(function ($media) {
             return [
@@ -346,6 +376,24 @@ class TaskController extends Controller
             'task' => $task,
             'attachments' => $attachments,
             'is_assigned' => $isAssigned,
+            'comments' => $task->comments
+                ->sortBy('created_at')
+                ->values()
+                ->map(fn (TaskComment $comment) => $this->serializeComment($comment)),
+            'status_logs' => $task->statusLogs
+                ->sortByDesc('changed_at')
+                ->values()
+                ->map(fn (TaskStatusLog $log) => [
+                    'id' => $log->id,
+                    'from_status' => $log->from_status,
+                    'to_status' => $log->to_status,
+                    'reason' => $log->reason,
+                    'changed_at' => $log->changed_at,
+                    'user' => $log->user ? [
+                        'id' => $log->user->id,
+                        'name' => $log->user->name,
+                    ] : null,
+                ]),
         ]);
     }
 
@@ -384,6 +432,7 @@ class TaskController extends Controller
                 'task_id' => $task->id,
                 'from_status' => $fromStatus,
                 'to_status' => 'in_review',
+                'reason' => null,
                 'changed_by' => $user->id,
                 'changed_at' => now(),
             ]);
@@ -402,6 +451,7 @@ class TaskController extends Controller
             'task_id' => $task->id,
             'from_status' => $fromStatus,
             'to_status' => 'completed',
+            'reason' => null,
             'changed_by' => $user->id,
             'changed_at' => now(),
         ]);
@@ -413,15 +463,88 @@ class TaskController extends Controller
     {
         $request->validate([
             'comment' => 'required|string|max:2000',
+            'parent_id' => 'nullable|exists:task_comments,id',
         ]);
+
+        if ($request->filled('parent_id')) {
+            $parent = TaskComment::query()
+                ->where('task_id', $task->id)
+                ->findOrFail($request->integer('parent_id'));
+
+            if ($parent->parent_id !== null) {
+                return back()->with('error', 'Solo se puede responder a comentarios principales.');
+            }
+        }
 
         TaskComment::create([
             'task_id' => $task->id,
             'user_id' => Auth::id(),
+            'parent_id' => $request->input('parent_id'),
             'comment' => $request->comment,
         ]);
 
         return back()->with('success', 'Comentario añadido.');
+    }
+
+    public function updateComment(Request $request, Task $task, TaskComment $comment)
+    {
+        abort_unless($comment->task_id === $task->id, 404);
+
+        if ((int) $comment->user_id !== (int) Auth::id()) {
+            return back()->with('error', 'Solo puedes editar tus propios comentarios.');
+        }
+
+        $request->validate([
+            'comment' => 'required|string|max:2000',
+        ]);
+
+        $comment->update([
+            'comment' => $request->input('comment'),
+            'edited_at' => now(),
+        ]);
+
+        return back()->with('success', 'Comentario actualizado.');
+    }
+
+    public function destroyComment(Task $task, TaskComment $comment)
+    {
+        abort_unless($comment->task_id === $task->id, 404);
+
+        $user = Auth::user();
+        $canDelete = (int) $comment->user_id === (int) $user?->id || $user?->isStaff();
+
+        if (! $canDelete) {
+            return back()->with('error', 'No puedes eliminar este comentario.');
+        }
+
+        $comment->replies()->delete();
+        $comment->delete();
+
+        return back()->with('success', 'Comentario eliminado.');
+    }
+
+    public function updateBoardOrder(Request $request)
+    {
+        if (Auth::user()?->isIntern()) {
+            return back()->with('error', 'No tienes permiso para reordenar tareas.');
+        }
+
+        $validated = $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.id' => 'required|integer|exists:tasks,id',
+            'items.*.status' => 'required|in:pending,in_progress,in_review,completed,rejected',
+            'items.*.position' => 'required|integer|min:1',
+        ]);
+
+        DB::transaction(function () use ($validated) {
+            foreach ($validated['items'] as $item) {
+                Task::whereKey($item['id'])->update([
+                    'kanban_position' => $item['position'],
+                ]);
+            }
+        });
+
+        return back()->with('success', 'Orden del tablero actualizado.');
     }
 
     public function addAttachment(Request $request, Task $task)
@@ -436,5 +559,37 @@ class TaskController extends Controller
         }
 
         return back()->with('success', 'Archivos subidos correctamente.');
+    }
+
+    protected function serializeComment(TaskComment $comment): array
+    {
+        return [
+            'id' => $comment->id,
+            'comment' => $comment->comment,
+            'edited_at' => $comment->edited_at,
+            'created_at' => $comment->created_at,
+            'user' => $comment->user ? [
+                'id' => $comment->user->id,
+                'name' => $comment->user->name,
+            ] : null,
+            'replies' => $comment->replies
+                ->sortBy('created_at')
+                ->values()
+                ->map(fn (TaskComment $reply) => [
+                    'id' => $reply->id,
+                    'comment' => $reply->comment,
+                    'edited_at' => $reply->edited_at,
+                    'created_at' => $reply->created_at,
+                    'user' => $reply->user ? [
+                        'id' => $reply->user->id,
+                        'name' => $reply->user->name,
+                    ] : null,
+                ]),
+        ];
+    }
+
+    protected function nextKanbanPosition(): int
+    {
+        return (int) Task::max('kanban_position') + 1;
     }
 }

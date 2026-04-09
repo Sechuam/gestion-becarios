@@ -257,6 +257,17 @@ const reorderBoardTasks = (
     return KANBAN_COLUMNS.flatMap((column) => grouped[column.key] || []);
 };
 
+const buildBoardOrderPayload = (tasks: any[]) =>
+    KANBAN_COLUMNS.flatMap((column) =>
+        tasks
+            .filter((task) => String(task.status) === column.key)
+            .map((task, index) => ({
+                id: Number(task.id),
+                status: column.key,
+                position: index + 1,
+            })),
+    );
+
 export default function Index({
     tasks,
     filters = {},
@@ -383,6 +394,19 @@ export default function Index({
         );
     };
 
+    const persistBoardOrder = (nextTasks: any[]) => {
+        router.patch(
+            '/tareas/board-order',
+            {
+                items: buildBoardOrderPayload(nextTasks),
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    };
+
     const filteredBoardTasks = useMemo(() => {
         return boardTasks.filter((task: any) => {
             if (boardFilter === 'urgent') {
@@ -421,8 +445,20 @@ export default function Index({
         task: any,
         newStatus: string,
         closePanel = false,
+        rejectReason?: string,
     ) => {
         if (!task || task.status === newStatus) return;
+
+        const resolvedRejectReason =
+            newStatus === 'rejected'
+                ? (rejectReason ??
+                  window.prompt('Indica el motivo del rechazo:') ??
+                  '')
+                : '';
+
+        if (newStatus === 'rejected' && !resolvedRejectReason.trim()) {
+            return;
+        }
 
         const nextStatusLabel = getTaskStatusLabel(String(newStatus));
         setLastMoveMessage(`"${task.title}" pasa a ${nextStatusLabel}.`);
@@ -438,7 +474,11 @@ export default function Index({
 
         router.patch(
             `/tareas/${task.id}/status`,
-            { status: newStatus },
+            {
+                status: newStatus,
+                reject_reason:
+                    newStatus === 'rejected' ? resolvedRejectReason : undefined,
+            },
             {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -1053,13 +1093,28 @@ export default function Index({
                                         );
                                     })();
 
-                                setBoardTasks(
-                                    reorderBoardTasks(
-                                        boardTasks,
-                                        activeTaskId,
-                                        overId,
-                                    ),
+                                const dragRejectReason =
+                                    String(targetStatus) === 'rejected'
+                                        ? (window.prompt(
+                                              'Indica el motivo del rechazo:',
+                                          ) ?? '')
+                                        : '';
+
+                                if (
+                                    String(targetStatus) === 'rejected' &&
+                                    !dragRejectReason.trim()
+                                ) {
+                                    setHoveredColumn(null);
+                                    return;
+                                }
+
+                                const nextTasks = reorderBoardTasks(
+                                    boardTasks,
+                                    activeTaskId,
+                                    overId,
                                 );
+                                setBoardTasks(nextTasks);
+                                persistBoardOrder(nextTasks);
                                 setHoveredColumn(null);
 
                                 if (
@@ -1071,6 +1126,8 @@ export default function Index({
                                     updateTaskStatus(
                                         movedTask,
                                         String(targetStatus),
+                                        false,
+                                        dragRejectReason,
                                     );
                                 }
                             }}

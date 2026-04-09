@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
@@ -51,11 +52,20 @@ class Intern extends Model implements HasMedia
         'total_hours',
         'abandon_reason',
         'internal_notes',
+        'internal_notes_updated_by',
+        'internal_notes_updated_at',
         'center_tutor_name',
         'center_tutor_email',
         'center_tutor_phone',
         'company_tutor_user_id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'internal_notes_updated_at' => 'datetime',
+        ];
+    }
 
     public function user(): BelongsTo
     {
@@ -126,5 +136,15 @@ class Intern extends Model implements HasMedia
     public function companyTutor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'company_tutor_user_id');
+    }
+
+    public function notesUpdatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'internal_notes_updated_by');
+    }
+
+    public function internalNotes(): MorphMany
+    {
+        return $this->morphMany(InternalNote::class, 'notable')->latest();
     }
 }

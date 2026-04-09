@@ -7,8 +7,10 @@ use App\Http\Requests\StoreInternRequest;
 use App\Http\Requests\UpdateInternRequest;
 use App\Models\EducationCenter;
 use App\Models\Intern;
+use App\Models\InternalNote;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -134,10 +136,20 @@ class InternController extends Controller
     public function show(Intern $intern)
     {
         return Inertia::render('interns/Show', [
-            'intern' => $intern->load(['user', 'educationCenter', 'companyTutor'])->append(['progress', 'is_delayed']),
+            'intern' => $intern->load(['user', 'educationCenter', 'companyTutor', 'notesUpdatedBy', 'internalNotes.user'])->append(['progress', 'is_delayed']),
             'dni_url' => $intern->getFirstMediaUrl('dni'),
             'agreement_url' => $intern->getFirstMediaUrl('agreement'),
             'insurance_url' => $intern->getFirstMediaUrl('insurance'),
+            'internal_notes' => $intern->internalNotes->map(fn (InternalNote $note) => [
+                'id' => $note->id,
+                'content' => $note->content,
+                'created_at' => $note->created_at,
+                'edited_at' => $note->edited_at,
+                'user' => $note->user ? [
+                    'id' => $note->user->id,
+                    'name' => $note->user->name,
+                ] : null,
+            ]),
 
             'activities' => $intern->activities()
                 ->with('causer')
@@ -242,11 +254,64 @@ class InternController extends Controller
             'internal_notes' => 'nullable|string|max:1000',
         ]);
 
-        $intern->updateQuietly([
+        $intern->update([
             'internal_notes' => $request->input('internal_notes'),
+            'internal_notes_updated_by' => Auth::id(),
+            'internal_notes_updated_at' => now(),
         ]);
 
         return back()->with('success', 'Notas actualizadas correctamente');
+    }
+
+    public function storeInternalNote(Request $request, Intern $intern)
+    {
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $intern->internalNotes()->create([
+            'content' => $request->input('content'),
+            'user_id' => Auth::id(),
+        ]);
+
+        $this->syncInternalNoteSummary($intern);
+
+        return back()->with('success', 'Nota añadida correctamente');
+    }
+
+    public function updateInternalNote(Request $request, Intern $intern, InternalNote $note)
+    {
+        abort_unless(
+            $note->notable_type === Intern::class && (int) $note->notable_id === (int) $intern->id,
+            404,
+        );
+
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $note->update([
+            'content' => $request->input('content'),
+            'edited_at' => now(),
+        ]);
+
+        $this->syncInternalNoteSummary($intern);
+
+        return back()->with('success', 'Nota actualizada correctamente');
+    }
+
+    public function destroyInternalNote(Intern $intern, InternalNote $note)
+    {
+        abort_unless(
+            $note->notable_type === Intern::class && (int) $note->notable_id === (int) $intern->id,
+            404,
+        );
+
+        $note->delete();
+
+        $this->syncInternalNoteSummary($intern);
+
+        return back()->with('success', 'Nota eliminada correctamente');
     }
 
     protected function syncInternMedia(Intern $intern, Request $request): void
@@ -262,5 +327,17 @@ class InternController extends Controller
         if ($request->hasFile('insurance_file')) {
             $intern->addMediaFromRequest('insurance_file')->toMediaCollection('insurance');
         }
+    }
+
+    protected function syncInternalNoteSummary(Intern $intern): void
+    {
+        /** @var InternalNote|null $latestNote */
+        $latestNote = $intern->internalNotes()->with('user')->latest('created_at')->first();
+
+        $intern->update([
+            'internal_notes' => $latestNote?->content,
+            'internal_notes_updated_by' => $latestNote?->user_id,
+            'internal_notes_updated_at' => $latestNote?->created_at,
+        ]);
     }
 }

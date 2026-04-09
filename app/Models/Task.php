@@ -14,6 +14,8 @@ class Task extends Model implements HasMedia
     protected $fillable = [
         'title',
         'description',
+        'reject_reason',
+        'kanban_position',
         'status',
         'priority',
         'due_date',
@@ -38,7 +40,7 @@ class Task extends Model implements HasMedia
 
     public function comments()
     {
-        return $this->hasMany(TaskComment::class);
+        return $this->hasMany(TaskComment::class)->whereNull('parent_id');
     }
 
     public function statusLogs()
