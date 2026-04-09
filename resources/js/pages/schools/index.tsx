@@ -414,16 +414,8 @@ export default function Index({
                 ).length,
                 hint: 'Centros con referencia directa',
             },
-            {
-                label: 'Filtros activos',
-                value: activeFilterChips.length,
-                hint:
-                    activeFilterChips.length > 0
-                        ? 'Puedes limpiarlos arriba'
-                        : 'Sin restricciones aplicadas',
-            },
         ],
-        [activeFilterChips.length, schools.data, schools.total],
+        [schools.data, schools.total],
     );
 
     return (
@@ -452,125 +444,133 @@ export default function Index({
                 />
 
                 {/* FILTROS */}
-                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                    <div className="relative w-full max-w-sm">
-                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
-                        <Input
-                            placeholder="Buscar por nombre..."
-                            className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
-                            defaultValue={filters.search}
-                            onChange={(e) =>
-                                handleFilter('search', e.target.value)
-                            }
-                        />
-                    </div>
+                <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                    {/* Fila 1: Búsqueda y Exportar */}
+                    <div className="flex flex-wrap items-center gap-4">
+                        <div className="relative flex-1 min-w-[200px] max-w-md">
+                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
+                            <Input
+                                placeholder="Buscar por nombre..."
+                                className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
+                                defaultValue={filters.search}
+                                onChange={(e) =>
+                                    handleFilter('search', e.target.value)
+                                }
+                            />
+                        </div>
 
-                    <div className="w-50">
-                        <Select
-                            value={filters.trashed || 'none'}
-                            onValueChange={(v) => handleFilter('trashed', v)}
-                        >
-                            <SelectTrigger className="w-full border-border bg-background text-foreground">
-                                <SelectValue>
-                                    {{
-                                        none: 'Activos',
-                                        only: 'Archivados',
-                                        with: 'Todos',
-                                    }[filters.trashed as string] || 'Activos'}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="none">Activos</SelectItem>
-                                <SelectItem value="only">Archivados</SelectItem>
-                                <SelectItem value="with">Todos</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {canManage && (
-                        <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-                            <DialogTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                                >
-                                    <FileDown className="h-4 w-4" />
-                                    Exportar Excel
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-xl">
-                                <DialogHeader>
-                                    <DialogTitle>
-                                        Exportación personalizada
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        Elige las columnas que quieres incluir
-                                        en el Excel. Se respetarán los filtros
-                                        actuales.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                    {exportColumns.map((column) => {
-                                        const isChecked =
-                                            selectedColumns.includes(
-                                                column.key,
-                                            );
-                                        return (
-                                            <label
-                                                key={column.key}
-                                                className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
-                                            >
-                                                <Checkbox
-                                                    checked={isChecked}
-                                                    onCheckedChange={(
-                                                        checked,
-                                                    ) => {
-                                                        const isOn =
-                                                            checked === true;
-                                                        setSelectedColumns(
-                                                            (prev) => {
-                                                                if (isOn) {
-                                                                    return [
-                                                                        ...prev,
-                                                                        column.key,
-                                                                    ];
-                                                                }
-                                                                return prev.filter(
-                                                                    (key) =>
-                                                                        key !==
-                                                                        column.key,
-                                                                );
-                                                            },
-                                                        );
-                                                    }}
-                                                />
-                                                {column.label}
-                                            </label>
-                                        );
-                                    })}
-                                </div>
-                                <DialogFooter>
+                        {canManage && (
+                            <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                                <DialogTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        onClick={() => setExportOpen(false)}
+                                        className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                                     >
-                                        Cancelar
+                                        <FileDown className="h-4 w-4" />
+                                        Exportar Excel
                                     </Button>
-                                    <Button
-                                        onClick={handleExport}
-                                        disabled={selectedColumns.length === 0}
-                                    >
-                                        Descargar Excel
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    )}
+                                </DialogTrigger>
+                                <DialogContent className="max-w-xl">
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Exportación personalizada
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Elige las columnas que quieres incluir
+                                            en el Excel. Se respetarán los filtros
+                                            actuales.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        {exportColumns.map((column) => {
+                                            const isChecked =
+                                                selectedColumns.includes(
+                                                    column.key,
+                                                );
+                                            return (
+                                                <label
+                                                    key={column.key}
+                                                    className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                                                >
+                                                    <Checkbox
+                                                        checked={isChecked}
+                                                        onCheckedChange={(
+                                                            checked,
+                                                        ) => {
+                                                            const isOn =
+                                                                checked === true;
+                                                            setSelectedColumns(
+                                                                (prev) => {
+                                                                    if (isOn) {
+                                                                        return [
+                                                                            ...prev,
+                                                                            column.key,
+                                                                        ];
+                                                                    }
+                                                                    return prev.filter(
+                                                                        (key) =>
+                                                                            key !==
+                                                                            column.key,
+                                                                    );
+                                                                },
+                                                            );
+                                                        }}
+                                                    />
+                                                    {column.label}
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setExportOpen(false)}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                        <Button
+                                            onClick={handleExport}
+                                            disabled={selectedColumns.length === 0}
+                                        >
+                                            Descargar Excel
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        )}
 
-                    <p className="ml-auto text-sm font-medium text-muted-foreground">
-                        Mostrando {schools.data.length} de {schools.total}{' '}
-                        centros
-                    </p>
+                        <p className="ml-auto text-sm font-medium text-muted-foreground whitespace-nowrap">
+                            Mostrando {schools.data.length} de {schools.total} centros
+                        </p>
+                    </div>
+
+                    {/* Fila 2: Filtros */}
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                Vista
+                            </label>
+                            <Select
+                                value={filters.trashed || 'none'}
+                                onValueChange={(v) => handleFilter('trashed', v)}
+                            >
+                                <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
+                                    <SelectValue>
+                                        {{
+                                            none: 'Activos',
+                                            only: 'Archivados',
+                                            with: 'Todos',
+                                        }[filters.trashed as string] || 'Activos'}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">Activos</SelectItem>
+                                    <SelectItem value="only">Archivados</SelectItem>
+                                    <SelectItem value="with">Todos</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
                 </div>
 
                 <ActiveFilterChips

@@ -5,6 +5,7 @@ use App\Http\Controllers\InternController;
 use App\Http\Controllers\PracticeTypeController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TutorController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -69,9 +70,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('becarios', [InternController::class, 'index'])
         ->name('becarios.index')
         ->middleware('staff');
-    Route::inertia('tutores', 'tutors/index')
+    Route::get('tutores', [TutorController::class, 'index'])
         ->name('tutores.index')
         ->middleware('admin');
+    Route::get('tutores/{user}', [TutorController::class, 'show'])
+        ->name('tutores.show')
+        ->middleware('staff');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
     Route::get('usuarios', [UsersController::class, 'index'])

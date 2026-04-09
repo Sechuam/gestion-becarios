@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -60,6 +61,16 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function intern(): HasOne
     {
         return $this->hasOne(Intern::class);
+    }
+
+    public function assignedInterns(): HasMany
+    {
+        return $this->hasMany(Intern::class, 'company_tutor_user_id');
+    }
+
+    public function createdTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'created_by');
     }
 
     public function isAdmin(): bool

@@ -6,6 +6,7 @@ import {
     LayoutGrid,
     List,
     PlusCircle,
+    Search,
     Sparkles,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -576,145 +577,167 @@ export default function Index({
                     }
                 />
 
-                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                    <div className="relative w-full max-w-sm">
-                        <Input
-                            placeholder="Buscar por título..."
-                            className="border-border bg-background text-foreground placeholder:text-muted-foreground"
-                            onChange={(e) =>
-                                handleFilter('search', e.target.value)
-                            }
-                        />
+                <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                    {/* Fila 1: Búsqueda */}
+                    <div className="flex flex-wrap items-center gap-4">
+                        <div className="relative flex-1 min-w-[200px] max-w-md">
+                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                                placeholder="Buscar por título..."
+                                className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
+                                onChange={(e) =>
+                                    handleFilter('search', e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <p className="ml-auto text-sm font-medium text-muted-foreground whitespace-nowrap">
+                            Mostrando {tasks.data.length} de {tasks.total} tareas
+                        </p>
                     </div>
 
-                    <div className="w-50">
-                        <Select
-                            value={filters.status || 'all'}
-                            onValueChange={(v) => handleFilter('status', v)}
-                        >
-                            <SelectTrigger className="w-full border-border bg-background text-foreground">
-                                <SelectValue>
-                                    {{
-                                        pending: 'Pendiente',
-                                        in_progress: 'En progreso',
-                                        in_review: 'En revisión',
-                                        completed: 'Completada',
-                                        rejected: 'Rechazada',
-                                    }[filters.status as string] ||
-                                        'Todos los estados'}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">
-                                    Todos los estados
-                                </SelectItem>
-                                <SelectItem value="pending">
-                                    Pendiente
-                                </SelectItem>
-                                <SelectItem value="in_progress">
-                                    En progreso
-                                </SelectItem>
-                                <SelectItem value="in_review">
-                                    En revisión
-                                </SelectItem>
-                                <SelectItem value="completed">
-                                    Completada
-                                </SelectItem>
-                                <SelectItem value="rejected">
-                                    Rechazada
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="w-60">
-                        <Select
-                            value={filters.practice_type || 'all'}
-                            onValueChange={(v) =>
-                                handleFilter('practice_type', v)
-                            }
-                        >
-                            <SelectTrigger className="w-full border-border bg-background text-foreground">
-                                <SelectValue>
-                                    {filters.practice_type &&
-                                    filters.practice_type !== 'all'
-                                        ? practice_types.find(
-                                              (p) =>
-                                                  p.id.toString() ===
-                                                  filters.practice_type?.toString(),
-                                          )?.name
-                                        : 'Todos los tipos'}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">
-                                    Todos los tipos
-                                </SelectItem>
-                                {practice_types.map((type) => (
-                                    <SelectItem
-                                        key={type.id}
-                                        value={type.id.toString()}
-                                    >
-                                        {type.name}
+                    {/* Fila 2: Filtros */}
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                Estado
+                            </label>
+                            <Select
+                                value={filters.status || 'all'}
+                                onValueChange={(v) => handleFilter('status', v)}
+                            >
+                                <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
+                                    <SelectValue>
+                                        {{
+                                            pending: 'Pendiente',
+                                            in_progress: 'En progreso',
+                                            in_review: 'En revisión',
+                                            completed: 'Completada',
+                                            rejected: 'Rechazada',
+                                        }[filters.status as string] ||
+                                            'Todos'}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">
+                                        Todos los estados
                                     </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="w-60">
-                        <Select
-                            value={filters.intern_id || 'all'}
-                            onValueChange={(v) => handleFilter('intern_id', v)}
-                        >
-                            <SelectTrigger className="w-full border-border bg-background text-foreground">
-                                <SelectValue>
-                                    {filters.intern_id && filters.intern_id !== 'all'
-                                        ? interns.find(
-                                              (intern) =>
-                                                  String(intern.id) ===
-                                                  String(filters.intern_id),
-                                          )?.name || 'Todos los becarios'
-                                        : 'Todos los becarios'}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">
-                                    Todos los becarios
-                                </SelectItem>
-                                {interns.map((intern) => (
-                                    <SelectItem
-                                        key={intern.id}
-                                        value={String(intern.id)}
-                                    >
-                                        {intern.name}
+                                    <SelectItem value="pending">
+                                        Pendiente
                                     </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                                    <SelectItem value="in_progress">
+                                        En progreso
+                                    </SelectItem>
+                                    <SelectItem value="in_review">
+                                        En revisión
+                                    </SelectItem>
+                                    <SelectItem value="completed">
+                                        Completada
+                                    </SelectItem>
+                                    <SelectItem value="rejected">
+                                        Rechazada
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <div className="w-45">
-                        <DatePicker
-                            value={filters.due_from || ''}
-                            onChange={(value) =>
-                                handleFilter('due_from', value)
-                            }
-                        />
-                    </div>
+                        <div className="flex items-center gap-2">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                Tipo
+                            </label>
+                            <Select
+                                value={filters.practice_type || 'all'}
+                                onValueChange={(v) =>
+                                    handleFilter('practice_type', v)
+                                }
+                            >
+                                <SelectTrigger className="w-[220px] border-border bg-background text-foreground [&>span]:truncate">
+                                    <SelectValue>
+                                        {filters.practice_type &&
+                                        filters.practice_type !== 'all'
+                                            ? practice_types.find(
+                                                  (p) =>
+                                                      p.id.toString() ===
+                                                      filters.practice_type?.toString(),
+                                              )?.name
+                                            : 'Todos'}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">
+                                        Todos los tipos
+                                    </SelectItem>
+                                    {practice_types.map((type) => (
+                                        <SelectItem
+                                            key={type.id}
+                                            value={type.id.toString()}
+                                        >
+                                            {type.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <div className="w-45">
-                        <DatePicker
-                            value={filters.due_to || ''}
-                            onChange={(value) =>
-                                handleFilter('due_to', value)
-                            }
-                        />
-                    </div>
+                        <div className="flex items-center gap-2">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                Becario
+                            </label>
+                            <Select
+                                value={filters.intern_id || 'all'}
+                                onValueChange={(v) => handleFilter('intern_id', v)}
+                            >
+                                <SelectTrigger className="w-[200px] border-border bg-background text-foreground [&>span]:truncate">
+                                    <SelectValue>
+                                        {filters.intern_id && filters.intern_id !== 'all'
+                                            ? interns.find(
+                                                  (intern) =>
+                                                      String(intern.id) ===
+                                                      String(filters.intern_id),
+                                              )?.name || 'Todos'
+                                            : 'Todos'}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">
+                                        Todos los becarios
+                                    </SelectItem>
+                                    {interns.map((intern) => (
+                                        <SelectItem
+                                            key={intern.id}
+                                            value={String(intern.id)}
+                                        >
+                                            {intern.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <p className="ml-auto text-sm font-medium text-muted-foreground">
-                        Mostrando {tasks.data.length} de {tasks.total} tareas
-                    </p>
+                        <div className="flex items-center gap-2">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                Desde
+                            </label>
+                            <DatePicker
+                                value={filters.due_from || ''}
+                                onChange={(value) =>
+                                    handleFilter('due_from', value)
+                                }
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                Hasta
+                            </label>
+                            <DatePicker
+                                value={filters.due_to || ''}
+                                onChange={(value) =>
+                                    handleFilter('due_to', value)
+                                }
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <ActiveFilterChips
