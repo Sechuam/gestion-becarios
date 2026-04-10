@@ -329,7 +329,8 @@ export default function Show({
                                 {task.creator?.name || '—'}
                             </span>
                         </div>
-                        {task.reject_reason && (
+                        {String(task.status) === 'rejected' &&
+                            task.reject_reason && (
                             <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                                 <p className="font-semibold">Motivo rechazo</p>
                                 <p className="mt-1">{task.reject_reason}</p>

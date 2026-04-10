@@ -1,4 +1,5 @@
 import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Link } from '@inertiajs/react';
 import {
     ArrowUpRight,
@@ -24,7 +25,8 @@ import {
     getTaskStatusLabel,
     getTaskStatusTone,
 } from '@/lib/task-labels';
-import { CSS } from '@dnd-kit/utilities';
+
+const getTaskSortableId = (taskId: number | string) => `task-${taskId}`;
 
 type Props = {
     task: any;
@@ -104,7 +106,7 @@ export default function KanbanTaskCard({
         transition,
         isDragging,
     } = useSortable({
-        id: `task-${task.id}`,
+        id: getTaskSortableId(task.id),
         disabled: !canDrag,
         data: {
             type: 'task',
@@ -126,11 +128,9 @@ export default function KanbanTaskCard({
         <div
             ref={setNodeRef}
             style={style}
-            className={`group rounded-xl border border-border bg-card p-4 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                isDragging ? 'z-20 rotate-[1deg] shadow-xl' : ''
-            } ${onOpenDetails ? 'cursor-pointer' : ''} ${
-                highlightMove ? 'task-card-drop-highlight' : ''
-            }`}
+            className={`group rounded-xl border border-border bg-card p-4 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
+                } ${onOpenDetails ? 'cursor-pointer' : ''} ${highlightMove ? 'task-card-drop-highlight' : ''
+                }`}
             onClick={() => onOpenDetails?.(task)}
         >
             <div className="mb-3 flex items-start justify-between gap-3">
@@ -229,50 +229,52 @@ export default function KanbanTaskCard({
                 </span>
             </div>
 
-            <div className="flex items-center gap-2 opacity-80 transition-opacity group-hover:opacity-100">
-                {onOpenDetails && (
+            <div className="space-y-2 opacity-80 transition-opacity group-hover:opacity-100">
+                <div className="flex flex-wrap items-center gap-2">
+                    {onOpenDetails && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 shrink-0 px-2.5"
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                onOpenDetails(task);
+                            }}
+                            title="Vista rápida"
+                        >
+                            <Eye className="h-4 w-4" />
+                        </Button>
+                    )}
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-8 px-2.5"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            onOpenDetails(task);
-                        }}
-                        title="Vista rápida"
-                    >
-                        <Eye className="h-4 w-4" />
-                    </Button>
-                )}
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 px-2.5"
-                    asChild
-                >
-                    <Link href={`/tareas/${task.id}`}>
-                        <ArrowUpRight className="h-4 w-4" />
-                    </Link>
-                </Button>
-                {canEdit && (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 px-2.5"
+                        className="h-8 shrink-0 px-2.5"
                         asChild
                     >
-                        <Link href={`/tareas/${task.id}/edit`}>
-                            <Pencil className="h-4 w-4" />
+                        <Link href={`/tareas/${task.id}`}>
+                            <ArrowUpRight className="h-4 w-4" />
                         </Link>
                     </Button>
-                )}
+                    {canEdit && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 shrink-0 px-2.5"
+                            asChild
+                        >
+                            <Link href={`/tareas/${task.id}/edit`}>
+                                <Pencil className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                    )}
+                </div>
                 {canComplete &&
                     onComplete &&
                     completeStatuses.includes(String(task.status)) && (
                         <Button
                             size="sm"
-                            className="ml-auto h-8 gap-1.5 px-3"
+                            className="h-8 w-full gap-1.5 px-3"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();

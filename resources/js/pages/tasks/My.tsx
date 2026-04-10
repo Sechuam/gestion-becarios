@@ -670,84 +670,86 @@ export default function My({
                             }}
                             onDragCancel={() => setHoveredColumn(null)}
                         >
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-                                {KANBAN_COLUMNS.map((col) => (
-                                    <div
-                                        key={col.key}
-                                        className={`flex min-h-[32rem] flex-col rounded-2xl border bg-card p-3 shadow-sm ${
-                                            tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
-                                                ? 'border-amber-300/70'
-                                                : 'border-border'
-                                        }`}
-                                    >
-                                        <div className="mb-3 flex items-center justify-between gap-3">
-                                            <div>
-                                                <h3 className="text-sm font-semibold text-foreground">
-                                                    {col.label}
-                                                </h3>
-                                                <p className="text-[11px] text-muted-foreground">
-                                                    {tasksByStatus[col.key].length}{' '}
-                                                    tareas
-                                                </p>
-                                            </div>
-                                            {tasksByStatus[col.key].length >
-                                            KANBAN_WIP_LIMIT ? (
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <div className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
-                                                            <AlertTriangle className="h-3 w-3" />
-                                                            WIP
-                                                        </div>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        Esta columna supera el
-                                                        límite sugerido de{' '}
-                                                        {KANBAN_WIP_LIMIT}{' '}
-                                                        tareas.
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            ) : null}
-                                        </div>
-                                        <DroppableColumn
-                                            id={col.key}
-                                            label={col.label}
-                                            hovered={hoveredColumn === col.key}
+                            <div className="overflow-x-auto pb-2">
+                                <div className="flex min-w-max gap-4">
+                                    {KANBAN_COLUMNS.map((col) => (
+                                        <div
+                                            key={col.key}
+                                            className={`flex min-h-[32rem] w-[18rem] min-w-[18rem] flex-col rounded-2xl border bg-card p-3 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
+                                                tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
+                                                    ? 'border-amber-300/70'
+                                                    : 'border-border'
+                                            }`}
                                         >
-                                            <div className="flex flex-1 flex-col gap-3">
+                                            <div className="mb-3 flex items-center justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <h3 className="text-sm font-semibold text-foreground">
+                                                        {col.label}
+                                                    </h3>
+                                                    <p className="text-[11px] text-muted-foreground">
+                                                        {tasksByStatus[col.key].length}{' '}
+                                                        tareas
+                                                    </p>
+                                                </div>
                                                 {tasksByStatus[col.key].length >
-                                                0 ? (
-                                                    tasksByStatus[col.key].map(
-                                                        (task: any) => (
-                                                            <KanbanTaskCard
-                                                                key={task.id}
-                                                                task={task}
-                                                                canDrag={!isIntern}
-                                                                canComplete={isIntern}
-                                                                completeLabel="Entregar"
-                                                                onComplete={
-                                                                    submitTask
-                                                                }
-                                                                onOpenDetails={
-                                                                    setSelectedTask
-                                                                }
-                                                                highlightMove={
-                                                                    highlightedTaskId ===
-                                                                    Number(task.id)
-                                                                }
-                                                            />
-                                                        ),
-                                                    )
-                                                ) : (
-                                                    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-4 py-8 text-center text-sm text-muted-foreground">
-                                                        No hay tareas en{' '}
-                                                        {col.label.toLowerCase()}
-                                                        .
-                                                    </div>
-                                                )}
+                                                KANBAN_WIP_LIMIT ? (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <div className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
+                                                                <AlertTriangle className="h-3 w-3" />
+                                                                WIP
+                                                            </div>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            Esta columna supera el
+                                                            límite sugerido de{' '}
+                                                            {KANBAN_WIP_LIMIT}{' '}
+                                                            tareas.
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                ) : null}
                                             </div>
-                                        </DroppableColumn>
-                                    </div>
-                                ))}
+                                            <DroppableColumn
+                                                id={col.key}
+                                                label={col.label}
+                                                hovered={hoveredColumn === col.key}
+                                            >
+                                                <div className="flex flex-1 flex-col gap-3">
+                                                    {tasksByStatus[col.key].length >
+                                                    0 ? (
+                                                        tasksByStatus[col.key].map(
+                                                            (task: any) => (
+                                                                <KanbanTaskCard
+                                                                    key={task.id}
+                                                                    task={task}
+                                                                    canDrag={!isIntern}
+                                                                    canComplete={isIntern}
+                                                                    completeLabel="Entregar"
+                                                                    onComplete={
+                                                                        submitTask
+                                                                    }
+                                                                    onOpenDetails={
+                                                                        setSelectedTask
+                                                                    }
+                                                                    highlightMove={
+                                                                        highlightedTaskId ===
+                                                                        Number(task.id)
+                                                                    }
+                                                                />
+                                                            ),
+                                                        )
+                                                    ) : (
+                                                        <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-4 py-8 text-center text-sm text-muted-foreground">
+                                                            No hay tareas en{' '}
+                                                            {col.label.toLowerCase()}
+                                                            .
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </DroppableColumn>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </DndContext>
                     </div>

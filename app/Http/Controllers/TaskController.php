@@ -539,6 +539,7 @@ class TaskController extends Controller
         DB::transaction(function () use ($validated) {
             foreach ($validated['items'] as $item) {
                 Task::whereKey($item['id'])->update([
+                    'status' => $item['status'],
                     'kanban_position' => $item['position'],
                 ]);
             }
