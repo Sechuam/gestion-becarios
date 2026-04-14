@@ -141,7 +141,7 @@ class TimeTrackingService
 
         if ($user->can('manage interns')) {
             $interns = $query->orderBy('start_date')->get();
-        } elseif ($user->company_tutor_user_id) { // Si es tutor
+        } elseif ($user->isTutor()) {
             $interns = $query->where('company_tutor_user_id', $user->id)->get();
         } else {
             return collect();
