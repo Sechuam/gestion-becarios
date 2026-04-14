@@ -37,15 +37,23 @@ class AbsenceController extends Controller
             'status' => 'required|in:approved,rejected',
         ]);
 
+        $intern = $absence->user?->intern;
+        abort_unless(
+            $request->user()->can('manage interns')
+                || ($request->user()->isTutor() && $intern && $intern->company_tutor_user_id === $request->user()->id),
+            403
+        );
+
         $absence->update([
             'status' => $validated['status'],
             'approved_by' => $request->user()->id,
         ]);
 
-        $request->user()->unreadNotifications->where('data.absence_id', $absence->id)->markAsRead();
+        $request->user()->unreadNotifications
+            ->where('data.absence_id', $absence->id)
+            ->markAsRead();
 
 
         return back()->with('success', 'Estado de la ausencia actualizado.');
     }
 }
-

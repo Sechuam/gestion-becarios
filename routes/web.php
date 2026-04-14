@@ -12,6 +12,8 @@ use Laravel\Fortify\Features;
 use App\Http\Controllers\TimeLogController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AttendanceReportController;
+
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
@@ -48,8 +50,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('tareas/{task}/comments/{comment}', [TaskController::class, 'updateComment'])->name('tasks.comments.update');
     Route::delete('tareas/{task}/comments/{comment}', [TaskController::class, 'destroyComment'])->name('tasks.comments.destroy');
     Route::post('tareas/{task}/attachments', [TaskController::class, 'addAttachment'])->name('tasks.attachments.store');
+    Route::get('/asistencia', [TimeLogController::class, 'index'])->name('attendance.index');
     Route::post('/time-logs/clock-in', [TimeLogController::class, 'clockIn'])->name('time-logs.clock-in');
     Route::post('/time-logs/clock-out', [TimeLogController::class, 'clockOut'])->name('time-logs.clock-out');
+    Route::post('/time-logs/manual', [TimeLogController::class, 'storeManual'])->name('time-logs.manual');
     Route::get('/time-logs/events', [TimeLogController::class, 'getEvents'])->name('time-logs.events');
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::patch('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
@@ -57,6 +61,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas de Ausencias
     Route::post('/absences', [AbsenceController::class, 'store'])->name('absences.store');
     Route::patch('/absences/{absence}/status', [AbsenceController::class, 'updateStatus'])->name('absences.updateStatus');
+    Route::get('/interns/{intern}/report', [AttendanceReportController::class, 'download'])->name('interns.report');
+
 
 
 
@@ -155,8 +161,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Ruta para evaluaciones
     Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
-    // Ruta para asistencia
-    Route::inertia('/asistencia', 'attendance/index')->name('attendance.index');
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
     // Roles y permisos (admin)

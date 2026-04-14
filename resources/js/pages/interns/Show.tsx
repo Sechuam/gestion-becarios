@@ -9,20 +9,32 @@ import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import type { BreadcrumbItem } from '@/types/navigation';
 import { CreateScheduleModal } from '@/components/interns/CreateScheduleModal';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
+import { AlertTriangle, CheckCircle2, Clock, Download } from 'lucide-react';
+import { ExportReportModal } from '@/components/interns/ExportReportModal';
+
+
+
 
 export default function Show({
     intern,
+    time_stats,
     dni_url,
     agreement_url,
     insurance_url,
     activities,
+
 }: {
     intern: any;
+    time_stats: any;
     dni_url: string;
     agreement_url: string;
     insurance_url: string;
     activities: any[];
 }) {
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage interns');
     const [editingNotes, setEditingNotes] = useState(false);
@@ -82,6 +94,62 @@ export default function Show({
                         </p>
                     </div>
                 </div>
+                {/* RESUMEN DE SEGUIMIENTO HORARIO */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <Card className="p-4 bg-white dark:bg-slate-900 border-none shadow-sm">
+                        <div className="flex items-center gap-3 mb-2">
+                            <Clock className="h-4 w-4 text-slate-400" />
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado de cumplimiento</span>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <p className={`text-2xl font-bold ${time_stats.debt >= 8 ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
+                                    {time_stats.total_done}h / {time_stats.expected_hours}h
+                                </p>
+                                <p className="text-xs text-slate-500">Balance: {time_stats.debt > 0 ? `-${time_stats.debt}h de deuda` : `+${Math.abs(time_stats.debt)}h de adelanto`}</p>
+                            </div>
+                            {time_stats.debt >= 8 ? (
+                                <div className="bg-red-100 text-red-700 p-2 rounded-full"><AlertTriangle className="h-5 w-5" /></div>
+                            ) : (
+                                <div className="bg-emerald-100 text-emerald-700 p-2 rounded-full"><CheckCircle2 className="h-5 w-5" /></div>
+                            )}
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-4 w-full flex items-center justify-center gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                            onClick={() => setIsExportModalOpen(true)}
+                        >
+                            <Download className="h-4 w-4" />
+                            Exportar Parte de Horas
+                        </Button>
+
+                    </Card>
+
+                    <Card className="p-4 bg-white dark:bg-slate-900 border-none shadow-sm col-span-2">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Progreso del Convenio ({time_stats.target_total}h totales)</span>
+                            <span className="text-sm font-bold text-slate-900 dark:text-white">{Math.round((time_stats.total_done / time_stats.target_total) * 100)}%</span>
+                        </div>
+                        <Progress value={(time_stats.total_done / time_stats.target_total) * 100} className="h-3 bg-slate-100 dark:bg-slate-800" />
+                        <div className="flex justify-between mt-3 text-[10px] text-slate-400">
+                            <span>Fichadas: {time_stats.worked_hours}h</span>
+                            <span>Justificadas: {time_stats.justified_hours}h</span>
+                            <span>Restantes: {Math.max(0, time_stats.target_total - time_stats.total_done)}h</span>
+                        </div>
+                    </Card>
+                </div>
+
+                {time_stats.is_non_compliant && (
+                    <Alert variant="destructive" className="mb-8 border-red-200 bg-red-50 text-red-800 dark:bg-red-950/30 dark:text-red-400">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle className="font-bold">¡Atención! Incumplimiento detectado</AlertTitle>
+                        <AlertDescription>
+                            Este becario tiene una deuda de <strong>{time_stats.debt} horas</strong> respecto a su horario esperado a día de hoy.
+                            Por favor, revisa su actividad o contacta con él.
+                        </AlertDescription>
+                    </Alert>
+                )}
 
                 {/* GRID */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
@@ -745,6 +813,11 @@ export default function Show({
                         </Card>
                     </div>
                 </div>
+                <ExportReportModal
+                    intern={intern}
+                    isOpen={isExportModalOpen}
+                    onClose={() => setIsExportModalOpen(false)}
+                />
             </div>
         </AppLayout>
     );

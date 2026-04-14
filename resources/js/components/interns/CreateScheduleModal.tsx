@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,50 @@ import { Label } from '@/components/ui/label';
 
 export function CreateScheduleModal({ userId }: { userId: number }) {
     const [open, setOpen] = useState(false);
+
+    const applyPreset = (preset: 'winter' | 'summer' | 'intensive') => {
+        if (preset === 'winter') {
+            setData({
+                ...data,
+                name: 'Horario de Invierno',
+                monday_hours: '8',
+                tuesday_hours: '8',
+                wednesday_hours: '8',
+                thursday_hours: '8',
+                friday_hours: '6',
+                saturday_hours: '0',
+                sunday_hours: '0',
+            });
+            return;
+        }
+
+        if (preset === 'summer') {
+            setData({
+                ...data,
+                name: 'Horario de Verano',
+                monday_hours: '7',
+                tuesday_hours: '7',
+                wednesday_hours: '7',
+                thursday_hours: '7',
+                friday_hours: '6',
+                saturday_hours: '0',
+                sunday_hours: '0',
+            });
+            return;
+        }
+
+        setData({
+            ...data,
+            name: 'Jornada Intensiva',
+            monday_hours: '6',
+            tuesday_hours: '6',
+            wednesday_hours: '6',
+            thursday_hours: '6',
+            friday_hours: '6',
+            saturday_hours: '0',
+            sunday_hours: '0',
+        });
+    };
 
     const { data, setData, post, processing, errors, reset } = useForm({
         user_id: userId,
@@ -18,9 +62,11 @@ export function CreateScheduleModal({ userId }: { userId: number }) {
         wednesday_hours: '0',
         thursday_hours: '0',
         friday_hours: '0',
+        saturday_hours: '0',
+        sunday_hours: '0',
     });
 
-    const submit = (e: React.FormEvent) => {
+    const submit = (e: FormEvent) => {
         e.preventDefault();
         post('/schedules', {
             onSuccess: () => {
@@ -42,6 +88,21 @@ export function CreateScheduleModal({ userId }: { userId: number }) {
                     <DialogTitle>Añadir nuevo horario</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={submit} className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                        <Label>Plantillas rápidas</Label>
+                        <div className="flex flex-wrap gap-2">
+                            <Button type="button" variant="outline" size="sm" onClick={() => applyPreset('winter')}>
+                                Invierno
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" onClick={() => applyPreset('summer')}>
+                                Verano
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" onClick={() => applyPreset('intensive')}>
+                                Intensiva
+                            </Button>
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2 col-span-2">
                             <Label>Nombre del horario</Label>
@@ -76,8 +137,8 @@ export function CreateScheduleModal({ userId }: { userId: number }) {
                     <div className="space-y-3 pt-2 border-t">
                         <Label>Horas diarias</Label>
                         <div className="flex justify-between gap-2">
-                            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day, idx) => {
-                                const labels = ['L', 'M', 'X', 'J', 'V'];
+                            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day, idx) => {
+                                const labels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
                                 const field = `${day}_hours` as keyof typeof data;
                                 return (
                                     <div key={day} className="flex flex-col items-center gap-1">
@@ -104,4 +165,3 @@ export function CreateScheduleModal({ userId }: { userId: number }) {
         </Dialog>
     );
 }
-

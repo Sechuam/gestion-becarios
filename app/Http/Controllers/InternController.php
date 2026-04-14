@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\TimeTrackingService;
+
 
 class InternController extends Controller
 {
@@ -133,7 +135,7 @@ class InternController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Intern $intern)
+    public function show(Intern $intern, TimeTrackingService $service)
     {
         auth()->user()->unreadNotifications
             ->where('data.intern_id', $intern->id)
@@ -141,6 +143,7 @@ class InternController extends Controller
 
         return Inertia::render('interns/Show', [
             'intern' => $intern->load(['user.schedules', 'user.absences', 'educationCenter', 'companyTutor', 'notesUpdatedBy', 'internalNotes.user'])->append(['progress', 'is_delayed']),
+            'time_stats' => $service->getStats($intern),
             'dni_url' => $intern->getFirstMediaUrl('dni'),
             'agreement_url' => $intern->getFirstMediaUrl('agreement'),
             'insurance_url' => $intern->getFirstMediaUrl('insurance'),
