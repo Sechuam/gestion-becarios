@@ -48,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tareas/{task}/attachments', [TaskController::class, 'addAttachment'])->name('tasks.attachments.store');
     Route::post('/time-logs/clock-in', [TimeLogController::class, 'clockIn'])->name('time-logs.clock-in');
     Route::post('/time-logs/clock-out', [TimeLogController::class, 'clockOut'])->name('time-logs.clock-out');
+    Route::get('/time-logs/events', [TimeLogController::class, 'getEvents'])->name('time-logs.events');
+
 
     // Catálogo de tipos de práctica (solo admin)
     Route::get('tipos-practica', [PracticeTypeController::class, 'index'])

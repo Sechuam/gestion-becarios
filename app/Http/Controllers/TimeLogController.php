@@ -57,4 +57,30 @@ class TimeLogController extends Controller
         return back()->with('success', 'Salida registrada correctamente.');
     }
 
+    public function getEvents(Request $request)
+    {
+        $user = $request->user();
+        $logs = TimeLog::where('user_id', $user->id)->get();
+        $events = [];
+        foreach ($logs as $log) {
+            if ($log->clock_in) {
+                $events[] = [
+                    'id' => 'in_' . $log->id,
+                    'title' => 'Entrada',
+                    'start' => $log->date->format('Y-m-d') . 'T' . $log->clock_in,
+                    'color' => '#10b981',
+                ];
+            }
+            if ($log->clock_out) {
+                $events[] = [
+                    'id' => 'out_' . $log->id,
+                    'title' => 'Salida',
+                    'start' => $log->date->format('Y-m-d') . 'T' . $log->clock_out,
+                    'color' => '#f43f5e',
+                ];
+            }
+        }
+        return response()->json($events);
+    }
+
 }
