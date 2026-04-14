@@ -10,6 +10,9 @@ class TimeTrackingService
 {
     public const NON_COMPLIANCE_THRESHOLD = 8.0;
 
+    /**
+     * Calcula estadísticas generales de un becario hasta la fecha actual.
+     */
     public function getStats(Intern $intern)
     {
         $user = $intern->user;
@@ -27,7 +30,7 @@ class TimeTrackingService
             $approvedAbsenceDates = $user->absences()
                 ->where('status', 'approved')
                 ->get()
-                ->map(fn($absence) => $absence->date->format('Y-m-d'));
+                ->map(fn($absence) => Carbon::parse($absence->date)->format('Y-m-d'));
 
             foreach ($period as $date) {
                 $schedule = $schedules->first(function ($s) use ($date) {
@@ -38,8 +41,8 @@ class TimeTrackingService
                     $dayName = strtolower($date->format('l'));
                     $hoursToday = (float) $schedule->{"{$dayName}_hours"};
                     $expectedHours += $hoursToday;
-                    $hasAbsence = $approvedAbsenceDates->contains($date->format('Y-m-d'));
-                    if ($hasAbsence) {
+
+                    if ($approvedAbsenceDates->contains($date->format('Y-m-d'))) {
                         $justifiedHours += $hoursToday;
                     }
                 }
@@ -64,6 +67,9 @@ class TimeTrackingService
         ];
     }
 
+    /**
+     * Prepara los datos detallados para el reporte PDF en un rango de fechas.
+     */
     public function getReportData(Intern $intern, $startDate, $endDate)
     {
         $user = $intern->user;
@@ -71,12 +77,18 @@ class TimeTrackingService
         $end = Carbon::parse($endDate);
 
         $period = CarbonPeriod::create($start, $end);
-        $logs = $user->timeLogs()->whereBetween('date', [$start, $end])->get()->keyBy(fn($l) => $l->date->format('Y-m-d'));
+
+        $logs = $user->timeLogs()
+            ->whereBetween('date', [$start, $end])
+            ->get()
+            ->keyBy(fn($l) => Carbon::parse($l->date)->format('Y-m-d'));
+
         $absences = $user->absences()
             ->where('status', 'approved')
             ->whereBetween('date', [$start, $end])
             ->get()
-            ->keyBy(fn($absence) => $absence->date->format('Y-m-d'));
+            ->keyBy(fn($a) => Carbon::parse($a->date)->format('Y-m-d'));
+
         $schedules = $user->schedules()->get();
 
         $days = [];
@@ -88,7 +100,6 @@ class TimeTrackingService
             $log = $logs->get($dateStr);
             $absence = $absences->get($dateStr);
 
-            // Buscar que horario le tocaba ese dia
             $schedule = $schedules->first(fn($s) => $date->between($s->start_date, $s->end_date ?? Carbon::tomorrow()));
             $expectedToday = $schedule ? (float) $schedule->{strtolower($date->format('l')) . '_hours'} : 0;
 
@@ -119,6 +130,9 @@ class TimeTrackingService
         ];
     }
 
+    /**
+     * Obtiene la lista de becarios con deuda de horas para un tutor o administrador.
+     */
     public function getNonCompliantInternsForUser($user)
     {
         $query = Intern::query()
@@ -127,30 +141,22 @@ class TimeTrackingService
 
         if ($user->can('manage interns')) {
             $interns = $query->orderBy('start_date')->get();
-        } elseif ($user->isTutor()) {
-            $interns = $query
-                ->where('company_tutor_user_id', $user->id)
-                ->orderBy('start_date')
-                ->get();
+        } elseif ($user->company_tutor_user_id) { // Si es tutor
+            $interns = $query->where('company_tutor_user_id', $user->id)->get();
         } else {
             return collect();
         }
 
-        return $interns
-            ->map(function (Intern $intern) {
-                $stats = $this->getStats($intern);
-
-                return [
-                    'id' => $intern->id,
-                    'name' => $intern->user->name,
-                    'debt' => $stats['debt'],
-                    'expected_hours' => $stats['expected_hours'],
-                    'total_done' => $stats['total_done'],
-                    'education_center' => $intern->educationCenter?->name,
-                    'company_tutor' => $intern->companyTutor?->name,
-                ];
-            })
-            ->filter(fn(array $intern) => $intern['debt'] >= self::NON_COMPLIANCE_THRESHOLD)
-            ->values();
+        return $interns->map(function ($intern) {
+            $stats = $this->getStats($intern);
+            return [
+                'id' => $intern->id,
+                'name' => $intern->user->name,
+                'debt' => $stats['debt'],
+                'expected_hours' => $stats['expected_hours'],
+                'total_done' => $stats['total_done'],
+                'education_center' => $intern->educationCenter?->name,
+            ];
+        })->filter(fn($i) => $i['debt'] >= self::NON_COMPLIANCE_THRESHOLD)->values();
     }
 }
