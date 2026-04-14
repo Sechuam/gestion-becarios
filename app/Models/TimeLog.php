@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class TimeLog extends Model
 {
     protected $guarded = ['id'];
+    protected $casts = [
+        'date' => 'date',
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);
