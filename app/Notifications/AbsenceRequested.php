@@ -45,6 +45,7 @@ class AbsenceRequested extends Notification implements ShouldQueue
     {
         return [
             'absence_id' => $this->absence->id,
+            'intern_id' => $this->absence->user->intern->id,
             'intern_name' => $this->absence->user->name,
             'date' => $this->absence->date,
             'reason' => $this->absence->reason,

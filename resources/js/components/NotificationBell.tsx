@@ -35,9 +35,13 @@ export function NotificationBell() {
                         <DropdownMenuItem key={notification.id} className="cursor-pointer p-3 flex flex-col items-start gap-1">
                             <span className="font-semibold text-sm">{notification.data.intern_name}</span>
                             <span className="text-xs text-slate-500 line-clamp-2">{notification.data.message}</span>
-                            <Link href="/dashboard" className="text-xs text-indigo-500 mt-1 hover:underline">
-                                Ir al Dashboard para gestionar
+                            <Link
+                                href={notification.data.intern_id ? `/interns/${notification.data.intern_id}` : '/becarios'}
+                                className="text-xs text-indigo-500 mt-1 hover:underline"
+                            >
+                                Ir a gestionar ausencias
                             </Link>
+
                         </DropdownMenuItem>
                     ))
                 )}

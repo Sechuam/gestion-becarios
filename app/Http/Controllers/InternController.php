@@ -135,8 +135,12 @@ class InternController extends Controller
      */
     public function show(Intern $intern)
     {
+        auth()->user()->unreadNotifications
+            ->where('data.intern_id', $intern->id)
+            ->markAsRead();
+
         return Inertia::render('interns/Show', [
-            'intern' => $intern->load(['user.schedules', 'educationCenter', 'companyTutor', 'notesUpdatedBy', 'internalNotes.user'])->append(['progress', 'is_delayed']),
+            'intern' => $intern->load(['user.schedules', 'user.absences', 'educationCenter', 'companyTutor', 'notesUpdatedBy', 'internalNotes.user'])->append(['progress', 'is_delayed']),
             'dni_url' => $intern->getFirstMediaUrl('dni'),
             'agreement_url' => $intern->getFirstMediaUrl('agreement'),
             'insurance_url' => $intern->getFirstMediaUrl('insurance'),

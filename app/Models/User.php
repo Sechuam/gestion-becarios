@@ -68,6 +68,11 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasMany(Schedule::class);
     }
 
+    public function absences()
+    {
+        return $this->hasMany(Absence::class);
+    }
+
     public function assignedInterns(): HasMany
     {
         return $this->hasMany(Intern::class, 'company_tutor_user_id');

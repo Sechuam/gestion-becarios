@@ -42,6 +42,9 @@ class AbsenceController extends Controller
             'approved_by' => $request->user()->id,
         ]);
 
+        $request->user()->unreadNotifications->where('data.absence_id', $absence->id)->markAsRead();
+
+
         return back()->with('success', 'Estado de la ausencia actualizado.');
     }
 }

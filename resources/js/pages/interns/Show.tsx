@@ -501,6 +501,54 @@ export default function Show({
                                 )}
                             </CardContent>
                         </Card>
+                        {/* CARD AUSENCIAS SOLICITADAS */}
+                        <Card className="rounded-xl border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 mt-6">
+                            <CardHeader className="border-b border-slate-100 pb-3 dark:border-slate-800">
+                                <CardTitle className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                    Solicitudes de Ausencia
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-6 pt-4 space-y-3">
+                                {intern.user?.absences?.length > 0 ? (
+                                    intern.user.absences.map((abs: any) => (
+                                        <div key={abs.id} className="flex items-center justify-between p-3 border rounded-lg bg-slate-50 dark:bg-slate-800/30">
+                                            <div>
+                                                <p className="text-sm font-medium">{abs.reason}</p>
+                                                <p className="text-xs text-slate-500">{formatDateEs(abs.date)}</p>
+                                            </div>
+
+                                            <div className="flex gap-2">
+                                                {abs.status === 'pending' ? (
+                                                    <>
+                                                        <Button
+                                                            size="sm"
+                                                            className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                                                            onClick={() => router.patch(`/absences/${abs.id}/status`, { status: 'approved' })}
+                                                        >
+                                                            Aprobar
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="destructive"
+                                                            onClick={() => router.patch(`/absences/${abs.id}/status`, { status: 'rejected' })}
+                                                        >
+                                                            Rechazar
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <span className={`text-xs font-bold uppercase px-2 py-1 rounded ${abs.status === 'approved' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'
+                                                        }`}>
+                                                        {abs.status === 'approved' ? 'Aprobada' : 'Denegada'}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-slate-400 italic">No hay solicitudes de ausencia registradas.</p>
+                                )}
+                            </CardContent>
+                        </Card>
 
                         <Card className="rounded-xl border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
                             <CardHeader className="border-b border-slate-100 pb-3 dark:border-slate-800">
