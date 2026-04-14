@@ -9,6 +9,7 @@ use App\Http\Controllers\TutorController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\TimeLogController;
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
@@ -45,6 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('tareas/{task}/comments/{comment}', [TaskController::class, 'updateComment'])->name('tasks.comments.update');
     Route::delete('tareas/{task}/comments/{comment}', [TaskController::class, 'destroyComment'])->name('tasks.comments.destroy');
     Route::post('tareas/{task}/attachments', [TaskController::class, 'addAttachment'])->name('tasks.attachments.store');
+    Route::post('/time-logs/clock-in', [TimeLogController::class, 'clockIn'])->name('time-logs.clock-in');
+    Route::post('/time-logs/clock-out', [TimeLogController::class, 'clockOut'])->name('time-logs.clock-out');
 
     // Catálogo de tipos de práctica (solo admin)
     Route::get('tipos-practica', [PracticeTypeController::class, 'index'])
@@ -164,4 +167,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // rutas públicas o especiales
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
