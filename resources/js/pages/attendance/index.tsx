@@ -48,7 +48,6 @@ type NonCompliantIntern = {
     expected_hours: number;
     total_done: number;
     education_center: string | null;
-    company_tutor: string | null;
 };
 
 export default function Index({

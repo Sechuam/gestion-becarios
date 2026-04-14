@@ -147,7 +147,7 @@ class TimeTrackingService
             return collect();
         }
 
-        return $interns->map(function ($intern) {
+        return $interns->map(function (Intern $intern) {
             $stats = $this->getStats($intern);
             return [
                 'id' => $intern->id,
