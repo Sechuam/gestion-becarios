@@ -20,7 +20,7 @@ class TimeLogController extends Controller
             return back()->with('error', 'Ya has fichado la entrada hoy');
         }
 
-        Timelog::create([
+        TimeLog::create([
             'user_id' => $user->id,
             'date' => $today,
             'clock_in' => Carbon::now()->format('H:i:s'),
