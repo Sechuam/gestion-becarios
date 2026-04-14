@@ -6,5 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Absence extends Model
 {
-    //
+    protected $guarded = ['id'];
+    protected $casts = [
+        'date' => 'date',
+        'is_approved' => 'boolean',
+    ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
 }
