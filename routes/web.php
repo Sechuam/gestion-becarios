@@ -10,6 +10,7 @@ use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\TimeLogController;
+use App\Http\Controllers\ScheduleController;
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
@@ -49,6 +50,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/time-logs/clock-in', [TimeLogController::class, 'clockIn'])->name('time-logs.clock-in');
     Route::post('/time-logs/clock-out', [TimeLogController::class, 'clockOut'])->name('time-logs.clock-out');
     Route::get('/time-logs/events', [TimeLogController::class, 'getEvents'])->name('time-logs.events');
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
+    Route::patch('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+    Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+
 
 
     // Catálogo de tipos de práctica (solo admin)

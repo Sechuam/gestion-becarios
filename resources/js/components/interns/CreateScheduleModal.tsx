@@ -1,0 +1,107 @@
+import { useState } from 'react';
+import { useForm } from '@inertiajs/react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+export function CreateScheduleModal({ userId }: { userId: number }) {
+    const [open, setOpen] = useState(false);
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        user_id: userId,
+        name: 'Horario de Invierno',
+        start_date: '',
+        end_date: '',
+        monday_hours: '0',
+        tuesday_hours: '0',
+        wednesday_hours: '0',
+        thursday_hours: '0',
+        friday_hours: '0',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/schedules', {
+            onSuccess: () => {
+                setOpen(false);
+                reset();
+            },
+        });
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button size="sm" variant="outline">
+                    + Añadir horario
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                    <DialogTitle>Añadir nuevo horario</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={submit} className="space-y-4 pt-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2 col-span-2">
+                            <Label>Nombre del horario</Label>
+                            <Input
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                                placeholder="Ej: Horario de Verano"
+                            />
+                            {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Desde (Fecha inicio)</Label>
+                            <Input
+                                type="date"
+                                value={data.start_date}
+                                onChange={(e) => setData('start_date', e.target.value)}
+                            />
+                            {errors.start_date && <span className="text-xs text-red-500">{errors.start_date}</span>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Hasta (Fecha fin - opcional)</Label>
+                            <Input
+                                type="date"
+                                value={data.end_date}
+                                onChange={(e) => setData('end_date', e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-3 pt-2 border-t">
+                        <Label>Horas diarias</Label>
+                        <div className="flex justify-between gap-2">
+                            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day, idx) => {
+                                const labels = ['L', 'M', 'X', 'J', 'V'];
+                                const field = `${day}_hours` as keyof typeof data;
+                                return (
+                                    <div key={day} className="flex flex-col items-center gap-1">
+                                        <span className="text-xs text-slate-500 font-bold">{labels[idx]}</span>
+                                        <Input
+                                            type="number"
+                                            min="0" max="24" step="0.5"
+                                            className="w-14 text-center px-1"
+                                            value={data[field]}
+                                            onChange={(e) => setData(field, e.target.value)}
+                                        />
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end pt-4 gap-2">
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                        <Button type="submit" disabled={processing}>Guardar Horario</Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+

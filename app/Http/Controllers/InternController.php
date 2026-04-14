@@ -33,7 +33,7 @@ class InternController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where(DB::raw('lower(users.name)'), 'like', '%'.strtolower($request->search).'%');
+            $query->where(DB::raw('lower(users.name)'), 'like', '%' . strtolower($request->search) . '%');
         }
         if ($request->filled('center')) {
             $query->where('education_center_id', $request->center);
@@ -136,11 +136,11 @@ class InternController extends Controller
     public function show(Intern $intern)
     {
         return Inertia::render('interns/Show', [
-            'intern' => $intern->load(['user', 'educationCenter', 'companyTutor', 'notesUpdatedBy', 'internalNotes.user'])->append(['progress', 'is_delayed']),
+            'intern' => $intern->load(['user.schedules', 'educationCenter', 'companyTutor', 'notesUpdatedBy', 'internalNotes.user'])->append(['progress', 'is_delayed']),
             'dni_url' => $intern->getFirstMediaUrl('dni'),
             'agreement_url' => $intern->getFirstMediaUrl('agreement'),
             'insurance_url' => $intern->getFirstMediaUrl('insurance'),
-            'internal_notes' => $intern->internalNotes->map(fn (InternalNote $note) => [
+            'internal_notes' => $intern->internalNotes->map(fn(InternalNote $note) => [
                 'id' => $note->id,
                 'content' => $note->content,
                 'created_at' => $note->created_at,
@@ -155,7 +155,7 @@ class InternController extends Controller
                 ->with('causer')
                 ->latest()
                 ->get()
-                ->map(fn ($activity) => [
+                ->map(fn($activity) => [
                     'id' => $activity->id,
                     'description' => $activity->description,
                     'event' => $activity->event,
@@ -224,7 +224,7 @@ class InternController extends Controller
     public function export(Request $request)
     {
         try {
-            return Excel::download(new InternsExport($request->all()), 'becarios_'.date('Y-m-d').'.xlsx');
+            return Excel::download(new InternsExport($request->all()), 'becarios_' . date('Y-m-d') . '.xlsx');
         } catch (\Throwable $e) {
             report($e);
 

@@ -63,6 +63,11 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasOne(Intern::class);
     }
 
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
     public function assignedInterns(): HasMany
     {
         return $this->hasMany(Intern::class, 'company_tutor_user_id');
@@ -101,7 +106,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     protected function normalizedRoleNames(): Collection
     {
-        return $this->getRoleNames()->map(fn (string $role) => strtolower($role));
+        return $this->getRoleNames()->map(fn(string $role) => strtolower($role));
     }
 
     public function getActivitylogOptions(): LogOptions

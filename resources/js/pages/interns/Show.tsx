@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import type { BreadcrumbItem } from '@/types/navigation';
+import { CreateScheduleModal } from '@/components/interns/CreateScheduleModal';
 
 export default function Show({
     intern,
@@ -304,7 +305,7 @@ export default function Show({
                                                 onClick={() => {
                                                     setNotesValue(
                                                         intern.internal_notes ||
-                                                            '',
+                                                        '',
                                                     );
                                                     setEditingNotes(false);
                                                 }}
@@ -350,16 +351,16 @@ export default function Show({
                                         </p>
                                         {(intern.notes_updated_by ||
                                             intern.internal_notes_updated_at) && (
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">
-                                                Última edición:{' '}
-                                                {intern.notes_updated_by
-                                                    ?.name || 'Usuario'}{' '}
-                                                ·{' '}
-                                                {formatDateTimeEs(
-                                                    intern.internal_notes_updated_at,
-                                                )}
-                                            </p>
-                                        )}
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                    Última edición:{' '}
+                                                    {intern.notes_updated_by
+                                                        ?.name || 'Usuario'}{' '}
+                                                    ·{' '}
+                                                    {formatDateTimeEs(
+                                                        intern.internal_notes_updated_at,
+                                                    )}
+                                                </p>
+                                            )}
                                     </>
                                 )}
                             </CardContent>
@@ -461,6 +462,43 @@ export default function Show({
                                         {intern.company_tutor?.email || '—'}
                                     </span>
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="rounded-xl border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <CardHeader className="border-b border-slate-100 pb-3 dark:border-slate-800">
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                        Horarios Asignados
+                                    </CardTitle>
+                                    {canManage && (
+                                        <CreateScheduleModal userId={intern.user.id} />
+                                    )}
+
+                                </div>
+                            </CardHeader>
+                            <CardContent className="px-6 pt-4 space-y-3">
+                                {intern.user?.schedules?.length > 0 ? (
+                                    intern.user.schedules.map((schedule: any) => (
+                                        <div key={schedule.id} className="p-3 border rounded-lg border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+                                            <div className="flex justify-between font-medium text-sm text-slate-800 dark:text-slate-200">
+                                                <span>{schedule.name}</span>
+                                                <span className="text-xs font-normal">
+                                                    {formatDateEs(schedule.start_date)} — {schedule.end_date ? formatDateEs(schedule.end_date) : 'Indefinido'}
+                                                </span>
+                                            </div>
+                                            <div className="mt-3 flex justify-between text-xs text-slate-500 font-mono bg-white dark:bg-slate-900 px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700">
+                                                <span>L: {schedule.monday_hours}h</span>
+                                                <span>M: {schedule.tuesday_hours}h</span>
+                                                <span>X: {schedule.wednesday_hours}h</span>
+                                                <span>J: {schedule.thursday_hours}h</span>
+                                                <span>V: {schedule.friday_hours}h</span>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-slate-400 italic">No tiene ningún horario asignado actualmente.</p>
+                                )}
                             </CardContent>
                         </Card>
 
@@ -587,12 +625,12 @@ export default function Show({
                                                     </span>
                                                     <div className="text-slate-600 dark:text-slate-300">
                                                         {activity.event ===
-                                                        'updated'
+                                                            'updated'
                                                             ? 'Perfil modificado '
                                                             : activity.event ===
                                                                 'created'
-                                                              ? 'Perfil creado '
-                                                              : activity.event +
+                                                                ? 'Perfil creado '
+                                                                : activity.event +
                                                                 ' '}
                                                         por{' '}
                                                         <span className="font-medium text-slate-700 dark:text-slate-200">
@@ -627,7 +665,7 @@ export default function Show({
                                                                                     {formatValue(
                                                                                         field,
                                                                                         old[
-                                                                                            field
+                                                                                        field
                                                                                         ],
                                                                                     )}
                                                                                 </span>{' '}
@@ -636,7 +674,7 @@ export default function Show({
                                                                                     {formatValue(
                                                                                         field,
                                                                                         changes[
-                                                                                            field
+                                                                                        field
                                                                                         ],
                                                                                     )}
                                                                                 </span>
