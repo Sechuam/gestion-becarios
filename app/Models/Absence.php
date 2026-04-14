@@ -9,7 +9,6 @@ class Absence extends Model
     protected $guarded = ['id'];
     protected $casts = [
         'date' => 'date',
-        'is_approved' => 'boolean',
     ];
     public function user()
     {

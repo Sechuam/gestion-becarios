@@ -42,13 +42,14 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user() ? array_merge($request->user()->toArray(), [
                     'roles' => $request->user()->getRoleNames(),
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+                    'unreadNotifications' => $request->user()->unreadNotifications,
                 ]) : null,
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
 }

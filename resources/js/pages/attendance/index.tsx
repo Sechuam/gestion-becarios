@@ -2,12 +2,11 @@ import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { router } from '@inertiajs/react';
-
-// Importaciones de FullCalendar
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { RequestAbsenceModal } from '@/components/attendance/RequestAbsenceModal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -37,7 +36,7 @@ export default function Index() {
                         <p className="mb-6 text-sm text-gray-500">
                             Registra la hora exacta a la que empiezas y terminas tu jornada.
                         </p>
-                        <div className="flex gap-4">
+                        <div className="flex items-center gap-2">
                             <button
                                 onClick={handleClockIn}
                                 className="px-6 py-2 bg-emerald-500 text-white font-medium rounded shadow hover:bg-emerald-600 active:scale-95 transition-all"
@@ -51,7 +50,10 @@ export default function Index() {
                             >
                                 Terminar Jornada
                             </button>
+
+                            <RequestAbsenceModal />
                         </div>
+
                     </div>
                 </div>
 

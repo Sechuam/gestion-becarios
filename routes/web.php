@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\TimeLogController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\AbsenceController;
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
@@ -53,6 +54,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::patch('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+    // Rutas de Ausencias
+    Route::post('/absences', [AbsenceController::class, 'store'])->name('absences.store');
+    Route::patch('/absences/{absence}/status', [AbsenceController::class, 'updateStatus'])->name('absences.updateStatus');
+
 
 
 

@@ -60,8 +60,14 @@ class TimeLogController extends Controller
     public function getEvents(Request $request)
     {
         $user = $request->user();
+
+        // Obtenemos Fichajes Y Ausencias
         $logs = TimeLog::where('user_id', $user->id)->get();
+        $absences = \App\Models\Absence::where('user_id', $user->id)->get();
+
         $events = [];
+
+        // 1. Procesar fichajes (como ya teníamos)
         foreach ($logs as $log) {
             if ($log->clock_in) {
                 $events[] = [
@@ -80,7 +86,30 @@ class TimeLogController extends Controller
                 ];
             }
         }
+
+        foreach ($absences as $abs) {
+            $color = '#f59e0b';
+            $title = "Ausencia ({$abs->reason}) - Pendiente";
+
+            if ($abs->status === 'approved') {
+                $color = '#10b981';
+                $title = "Ausencia ({$abs->reason}) - Aprobada";
+            } else if ($abs->status === 'rejected') {
+                $color = '#ef4444';
+                $title = "Ausencia ({$abs->reason}) - Denegada";
+            }
+
+            $events[] = [
+                'id' => 'abs_' . $abs->id,
+                'title' => $title,
+                'start' => $abs->date->format('Y-m-d'),
+                'allDay' => true,
+                'color' => $color,
+            ];
+        }
+
         return response()->json($events);
     }
+
 
 }
