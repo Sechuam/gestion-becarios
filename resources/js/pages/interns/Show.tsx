@@ -189,6 +189,34 @@ export default function Show({
                                 </div>
                                 <div className="flex items-center justify-between border-b border-slate-50 py-3 dark:border-slate-800">
                                     <span className="text-xs text-slate-500 dark:text-slate-400">
+                                        Ciudad
+                                    </span>
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                                        {intern.city || '—'}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between border-b border-slate-50 py-3 dark:border-slate-800">
+                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                        Dirección
+                                    </span>
+                                    {intern.address ? (
+                                        <a
+                                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${intern.address}, ${intern.city || ''}`)}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-sm font-medium text-slate-700 hover:underline dark:text-slate-200"
+                                            title="Ver en Google Maps"
+                                        >
+                                            {intern.address}
+                                        </a>
+                                    ) : (
+                                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                                            —
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="flex items-center justify-between border-b border-slate-50 py-3 dark:border-slate-800">
+                                    <span className="text-xs text-slate-500 dark:text-slate-400">
                                         DNI
                                     </span>
                                     <span className="text-sm font-medium text-slate-700 dark:text-slate-200">

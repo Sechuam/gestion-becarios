@@ -244,9 +244,20 @@ export default function Show({
                                 <p className="text-muted-foreground">
                                     Dirección
                                 </p>
-                                <p className="font-medium text-foreground">
-                                    {educationCenter.address || '—'}
-                                </p>
+                                {educationCenter.address ? (
+                                    <a
+                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${educationCenter.address}, ${educationCenter.city || ''}`)}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="font-medium text-foreground hover:underline"
+                                        title="Ver en Google Maps"
+                                    >
+                                        {educationCenter.address}
+                                        {educationCenter.city && ` (${educationCenter.city})`}
+                                    </a>
+                                ) : (
+                                    <p className="font-medium text-foreground">—</p>
+                                )}
                             </div>
                             <div>
                                 <p className="text-muted-foreground">
