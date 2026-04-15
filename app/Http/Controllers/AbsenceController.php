@@ -13,6 +13,7 @@ class AbsenceController extends Controller
         $validated = $request->validate([
             'date' => 'required|date',
             'reason' => 'required|string|max:255',
+            'justification_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
         $user = $request->user();
@@ -23,6 +24,10 @@ class AbsenceController extends Controller
             'reason' => $validated['reason'],
             'status' => 'pending',
         ]);
+
+        if ($request->hasFile('justification_file')) {
+            $absence->addMediaFromRequest('justification_file')->toMediaCollection('justifications');
+        }
 
         if ($user->intern && $user->intern->companyTutor) {
             $user->intern->companyTutor->notify(new AbsenceRequested($absence));

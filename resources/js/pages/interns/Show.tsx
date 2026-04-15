@@ -24,6 +24,7 @@ export default function Show({
     agreement_url,
     insurance_url,
     activities,
+    absences,
 
 }: {
     intern: any;
@@ -32,6 +33,7 @@ export default function Show({
     agreement_url: string;
     insurance_url: string;
     activities: any[];
+    absences: any[];
 }) {
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
@@ -605,12 +607,35 @@ export default function Show({
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="px-6 pt-4 space-y-3">
-                                {intern.user?.absences?.length > 0 ? (
-                                    intern.user.absences.map((abs: any) => (
+                                {absences?.length > 0 ? (
+                                    absences.map((abs: any) => (
                                         <div key={abs.id} className="flex items-center justify-between p-3 border rounded-lg bg-slate-50 dark:bg-slate-800/30">
-                                            <div>
+                                            <div className="flex flex-col gap-1">
                                                 <p className="text-sm font-medium">{abs.reason}</p>
-                                                <p className="text-xs text-slate-500">{formatDateEs(abs.date)}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-xs text-slate-500">{formatDateEs(abs.date)}</p>
+                                                    {abs.justification_url && (
+                                                        <div className="flex items-center gap-2">
+                                                            <a
+                                                                href={abs.justification_url}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                                className="flex items-center gap-1 text-[10px] text-indigo-600 hover:underline dark:text-indigo-400"
+                                                            >
+                                                                <FileText className="h-3 w-3" />
+                                                                Ver
+                                                            </a>
+                                                            <a
+                                                                href={abs.justification_url}
+                                                                download
+                                                                className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-600 hover:underline dark:hover:text-slate-200"
+                                                            >
+                                                                <Download className="h-3 w-3" />
+                                                                Descargar
+                                                            </a>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
 
                                             <div className="flex gap-2">

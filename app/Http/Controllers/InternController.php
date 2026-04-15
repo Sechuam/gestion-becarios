@@ -170,6 +170,14 @@ class InternController extends Controller
                     'created_at' => $activity->created_at->format('d/m/Y H:i:'),
                     'properties' => $activity->properties,
                 ]),
+
+            'absences' => $intern->user->absences->map(fn($absence) => [
+                'id' => $absence->id,
+                'date' => $absence->date,
+                'reason' => $absence->reason,
+                'status' => $absence->status,
+                'justification_url' => $absence->getFirstMediaUrl('justifications'),
+            ]),
         ]);
     }
 

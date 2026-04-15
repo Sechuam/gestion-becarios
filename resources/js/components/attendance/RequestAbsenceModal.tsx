@@ -11,11 +11,13 @@ export function RequestAbsenceModal() {
     const { data, setData, post, processing, errors, reset } = useForm({
         date: '',
         reason: 'Examen',
+        justification_file: null as File | null,
     });
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
         post('/absences', {
+            forceFormData: true,
             onSuccess: () => {
                 setOpen(false);
                 reset();
@@ -60,6 +62,17 @@ export function RequestAbsenceModal() {
                             <option value="Vacaciones">Vacaciones</option>
                         </select>
                         {errors.reason && <span className="text-xs text-red-500">{errors.reason}</span>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Justificante (opcional)</Label>
+                        <Input
+                            type="file"
+                            className="bg-background text-foreground"
+                            onChange={(e) => setData('justification_file', e.target.files?.[0] || null)}
+                        />
+                        <p className="text-[10px] text-muted-foreground italic">PDF, JPG, PNG (Max 5MB)</p>
+                        {errors.justification_file && <span className="text-xs text-red-500">{errors.justification_file}</span>}
                     </div>
 
                     <div className="flex justify-end pt-4 gap-2">
