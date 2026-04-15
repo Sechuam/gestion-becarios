@@ -324,9 +324,7 @@ export default function Index({
     }, [highlightedTaskId]);
 
     useEffect(() => {
-        setBoardTasks((prev) =>
-            prev.length ? prev : applyStoredKanbanOrder(tasks.data)
-        );
+        setBoardTasks(applyStoredKanbanOrder(tasks.data));
     }, [tasks.data]);
 
     useEffect(() => {
@@ -382,6 +380,17 @@ export default function Index({
     const isTutor = auth?.user?.roles?.includes('tutor');
 
     const completeTask = (task: any, closePanel = false) => {
+        const nextStatus = isIntern ? 'in_review' : 'completed';
+
+        // Actualización optimista para feedback instantáneo en el tablero
+        setBoardTasks((currentTasks) =>
+            currentTasks.map((t) =>
+                Number(t.id) === Number(task.id)
+                    ? { ...t, status: nextStatus }
+                    : t,
+            ),
+        );
+
         router.post(
             `/tareas/${task.id}/complete`,
             {},
@@ -392,8 +401,8 @@ export default function Index({
                         setSelectedTask(null);
                     }
                     toast({
-                        title: 'Tarea completada',
-                        description: `"${task.title}" se ha marcado como completada.`,
+                        title: isIntern ? 'Tarea entregada' : 'Tarea completada',
+                        description: `"${task.title}" se ha marcado como ${isIntern ? 'en revisión' : 'completada'}.`,
                     });
                 },
             },

@@ -1,5 +1,5 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { MessageSquareReply, Pencil, Trash2, XCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageSquareReply, Pencil, Trash2, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -78,6 +78,13 @@ export default function Show({
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editingValue, setEditingValue] = useState('');
     const [showRejectForm, setShowRejectForm] = useState(false);
+    const [logPage, setLogPage] = useState(1);
+    const logsPerPage = 3;
+    const totalLogPages = Math.ceil(status_logs.length / logsPerPage);
+    const displayedLogs = status_logs.slice(
+        (logPage - 1) * logsPerPage,
+        logPage * logsPerPage,
+    );
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -692,31 +699,74 @@ export default function Show({
                             <h2 className="text-sm font-semibold text-foreground">
                                 Historial de estado
                             </h2>
-                            {status_logs.length > 0 ? (
-                                <div className="space-y-3">
-                                    {status_logs.map((log) => (
-                                        <div
-                                            key={log.id}
-                                            className="rounded-lg border border-border/70 p-3 text-sm"
-                                        >
-                                            <p className="font-medium text-foreground">
-                                                {log.user?.name || 'Sistema'} ·{' '}
-                                                {formatDateTimeEs(
-                                                    log.changed_at,
-                                                )}
-                                            </p>
-                                            <p className="mt-1 text-muted-foreground">
-                                                {log.from_status
-                                                    ? `${getTaskStatusLabel(log.from_status)} → ${getTaskStatusLabel(log.to_status)}`
-                                                    : `Estado inicial: ${getTaskStatusLabel(log.to_status)}`}
-                                            </p>
-                                            {log.reason && (
-                                                <p className="mt-2 rounded-md bg-muted/30 p-2 text-xs text-foreground">
-                                                    {log.reason}
+                            {displayedLogs.length > 0 ? (
+                                <div className="space-y-4">
+                                    <div className="space-y-3">
+                                        {displayedLogs.map((log) => (
+                                            <div
+                                                key={log.id}
+                                                className="rounded-lg border border-border/70 p-3 text-sm transition-colors hover:bg-muted/5"
+                                            >
+                                                <p className="font-medium text-foreground">
+                                                    {log.user?.name ||
+                                                        'Sistema'}{' '}
+                                                    ·{' '}
+                                                    {formatDateTimeEs(
+                                                        log.changed_at,
+                                                    )}
                                                 </p>
-                                            )}
+                                                <p className="mt-1 text-muted-foreground">
+                                                    {log.from_status
+                                                        ? `${getTaskStatusLabel(log.from_status)} → ${getTaskStatusLabel(log.to_status)}`
+                                                        : `Estado inicial: ${getTaskStatusLabel(log.to_status)}`}
+                                                </p>
+                                                {log.reason && (
+                                                    <p className="mt-2 rounded-md bg-muted/30 p-2 text-xs text-foreground">
+                                                        {log.reason}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {totalLogPages > 1 && (
+                                        <div className="flex items-center justify-between border-t border-border/50 pt-4">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={logPage === 1}
+                                                onClick={() =>
+                                                    setLogPage((p) => p - 1)
+                                                }
+                                                className="h-8 px-2"
+                                            >
+                                                <ChevronLeft className="h-4 w-4" />
+                                                <span className="ml-1 hidden sm:inline">
+                                                    Anterior
+                                                </span>
+                                            </Button>
+
+                                            <span className="text-xs text-muted-foreground">
+                                                Página {logPage} de{' '}
+                                                {totalLogPages}
+                                            </span>
+
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={logPage === totalLogPages}
+                                                onClick={() =>
+                                                    setLogPage((p) => p + 1)
+                                                }
+                                                className="h-8 px-2"
+                                            >
+                                                <span className="mr-1 hidden sm:inline">
+                                                    Siguiente
+                                                </span>
+                                                <ChevronRight className="h-4 w-4" />
+                                            </Button>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             ) : (
                                 <p className="text-sm text-muted-foreground">
