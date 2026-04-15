@@ -792,7 +792,7 @@ export default function Index({
                         <>
                             {isTutor && (
                                 <Button
-                                    className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
+                                    className="gap-2"
                                     onClick={() => router.get('/tareas/create')}
                                 >
                                     <PlusCircle className="h-4 w-4" />
@@ -835,7 +835,7 @@ export default function Index({
                     }
                 />
 
-                <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                <div className="filter-panel space-y-4 p-5">
                     {/* Fila 1: Búsqueda */}
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="relative max-w-md min-w-[200px] flex-1">
@@ -1009,7 +1009,7 @@ export default function Index({
 
                 {viewMode === 'kanban' ? (
                     <div className="space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm">
+                        <div className="app-panel flex flex-wrap items-center justify-between gap-3 p-4">
                             <div className="flex flex-wrap items-center gap-2">
                                 {boardQuickFilters.map((filter) => (
                                     <Button
@@ -1215,6 +1215,8 @@ export default function Index({
                         sortKey={filters.sort}
                         sortDirection={filters.direction}
                         onSort={handleSort}
+                        emptyTitle="No hay tareas en esta vista"
+                        emptyDescription="Ajusta los filtros, cambia a otra vista o crea una nueva tarea para empezar a mover el tablero."
                     />
                 )}
 

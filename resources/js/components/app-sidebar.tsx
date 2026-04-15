@@ -45,11 +45,11 @@ export function AppSidebar() {
     const sidebarSections = getSidebarByRole(role);
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" variant="inset" className="group-data-[variant=inset]:p-3">
+            <SidebarHeader className="border-b border-sidebar-border/80 px-2 pb-4 pt-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton size="lg" asChild className="rounded-2xl bg-white/8 p-1.5 hover:bg-white/12">
                             <Link href={dashboard()} prefetch>
                                 <AppLogo />
                             </Link>
@@ -58,11 +58,11 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className="px-1 py-4">
                 <NavMain sections={sidebarSections} />
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-sidebar-border/80 px-2 pt-4">
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

@@ -19,7 +19,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CalendarClock, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { CalendarClock, AlertTriangle, Clock3, ShieldAlert, TimerReset } from 'lucide-react';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -149,10 +150,33 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Control Horario" />
 
-            <div className="flex h-full flex-1 flex-col gap-6 p-4">
-                <Card className="border-l-4 border-l-indigo-500">
+            <div className="flex h-full flex-1 flex-col gap-6">
+                <ModuleHeader
+                    title="Control horario"
+                    description="Registra tu jornada, visualiza tus tramos del día y detecta incidencias de cumplimiento sin salir del módulo."
+                    icon={<Clock3 className="h-5 w-5" />}
+                    metrics={[
+                        {
+                            label: 'Tramos hoy',
+                            value: today_logs.length,
+                            hint: 'Sesiones registradas en la jornada',
+                        },
+                        {
+                            label: 'Tiempo acumulado',
+                            value: today_total_hours > 0 ? formatHoursDecimal(today_total_hours) : '0m',
+                            hint: 'Suma de horas del día',
+                        },
+                        {
+                            label: 'Jornada activa',
+                            value: current_log ? 'Sí' : 'No',
+                            hint: current_log ? 'Hay un tramo abierto en curso' : 'No hay fichaje activo',
+                        },
+                    ]}
+                />
+
+                <Card className="overflow-hidden">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-indigo-600">
+                        <CardTitle className="flex items-center gap-2 text-primary">
                             <CalendarClock className="h-5 w-5" />
                             Registro diario
                         </CardTitle>
@@ -181,7 +205,7 @@ export default function Index({
 
                         {(today_logs.length > 0 || current_log) && (
                             <>
-                                <div className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-3 dark:border-slate-800 dark:bg-slate-900/50">
+                                <div className="grid gap-3 rounded-[1.1rem] border border-border/70 bg-muted/25 p-4 text-sm md:grid-cols-3">
                                     <div>
                                         <p className="text-xs uppercase tracking-wide text-slate-500">Entrada</p>
                                         <p className="font-medium">{current_log?.clock_in ?? '--:--'}</p>
@@ -199,18 +223,23 @@ export default function Index({
                                 </div>
 
                                 {liveElapsed && (
-                                    <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-sm dark:border-indigo-900 dark:bg-indigo-950/30">
-                                        <p className="text-xs uppercase tracking-wide text-slate-500">
+                                    <div className="rounded-[1.1rem] border border-primary/20 bg-primary/10 p-4 text-sm">
+                                        <p className="text-xs uppercase tracking-wide text-muted-foreground">
                                             Tiempo trabajando ahora
                                         </p>
-                                        <p className="mt-1 text-2xl font-semibold text-indigo-600">
-                                            {liveElapsed}
-                                        </p>
+                                        <div className="mt-2 flex items-center gap-3">
+                                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/60 text-primary">
+                                                <TimerReset className="h-5 w-5" />
+                                            </div>
+                                            <p className="text-2xl font-semibold tracking-[-0.03em] text-primary">
+                                                {liveElapsed}
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
 
                                 {today_logs.length > 0 && (
-                                    <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm dark:border-slate-800 dark:bg-slate-900/50">
+                                    <div className="rounded-[1.1rem] border border-border/70 bg-background/70 p-4 text-sm">
                                         <p className="text-xs uppercase tracking-wide text-slate-500">
                                             Tramos de hoy
                                         </p>
@@ -219,7 +248,7 @@ export default function Index({
                                             {today_logs.map((log) => (
                                                 <div
                                                     key={log.id}
-                                                    className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2 dark:border-slate-800"
+                                                    className="flex items-center justify-between rounded-xl border border-border/60 bg-card/80 px-3 py-2.5"
                                                 >
                                                     <span>
                                                         {log.clock_in ?? '--:--'} - {log.clock_out ?? 'En curso'}
@@ -337,7 +366,7 @@ export default function Index({
                                         <Alert
                                             key={intern.id}
                                             variant="destructive"
-                                            className="border-red-200 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100"
+                                            className="rounded-2xl border-red-200 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100"
                                         >
                                             <AlertTriangle className="h-4 w-4" />
                                             <AlertTitle className="text-red-900 dark:text-red-100">
@@ -361,24 +390,26 @@ export default function Index({
 
                 <Card>
                     <CardContent className="p-6">
-                        <FullCalendar
-                            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                            initialView="dayGridMonth"
-                            headerToolbar={{
-                                left: 'prev,next today',
-                                center: 'title',
-                                right: 'dayGridMonth,timeGridWeek',
-                            }}
-                            events="/time-logs/events"
-                            locale="es"
-                            height="auto"
-                            buttonText={{
-                                today: 'Hoy',
-                                month: 'Mes',
-                                week: 'Semana',
-                                day: 'Día',
-                            }}
-                        />
+                        <div className="rounded-[1.15rem] border border-border/70 bg-background/60 p-3">
+                            <FullCalendar
+                                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                                initialView="dayGridMonth"
+                                headerToolbar={{
+                                    left: 'prev,next today',
+                                    center: 'title',
+                                    right: 'dayGridMonth,timeGridWeek',
+                                }}
+                                events="/time-logs/events"
+                                locale="es"
+                                height="auto"
+                                buttonText={{
+                                    today: 'Hoy',
+                                    month: 'Mes',
+                                    week: 'Semana',
+                                    day: 'Día',
+                                }}
+                            />
+                        </div>
                     </CardContent>
                 </Card>
             </div>

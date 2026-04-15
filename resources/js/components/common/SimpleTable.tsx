@@ -24,6 +24,8 @@ type SimpleTableProps<T> = {
     sortKey?: string;
     sortDirection?: 'asc' | 'desc';
     onSort?: (key: string) => void;
+    emptyTitle?: string;
+    emptyDescription?: string;
 };
 
 export function SimpleTable<T>({
@@ -33,9 +35,11 @@ export function SimpleTable<T>({
     sortKey,
     sortDirection = 'asc',
     onSort,
+    emptyTitle = 'No hay datos disponibles',
+    emptyDescription = 'Ajusta los filtros o crea un nuevo registro para empezar.',
 }: SimpleTableProps<T>) {
     return (
-        <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+        <div className="app-panel w-full overflow-hidden">
             <div className="w-full overflow-x-auto">
                 <Table className="w-full min-w-[900px] text-left text-sm">
                     <TableHeader>
@@ -72,26 +76,49 @@ export function SimpleTable<T>({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {rows.map((row) => (
-                            <TableRow
-                                key={rowKey(row)}
-                                className="border-b border-border transition-colors hover:bg-muted/60 dark:border-slate-700/70 dark:hover:bg-slate-800/50"
-                            >
-                                {columns.map((col) => (
-                                    <TableCell
-                                        key={col.label}
-                                        className={`px-4 py-4 ${
-                                            col.cellClassName ??
-                                            'text-muted-foreground'
-                                        }`}
-                                    >
-                                        {col.render
-                                            ? col.render(row)
-                                            : (row as any)[col.key]}
-                                    </TableCell>
-                                ))}
+                        {rows.length > 0 ? (
+                            rows.map((row) => (
+                                <TableRow
+                                    key={rowKey(row)}
+                                    className="border-b border-border transition-colors hover:bg-muted/35"
+                                >
+                                    {columns.map((col) => (
+                                        <TableCell
+                                            key={col.label}
+                                            className={`${
+                                                col.cellClassName ??
+                                                'text-muted-foreground'
+                                            }`}
+                                        >
+                                            {col.render
+                                                ? col.render(row)
+                                                : (row as any)[col.key]}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow className="hover:bg-transparent">
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="px-6 py-10"
+                                >
+                                    <div className="empty-state">
+                                        <div className="empty-state-icon">
+                                            <ArrowUpDown className="h-5 w-5" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="font-semibold text-foreground">
+                                                {emptyTitle}
+                                            </p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {emptyDescription}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </TableCell>
                             </TableRow>
-                        ))}
+                        )}
                     </TableBody>
                 </Table>
             </div>

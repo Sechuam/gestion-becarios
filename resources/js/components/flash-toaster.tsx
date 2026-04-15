@@ -11,7 +11,7 @@ type FlashProps = {
 
 export function FlashToaster() {
     const { flash } = usePage().props as FlashProps;
-    const lastFlashRef = useRef<FlashProps['flash']>();
+    const lastFlashRef = useRef<FlashProps['flash']>(undefined);
 
     useEffect(() => {
         if (flash?.success && flash !== lastFlashRef.current) {

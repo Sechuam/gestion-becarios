@@ -489,7 +489,7 @@ export default function Index({
                     actions={
                         canManage ? (
                             <Button
-                                className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
+                                className="gap-2"
                                 onClick={() => router.get('/interns/create')}
                             >
                                 <Plus className="h-4 w-4" />
@@ -500,7 +500,7 @@ export default function Index({
                 />
 
                 {/* FILTROS */}
-                <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                <div className="filter-panel space-y-4 p-5">
                     {/* Fila 1: Búsqueda y Exportar */}
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="relative max-w-md min-w-[200px] flex-1">
@@ -747,6 +747,8 @@ export default function Index({
                     sortKey={filters.sort}
                     sortDirection={filters.direction}
                     onSort={handleSort}
+                    emptyTitle="No hay becarios que mostrar"
+                    emptyDescription="Prueba con otros filtros o registra un nuevo becario para empezar a poblar el módulo."
                 />
 
                 {/* PAGINACIÓN */}

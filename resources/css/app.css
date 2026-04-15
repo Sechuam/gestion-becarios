@@ -61,74 +61,74 @@
 }
 
 :root {
-    --background: #f4fbfb;
-    --foreground: #0b1020;
+    --background: #f6f4ee;
+    --foreground: #172033;
     --card: #ffffff;
-    --card-foreground: #0b1020;
+    --card-foreground: #172033;
     --popover: #ffffff;
-    --popover-foreground: #0b1020;
-    --primary: #0f766e;
+    --popover-foreground: #172033;
+    --primary: #1f4f52;
     --primary-foreground: #ffffff;
-    --secondary: #115e59;
-    --secondary-foreground: #ffffff;
-    --muted: #e9f7f6;
-    --muted-foreground: #5b6b8a;
-    --accent: #dcf5f3;
-    --accent-foreground: #0b1020;
-    --destructive: #dc2626;
+    --secondary: #d9d2c3;
+    --secondary-foreground: #172033;
+    --muted: #efe9dc;
+    --muted-foreground: #647089;
+    --accent: #dce9e5;
+    --accent-foreground: #172033;
+    --destructive: #c63d31;
     --destructive-foreground: #fef2f2;
-    --border: #d6eeec;
-    --input: #d6eeec;
-    --ring: #2dd4bf;
-    --chart-1: #0f766e;
-    --chart-2: #10b981;
-    --chart-3: #f59e0b;
-    --chart-4: #0ea5a4;
-    --chart-5: #f43f5e;
-    --radius: 0.75rem;
-    --sidebar: #ffffff;
-    --sidebar-foreground: #0b1020;
-    --sidebar-primary: #0f766e;
+    --border: #ddd5c6;
+    --input: #e4ddd0;
+    --ring: #5a8b88;
+    --chart-1: #1f4f52;
+    --chart-2: #4e7f78;
+    --chart-3: #cc8b3c;
+    --chart-4: #8ea9a1;
+    --chart-5: #c63d31;
+    --radius: 1rem;
+    --sidebar: #18313d;
+    --sidebar-foreground: #f4efe6;
+    --sidebar-primary: #84b7af;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #e9f7f6;
-    --sidebar-accent-foreground: #0b1020;
-    --sidebar-border: #d6eeec;
-    --sidebar-ring: #2dd4bf;
+    --sidebar-accent: #244655;
+    --sidebar-accent-foreground: #f8f4ec;
+    --sidebar-border: rgba(244, 239, 230, 0.12);
+    --sidebar-ring: #84b7af;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --background: #111922;
+    --foreground: #edf1f5;
+    --card: #17222e;
+    --card-foreground: #edf1f5;
+    --popover: #17222e;
+    --popover-foreground: #edf1f5;
+    --primary: #9fc6bf;
+    --primary-foreground: #14202a;
+    --secondary: #223140;
+    --secondary-foreground: #edf1f5;
+    --muted: #1d2a37;
+    --muted-foreground: #a4b0c0;
+    --accent: #213543;
+    --accent-foreground: #edf1f5;
+    --destructive: #d4675f;
+    --destructive-foreground: #fff2f1;
+    --border: rgba(233, 225, 212, 0.12);
+    --input: rgba(233, 225, 212, 0.12);
+    --ring: #9fc6bf;
+    --chart-1: #9fc6bf;
+    --chart-2: #6ea49a;
+    --chart-3: #d6a055;
+    --chart-4: #6f86a6;
+    --chart-5: #d4675f;
+    --sidebar: #0f1823;
+    --sidebar-foreground: #edf1f5;
+    --sidebar-primary: #9fc6bf;
+    --sidebar-primary-foreground: #14202a;
+    --sidebar-accent: #1d2a37;
+    --sidebar-accent-foreground: #edf1f5;
+    --sidebar-border: rgba(233, 225, 212, 0.1);
+    --sidebar-ring: #9fc6bf;
 }
 
 @layer base {
@@ -140,18 +140,24 @@
         @apply bg-background text-foreground;
         background-image:
             radial-gradient(
-                60rem 40rem at 10% -10%,
-                rgba(45, 212, 191, 0.18),
+                58rem 38rem at 0% -10%,
+                rgba(132, 183, 175, 0.22),
                 transparent 60%
             ),
             radial-gradient(
-                60rem 40rem at 110% 10%,
-                rgba(14, 165, 164, 0.14),
+                54rem 36rem at 110% 8%,
+                rgba(215, 199, 168, 0.24),
                 transparent 55%
+            ),
+            linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.54) 0%,
+                rgba(246, 244, 238, 0.84) 100%
             );
         font-size: 15px;
         line-height: 1.6;
         letter-spacing: 0.01em;
+        min-height: 100vh;
     }
 
     h1,
@@ -169,33 +175,114 @@
     .page-shell {
         width: 100%;
         margin: 0;
-        padding: 1.5rem 1.5rem 2.25rem;
+        padding: 1.5rem 1.5rem 2.5rem;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1.25rem;
     }
 
     .page-surface {
         background: var(--card);
         color: var(--card-foreground);
-        border: 1px solid var(--border);
-        border-radius: 1rem;
+        border: 1px solid color-mix(in srgb, var(--border) 85%, white 15%);
+        border-radius: 1.25rem;
         padding: 1.5rem;
         box-shadow:
-            0 1px 0 rgba(15, 23, 42, 0.04),
-            0 12px 24px rgba(15, 23, 42, 0.06);
+            0 1px 0 rgba(23, 32, 51, 0.05),
+            0 14px 30px rgba(23, 32, 51, 0.08);
     }
 
     .page-title {
-        font-size: 1.6rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
+        font-size: 1.9rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
         color: var(--foreground);
     }
 
     .page-subtitle {
-        font-size: 0.95rem;
+        font-size: 0.96rem;
         color: var(--muted-foreground);
+        max-width: 62ch;
+    }
+
+    .app-panel {
+        background: linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--card) 92%, white 8%) 0%,
+            var(--card) 100%
+        );
+        border: 1px solid color-mix(in srgb, var(--border) 86%, white 14%);
+        border-radius: 1.25rem;
+        box-shadow:
+            0 1px 0 rgba(23, 32, 51, 0.04),
+            0 16px 38px rgba(23, 32, 51, 0.08);
+    }
+
+    .filter-panel {
+        background: color-mix(in srgb, var(--card) 92%, var(--muted) 8%);
+        border: 1px solid color-mix(in srgb, var(--border) 84%, white 16%);
+        border-radius: 1.15rem;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.45),
+            0 8px 18px rgba(23, 32, 51, 0.05);
+    }
+
+    .metric-tile {
+        border-radius: 1rem;
+        border: 1px solid color-mix(in srgb, var(--border) 88%, white 12%);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.74)),
+            color-mix(in srgb, var(--muted) 46%, white 54%);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.55),
+            0 10px 20px rgba(23, 32, 51, 0.05);
+    }
+
+    .section-kicker {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--primary);
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 2.25rem 1.5rem;
+        text-align: center;
+        border-radius: 1.15rem;
+        border: 1px dashed color-mix(in srgb, var(--border) 88%, white 12%);
+        background:
+            radial-gradient(circle at top, rgba(132, 183, 175, 0.12), transparent 52%),
+            color-mix(in srgb, var(--card) 88%, var(--muted) 12%);
+    }
+
+    .empty-state-icon {
+        display: flex;
+        height: 3.25rem;
+        width: 3.25rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        background: color-mix(in srgb, var(--accent) 72%, white 28%);
+        color: var(--primary);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    }
+
+    .dashboard-grid {
+        display: grid;
+        gap: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+        .page-shell {
+            padding: 1.75rem 1.75rem 2.75rem;
+            gap: 1.5rem;
+        }
     }
 }
 
