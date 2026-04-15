@@ -1,5 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import type { FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import FullCalendar from '@fullcalendar/react';
@@ -50,6 +50,26 @@ type NonCompliantIntern = {
     education_center: string | null;
 };
 
+const pad = (value: number) => String(value).padStart(2, '0');
+
+const formatElapsed = (totalSeconds: number) => {
+    const safeSeconds = Math.max(0, totalSeconds);
+    const hours = Math.floor(safeSeconds / 3600);
+    const minutes = Math.floor((safeSeconds % 3600) / 60);
+    const seconds = safeSeconds % 60;
+
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+};
+
+const getElapsedSeconds = (clockIn: string, currentDate = new Date()) => {
+    const [hours, minutes, seconds] = clockIn.split(':').map(Number);
+
+    const start = new Date(currentDate);
+    start.setHours(hours ?? 0, minutes ?? 0, seconds ?? 0, 0);
+
+    return Math.floor((currentDate.getTime() - start.getTime()) / 1000);
+};
+
 export default function Index({
     today_log,
     can_manage_attendance,
@@ -69,6 +89,18 @@ export default function Index({
         notes: '',
     });
 
+    const [now, setNow] = useState(() => new Date());
+
+    useEffect(() => {
+        if (!today_log?.clock_in || today_log?.clock_out) return;
+
+        const interval = window.setInterval(() => {
+            setNow(new Date());
+        }, 1000);
+
+        return () => window.clearInterval(interval);
+    }, [today_log?.clock_in, today_log?.clock_out]);
+
     const handleClockIn = () => {
         router.post('/time-logs/clock-in', {}, { preserveScroll: true });
     };
@@ -87,6 +119,14 @@ export default function Index({
             },
         });
     };
+
+    const liveElapsed =
+        today_log?.clock_in && !today_log?.clock_out
+            ? formatElapsed(getElapsedSeconds(today_log.clock_in, now))
+            : null;
+
+
+
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -120,22 +160,35 @@ export default function Index({
                         </div>
 
                         {today_log && (
-                            <div className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-3 dark:border-slate-800 dark:bg-slate-900/50">
-                                <div>
-                                    <p className="text-xs uppercase tracking-wide text-slate-500">Entrada</p>
-                                    <p className="font-medium">{today_log.clock_in ?? '--:--'}</p>
+                            <>
+                                <div className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-3 dark:border-slate-800 dark:bg-slate-900/50">
+                                    <div>
+                                        <p className="text-xs uppercase tracking-wide text-slate-500">Entrada</p>
+                                        <p className="font-medium">{today_log.clock_in ?? '--:--'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs uppercase tracking-wide text-slate-500">Salida</p>
+                                        <p className="font-medium">{today_log.clock_out ?? '--:--'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs uppercase tracking-wide text-slate-500">Total</p>
+                                        <p className="font-medium">
+                                            {today_log.total_hours !== null ? `${today_log.total_hours}h` : 'Pendiente'}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-xs uppercase tracking-wide text-slate-500">Salida</p>
-                                    <p className="font-medium">{today_log.clock_out ?? '--:--'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs uppercase tracking-wide text-slate-500">Total</p>
-                                    <p className="font-medium">
-                                        {today_log.total_hours !== null ? `${today_log.total_hours}h` : 'Pendiente'}
-                                    </p>
-                                </div>
-                            </div>
+
+                                {liveElapsed && (
+                                    <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-sm dark:border-indigo-900 dark:bg-indigo-950/30">
+                                        <p className="text-xs uppercase tracking-wide text-slate-500">
+                                            Tiempo trabajando ahora
+                                        </p>
+                                        <p className="mt-1 text-2xl font-semibold text-indigo-600">
+                                            {liveElapsed}
+                                        </p>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </CardContent>
                 </Card>
@@ -237,13 +290,20 @@ export default function Index({
                             <CardContent className="space-y-3">
                                 {non_compliant_interns.length > 0 ? (
                                     non_compliant_interns.map((intern) => (
-                                        <Alert key={intern.id} variant="destructive" className="border-red-200 bg-red-50 dark:bg-red-950/30">
+                                        <Alert
+                                            key={intern.id}
+                                            variant="destructive"
+                                            className="border-red-200 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100"
+                                        >
                                             <AlertTriangle className="h-4 w-4" />
-                                            <AlertTitle>{intern.name}</AlertTitle>
-                                            <AlertDescription>
+                                            <AlertTitle className="text-red-900 dark:text-red-100">
+                                                {intern.name}
+                                            </AlertTitle>
+                                            <AlertDescription className="text-red-700 dark:text-red-200">
                                                 Deuda de {intern.debt}h. Lleva {intern.total_done}h de {intern.expected_hours}h esperadas.
                                             </AlertDescription>
                                         </Alert>
+
                                     ))
                                 ) : (
                                     <p className="text-sm text-slate-500">

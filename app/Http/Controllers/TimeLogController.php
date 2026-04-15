@@ -113,7 +113,7 @@ class TimeLogController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        if (! $validated['clock_in'] && ! $validated['clock_out']) {
+        if (!$validated['clock_in'] && !$validated['clock_out']) {
             return back()->with('error', 'Debes indicar al menos una hora de entrada o de salida.');
         }
 
