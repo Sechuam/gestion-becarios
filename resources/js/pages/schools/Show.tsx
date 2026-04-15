@@ -1,5 +1,28 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Search, FileDown } from 'lucide-react';
+import { 
+    Search, 
+    FileDown, 
+    ArrowLeft, 
+    School, 
+    Users, 
+    History as HistoryIcon, 
+    HardDrive, 
+    Calendar, 
+    MapPin, 
+    Mail, 
+    Phone, 
+    Globe, 
+    FileText, 
+    Download,
+    GraduationCap,
+    Clock,
+    User,
+    AlertTriangle,
+    BarChart3,
+    Info,
+    Hash,
+    ExternalLink
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
@@ -19,6 +42,9 @@ import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import type { BreadcrumbItem } from '@/types/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 
 type Props = {
     educationCenter: any;
@@ -145,819 +171,438 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Centro: ${educationCenter.name}`} />
 
-            <div className="flex flex-col gap-6">
-                {isTrashed && (
-                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
-                        Este centro está archivado. No admite nuevos becarios.
+            <div className="w-full space-y-6 bg-slate-50/50 p-6 dark:bg-slate-950/20 min-h-screen">
+                {/* CABECERA DE ACCIÓN RÁPIDA */}
+                <div className="flex items-center justify-between">
+                    <Button
+                        variant="ghost"
+                        className="text-slate-600 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl"
+                        asChild
+                    >
+                        <Link href="/centros">
+                            <ArrowLeft className="h-4 w-4 mr-2" /> Volver al listado
+                        </Link>
+                    </Button>
+                    
+                    <div className="flex gap-2">
+                        {isTrashed ? (
+                            canManage && (
+                                <>
+                                    <Button
+                                        variant="outline"
+                                        className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-xl"
+                                        onClick={() => router.post(`/centros/${educationCenter.id}/restore`)}
+                                    >
+                                        Restaurar centro
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        className="rounded-xl"
+                                        onClick={() => {
+                                            if (confirm('¿Seguro que quieres eliminar definitivamente este centro?')) {
+                                                router.delete(`/centros/${educationCenter.id}/force`);
+                                            }
+                                        }}
+                                    >
+                                        Eliminar definitivo
+                                    </Button>
+                                </>
+                            )
+                        ) : (
+                            canManage && (
+                                <ConfirmNavigationButton
+                                    href={`/centros/${educationCenter.id}/edit`}
+                                    title="Confirmar edición"
+                                    description={`Vas a editar la ficha de ${educationCenter.name}.`}
+                                    confirmLabel="Ir a editar"
+                                    className="bg-primary text-white hover:opacity-90 rounded-xl px-6"
+                                >
+                                    Editar Información
+                                </ConfirmNavigationButton>
+                            )
+                        )}
                     </div>
-                )}
+                </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h1 className="page-title">{educationCenter.name}</h1>
-                        <p className="page-subtitle">
-                            Detalle del centro educativo y su histórico de
-                            becarios.
+                {/* HERO DEL CENTRO */}
+                <div className="flex items-center gap-6 pb-2">
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white shadow-sm border border-sidebar dark:bg-slate-900">
+                        <School className="h-10 w-10 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+                                {educationCenter.name}
+                            </h1>
+                            {isTrashed && <Badge variant="destructive" className="rounded-lg">Archivado</Badge>}
+                        </div>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium">
+                            {educationCenter.city || 'Ciudad no especificada'} · {educationCenter.code || 'Sin código de centro'}
                         </p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                        <Button
-                            variant="outline"
-                            className="border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                            asChild
-                        >
-                            <Link href="/centros">Volver</Link>
-                        </Button>
-
-                        {isTrashed ? (
-                            <>
-                                {canManage && (
-                                    <>
-                                        <Button
-                                            variant="outline"
-                                            className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                                            onClick={() =>
-                                                router.post(
-                                                    `/centros/${educationCenter.id}/restore`,
-                                                )
-                                            }
-                                        >
-                                            Restaurar centro
-                                        </Button>
-                                        <Button
-                                            variant="destructive"
-                                            className="shadow-md shadow-red-500/20"
-                                            onClick={() => {
-                                                if (
-                                                    confirm(
-                                                        '¿Seguro que quieres eliminar definitivamente este centro? Esta acción no se puede deshacer.',
-                                                    )
-                                                ) {
-                                                    router.delete(
-                                                        `/centros/${educationCenter.id}/force`,
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            Eliminar definitivo
-                                        </Button>
-                                    </>
-                                )}
-                            </>
-                        ) : (
-                            <>
-                                {canManage && (
-                                    <ConfirmNavigationButton
-                                        href={`/centros/${educationCenter.id}/edit`}
-                                        title="Confirmar edición"
-                                        description={`Vas a editar la ficha de ${educationCenter.name}.`}
-                                        confirmLabel="Ir a editar"
-                                        className="bg-slate-900 text-white hover:bg-slate-800"
-                                    >
-                                        Editar
-                                    </ConfirmNavigationButton>
-                                )}
-                            </>
-                        )}
-                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm lg:col-span-2 dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <h2 className="text-lg font-semibold text-foreground">
-                            Información del centro
-                        </h2>
-                        <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
-                            <div>
-                                <p className="text-muted-foreground">Código</p>
-                                <p className="font-medium text-foreground">
-                                    {educationCenter.code || '—'}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">Ciudad</p>
-                                <p className="font-medium text-foreground">
-                                    {educationCenter.city || '—'}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Dirección
-                                </p>
-                                {educationCenter.address ? (
-                                    <a
-                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${educationCenter.address}, ${educationCenter.city || ''}`)}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="font-medium text-foreground hover:underline"
-                                        title="Ver en Google Maps"
+                {/* PANEL ÚNICO UNIFICADO */}
+                <Card className="app-panel rounded-3xl overflow-hidden">
+                    <Tabs defaultValue="general" className="w-full">
+                        {/* NAVEGACIÓN INTEGRADA */}
+                        <div className="bg-slate-50/30 dark:bg-slate-800/20 border-b border-sidebar/20 px-6 pt-4">
+                            <TabsList className="flex bg-transparent h-auto p-0 gap-8 justify-start">
+                                {[
+                                    { value: 'general', label: 'Información General', icon: Info },
+                                    { value: 'becarios', label: `Becarios (${interns.total})`, icon: Users },
+                                    { value: 'seguimiento', label: 'Seguimiento y Auditoría', icon: HistoryIcon },
+                                ].map((tab) => (
+                                    <TabsTrigger
+                                        key={tab.value}
+                                        value={tab.value}
+                                        className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-semibold text-slate-500 transition-all data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary dark:text-slate-400 dark:data-[state=active]:text-primary"
                                     >
-                                        {educationCenter.address}
-                                        {educationCenter.city && ` (${educationCenter.city})`}
-                                    </a>
-                                ) : (
-                                    <p className="font-medium text-foreground">—</p>
-                                )}
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Contacto
-                                </p>
-                                <p className="font-medium text-foreground">
-                                    {educationCenter.contact_person || '—'}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Email del coordinador
-                                </p>
-                                {educationCenter.contact_email ? (
-                                    <a
-                                        href={`mailto:${educationCenter.contact_email}`}
-                                        className="font-medium text-foreground hover:underline"
-                                    >
-                                        {educationCenter.contact_email}
-                                    </a>
-                                ) : (
-                                    <p className="font-medium text-foreground">
-                                        —
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Email institucional
-                                </p>
-                                {educationCenter.email ? (
-                                    <a
-                                        href={`mailto:${educationCenter.email}`}
-                                        className="font-medium text-foreground hover:underline"
-                                    >
-                                        {educationCenter.email}
-                                    </a>
-                                ) : (
-                                    <p className="font-medium text-foreground">
-                                        —
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Teléfono
-                                </p>
-                                <p className="font-medium text-foreground">
-                                    {educationCenter.phone || '—'}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">Web</p>
-                                {educationCenter.web ? (
-                                    <a
-                                        href={educationCenter.web}
-                                        className="text-blue-600 hover:underline"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        {educationCenter.web}
-                                    </a>
-                                ) : (
-                                    <p className="font-medium text-foreground">
-                                        —
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <h2 className="text-lg font-semibold text-foreground">
-                            Convenio
-                        </h2>
-                        <div className="space-y-3 text-sm">
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Fecha de firma
-                                </p>
-                                <p className="font-medium text-foreground">
-                                    {formatDateEs(
-                                        educationCenter.agreement_signed_at,
-                                    )}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Fecha de vencimiento
-                                </p>
-                                <p className="font-medium text-foreground">
-                                    {formatDateEs(
-                                        educationCenter.agreement_expires_at,
-                                    )}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Plazas acordadas
-                                </p>
-                                <p className="font-medium text-foreground">
-                                    {educationCenter.agreement_slots ?? '—'}
-                                </p>
-                            </div>
-                            {agreement_url && (
-                                <div className="flex flex-wrap gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="border-border text-foreground hover:bg-muted"
-                                        asChild
-                                    >
-                                        <a
-                                            href={agreement_url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            Ver convenio PDF
-                                        </a>
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="border-border text-foreground hover:bg-muted"
-                                        asChild
-                                    >
-                                        <a href={agreement_url} download>
-                                            Descargar
-                                        </a>
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <div className="flex items-center justify-between gap-3">
-                            <h2 className="text-lg font-semibold text-foreground">
-                                Notas internas
-                            </h2>
-                            {canManage && !editingNotes && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setEditingNotes(true)}
-                                >
-                                    Editar
-                                </Button>
-                            )}
-                        </div>
-                        {editingNotes ? (
-                            <div className="space-y-3">
-                                <textarea
-                                    value={notesValue}
-                                    onChange={(e) =>
-                                        setNotesValue(e.target.value)
-                                    }
-                                    className="min-h-[140px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm"
-                                    placeholder="Escribe una nota interna del centro..."
-                                />
-                                <div className="flex flex-wrap gap-2">
-                                    <Button
-                                        type="button"
-                                        onClick={() =>
-                                            router.patch(
-                                                `/centros/${educationCenter.id}/notes`,
-                                                {
-                                                    internal_notes: notesValue,
-                                                },
-                                                {
-                                                    preserveScroll: true,
-                                                    onSuccess: () =>
-                                                        setEditingNotes(false),
-                                                },
-                                            )
-                                        }
-                                    >
-                                        Guardar nota
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => {
-                                            setNotesValue(
-                                                educationCenter.internal_notes ||
-                                                '',
-                                            );
-                                            setEditingNotes(false);
-                                        }}
-                                    >
-                                        Cancelar
-                                    </Button>
-                                    {educationCenter.internal_notes && (
-                                        <Button
-                                            type="button"
-                                            variant="destructive"
-                                            onClick={() =>
-                                                router.patch(
-                                                    `/centros/${educationCenter.id}/notes`,
-                                                    {
-                                                        internal_notes: null,
-                                                    },
-                                                    {
-                                                        preserveScroll: true,
-                                                        onSuccess: () => {
-                                                            setNotesValue('');
-                                                            setEditingNotes(
-                                                                false,
-                                                            );
-                                                        },
-                                                    },
-                                                )
-                                            }
-                                        >
-                                            Borrar nota
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-2 text-sm">
-                                <p className="text-foreground">
-                                    {educationCenter.internal_notes ||
-                                        'Sin notas internas.'}
-                                </p>
-                                {(educationCenter.notes_updated_by ||
-                                    educationCenter.internal_notes_updated_at) && (
-                                        <p className="text-xs text-muted-foreground">
-                                            Última edición:{' '}
-                                            {educationCenter.notes_updated_by
-                                                ?.name || 'Usuario'}{' '}
-                                            ·{' '}
-                                            {formatDateTimeEs(
-                                                educationCenter.internal_notes_updated_at,
-                                            )}
-                                        </p>
-                                    )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {isIntern && (
-                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <h2 className="text-lg font-semibold text-foreground">
-                            Tutores
-                        </h2>
-
-                        <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Tutor del Centro
-                                </p>
-                                <p className="font-medium text-foreground">
-                                    {currentIntern?.center_tutor_name || '—'}
-                                </p>
-                                {currentIntern?.center_tutor_email ? (
-                                    <a
-                                        href={`mailto:${currentIntern.center_tutor_email}`}
-                                        className="text-foreground hover:underline"
-                                    >
-                                        {currentIntern.center_tutor_email}
-                                    </a>
-                                ) : (
-                                    <p className="text-foreground">—</p>
-                                )}
-                                <p className="text-foreground">
-                                    {currentIntern?.center_tutor_phone || '—'}
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="text-muted-foreground">
-                                    Tutor de Empresa
-                                </p>
-                                <p className="font-medium text-foreground">
-                                    {currentIntern?.company_tutor?.name || '—'}
-                                </p>
-                                {currentIntern?.company_tutor?.email ? (
-                                    <a
-                                        href={`mailto:${currentIntern.company_tutor.email}`}
-                                        className="text-foreground hover:underline"
-                                    >
-                                        {currentIntern.company_tutor.email}
-                                    </a>
-                                ) : (
-                                    <p className="text-foreground">—</p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {!isIntern && (
-                    <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <h2 className="text-lg font-semibold text-foreground">
-                            Historial de actividad
-                        </h2>
-                        {activities.length > 0 ? (
-                            <div className="space-y-4">
-                                {activities.map((activity) => {
-                                    const changes =
-                                        activity.properties?.attributes ?? {};
-                                    const old = activity.properties?.old ?? {};
-
-                                    const labels: Record<string, string> = {
-                                        name: 'Nombre',
-                                        code: 'Código',
-                                        address: 'Dirección',
-                                        city: 'Ciudad',
-                                        contact_person: 'Contacto',
-                                        contact_email: 'Email del coordinador',
-                                        contact_position: 'Cargo',
-                                        email: 'Email institucional',
-                                        phone: 'Teléfono',
-                                        web: 'Web',
-                                        agreement_signed_at: 'Fecha de firma',
-                                        agreement_expires_at:
-                                            'Fecha de vencimiento',
-                                        agreement_slots: 'Plazas acordadas',
-                                        internal_notes: 'Notas internas',
-                                        internal_notes_updated_by:
-                                            'Editor de notas',
-                                        internal_notes_updated_at:
-                                            'Fecha edición de notas',
-                                    };
-
-                                    const visibleFields = Object.keys(changes)
-                                        .filter((key) => key in labels)
-                                        .filter(
-                                            (key) => old[key] !== changes[key],
-                                        );
-
-                                    return (
-                                        <div
-                                            key={activity.id}
-                                            className="rounded-xl border border-border/70 p-4"
-                                        >
-                                            <div className="flex flex-wrap items-center justify-between gap-2">
-                                                <div>
-                                                    <p className="text-sm font-medium text-foreground">
-                                                        {activity.causer_name}
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        {activity.event ===
-                                                            'created'
-                                                            ? 'Creó el centro'
-                                                            : activity.event ===
-                                                                'updated'
-                                                                ? 'Actualizó la ficha del centro'
-                                                                : activity.description}
-                                                    </p>
-                                                </div>
-                                                <p className="text-xs text-muted-foreground">
-                                                    {activity.created_at}
-                                                </p>
-                                            </div>
-
-                                            {visibleFields.length > 0 && (
-                                                <div className="mt-3 space-y-2 text-sm">
-                                                    {visibleFields.map(
-                                                        (field) => (
-                                                            <div
-                                                                key={field}
-                                                                className="rounded-lg bg-muted/30 px-3 py-2"
-                                                            >
-                                                                <span className="font-medium text-foreground">
-                                                                    {
-                                                                        labels[
-                                                                        field
-                                                                        ]
-                                                                    }
-                                                                    :
-                                                                </span>{' '}
-                                                                <span className="text-muted-foreground">
-                                                                    {old[
-                                                                        field
-                                                                    ] ?? '—'}
-                                                                </span>{' '}
-                                                                <span className="text-muted-foreground">
-                                                                    →
-                                                                </span>{' '}
-                                                                <span className="text-foreground">
-                                                                    {changes[
-                                                                        field
-                                                                    ] ?? '—'}
-                                                                </span>
-                                                            </div>
-                                                        ),
-                                                    )}
-                                                </div>
-                                            )}
+                                        <div className="flex items-center gap-2">
+                                            <tab.icon className="h-4 w-4" />
+                                            {tab.label}
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-muted-foreground">
-                                Aún no hay actividad registrada para este
-                                centro.
-                            </p>
-                        )}
-                    </div>
-                )}
-
-                {!isIntern && (
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                            <div className="relative w-full max-w-sm">
-                                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
-                                <Input
-                                    placeholder="Buscar becario por nombre..."
-                                    className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
-                                    defaultValue={filters?.search}
-                                    onChange={(e) =>
-                                        router.get(
-                                            `/centros/${educationCenter.id}`,
-                                            {
-                                                search: e.target.value,
-                                                status: filters?.status,
-                                                order: filters?.order,
-                                            },
-                                            {
-                                                preserveState: true,
-                                                preserveScroll: true,
-                                                replace: true,
-                                            },
-                                        )
-                                    }
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <label className="text-sm text-muted-foreground">
-                                    Estado
-                                </label>
-                                <select
-                                    className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
-                                    value={filters?.status ?? ''}
-                                    onChange={(e) =>
-                                        router.get(
-                                            `/centros/${educationCenter.id}`,
-                                            {
-                                                search: filters?.search,
-                                                status:
-                                                    e.target.value || undefined,
-                                                order: filters?.order,
-                                            },
-                                            {
-                                                preserveState: true,
-                                                preserveScroll: true,
-                                                replace: true,
-                                            },
-                                        )
-                                    }
-                                >
-                                    <option value="">Todos</option>
-                                    <option value="active">Activo</option>
-                                    <option value="completed">
-                                        Finalizado
-                                    </option>
-                                    <option value="abandoned">
-                                        Abandonado
-                                    </option>
-                                </select>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <label className="text-sm text-muted-foreground">
-                                    Orden
-                                </label>
-                                <select
-                                    className="h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
-                                    value={filters?.order ?? 'az'}
-                                    onChange={(e) =>
-                                        router.get(
-                                            `/centros/${educationCenter.id}`,
-                                            {
-                                                search: filters?.search,
-                                                status: filters?.status,
-                                                order: e.target.value,
-                                            },
-                                            {
-                                                preserveState: true,
-                                                preserveScroll: true,
-                                                replace: true,
-                                            },
-                                        )
-                                    }
-                                >
-                                    <option value="az">Orden: A → Z</option>
-                                    <option value="za">Orden: Z → A</option>
-                                    <option value="recent">
-                                        Orden: Actualizados primero
-                                    </option>
-                                    <option value="oldest">
-                                        Orden: Actualizados últimos
-                                    </option>
-                                </select>
-                            </div>
-                            {canExport && (
-                                <Dialog
-                                    open={exportOpen}
-                                    onOpenChange={setExportOpen}
-                                >
-                                    <DialogTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className="gap-2 border-border text-foreground hover:bg-muted"
-                                        >
-                                            <FileDown className="h-4 w-4" />
-                                            Exportar Excel
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="max-w-xl">
-                                        <DialogHeader>
-                                            <DialogTitle>
-                                                Exportación personalizada
-                                            </DialogTitle>
-                                            <DialogDescription>
-                                                Elige las columnas que quieres
-                                                incluir en el Excel. Se
-                                                respetarán los filtros actuales.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                            {exportColumns.map((column) => {
-                                                const isChecked =
-                                                    selectedColumns.includes(
-                                                        column.key,
-                                                    );
-                                                return (
-                                                    <label
-                                                        key={column.key}
-                                                        className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
-                                                    >
-                                                        <Checkbox
-                                                            checked={isChecked}
-                                                            onCheckedChange={(
-                                                                checked,
-                                                            ) => {
-                                                                const isOn =
-                                                                    checked ===
-                                                                    true;
-                                                                setSelectedColumns(
-                                                                    (prev) => {
-                                                                        if (
-                                                                            isOn
-                                                                        ) {
-                                                                            return [
-                                                                                ...prev,
-                                                                                column.key,
-                                                                            ];
-                                                                        }
-                                                                        return prev.filter(
-                                                                            (
-                                                                                key,
-                                                                            ) =>
-                                                                                key !==
-                                                                                column.key,
-                                                                        );
-                                                                    },
-                                                                );
-                                                            }}
-                                                        />
-                                                        {column.label}
-                                                    </label>
-                                                );
-                                            })}
-                                        </div>
-                                        <DialogFooter>
-                                            <Button
-                                                variant="outline"
-                                                onClick={() =>
-                                                    setExportOpen(false)
-                                                }
-                                            >
-                                                Cancelar
-                                            </Button>
-                                            <Button
-                                                onClick={handleExport}
-                                                disabled={
-                                                    selectedColumns.length === 0
-                                                }
-                                            >
-                                                Descargar Excel
-                                            </Button>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
-                            )}
-                            <p className="ml-auto text-sm font-medium text-muted-foreground">
-                                Mostrando {interns.data.length} de{' '}
-                                {interns.total} becarios
-                            </p>
+                                    </TabsTrigger>
+                                ))}
+                            </TabsList>
                         </div>
 
-                        <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                            <div className="w-full overflow-x-auto">
-                                <table className="min-w- w-full text-left text-sm">
-                                    <thead>
-                                        <tr className="border-b border-b-border bg-muted dark:border-slate-700/70 dark:bg-slate-800/70">
-                                            <th className="px-4 py-4 text-left font-semibold text-foreground">
-                                                Becario
-                                            </th>
-                                            <th className="px-4 py-4 text-left font-semibold text-foreground">
-                                                Email
-                                            </th>
-                                            <th className="px-4 py-4 text-left font-semibold text-foreground">
-                                                Titulación
-                                            </th>
-                                            <th className="px-4 py-4 text-left font-semibold text-foreground">
-                                                Inicio
-                                            </th>
-                                            <th className="px-4 py-4 text-left font-semibold text-foreground">
-                                                Fin
-                                            </th>
-                                            <th className="px-4 py-4 text-left font-semibold text-foreground">
-                                                Estado
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {interns.data.map((intern: any) => (
-                                            <tr
-                                                key={intern.id}
-                                                className="border-b border-border transition-colors hover:bg-muted/60 dark:border-slate-700/70 dark:hover:bg-slate-800/50"
-                                            >
-                                                <td className="px-4 py-4 text-foreground">
-                                                    {intern.user?.name ? (
-                                                        <Link
-                                                            href={`/interns/${intern.id}`}
-                                                            className="font-medium hover:underline"
-                                                        >
-                                                            {intern.user.name}
-                                                        </Link>
-                                                    ) : (
-                                                        '—'
-                                                    )}
-                                                </td>
-                                                <td className="px-4 py-4 text-muted-foreground">
-                                                    {intern.user?.email ? (
-                                                        <a
-                                                            href={`mailto:${intern.user.email}`}
-                                                            className="hover:underline"
-                                                        >
-                                                            {intern.user.email}
+                        <CardContent className="p-8">
+                            {/* PESTAÑA GENERAL */}
+                            <TabsContent value="general" className="mt-0 space-y-12 animate-in fade-in duration-500">
+                                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                                    <div className="md:col-span-8 space-y-10">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                            {[
+                                                { label: 'Código de Centro', value: educationCenter.code, icon: Hash },
+                                                { label: 'Localidad / Ciudad', value: educationCenter.city, icon: MapPin },
+                                                { label: 'Persona de Contacto', value: educationCenter.contact_person, icon: User },
+                                                { label: 'Email Institucional', value: educationCenter.email, icon: Mail, isLink: true, href: `mailto:${educationCenter.email}` },
+                                                { label: 'Correo del Coordinador', value: educationCenter.contact_email, icon: Mail, isLink: true, href: `mailto:${educationCenter.contact_email}` },
+                                                { label: 'Teléfono', value: educationCenter.phone, icon: Phone },
+                                                { label: 'Sitio Web', value: educationCenter.web, icon: Globe, isLink: true, href: educationCenter.web, target: '_blank' },
+                                            ].map((item, i) => (
+                                                <div key={i} className="space-y-1.5 group">
+                                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest flex items-center gap-2">
+                                                        <item.icon className="h-3 w-3" /> {item.label}
+                                                    </p>
+                                                    {item.isLink && item.value ? (
+                                                        <a href={item.href} target={item.target} className="text-sm font-bold text-primary hover:underline block truncate">
+                                                            {item.value}
                                                         </a>
                                                     ) : (
-                                                        '—'
+                                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{item.value || '—'}</p>
                                                     )}
-                                                </td>
-                                                <td className="px-4 py-4 text-muted-foreground">
-                                                    {intern.academic_degree ||
-                                                        '—'}
-                                                </td>
-                                                <td className="px-4 py-4 text-muted-foreground">
-                                                    {formatDateEs(
-                                                        intern.start_date,
-                                                    )}
-                                                </td>
-                                                <td className="px-4 py-4 text-muted-foreground">
-                                                    {formatDateEs(
-                                                        intern.end_date,
-                                                    )}
-                                                </td>
-                                                <td className="px-4 py-4">
-                                                    <StatusBadge
-                                                        status={intern.status}
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                                </div>
+                                            ))}
+                                            <div className="md:col-span-2 space-y-1.5">
+                                                <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Dirección Completa</p>
+                                                {educationCenter.address ? (
+                                                    <a
+                                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${educationCenter.address}, ${educationCenter.city || ''}`)}`}
+                                                        target="_blank"
+                                                        className="text-sm font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 transition-colors flex items-center gap-2"
+                                                    >
+                                                        {educationCenter.address} <ExternalLink className="h-3 w-3 opacity-50" />
+                                                    </a>
+                                                ) : <p className="text-sm font-bold text-slate-400">—</p>}
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        <div className="flex items-center gap-2">
-                            {interns.links.map((link: any, i: number) => {
-                                const label = link.label
-                                    .replace('Previous', 'Anterior')
-                                    .replace('Next', 'Siguiente');
-                                return (
-                                    <Link
-                                        key={i}
-                                        href={link.url ?? '#'}
-                                        className={`rounded border border-border px-3 py-1 text-sm ${link.active
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'hover:bg-muted'
-                                            } ${!link.url ? 'pointer-events-none opacity-40' : ''}`}
-                                        dangerouslySetInnerHTML={{
-                                            __html: label,
-                                        }}
-                                        preserveState
-                                    />
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
+                                    <div className="md:col-span-4 translate-y-[-10px]">
+                                        <div className="filter-panel p-6 space-y-4">
+                                            <h4 className="text-xs font-black uppercase text-slate-500 flex items-center gap-2 mb-4">
+                                                <FileText className="h-3 w-3" /> Convenio de Prácticas
+                                            </h4>
+
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs font-medium text-indigo-600/70">Fecha Firma</span>
+                                                    <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100">{formatDateEs(educationCenter.agreement_signed_at)}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs font-medium text-indigo-600/70">Vencimiento</span>
+                                                    <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100">{formatDateEs(educationCenter.agreement_expires_at)}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs font-medium text-primary/70">Plazas Máximas</span>
+                                                    <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100">{educationCenter.agreement_slots ?? 'Ilimitadas'}</span>
+                                                </div>
+                                            </div>
+
+                                            {agreement_url && (
+                                                <div className="pt-2 grid grid-cols-2 gap-3">
+                                                    <Button variant="outline" size="sm" className="rounded-xl border-primary/20 bg-white text-primary hover:bg-accent" asChild>
+                                                        <a href={agreement_url} target="_blank">Ver</a>
+                                                    </Button>
+                                                    <Button size="sm" className="rounded-xl bg-primary hover:opacity-90 text-white" asChild>
+                                                        <a href={agreement_url} download>Descargar</a>
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            {/* PESTAÑA BECARIOS */}
+                            <TabsContent value="becarios" className="mt-0 space-y-8 animate-in fade-in duration-500">
+                                {/* BARRA DE HERRAMIENTAS DE BECARIOS */}
+                                <div className="filter-panel flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 p-6 rounded-3xl">
+                                    <div className="flex flex-1 items-center gap-4">
+                                        <div className="relative w-full max-w-md">
+                                            <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                            <Input
+                                                placeholder="Buscar por nombre o DNI..."
+                                                className="h-12 border border-sidebar/40 bg-white dark:bg-slate-900 pl-11 rounded-2xl shadow-sm focus:ring-2 focus:ring-primary transition-all font-medium"
+                                                defaultValue={filters?.search}
+                                                onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: e.target.value, status: filters?.status, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
+                                            />
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2">
+                                            <select
+                                                className="h-12 rounded-2xl border border-sidebar/40 bg-white dark:bg-slate-900 px-4 text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm focus:ring-2 focus:ring-primary"
+                                                value={filters?.status ?? ''}
+                                                onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: e.target.value || undefined, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
+                                            >
+                                                <option value="">Todos los Estados</option>
+                                                <option value="active">Becarios Activos</option>
+                                                <option value="completed">Finalizados</option>
+                                                <option value="abandoned">Abandonados</option>
+                                            </select>
+
+                                            <select
+                                                className="h-12 rounded-2xl border border-sidebar/40 bg-white dark:bg-slate-900 px-4 text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm focus:ring-2 focus:ring-primary"
+                                                value={filters?.order ?? 'az'}
+                                                onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: filters?.status, order: e.target.value }, { preserveState: true, preserveScroll: true, replace: true })}
+                                            >
+                                                <option value="az">A → Z</option>
+                                                <option value="za">Z → A</option>
+                                                <option value="recent">Nuevos primero</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {canExport && (
+                                        <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button className="h-12 px-6 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-2 shadow-lg shadow-slate-900/20">
+                                                    <FileDown className="h-4 w-4" />
+                                                    Exportar Excel
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-xl rounded-3xl border-none p-8">
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-xl font-bold">Personalizar Exportación</DialogTitle>
+                                                    <DialogDescription className="text-slate-500 py-2">
+                                                        Selecciona los campos que deseas incluir en el informe de {interns.total} alumnos.
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="grid grid-cols-2 gap-3 py-6">
+                                                    {exportColumns.map((column) => (
+                                                        <label key={column.key} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                                            <Checkbox
+                                                                checked={selectedColumns.includes(column.key)}
+                                                                onCheckedChange={(checked) => {
+                                                                    if (checked) setSelectedColumns([...selectedColumns, column.key]);
+                                                                    else setSelectedColumns(selectedColumns.filter(c => c !== column.key));
+                                                                }}
+                                                            />
+                                                            <span className="text-sm font-medium">{column.label}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                                <DialogFooter>
+                                                    <Button variant="outline" className="rounded-xl px-6" onClick={() => setExportOpen(false)}>Cerrar</Button>
+                                                    <Button className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-700" onClick={handleExport}>Descargar Listado</Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+                                    )}
+                                </div>
+
+                                {/* LISTADO DE BECARIOS (TABLA INTEGRADA) */}
+                                <div className="w-full overflow-hidden rounded-3xl border border-sidebar/30 bg-white dark:bg-slate-900 shadow-sm">
+                                    <div className="w-full overflow-x-auto">
+                                        <table className="w-full text-left text-sm border-collapse">
+                                            <thead>
+                                                <tr className="border-b border-sidebar/20 bg-slate-50/50 dark:bg-slate-800/50">
+                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400">Alumno</th>
+                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400">Titulación</th>
+                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400">Estado</th>
+                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400 text-right">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-sidebar/10">
+                                                {interns.data.length > 0 ? (
+                                                    interns.data.map((intern: any) => (
+                                                        <tr key={intern.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                                            <td className="px-6 py-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-500">
+                                                                        {intern.user.name.substring(0, 2).toUpperCase()}
+                                                                    </div>
+                                                                    <div className="flex flex-col">
+                                                                        <Link href={`/becarios/${intern.id}`} className="font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 transition-colors">
+                                                                            {intern.user.name}
+                                                                        </Link>
+                                                                        <span className="text-[10px] text-slate-400 font-bold uppercase">{intern.dni}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                <span className="font-medium text-slate-600 dark:text-slate-400">{intern.academic_degree}</span>
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                <StatusBadge status={intern.status} />
+                                                            </td>
+                                                            <td className="px-6 py-4 text-right">
+                                                                <Button variant="ghost" size="sm" className="rounded-xl font-bold text-primary hover:bg-white hover:shadow-sm" asChild>
+                                                                    <Link href={`/becarios/${intern.id}`}>Ver Perfil</Link>
+                                                                </Button>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan={4} className="px-6 py-20 text-center">
+                                                            <div className="flex flex-col items-center">
+                                                                <Users className="h-10 w-10 text-slate-200 mb-4" />
+                                                                <p className="text-slate-400 font-medium">No se encontraron becarios con estos filtros.</p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    {/* PAGINACIÓN INTEGRADA */}
+                                    <div className="bg-slate-50/30 dark:bg-slate-800/20 px-6 py-4 border-t border-sidebar/20 flex items-center justify-between">
+                                        <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">
+                                            Mostrando {interns.from || 0} a {interns.to || 0} de {interns.total} alumnos
+                                        </p>
+                                        <div className="flex gap-1">
+                                            {interns.links.map((link: any, i: number) => (
+                                                <Button
+                                                    key={i}
+                                                    variant={link.active ? 'secondary' : 'ghost'}
+                                                    size="sm"
+                                                    className={`h-8 min-w-[32px] rounded-lg text-xs font-bold ${link.active ? 'bg-white shadow-sm' : 'text-slate-400'} ${!link.url ? 'opacity-30 pointer-events-none' : ''}`}
+                                                    asChild={!!link.url}
+                                                    disabled={!link.url}
+                                                >
+                                                    {link.url ? (
+                                                        <Link href={link.url} preserveState preserveScroll dangerouslySetInnerHTML={{ __html: link.label }} />
+                                                    ) : <span dangerouslySetInnerHTML={{ __html: link.label }} />}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            {/* PESTAÑA SEGUIMIENTO */}
+                            <TabsContent value="seguimiento" className="mt-0 animate-in fade-in duration-500">
+                                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                                    <div className="md:col-span-12 items-center mb-8 pb-4 border-b border-slate-50 dark:border-slate-800 flex justify-between tracking-tight">
+                                        <h3 className="text-xl font-bold flex items-center gap-2">
+                                            <HistoryIcon className="h-5 w-5 text-slate-500" />
+                                            Historial y Notas de Auditoría
+                                        </h3>
+                                    </div>
+
+                                    <div className="md:col-span-5 space-y-6">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Notas del Centro</h4>
+                                            {canManage && !editingNotes && (
+                                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-indigo-600" onClick={() => setEditingNotes(true)}>Editar Notas</Button>
+                                            )}
+                                        </div>
+
+                                        {editingNotes ? (
+                                            <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                                                <textarea
+                                                    value={notesValue}
+                                                    onChange={(e) => setNotesValue(e.target.value)}
+                                                    className="min-h-[250px] w-full rounded-3xl border-slate-100 bg-slate-50 dark:bg-slate-800 px-6 py-5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all shadow-inner"
+                                                    placeholder="Añade observaciones internas sobre este centro..."
+                                                />
+                                                <div className="flex gap-2">
+                                                    <Button size="sm" className="rounded-xl px-8 bg-slate-900" onClick={() => router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar</Button>
+                                                    <Button size="sm" variant="outline" className="rounded-xl px-8" onClick={() => { setNotesValue(educationCenter.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="p-8 rounded-3xl filter-panel min-h-[200px] relative">
+                                                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
+                                                    {educationCenter.internal_notes || 'No hay notas redactadas para este centro educativo.'}
+                                                </p>
+                                                {(educationCenter.notes_updated_by || educationCenter.internal_notes_updated_at) && (
+                                                    <div className="mt-12 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between opacity-40">
+                                                        <span className="text-[10px] font-black uppercase tracking-tighter">Editado por</span>
+                                                        <span className="text-[10px] font-black tracking-tighter uppercase">{educationCenter.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(educationCenter.internal_notes_updated_at)}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="md:col-span-7 space-y-8 pl-8 relative before:absolute before:left-0 before:top-4 before:bottom-0 before:w-px before:bg-slate-100 dark:before:bg-slate-800">
+                                        <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-8 font-black">Actividad Reciente</h4>
+                                        <div className="space-y-10">
+                                            {activities.length > 0 ? (
+                                                activities.map((activity) => {
+                                                    const changes = activity.properties?.attributes ?? {};
+                                                    const old = activity.properties?.old ?? {};
+                                                    const labels: Record<string, string> = {
+                                                        name: 'Nombre', code: 'Código', address: 'Dirección', city: 'Ciudad',
+                                                        contact_person: 'Contacto', contact_email: 'Email centro', phone: 'Teléfono',
+                                                        web: 'Web', agreement_signed_at: 'Firma', agreement_expires_at: 'Vencimiento'
+                                                    };
+                                                    
+                                                    const visibleFields = Object.keys(changes).filter(k => k in labels && old[k] !== changes[k]);
+
+                                                    return (
+                                                        <div key={activity.id} className="relative group">
+                                                            <div className="absolute -left-[37px] top-1.5 h-4 w-4 rounded-full border-4 border-white dark:border-slate-900 bg-slate-200 group-hover:bg-primary z-10 transition-colors" />
+                                                            <div>
+                                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{formatDateTimeEs(activity.created_at)}</p>
+                                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-1 uppercase">
+                                                                    {activity.event === 'updated' ? 'Actualización de ficha' : 'Registro creado'}
+                                                                </p>
+                                                                <p className="text-xs text-slate-500 mt-0.5">Realizado por <span className="font-bold text-slate-700 dark:text-slate-300">{activity.causer_name || 'Sistema'}</span></p>
+                                                                
+                                                                {visibleFields.length > 0 && (
+                                                                    <div className="mt-4 space-y-2 p-4 rounded-2xl border border-sidebar/20 bg-white dark:bg-slate-900">
+                                                                        {visibleFields.map(field => (
+                                                                            <div key={field} className="text-[11px] grid grid-cols-12 gap-2">
+                                                                                <span className="col-span-4 text-slate-500 font-bold">{labels[field]}:</span>
+                                                                                <div className="col-span-8">
+                                                                                    <span className="line-through opacity-30 italic">{String(old[field]) || '—'}</span>
+                                                                                    <span className="mx-2 text-primary/40">→</span>
+                                                                                    <span className="font-bold text-primary">{String(changes[field]) || '—'}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            ) : (
+                                                <p className="text-sm text-slate-400 italic py-4">Aún no hay actividad registrada para este centro.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </CardContent>
+                    </Tabs>
+                </Card>
             </div>
         </AppLayout>
     );

@@ -61,7 +61,7 @@
 }
 
 :root {
-    --background: #f6f4ee;
+    --background: #f0ede4;
     --foreground: #172033;
     --card: #ffffff;
     --card-foreground: #172033;
@@ -69,16 +69,16 @@
     --popover-foreground: #172033;
     --primary: #1f4f52;
     --primary-foreground: #ffffff;
-    --secondary: #d9d2c3;
+    --secondary: #d4cebc;
     --secondary-foreground: #172033;
-    --muted: #efe9dc;
-    --muted-foreground: #647089;
+    --muted: #e5e1d5;
+    --muted-foreground: #5a657c;
     --accent: #dce9e5;
     --accent-foreground: #172033;
     --destructive: #c63d31;
     --destructive-foreground: #fef2f2;
-    --border: #ddd5c6;
-    --input: #e4ddd0;
+    --border: #dcd7c9;
+    --input: #e5e1d5;
     --ring: #5a8b88;
     --chart-1: #1f4f52;
     --chart-2: #4e7f78;
@@ -152,7 +152,7 @@
             linear-gradient(
                 180deg,
                 rgba(255, 255, 255, 0.54) 0%,
-                rgba(246, 244, 238, 0.84) 100%
+                rgba(240, 237, 228, 0.84) 100%
             );
         font-size: 15px;
         line-height: 1.6;
@@ -184,66 +184,100 @@
     .page-surface {
         background: var(--card);
         color: var(--card-foreground);
-        border: 1px solid color-mix(in srgb, var(--border) 85%, white 15%);
+        border: 1px solid var(--sidebar);
         border-radius: 1.25rem;
         padding: 1.5rem;
         box-shadow:
-            0 1px 0 rgba(23, 32, 51, 0.05),
-            0 14px 30px rgba(23, 32, 51, 0.08);
+            0 1px 2px rgba(24, 49, 61, 0.05),
+            0 10px 30px -10px rgba(24, 49, 61, 0.12),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .page-title {
-        font-size: 1.9rem;
-        font-weight: 800;
-        letter-spacing: -0.03em;
+        font-size: 2.25rem;
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        line-height: 1;
         color: var(--foreground);
     }
 
     .page-subtitle {
-        font-size: 0.96rem;
+        font-size: 1rem;
+        font-weight: 500;
         color: var(--muted-foreground);
-        max-width: 62ch;
+        max-width: 65ch;
+        line-height: 1.5;
     }
 
     .app-panel {
         background: linear-gradient(
             180deg,
-            color-mix(in srgb, var(--card) 92%, white 8%) 0%,
-            var(--card) 100%
-        );
-        border: 1px solid color-mix(in srgb, var(--border) 86%, white 14%);
-        border-radius: 1.25rem;
+            rgba(255, 255, 255, 0.02) 0%,
+            transparent 100%
+        ), var(--card);
+        border: 1px solid var(--sidebar);
+        border-radius: 1.5rem;
         box-shadow:
-            0 1px 0 rgba(23, 32, 51, 0.04),
-            0 16px 38px rgba(23, 32, 51, 0.08);
+            0 1px 3px rgba(24, 49, 61, 0.08),
+            0 20px 48px -12px rgba(24, 49, 61, 0.15),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .app-panel:hover {
+        box-shadow:
+            0 1px 4px rgba(24, 49, 61, 0.1),
+            0 25px 60px -12px rgba(24, 49, 61, 0.2),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        border-color: var(--primary);
     }
 
     .filter-panel {
-        background: color-mix(in srgb, var(--card) 92%, var(--muted) 8%);
-        border: 1px solid color-mix(in srgb, var(--border) 84%, white 16%);
-        border-radius: 1.15rem;
+        background: color-mix(in srgb, var(--card) 94%, var(--muted) 6%);
+        border: 1.5px solid var(--sidebar);
+        border-radius: 1.25rem;
         box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.45),
-            0 8px 18px rgba(23, 32, 51, 0.05);
+            inset 0 1px 0 rgba(255, 255, 255, 0.4),
+            0 8px 18px -4px rgba(24, 49, 61, 0.1);
     }
 
     .metric-tile {
-        border-radius: 1rem;
-        border: 1px solid color-mix(in srgb, var(--border) 88%, white 12%);
+        border-radius: 1.15rem;
+        border: 1px solid var(--sidebar);
         background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.74)),
-            color-mix(in srgb, var(--muted) 46%, white 54%);
+            linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.55),
-            0 10px 20px rgba(23, 32, 51, 0.05);
+            0 1px 2px rgba(24, 49, 61, 0.04),
+            0 12px 24px -10px rgba(24, 49, 61, 0.08);
+        transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    }
+
+    .metric-tile:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 4px 12px rgba(24, 49, 61, 0.08),
+            0 20px 40px -10px rgba(24, 49, 61, 0.15);
     }
 
     .section-kicker {
         font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.18em;
+        font-weight: 800;
+        letter-spacing: 0.25em;
         text-transform: uppercase;
         color: var(--primary);
+        display: flex;
+        items-center: center;
+        gap: 0.5rem;
+    }
+
+    .section-kicker::before {
+        content: "";
+        display: block;
+        width: 12px;
+        height: 2px;
+        background: currentColor;
+        border-radius: 1px;
     }
 
     .empty-state {

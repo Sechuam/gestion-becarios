@@ -338,11 +338,11 @@ export default function Show({
                         </div>
                         {String(task.status) === 'rejected' &&
                             task.reject_reason && (
-                            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                                <p className="font-semibold">Motivo rechazo</p>
-                                <p className="mt-1">{task.reject_reason}</p>
-                            </div>
-                        )}
+                                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                                    <p className="font-semibold">Motivo rechazo</p>
+                                    <p className="mt-1">{task.reject_reason}</p>
+                                </div>
+                            )}
                     </div>
 
                     <div className="rounded-xl border border-border bg-card p-6 shadow-sm md:col-span-2 dark:border-slate-700/70 dark:bg-slate-900/60">
@@ -525,7 +525,7 @@ export default function Show({
                                                                 )}
                                                             </div>
                                                             {editingId ===
-                                                            reply.id ? (
+                                                                reply.id ? (
                                                                 <div className="space-y-2">
                                                                     <textarea
                                                                         value={

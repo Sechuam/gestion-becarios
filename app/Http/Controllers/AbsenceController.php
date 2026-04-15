@@ -61,4 +61,21 @@ class AbsenceController extends Controller
 
         return back()->with('success', 'Estado de la ausencia actualizado.');
     }
+
+    public function uploadJustification(Request $request, Absence $absence)
+    {
+        $request->validate([
+            'justification_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        abort_unless($request->user()->id === $absence->user_id, 403);
+
+        if ($request->hasFile('justification_file')) {
+            // Eliminar justificantes anteriores si existieran (opcional, Spatie lo gestiona si usamos la misma colección)
+            $absence->clearMediaCollection('justifications');
+            $absence->addMediaFromRequest('justification_file')->toMediaCollection('justifications');
+        }
+
+        return back()->with('success', 'Justificante subido correctamente.');
+    }
 }

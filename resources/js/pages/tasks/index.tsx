@@ -102,7 +102,7 @@ function DroppableColumn({
     return (
         <div
             ref={setNodeRef}
-            className={`relative flex min-h-[24rem] flex-1 flex-col rounded-xl transition-colors ${isOver || hovered ? 'bg-primary/10 ring-2 ring-primary/40' : ''
+            className={`relative flex min-h-[24rem] flex-1 flex-col rounded-2xl transition-all border border-sidebar/20 bg-background shadow-sm ${isOver || hovered ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'border-sidebar/30'
                 }`}
         >
             {(isOver || hovered) && (
@@ -821,7 +821,7 @@ export default function Index({
                                 }}
                                 variant="outline"
                                 size="sm"
-                                className="rounded-lg border border-border bg-card/80 p-0.5 shadow-sm"
+                                className="rounded-lg border border-sidebar bg-card/80 p-0.5 shadow-sm"
                             >
                                 <ToggleGroupItem
                                     value="kanban"
@@ -851,7 +851,7 @@ export default function Index({
                             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por título..."
-                                className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
+                                className="border-sidebar/40 bg-background pl-9 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
                                 }
@@ -874,7 +874,7 @@ export default function Index({
                                 value={filters.status || 'all'}
                                 onValueChange={(v) => handleFilter('status', v)}
                             >
-                                <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
+                                <SelectTrigger className="w-[160px] border-sidebar/40 bg-background text-foreground">
                                     <SelectValue>
                                         {{
                                             pending: 'Pendiente',
@@ -918,7 +918,7 @@ export default function Index({
                                     handleFilter('practice_type', v)
                                 }
                             >
-                                <SelectTrigger className="w-[220px] border-border bg-background text-foreground [&>span]:truncate">
+                                <SelectTrigger className="w-[220px] border-sidebar/40 bg-background text-foreground [&>span]:truncate">
                                     <SelectValue>
                                         {filters.practice_type &&
                                             filters.practice_type !== 'all'
@@ -956,7 +956,7 @@ export default function Index({
                                     handleFilter('intern_id', v)
                                 }
                             >
-                                <SelectTrigger className="w-[200px] border-border bg-background text-foreground [&>span]:truncate">
+                                <SelectTrigger className="w-[200px] border-sidebar/40 bg-background text-foreground [&>span]:truncate">
                                     <SelectValue>
                                         {filters.intern_id &&
                                             filters.intern_id !== 'all'

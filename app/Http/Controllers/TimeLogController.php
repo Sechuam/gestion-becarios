@@ -67,6 +67,13 @@ class TimeLogController extends Controller
                 'education_center' => $intern->educationCenter?->name,
             ])->values(),
             'non_compliant_interns' => $service->getNonCompliantInternsForUser($user),
+            'absences' => $user->absences()->latest('date')->get()->map(fn($absence) => [
+                'id' => $absence->id,
+                'date' => $absence->date->format('Y-m-d'),
+                'reason' => $absence->reason,
+                'status' => $absence->status,
+                'justification_url' => $absence->getFirstMediaUrl('justifications'),
+            ]),
         ]);
     }
 

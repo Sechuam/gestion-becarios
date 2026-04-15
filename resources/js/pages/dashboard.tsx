@@ -82,7 +82,7 @@ export default function Dashboard() {
 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                     {metrics.map((metric) => (
-                        <Card key={metric.label}>
+                        <Card key={metric.label} className="app-panel border-sidebar">
                             <CardContent className="flex items-start justify-between gap-4 pt-6">
                                 <div className="space-y-2">
                                     <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
@@ -102,8 +102,8 @@ export default function Dashboard() {
                 </div>
 
                 <div className="grid gap-4 xl:grid-cols-[1.45fr_0.95fr]">
-                    <Card className="overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-border/70 pb-4">
+                    <Card className="app-panel overflow-hidden border-sidebar">
+                        <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-sidebar/20 pb-4">
                             <div>
                                 <p className="section-kicker">Actividad</p>
                                 <CardTitle className="mt-2 text-xl">Mapa operativo del día</CardTitle>
@@ -114,7 +114,7 @@ export default function Dashboard() {
                             </Badge>
                         </CardHeader>
                         <CardContent className="pt-6">
-                            <div className="relative min-h-[22rem] overflow-hidden rounded-[1.15rem] border border-border/70 bg-muted/20">
+                            <div className="relative min-h-[22rem] overflow-hidden rounded-[1.15rem] border border-sidebar/30 bg-muted/20">
                                 <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/15 dark:stroke-neutral-100/10" />
                                 <div className="relative grid gap-4 p-6 md:grid-cols-3">
                                     <div className="metric-tile px-4 py-4">
@@ -135,8 +135,8 @@ export default function Dashboard() {
                     </Card>
 
                     <div className="grid gap-4">
-                        <Card>
-                            <CardHeader className="border-b border-border/70 pb-4">
+                        <Card className="app-panel border-sidebar">
+                            <CardHeader className="border-b border-sidebar/20 pb-4">
                                 <p className="section-kicker">Atención</p>
                                 <CardTitle className="mt-2 text-xl">Bloqueos y alertas</CardTitle>
                             </CardHeader>
@@ -146,7 +146,7 @@ export default function Dashboard() {
                                     ['3 tareas con entrega sensible', 'Conviene priorizar seguimiento del tutor'],
                                     ['1 convenio vence este mes', 'Validar renovación del centro'],
                                 ].map(([title, description]) => (
-                                    <div key={title} className="rounded-2xl border border-border/70 bg-muted/25 p-4">
+                                    <div key={title} className="rounded-2xl border border-sidebar/30 bg-muted/25 p-4">
                                         <div className="flex items-start gap-3">
                                             <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
                                                 <AlertTriangle className="h-4 w-4" />
