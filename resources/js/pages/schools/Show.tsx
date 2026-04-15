@@ -433,7 +433,7 @@ export default function Show({
                                         onClick={() => {
                                             setNotesValue(
                                                 educationCenter.internal_notes ||
-                                                    '',
+                                                '',
                                             );
                                             setEditingNotes(false);
                                         }}
@@ -475,16 +475,16 @@ export default function Show({
                                 </p>
                                 {(educationCenter.notes_updated_by ||
                                     educationCenter.internal_notes_updated_at) && (
-                                    <p className="text-xs text-muted-foreground">
-                                        Última edición:{' '}
-                                        {educationCenter.notes_updated_by
-                                            ?.name || 'Usuario'}{' '}
-                                        ·{' '}
-                                        {formatDateTimeEs(
-                                            educationCenter.internal_notes_updated_at,
-                                        )}
-                                    </p>
-                                )}
+                                        <p className="text-xs text-muted-foreground">
+                                            Última edición:{' '}
+                                            {educationCenter.notes_updated_by
+                                                ?.name || 'Usuario'}{' '}
+                                            ·{' '}
+                                            {formatDateTimeEs(
+                                                educationCenter.internal_notes_updated_at,
+                                            )}
+                                        </p>
+                                    )}
                             </div>
                         )}
                     </div>
@@ -504,9 +504,16 @@ export default function Show({
                                 <p className="font-medium text-foreground">
                                     {currentIntern?.center_tutor_name || '—'}
                                 </p>
-                                <p className="text-foreground">
-                                    {currentIntern?.center_tutor_email || '—'}
-                                </p>
+                                {currentIntern?.center_tutor_email ? (
+                                    <a
+                                        href={`mailto:${currentIntern.center_tutor_email}`}
+                                        className="text-foreground hover:underline"
+                                    >
+                                        {currentIntern.center_tutor_email}
+                                    </a>
+                                ) : (
+                                    <p className="text-foreground">—</p>
+                                )}
                                 <p className="text-foreground">
                                     {currentIntern?.center_tutor_phone || '—'}
                                 </p>
@@ -519,9 +526,16 @@ export default function Show({
                                 <p className="font-medium text-foreground">
                                     {currentIntern?.company_tutor?.name || '—'}
                                 </p>
-                                <p className="text-foreground">
-                                    {currentIntern?.company_tutor?.email || '—'}
-                                </p>
+                                {currentIntern?.company_tutor?.email ? (
+                                    <a
+                                        href={`mailto:${currentIntern.company_tutor.email}`}
+                                        className="text-foreground hover:underline"
+                                    >
+                                        {currentIntern.company_tutor.email}
+                                    </a>
+                                ) : (
+                                    <p className="text-foreground">—</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -579,12 +593,12 @@ export default function Show({
                                                     </p>
                                                     <p className="text-xs text-muted-foreground">
                                                         {activity.event ===
-                                                        'created'
+                                                            'created'
                                                             ? 'Creó el centro'
                                                             : activity.event ===
                                                                 'updated'
-                                                              ? 'Actualizó la ficha del centro'
-                                                              : activity.description}
+                                                                ? 'Actualizó la ficha del centro'
+                                                                : activity.description}
                                                     </p>
                                                 </div>
                                                 <p className="text-xs text-muted-foreground">
@@ -603,7 +617,7 @@ export default function Show({
                                                                 <span className="font-medium text-foreground">
                                                                     {
                                                                         labels[
-                                                                            field
+                                                                        field
                                                                         ]
                                                                     }
                                                                     :
@@ -919,11 +933,10 @@ export default function Show({
                                     <Link
                                         key={i}
                                         href={link.url ?? '#'}
-                                        className={`rounded border border-border px-3 py-1 text-sm ${
-                                            link.active
+                                        className={`rounded border border-border px-3 py-1 text-sm ${link.active
                                                 ? 'bg-primary text-primary-foreground'
                                                 : 'hover:bg-muted'
-                                        } ${!link.url ? 'pointer-events-none opacity-40' : ''}`}
+                                            } ${!link.url ? 'pointer-events-none opacity-40' : ''}`}
                                         dangerouslySetInnerHTML={{
                                             __html: label,
                                         }}
