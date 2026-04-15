@@ -27,12 +27,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 type TodayLog = {
+    id: number;
     date: string;
     clock_in: string | null;
     clock_out: string | null;
     total_hours: number | null;
     notes: string | null;
-} | null;
+};
 
 type ManageableIntern = {
     id: number;
@@ -70,13 +71,33 @@ const getElapsedSeconds = (clockIn: string, currentDate = new Date()) => {
     return Math.floor((currentDate.getTime() - start.getTime()) / 1000);
 };
 
+const formatHoursDecimal = (hours: number) => {
+    const totalMinutes = Math.round(hours * 60);
+    const wholeHours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (wholeHours === 0) {
+        return `${minutes}m`;
+    }
+
+    if (minutes === 0) {
+        return `${wholeHours}h`;
+    }
+
+    return `${wholeHours}h ${minutes}m`;
+};
+
 export default function Index({
-    today_log,
+    today_logs,
+    current_log,
+    today_total_hours,
     can_manage_attendance,
     manageable_interns,
     non_compliant_interns,
 }: {
-    today_log: TodayLog;
+    today_logs: TodayLog[];
+    current_log: TodayLog | null;
+    today_total_hours: number;
     can_manage_attendance: boolean;
     manageable_interns: ManageableIntern[];
     non_compliant_interns: NonCompliantIntern[];
@@ -92,15 +113,14 @@ export default function Index({
     const [now, setNow] = useState(() => new Date());
 
     useEffect(() => {
-        if (!today_log?.clock_in || today_log?.clock_out) return;
+        if (!current_log?.clock_in || current_log?.clock_out) return;
 
         const interval = window.setInterval(() => {
             setNow(new Date());
         }, 1000);
 
         return () => window.clearInterval(interval);
-    }, [today_log?.clock_in, today_log?.clock_out]);
-
+    }, [current_log?.clock_in, current_log?.clock_out]);
     const handleClockIn = () => {
         router.post('/time-logs/clock-in', {}, { preserveScroll: true });
     };
@@ -121,12 +141,9 @@ export default function Index({
     };
 
     const liveElapsed =
-        today_log?.clock_in && !today_log?.clock_out
-            ? formatElapsed(getElapsedSeconds(today_log.clock_in, now))
+        current_log?.clock_in && !current_log?.clock_out
+            ? formatElapsed(getElapsedSeconds(current_log.clock_in, now))
             : null;
-
-
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -146,34 +163,37 @@ export default function Index({
                         </p>
 
                         <div className="flex flex-wrap items-center gap-2">
-                            <Button onClick={handleClockIn} disabled={Boolean(today_log?.clock_in)}>
+                            <Button
+                                onClick={handleClockIn}
+                                disabled={Boolean(current_log?.clock_in && !current_log?.clock_out)}
+                            >
                                 Entrar a trabajar
                             </Button>
                             <Button
                                 variant="destructive"
                                 onClick={handleClockOut}
-                                disabled={!today_log?.clock_in || Boolean(today_log?.clock_out)}
+                                disabled={!current_log?.clock_in || Boolean(current_log?.clock_out)}
                             >
                                 Terminar jornada
                             </Button>
                             <RequestAbsenceModal />
                         </div>
 
-                        {today_log && (
+                        {(today_logs.length > 0 || current_log) && (
                             <>
                                 <div className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm md:grid-cols-3 dark:border-slate-800 dark:bg-slate-900/50">
                                     <div>
                                         <p className="text-xs uppercase tracking-wide text-slate-500">Entrada</p>
-                                        <p className="font-medium">{today_log.clock_in ?? '--:--'}</p>
+                                        <p className="font-medium">{current_log?.clock_in ?? '--:--'}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs uppercase tracking-wide text-slate-500">Salida</p>
-                                        <p className="font-medium">{today_log.clock_out ?? '--:--'}</p>
+                                        <p className="font-medium">{current_log?.clock_out ?? '--:--'}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs uppercase tracking-wide text-slate-500">Total</p>
                                         <p className="font-medium">
-                                            {today_log.total_hours !== null ? `${today_log.total_hours}h` : 'Pendiente'}
+                                            {today_total_hours > 0 ? formatHoursDecimal(today_total_hours) : '0m'}
                                         </p>
                                     </div>
                                 </div>
@@ -186,6 +206,30 @@ export default function Index({
                                         <p className="mt-1 text-2xl font-semibold text-indigo-600">
                                             {liveElapsed}
                                         </p>
+                                    </div>
+                                )}
+
+                                {today_logs.length > 0 && (
+                                    <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm dark:border-slate-800 dark:bg-slate-900/50">
+                                        <p className="text-xs uppercase tracking-wide text-slate-500">
+                                            Tramos de hoy
+                                        </p>
+
+                                        <div className="mt-3 space-y-2">
+                                            {today_logs.map((log) => (
+                                                <div
+                                                    key={log.id}
+                                                    className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2 dark:border-slate-800"
+                                                >
+                                                    <span>
+                                                        {log.clock_in ?? '--:--'} - {log.clock_out ?? 'En curso'}
+                                                    </span>
+                                                    <span className="text-slate-500">
+                                                        {log.total_hours !== null ? formatHoursDecimal(log.total_hours) : 'Pendiente'}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                             </>

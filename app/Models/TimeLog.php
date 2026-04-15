@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property \Illuminate\Support\Carbon $date
+ * @property string|null $clock_in
+ * @property string|null $clock_out
+ * @property float|null $total_hours
+ */
 class TimeLog extends Model
 {
     protected $guarded = ['id'];

@@ -15,9 +15,15 @@ class TimeLogController extends Controller
     {
         $user = $request->user();
         $today = Carbon::today();
-        $todayLog = $user->timeLogs()
-            ->whereDate('date', $today)
-            ->first();
+        $todayLogs = $user->timeLogs()
+            ->whereDate('date', '=', $today->toDateString())
+            ->orderBy('clock_in')
+            ->get();
+
+        $currentLog = $todayLogs->firstWhere('clock_out', null);
+        $todayTotalHours = $todayLogs->sum(function ($log) {
+            return (float) ($log->total_hours ?? 0);
+        });
 
         $manageableInterns = collect();
 
@@ -36,13 +42,23 @@ class TimeLogController extends Controller
         }
 
         return Inertia::render('attendance/index', [
-            'today_log' => $todayLog ? [
-                'date' => $todayLog->date->format('Y-m-d'),
-                'clock_in' => $todayLog->clock_in,
-                'clock_out' => $todayLog->clock_out,
-                'total_hours' => $todayLog->total_hours,
-                'notes' => $todayLog->notes,
+            'today_logs' => $todayLogs->map(fn(TimeLog $log) => [
+                'id' => $log->id,
+                'date' => $log->date->format('Y-m-d'),
+                'clock_in' => $log->clock_in,
+                'clock_out' => $log->clock_out,
+                'total_hours' => $log->total_hours,
+                'notes' => $log->notes,
+            ])->values(),
+            'current_log' => $currentLog ? [
+                'id' => $currentLog->id,
+                'date' => $currentLog->date->format('Y-m-d'),
+                'clock_in' => $currentLog->clock_in,
+                'clock_out' => $currentLog->clock_out,
+                'total_hours' => $currentLog->total_hours,
+                'notes' => $currentLog->notes,
             ] : null,
+            'today_total_hours' => round($todayTotalHours, 2),
             'can_manage_attendance' => $user->can('manage interns') || $user->isTutor(),
             'manageable_interns' => $manageableInterns->map(fn(Intern $intern) => [
                 'id' => $intern->id,
@@ -58,12 +74,13 @@ class TimeLogController extends Controller
     {
         $user = $request->user();
         $today = Carbon::today();
-        $existingLog = TimeLog::where("user_id", $user->id)
-            ->where('date', $today)
+        $openLog = TimeLog::where('user_id', $user->id)
+            ->whereDate('date', '=', $today->toDateString())
+            ->whereNull('clock_out')
             ->first();
 
-        if ($existingLog) {
-            return back()->with('error', 'Ya has fichado la entrada hoy');
+        if ($openLog) {
+            return back()->with('error', 'Ya tienes una jornada abierta');
         }
 
         TimeLog::create([
@@ -80,15 +97,13 @@ class TimeLogController extends Controller
         $user = $request->user();
         $today = Carbon::today();
         $log = TimeLog::where('user_id', $user->id)
-            ->where('date', $today)
+            ->whereDate('date', '=', $today->toDateString())
+            ->whereNull('clock_out')
+            ->latest('id')
             ->first();
 
         if (!$log) {
             return back()->with('error', 'No has registrado la entrada hoy.');
-        }
-
-        if ($log->clock_out) {
-            return back()->with('error', 'Ya has registrado la salida hoy.');
         }
 
         $now = Carbon::now();
