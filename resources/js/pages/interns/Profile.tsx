@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { User, Building2, CalendarRange, Phone, GraduationCap, MapPin, Mail, Camera, Eye, Pencil, Check } from 'lucide-react';
+import { User, Building2, CalendarRange, Phone, GraduationCap, MapPin, Mail, Camera, Eye, Pencil, Check, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
