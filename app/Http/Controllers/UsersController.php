@@ -21,6 +21,7 @@ class UsersController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar' => $user->avatar,
                 'roles' => $user->roles->map(fn ($role) => [
                     'name' => $role->name,
                     'display_name' => $role->display_name,
