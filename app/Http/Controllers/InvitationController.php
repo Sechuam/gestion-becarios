@@ -67,9 +67,15 @@ class InvitationController extends Controller
             'name' => $request->name,
             'email' => $invitation->email,
             'password' => Hash::make($request->password),
-            'email_verified_at' => now(),
         ]);
+        $user->markEmailAsVerified();
         $user->assignRole($invitation->role);
+
+        // Si el usuario es un becario, debemos crearle una ficha vacía ("Esqueleto")
+        // para que le salga inmediatamente al administrador en la lista general de becarios.
+        if ($invitation->role === 'intern') {
+            $user->intern()->create();
+        }
         $invitation->update([
             'accepted_at' => now()
         ]);
