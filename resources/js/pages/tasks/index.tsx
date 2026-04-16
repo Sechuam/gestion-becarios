@@ -1,9 +1,7 @@
 import {
     pointerWithin,
-    closestCenter,
     DndContext,
     PointerSensor,
-    useDroppable,
     useSensor,
     useSensors,
     DragOverlay,
@@ -11,39 +9,25 @@ import {
     type DragOverEvent,
 } from '@dnd-kit/core';
 import {
-    SortableContext,
-    verticalListSortingStrategy,
     arrayMove,
 } from '@dnd-kit/sortable';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
-    AlertTriangle,
     KanbanSquare,
     LayoutGrid,
     List,
     PlusCircle,
-    Search,
     Sparkles,
+    Loader2
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
 import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
-import KanbanTaskCard from '@/components/tasks/KanbanTaskCard';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DatePicker } from '@/components/ui/date-picker';
-import { Input } from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
     Tooltip,
@@ -59,6 +43,22 @@ import {
     getTaskStatusLabel,
     getTaskStatusTone,
 } from '@/lib/task-labels';
+import {
+    KANBAN_COLUMNS,
+    KANBAN_ORDER_STORAGE_KEY,
+    KANBAN_WIP_LIMIT,
+    type TaskViewMode,
+    type BoardQuickFilter,
+} from '@/lib/task-constants';
+import {
+    dueStatus,
+    getTaskSortableId,
+    getColumnDropId,
+    parseTaskSortableId,
+    parseColumnDropId,
+} from '@/lib/task-utils';
+import { TaskFilters } from '@/components/tasks/TaskFilters';
+import { KanbanBoard } from '@/components/tasks/KanbanBoard';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
@@ -73,81 +73,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Tareas', href: '/tareas' },
 ];
 
-const KANBAN_COLUMNS = [
-    { key: 'pending', label: 'Pendiente' },
-    { key: 'in_progress', label: 'En progreso' },
-    { key: 'in_review', label: 'En revisión' },
-    { key: 'completed', label: 'Completada' },
-    { key: 'rejected', label: 'Rechazada' },
-];
-const KANBAN_ORDER_STORAGE_KEY = 'tasks-index-kanban-order';
-
-type TaskViewMode = 'kanban' | 'table';
-type BoardQuickFilter = 'all' | 'urgent' | 'high' | 'review' | 'unassigned';
-const KANBAN_WIP_LIMIT = 6;
-
-function DroppableColumn({
-    id,
-    label,
-    hovered = false,
-    children,
-}: {
-    id: string;
-    label: string;
-    hovered?: boolean;
-    children: React.ReactNode;
-}) {
-    const { setNodeRef, isOver } = useDroppable({ id });
-
-    return (
-        <div
-            ref={setNodeRef}
-            className={`relative flex min-h-[24rem] flex-1 flex-col rounded-2xl transition-all border border-sidebar/20 bg-background shadow-sm ${isOver || hovered ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'border-sidebar/30'
-                }`}
-        >
-            {(isOver || hovered) && (
-                <div className="absolute top-2 left-2 right-2 z-10 rounded-lg border border-primary/20 bg-primary/10 px-3 py-2 text-center text-xs font-medium text-primary backdrop-blur-sm pointer-events-none">
-                    Suelta para mover a {label.toLowerCase()}
-                </div>
-            )}
-            <div className={`flex flex-1 flex-col ${(isOver || hovered) ? 'pt-12' : ''} transition-all`}>
-                {children}
-            </div>
-        </div>
-    );
-}
-
-const dueStatus = (dueDate?: string | null) => {
-    if (!dueDate) return 'none';
-    const today = new Date();
-    const startOfToday = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-    );
-    const due = new Date(`${dueDate}T00:00:00`);
-    if (Number.isNaN(due.getTime())) return 'none';
-    const diffDays = Math.ceil(
-        (due.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24),
-    );
-    if (diffDays < 0) return 'overdue';
-    if (diffDays <= 3) return 'soon';
-    return 'none';
-};
-
-const getTaskSortableId = (taskId: number | string) => `task-${taskId}`;
-const getColumnDropId = (status: string) => `column-${status}`;
-
-const parseTaskSortableId = (value: unknown) => {
-    if (typeof value !== 'string' || !value.startsWith('task-')) return null;
-    const id = Number(value.slice(5));
-    return Number.isNaN(id) ? null : id;
-};
-
-const parseColumnDropId = (value: unknown) => {
-    if (typeof value !== 'string' || !value.startsWith('column-')) return null;
-    return value.slice(7);
-};
 
 const applyStoredKanbanOrder = (tasks: any[]) => {
     if (typeof window === 'undefined') return tasks;
@@ -844,378 +769,66 @@ export default function Index({
                     }
                 />
 
-                <div className="filter-panel space-y-4 p-5">
-                    {/* Fila 1: Búsqueda */}
-                    <div className="flex flex-wrap items-center gap-4">
-                        <div className="relative max-w-md min-w-[200px] flex-1">
-                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <Input
-                                placeholder="Buscar por título..."
-                                className="border-sidebar/40 bg-background pl-9 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
-                                onChange={(e) =>
-                                    handleFilter('search', e.target.value)
-                                }
-                            />
-                        </div>
-
-                        <p className="ml-auto text-sm font-medium whitespace-nowrap text-muted-foreground">
-                            Mostrando {tasks.data.length} de {tasks.total}{' '}
-                            tareas
-                        </p>
-                    </div>
-
-                    {/* Fila 2: Filtros */}
-                    <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Estado
-                            </label>
-                            <Select
-                                value={filters.status || 'all'}
-                                onValueChange={(v) => handleFilter('status', v)}
-                            >
-                                <SelectTrigger className="w-[160px] border-sidebar/40 bg-background text-foreground">
-                                    <SelectValue>
-                                        {{
-                                            pending: 'Pendiente',
-                                            in_progress: 'En progreso',
-                                            in_review: 'En revisión',
-                                            completed: 'Completada',
-                                            rejected: 'Rechazada',
-                                        }[filters.status as string] || 'Todos'}
-                                    </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">
-                                        Todos los estados
-                                    </SelectItem>
-                                    <SelectItem value="pending">
-                                        Pendiente
-                                    </SelectItem>
-                                    <SelectItem value="in_progress">
-                                        En progreso
-                                    </SelectItem>
-                                    <SelectItem value="in_review">
-                                        En revisión
-                                    </SelectItem>
-                                    <SelectItem value="completed">
-                                        Completada
-                                    </SelectItem>
-                                    <SelectItem value="rejected">
-                                        Rechazada
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Tipo
-                            </label>
-                            <Select
-                                value={filters.practice_type || 'all'}
-                                onValueChange={(v) =>
-                                    handleFilter('practice_type', v)
-                                }
-                            >
-                                <SelectTrigger className="w-[220px] border-sidebar/40 bg-background text-foreground [&>span]:truncate">
-                                    <SelectValue>
-                                        {filters.practice_type &&
-                                            filters.practice_type !== 'all'
-                                            ? practice_types.find(
-                                                (p) =>
-                                                    p.id.toString() ===
-                                                    filters.practice_type?.toString(),
-                                            )?.name
-                                            : 'Todos'}
-                                    </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">
-                                        Todos los tipos
-                                    </SelectItem>
-                                    {practice_types.map((type) => (
-                                        <SelectItem
-                                            key={type.id}
-                                            value={type.id.toString()}
-                                        >
-                                            {type.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Becario
-                            </label>
-                            <Select
-                                value={filters.intern_id || 'all'}
-                                onValueChange={(v) =>
-                                    handleFilter('intern_id', v)
-                                }
-                            >
-                                <SelectTrigger className="w-[200px] border-sidebar/40 bg-background text-foreground [&>span]:truncate">
-                                    <SelectValue>
-                                        {filters.intern_id &&
-                                            filters.intern_id !== 'all'
-                                            ? interns.find(
-                                                (intern) =>
-                                                    String(intern.id) ===
-                                                    String(filters.intern_id),
-                                            )?.name || 'Todos'
-                                            : 'Todos'}
-                                    </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">
-                                        Todos los becarios
-                                    </SelectItem>
-                                    {interns.map((intern) => (
-                                        <SelectItem
-                                            key={intern.id}
-                                            value={String(intern.id)}
-                                        >
-                                            {intern.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Desde
-                            </label>
-                            <DatePicker
-                                value={filters.due_from || ''}
-                                onChange={(value) =>
-                                    handleFilter('due_from', value)
-                                }
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Hasta
-                            </label>
-                            <DatePicker
-                                value={filters.due_to || ''}
-                                onChange={(value) =>
-                                    handleFilter('due_to', value)
-                                }
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <ActiveFilterChips
-                    chips={activeFilterChips}
-                    onRemove={clearFilter}
+                <TaskFilters
+                    filters={filters}
+                    practice_types={practice_types}
+                    interns={interns}
+                    tasksCount={tasks.data.length}
+                    totalTasks={tasks.total}
+                    onFilterChange={handleFilter}
+                    onClearFilter={clearFilter}
                     onClearAll={clearAllFilters}
+                    activeFilterChips={activeFilterChips}
                 />
 
                 {viewMode === 'kanban' ? (
-                    <div className="space-y-4">
-                        <div className="app-panel flex flex-wrap items-center justify-between gap-3 p-4">
-                            <div className="flex flex-wrap items-center gap-2">
-                                {boardQuickFilters.map((filter) => (
-                                    <Button
-                                        key={filter.key}
-                                        type="button"
-                                        variant={
-                                            boardFilter === filter.key
-                                                ? 'default'
-                                                : 'outline'
-                                        }
-                                        size="sm"
-                                        className="gap-2"
-                                        onClick={() =>
-                                            setBoardFilter(filter.key)
-                                        }
-                                    >
-                                        {filter.label}
-                                        <span className="rounded-full bg-black/10 px-1.5 py-0.5 text-[10px] dark:bg-white/10">
-                                            {filter.count}
-                                        </span>
-                                    </Button>
-                                ))}
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Sparkles className="h-3.5 w-3.5" />
-                                Vista operativa con filtros rápidos y acciones
-                                directas.
-                            </div>
-                        </div>
-
-                        {lastMoveMessage && (
-                            <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-foreground">
-                                <Sparkles className="h-4 w-4 text-primary" />
-                                {lastMoveMessage}
-                            </div>
-                        )}
-
-                        <DndContext
-                            sensors={sensors}
-                            collisionDetection={pointerWithin}
-                            onDragStart={({ active }) => {
-                                const taskId = parseTaskSortableId(active.id);
-                                if (!taskId) return;
-
-                                const task = boardTasks.find(t => t.id === taskId);
-                                setActiveDragTask(task || null);
-                            }}
-                            onDragOver={(event: DragOverEvent) => {
-                                const { active, over } = event;
-                                if (!over) return;
-
-                                const activeTaskId = parseTaskSortableId(active.id);
-                                if (!activeTaskId) return;
-
-                                setBoardTasks((prev) =>
-                                    reorderBoardTasks(prev, activeTaskId, String(over.id))
-                                );
-                            }}
-                            onDragEnd={(event: DragEndEvent) => {
-                                const { active, over } = event;
-
-                                if (!over) {
-                                    setActiveDragTask(null);
-                                    return;
-                                }
-
-                                const activeTaskId = parseTaskSortableId(active.id);
-                                if (!activeTaskId) return;
-
-                                const originalTask = boardTasks.find(
-                                    (task) => Number(task.id) === activeTaskId,
-                                );
-
+                    <KanbanBoard
+                        boardTasks={boardTasks}
+                        tasksByStatus={tasksByStatus}
+                        sensors={sensors}
+                        activeDragTask={activeDragTask}
+                        lastMoveMessage={lastMoveMessage}
+                        highlightedTaskId={highlightedTaskId}
+                        boardFilter={boardFilter}
+                        boardQuickFilters={boardQuickFilters}
+                        isIntern={isIntern}
+                        isTutor={isTutor}
+                        onBoardFilterChange={setBoardFilter}
+                        onDragStart={({ active }) => {
+                            const taskId = parseTaskSortableId(active.id);
+                            if (taskId) setActiveDragTask(boardTasks.find(t => t.id === taskId) || null);
+                        }}
+                        onDragOver={(event) => {
+                            const activeTaskId = parseTaskSortableId(event.active.id);
+                            if (activeTaskId && event.over) {
+                                setBoardTasks((prev) => reorderBoardTasks(prev, activeTaskId, String(event.over?.id)));
+                            }
+                        }}
+                        onDragEnd={(event) => {
+                            const activeTaskId = parseTaskSortableId(event.active.id);
+                            if (activeTaskId && event.over) {
+                                const originalTask = boardTasks.find(t => Number(t.id) === activeTaskId);
                                 setBoardTasks((prev) => {
-                                    const newTasks = reorderBoardTasks(
-                                        prev,
-                                        activeTaskId,
-                                        String(over.id)
-                                    );
-
+                                    const newTasks = reorderBoardTasks(prev, activeTaskId, String(event.over?.id));
                                     const movedTask = newTasks.find(t => t.id === activeTaskId);
-                                    if (movedTask && originalTask) {
-                                        const newStatus = movedTask.status;
-                                        updateTaskStatus(originalTask, newStatus);
-                                    }
-
+                                    if (movedTask && originalTask) updateTaskStatus(originalTask, movedTask.status);
                                     persistBoardOrder(newTasks);
                                     return newTasks;
                                 });
-
-                                setActiveDragTask(null);
-                            }}
-                            onDragCancel={() => {
-                                setHoveredColumn(null);
-                                setActiveDragTask(null);
-                                setBoardTasks(applyStoredKanbanOrder(tasks.data));
-                            }}
-                        >
-
-                            <div className="overflow-x-auto pb-2">
-                                <div className="flex min-w-max gap-4">
-                                    {KANBAN_COLUMNS.map((col) => (
-                                        <div
-                                            key={col.key}
-                                            className={`flex min-h-[32rem] w-[18rem] min-w-[18rem] flex-col rounded-2xl border bg-card p-3 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${tasksByStatus[col.key].length >
-                                                KANBAN_WIP_LIMIT
-                                                ? 'border-amber-300/70'
-                                                : 'border-border'
-                                                }`}
-                                        >
-                                            <div className="mb-3 flex items-center justify-between gap-3">
-                                                <div className="min-w-0">
-                                                    <h3 className="text-sm font-semibold text-foreground">
-                                                        {col.label}
-                                                    </h3>
-                                                    <p className="text-[11px] text-muted-foreground">
-                                                        {
-                                                            tasksByStatus[col.key]
-                                                                .length
-                                                        }{' '}
-                                                        tareas
-                                                    </p>
-                                                </div>
-                                                {tasksByStatus[col.key].length >
-                                                    KANBAN_WIP_LIMIT ? (
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <div className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
-                                                                <AlertTriangle className="h-3 w-3" />
-                                                                WIP
-                                                            </div>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            Esta columna supera el
-                                                            límite sugerido de{' '}
-                                                            {KANBAN_WIP_LIMIT}{' '}
-                                                            tareas.
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                ) : null}
-                                            </div>
-                                            <DroppableColumn
-                                                id={getColumnDropId(col.key)}
-                                                label={col.label}
-                                                hovered={hoveredColumn === col.key}
-                                            >
-                                                <SortableContext
-                                                    items={tasksByStatus[col.key].map(task => getTaskSortableId(task.id))}
-                                                    strategy={verticalListSortingStrategy}
-                                                >
-                                                    {tasksByStatus[col.key].map(task => (
-                                                        <KanbanTaskCard
-                                                            key={task.id}
-                                                            task={task}
-                                                            canDrag={!isIntern}
-                                                            canEdit={!isIntern}
-                                                            canComplete={
-                                                                isTutor || isIntern
-                                                            }
-                                                            completeLabel={
-                                                                isTutor
-                                                                    ? 'Completar'
-                                                                    : 'Entregar'
-                                                            }
-                                                            completeStatuses={
-                                                                isTutor
-                                                                    ? ['in_review']
-                                                                    : [
-                                                                          'pending',
-                                                                          'in_progress',
-                                                                      ]
-                                                            }
-                                                            onComplete={completeTask}
-                                                            onOpenDetails={setSelectedTask}
-                                                            highlightMove={
-                                                                highlightedTaskId ===
-                                                                Number(task.id)
-                                                            }
-                                                        />
-                                                    ))}
-
-                                                </SortableContext>
-                                            </DroppableColumn>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <DragOverlay>
-                                {activeDragTask ? (
-                                    <KanbanTaskCard
-                                        task={activeDragTask}
-                                        canDrag={false}
-                                    />
-                                ) : null}
-                            </DragOverlay>
-                        </DndContext>
-                    </div>
+                            }
+                            setActiveDragTask(null);
+                        }}
+                        onDragCancel={() => {
+                            setHoveredColumn(null);
+                            setActiveDragTask(null);
+                            setBoardTasks(applyStoredKanbanOrder(tasks.data));
+                        }}
+                        onComplete={completeTask}
+                        onOpenDetails={setSelectedTask}
+                        hoveredColumn={hoveredColumn}
+                        getTaskSortableId={getTaskSortableId}
+                        getColumnDropId={getColumnDropId}
+                    />
                 ) : (
                     <SimpleTable
                         columns={columns}

@@ -12,23 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
@@ -38,6 +21,9 @@ import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
 import { recentLabelFromDate } from '@/lib/recent-label';
 import type { BreadcrumbItem } from '@/types/navigation';
+import { InternFilters } from '@/components/interns/InternFilters';
+import { InternExportDialog } from '@/components/interns/InternExportDialog';
+import { InternNotesDialog } from '@/components/interns/InternNotesDialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -501,246 +487,27 @@ export default function Index({
                     }
                 />
 
-                {/* FILTROS */}
-                <div className="filter-panel space-y-4 p-5">
-                    {/* Fila 1: Búsqueda y Exportar */}
-                    <div className="flex flex-wrap items-center gap-4">
-                        <div className="relative max-w-md min-w-[200px] flex-1">
-                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <Input
-                                placeholder="Buscar por nombre..."
-                                className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
-                                onChange={(e) =>
-                                    handleFilter('search', e.target.value)
-                                }
-                            />
-                        </div>
-
-                        {canManage && (
-                            <Dialog
-                                open={exportOpen}
-                                onOpenChange={setExportOpen}
-                            >
-                                <DialogTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    >
-                                        <FileDown className="h-4 w-4" />
-                                        Exportar Excel
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-xl">
-                                    <DialogHeader>
-                                        <DialogTitle>
-                                            Exportación personalizada
-                                        </DialogTitle>
-                                        <DialogDescription>
-                                            Elige las columnas que quieres
-                                            incluir en el Excel. Se respetarán
-                                            los filtros actuales.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                        {exportColumns.map((column) => {
-                                            const isChecked =
-                                                selectedColumns.includes(
-                                                    column.key,
-                                                );
-                                            return (
-                                                <label
-                                                    key={column.key}
-                                                    className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
-                                                >
-                                                    <Checkbox
-                                                        checked={isChecked}
-                                                        onCheckedChange={(
-                                                            checked,
-                                                        ) => {
-                                                            const isOn =
-                                                                checked ===
-                                                                true;
-                                                            setSelectedColumns(
-                                                                (prev) => {
-                                                                    if (isOn) {
-                                                                        return [
-                                                                            ...prev,
-                                                                            column.key,
-                                                                        ];
-                                                                    }
-                                                                    return prev.filter(
-                                                                        (key) =>
-                                                                            key !==
-                                                                            column.key,
-                                                                    );
-                                                                },
-                                                            );
-                                                        }}
-                                                    />
-                                                    {column.label}
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
-                                    <DialogFooter>
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => setExportOpen(false)}
-                                        >
-                                            Cancelar
-                                        </Button>
-                                        <Button
-                                            onClick={handleExport}
-                                            disabled={
-                                                selectedColumns.length === 0
-                                            }
-                                        >
-                                            Descargar Excel
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        )}
-
-                        <p className="ml-auto text-sm font-medium whitespace-nowrap text-muted-foreground">
-                            Mostrando {interns.data.length} de {interns.total}{' '}
-                            becarios
-                        </p>
-                    </div>
-
-                    {/* Fila 2: Filtros */}
-                    <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Centro
-                            </label>
-                            <Select
-                                value={filters.center || 'all'}
-                                onValueChange={(v) => handleFilter('center', v)}
-                            >
-                                <SelectTrigger className="w-[220px] border-border bg-background text-foreground [&>span]:truncate">
-                                    <SelectValue>
-                                        {filters.center &&
-                                        filters.center !== 'all'
-                                            ? education_centers.find(
-                                                  (c) =>
-                                                      c.id.toString() ===
-                                                      filters.center?.toString(),
-                                              )?.name
-                                            : 'Todos'}
-                                    </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">
-                                        Todos los centros
-                                    </SelectItem>
-                                    {education_centers.map((center) => (
-                                        <SelectItem
-                                            key={center.id}
-                                            value={center.id.toString()}
-                                        >
-                                            {center.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Estado
-                            </label>
-                            <Select
-                                value={filters.status || 'all'}
-                                onValueChange={(v) => handleFilter('status', v)}
-                            >
-                                <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
-                                    <SelectValue>
-                                        {{
-                                            active: 'Activos',
-                                            completed: 'Completados',
-                                            abandoned: 'Abandonados',
-                                        }[filters.status as string] || 'Todos'}
-                                    </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Todos</SelectItem>
-                                    <SelectItem value="active">
-                                        Activos
-                                    </SelectItem>
-                                    <SelectItem value="completed">
-                                        Completados
-                                    </SelectItem>
-                                    <SelectItem value="abandoned">
-                                        Abandonados
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Vista
-                            </label>
-                            <Select
-                                value={filters.trashed || 'none'}
-                                onValueChange={(v) =>
-                                    handleFilter('trashed', v)
-                                }
-                            >
-                                <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
-                                    <SelectValue>
-                                        {{
-                                            none: 'Activos',
-                                            only: 'Archivados',
-                                            with: 'Todos',
-                                        }[filters.trashed as string] ||
-                                            'Activos'}
-                                    </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="none">
-                                        Activos
-                                    </SelectItem>
-                                    <SelectItem value="only">
-                                        Archivados
-                                    </SelectItem>
-                                    <SelectItem value="with">Todos</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Desde
-                            </label>
-                            <DatePicker
-                                value={filters.start_from || ''}
-                                onChange={(value) =>
-                                    handleFilter('start_from', value)
-                                }
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                Hasta
-                            </label>
-                            <DatePicker
-                                value={filters.start_to || ''}
-                                onChange={(value) =>
-                                    handleFilter('start_to', value)
-                                }
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <ActiveFilterChips
-                    chips={activeFilterChips}
-                    onRemove={clearFilter}
+                <InternFilters
+                    filters={filters}
+                    education_centers={education_centers}
+                    internsCount={interns.data.length}
+                    totalInterns={interns.total}
+                    onFilterChange={handleFilter}
+                    onClearFilter={clearFilter}
                     onClearAll={clearAllFilters}
-                />
+                    activeFilterChips={activeFilterChips}
+                >
+                    {canManage && (
+                        <InternExportDialog
+                            open={exportOpen}
+                            onOpenChange={setExportOpen}
+                            exportColumns={exportColumns}
+                            selectedColumns={selectedColumns}
+                            onSelectedColumnsChange={setSelectedColumns}
+                            onExport={handleExport}
+                        />
+                    )}
+                </InternFilters>
 
                 <SimpleTable
                     columns={columns}
@@ -782,33 +549,14 @@ export default function Index({
                 </div>
             </div>
 
-            <Dialog open={notesOpen} onOpenChange={setNotesOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Notas internas</DialogTitle>
-                        <DialogDescription>
-                            {activeIntern?.user?.name
-                                ? `Notas privadas para ${activeIntern.user.name}.`
-                                : 'Notas privadas del becario.'}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <textarea
-                        value={noteValue}
-                        onChange={(e) => setNoteValue(e.target.value)}
-                        placeholder="Escribe aquí una nota interna..."
-                        className="min-h-[120px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
-                    />
-                    <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setNotesOpen(false)}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button onClick={handleSaveNotes}>Guardar nota</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <InternNotesDialog
+                open={notesOpen}
+                onOpenChange={setNotesOpen}
+                activeIntern={activeIntern}
+                noteValue={noteValue}
+                onNoteValueChange={setNoteValue}
+                onSave={handleSaveNotes}
+            />
         </AppLayout>
     );
 }
