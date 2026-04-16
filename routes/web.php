@@ -13,6 +13,8 @@ use App\Http\Controllers\TimeLogController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\InvitationController;
+
 
 
 // Ruta de bienvenida
@@ -114,6 +116,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('users.role')
         ->middleware('admin');
 
+    // Ruta para que el Admin envíe la invitación
+    Route::post('invitaciones', [InvitationController::class, 'store'])
+        ->name('invitations.store')
+        ->middleware('admin');
+
     // Ruta para los centros educativos
     Route::get('centros', [EducationCenterController::class, 'index'])
         ->name('schools.index')
@@ -183,5 +190,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
+// Rutas Públicas (para invitados que aún no se han logueado)
+Route::middleware('guest')->group(function () {
+    Route::get('registro/invitacion/{token}', [InvitationController::class, 'accept'])->name('register.invitation');
+    Route::post('registro/invitacion/registrar', [InvitationController::class, 'register'])->name('register.invitation.store');
+});
+
 // rutas públicas o especiales
 require __DIR__ . '/settings.php';
+
+
