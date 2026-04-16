@@ -1,14 +1,21 @@
 import { Head, usePage, useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { User, Building2, CalendarRange, Phone, GraduationCap, MapPin, Mail, Camera } from 'lucide-react';
+import { User, Building2, CalendarRange, Phone, GraduationCap, MapPin, Mail, Camera, Eye, Pencil, Check } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
+import ImageCropperModal from '@/components/ImageCropperModal';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 
 export default function Profile({
     intern,
@@ -32,13 +39,30 @@ export default function Profile({
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    
+    // Estados para el cropper
+    const [originalImage, setOriginalImage] = useState<string | null>(null);
+    const [isCropperOpen, setIsCropperOpen] = useState(false);
+    
+    // Estado para el visor de foto
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setData('avatar', file);
-            setPreviewUrl(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.onload = () => {
+                setOriginalImage(reader.result as string);
+                setIsCropperOpen(true);
+            };
+            reader.readAsDataURL(file);
         }
+    };
+
+    const handleCropComplete = (croppedImageBlob: Blob) => {
+        const file = new File([croppedImageBlob], 'avatar.jpg', { type: 'image/jpeg' });
+        setData('avatar', file);
+        setPreviewUrl(URL.createObjectURL(croppedImageBlob));
     };
 
     const submitAvatar = () => {
@@ -47,9 +71,17 @@ export default function Profile({
             preserveScroll: true,
             onSuccess: () => {
                 setPreviewUrl(null);
+                setOriginalImage(null);
                 if (fileInputRef.current) fileInputRef.current.value = '';
             },
         });
+    };
+
+    const cancelSelection = () => {
+        setPreviewUrl(null);
+        setOriginalImage(null);
+        setData('avatar', null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     return (
@@ -73,20 +105,23 @@ export default function Profile({
                     {/* AVATAR SECTION */}
                     <div className="md:col-span-4 space-y-6">
                         <Card className="app-panel rounded-3xl overflow-hidden border-sidebar/20">
-                            <CardContent className="p-8 flex flex-col items-center justify-center text-center space-y-4">
+                            <CardContent className="p-8 flex flex-col items-center justify-center text-center space-y-6">
                                 <div className="relative group">
-                                    <Avatar className="h-32 w-32 shrink-0 border-4 border-white dark:border-slate-800 shadow-md">
-                                        <AvatarImage src={previewUrl || user.avatar || ''} alt={user.name} />
-                                        <AvatarFallback className="text-4xl bg-primary/10 text-primary font-bold">
+                                    <Avatar className="h-40 w-40 shrink-0 border-4 border-white dark:border-slate-800 shadow-xl ring-1 ring-slate-200 dark:ring-slate-700">
+                                        <AvatarImage src={previewUrl || user.avatar || ''} className="object-cover" alt={user.name} />
+                                        <AvatarFallback className="text-5xl bg-primary/10 text-primary font-bold">
                                             {user.name.substring(0, 2).toUpperCase()}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div 
+                                    
+                                    <button 
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white cursor-pointer transition-opacity"
+                                        className="absolute bottom-2 right-2 bg-primary text-white p-2.5 rounded-2xl shadow-lg hover:scale-110 active:scale-95 transition-all ring-4 ring-white dark:ring-slate-800"
+                                        title="Cambiar foto"
                                     >
-                                        <Camera className="h-8 w-8" />
-                                    </div>
+                                        <Camera className="h-5 w-5" />
+                                    </button>
+                                    
                                     <input 
                                         type="file" 
                                         ref={fileInputRef}
@@ -96,23 +131,69 @@ export default function Profile({
                                     />
                                 </div>
                                 
-                                <div>
-                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{user.name}</h3>
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">{user.name}</h3>
                                     <p className="text-sm font-medium text-slate-500">{user.email}</p>
                                 </div>
 
-                                {data.avatar && (
+                                <div className="w-full grid grid-cols-2 gap-2 pt-2">
                                     <Button 
-                                        onClick={submitAvatar} 
-                                        disabled={processing}
-                                        className="w-full mt-4 bg-primary text-white hover:bg-primary/90 rounded-xl"
+                                        variant="outline" 
+                                        className="rounded-xl gap-2 font-bold"
+                                        onClick={() => setIsViewerOpen(true)}
                                     >
-                                        Guardar Foto
+                                        <Eye className="h-4 w-4" /> Ver foto
                                     </Button>
+                                    <Button 
+                                        variant="outline" 
+                                        className="rounded-xl gap-2 font-bold"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        <Pencil className="h-4 w-4" /> Editar
+                                    </Button>
+                                </div>
+
+                                {data.avatar && (
+                                    <div className="w-full pt-2 flex gap-2">
+                                        <Button 
+                                            onClick={submitAvatar} 
+                                            disabled={processing}
+                                            className="flex-1 bg-primary text-white hover:bg-primary/90 rounded-xl gap-2 font-bold shadow-lg shadow-primary/20"
+                                        >
+                                            {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                                            Guardar Cambios
+                                        </Button>
+                                        <Button 
+                                            variant="ghost"
+                                            onClick={cancelSelection} 
+                                            disabled={processing}
+                                            className="rounded-xl text-slate-500"
+                                        >
+                                            Cancelar
+                                        </Button>
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* MODALES */}
+                    <ImageCropperModal 
+                        open={isCropperOpen}
+                        image={originalImage}
+                        onClose={() => setIsCropperOpen(false)}
+                        onCropComplete={handleCropComplete}
+                    />
+
+                    <Dialog open={isViewerOpen} onOpenChange={setIsViewerOpen}>
+                        <DialogContent className="max-w-xl p-0 overflow-hidden bg-transparent border-none shadow-none">
+                            <img 
+                                src={user.avatar || ''} 
+                                className="w-full h-auto rounded-3xl shadow-2xl" 
+                                alt="Foto de perfil" 
+                            />
+                        </DialogContent>
+                    </Dialog>
 
                     {/* DATOS SECTION */}
                     <div className="md:col-span-8 space-y-6">

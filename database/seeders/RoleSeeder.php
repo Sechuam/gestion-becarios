@@ -12,8 +12,21 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Crear permisos
-        Permission::firstOrCreate(['name' => 'manage schools']);
-        Permission::firstOrCreate(['name' => 'manage interns']);
+        $permissions = [
+            'manage schools',
+            'manage interns',
+            'manage tasks',
+            'validate time logs',
+            'edit time logs',
+            'view reports',
+            'manage users',
+            'view internal notes',
+            'manage tutors',
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
 
         // Creamos los tres roles definidos en la fase 1
         $admin = Role::firstOrCreate(['name' => 'admin']);
@@ -21,6 +34,6 @@ class RoleSeeder extends Seeder
         Role::firstOrCreate(['name' => 'intern']);
 
         // Asignar permisos
-        $admin->givePermissionTo(['manage schools', 'manage interns']);
+        $admin->syncPermissions($permissions);
     }
 }

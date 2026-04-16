@@ -20,6 +20,13 @@ export const permissionLabel = (permission: string) =>
     ({
         'manage interns': 'Gestionar becarios',
         'manage schools': 'Gestionar centros',
+        'manage tasks': 'Gestionar tareas',
+        'validate time logs': 'Validar fichajes',
+        'edit time logs': 'Editar registros horarios',
+        'view reports': 'Ver informes y estadísticas',
+        'manage users': 'Gestionar usuarios y roles',
+        'view internal notes': 'Ver notas internas',
+        'manage tutors': 'Gestionar tutores',
     })[permission] || permission;
 
 function formatRoleName(role: string) {
