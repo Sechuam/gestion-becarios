@@ -1,6 +1,7 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { AlertTriangle, ArrowLeft, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, Download, FilePlus, GraduationCap, History, LayoutGrid, MessageSquare, MessageSquareReply, Paperclip, Pencil, Trash2, User, XCircle } from 'lucide-react';
 import { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,7 @@ type CommentItem = {
     user?: {
         id: number;
         name: string;
+        avatar?: string | null;
     } | null;
     replies: Array<{
         id: number;
@@ -28,6 +30,7 @@ type CommentItem = {
         user?: {
             id: number;
             name: string;
+            avatar?: string | null;
         } | null;
     }>;
 };
@@ -41,6 +44,7 @@ type StatusLogItem = {
     user?: {
         id: number;
         name: string;
+        avatar?: string | null;
     } | null;
 };
 
@@ -405,9 +409,12 @@ export default function Show({
                                                     task.interns.map((intern: any) => (
                                                         <div key={intern.id} className="flex items-center justify-between rounded-xl border border-sidebar bg-white p-4 transition-all hover:border-[#1f4f52] hover:shadow-md dark:bg-slate-800/40">
                                                             <div className="flex items-center gap-3">
-                                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-100 text-stone-600 dark:bg-slate-700 dark:text-slate-300 font-bold">
-                                                                    {intern.user?.name?.charAt(0) || 'B'}
-                                                                </div>
+                                                                <Avatar className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border border-sidebar bg-stone-100 text-stone-600 dark:bg-slate-700 dark:text-slate-300 font-bold">
+                                                                    <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
+                                                                    <AvatarFallback className="bg-transparent">
+                                                                        {intern.user?.name?.charAt(0) || 'B'}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
                                                                 <div>
                                                                     <p className="font-bold text-slate-800 dark:text-emerald-400">{intern.user?.name || `Becario #${intern.id}`}</p>
                                                                     <p className="text-xs text-slate-400">{intern.center?.name || 'Sin centro'}</p>
@@ -524,9 +531,12 @@ export default function Show({
                                                     <div key={comment.id} className="group rounded-2xl border border-sidebar bg-white p-6 shadow-sm transition-all hover:bg-stone-50/30 dark:bg-slate-800/40">
                                                         <div className="mb-4 flex items-start justify-between">
                                                             <div className="flex items-center gap-3">
-                                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1f4f52]/10 font-bold text-[#1f4f52]">
-                                                                    {comment.user?.name?.charAt(0) || 'U'}
-                                                                </div>
+                                                                <Avatar className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border border-sidebar bg-[#1f4f52]/10 font-bold text-[#1f4f52]">
+                                                                    <AvatarImage src={comment.user?.avatar || ''} alt={comment.user?.name || ''} />
+                                                                    <AvatarFallback className="bg-transparent">
+                                                                        {comment.user?.name?.charAt(0) || 'U'}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
                                                                 <div>
                                                                     <p className="font-bold text-slate-800 dark:text-slate-200">{comment.user?.name || 'Usuario'}</p>
                                                                     <p className="text-xs text-slate-400">
@@ -575,6 +585,12 @@ export default function Show({
                                                                     <div key={reply.id} className="relative rounded-xl border border-sidebar bg-stone-50/50 p-4 dark:bg-slate-800/20">
                                                                         <div className="mb-2 flex items-center justify-between">
                                                                             <div className="flex items-center gap-2">
+                                                                                <Avatar className="h-6 w-6 shrink-0 overflow-hidden rounded-full border border-sidebar bg-[#1f4f52]/5 font-bold text-[#1f4f52]">
+                                                                                    <AvatarImage src={reply.user?.avatar || ''} alt={reply.user?.name || ''} />
+                                                                                    <AvatarFallback className="bg-transparent text-[10px]">
+                                                                                        {reply.user?.name?.charAt(0) || 'U'}
+                                                                                    </AvatarFallback>
+                                                                                </Avatar>
                                                                                 <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{reply.user?.name || 'Usuario'}</p>
                                                                                 <span className="text-[10px] text-slate-400 tracking-tighter uppercase">{formatDateTimeEs(reply.created_at)}</span>
                                                                             </div>
@@ -656,13 +672,18 @@ export default function Show({
                                             <div className="relative space-y-6 before:absolute before:left-5 before:top-2 before:h-[calc(100%-16px)] before:w-0.5 before:bg-stone-100 dark:before:bg-slate-800">
                                                 {displayedLogs.map((log) => (
                                                     <div key={log.id} className="relative pl-12 group transition-all">
-                                                        <div className={`absolute left-0 top-1.5 h-10 w-10 flex items-center justify-center rounded-xl border-4 border-white shadow-sm dark:border-slate-900 group-hover:scale-110 transition-transform ${
-                                                            String(log.to_status) === 'completed' ? 'bg-emerald-500 text-white' :
-                                                            String(log.to_status) === 'pending' ? 'bg-amber-500 text-white' :
-                                                            String(log.to_status) === 'rejected' ? 'bg-red-500 text-white' :
-                                                            'bg-slate-500 text-white'
+                                                        <div className={`absolute left-0 top-1.5 h-10 w-10 flex items-center justify-center rounded-xl border-4 border-white shadow-sm dark:border-slate-900 group-hover:scale-110 transition-transform overflow-hidden ${
+                                                            String(log.to_status) === 'completed' ? 'bg-emerald-500' :
+                                                            String(log.to_status) === 'pending' ? 'bg-amber-500' :
+                                                            String(log.to_status) === 'rejected' ? 'bg-red-500' :
+                                                            'bg-slate-500'
                                                         }`}>
-                                                            <div className="h-2 w-2 rounded-full bg-white animate-pulse" />
+                                                            <Avatar className="h-full w-full rounded-none">
+                                                                <AvatarImage src={log.user?.avatar || ''} alt={log.user?.name || ''} />
+                                                                <AvatarFallback className="bg-transparent text-white font-bold">
+                                                                    {log.user?.name?.charAt(0) || 'U'}
+                                                                </AvatarFallback>
+                                                            </Avatar>
                                                         </div>
 
                                                         <div className="rounded-2xl border border-sidebar bg-white p-5 shadow-sm transition-all hover:border-[#1f4f52]/30 dark:bg-slate-800/40">

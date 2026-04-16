@@ -5,6 +5,7 @@ import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { StatusBadge } from '@/components/interns/StatusBadge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -30,6 +31,7 @@ type InternRow = {
     user?: {
         name?: string | null;
         email?: string | null;
+        avatar?: string | null;
     } | null;
     education_center?: {
         id: number;
@@ -66,6 +68,7 @@ type Props = {
         id: number;
         name: string;
         email: string;
+        avatar?: string;
     };
     interns: Paginated<InternRow>;
     recent_tasks: RecentTask[];
@@ -194,16 +197,14 @@ export default function My({
             cellClassName: 'text-foreground',
             render: (intern: InternRow) => (
                 <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-muted text-xs font-bold text-muted-foreground">
-                        {intern.user?.name
-                            ? intern.user.name
-                                  .split(' ')
-                                  .slice(0, 2)
-                                  .map((word) => word.charAt(0))
-                                  .join('')
-                                  .toUpperCase()
-                            : 'B'}
-                    </div>
+                    <Avatar className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border border-border bg-muted">
+                        <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
+                        <AvatarFallback className="text-xs font-bold text-muted-foreground bg-transparent">
+                            {intern.user?.name
+                                ? intern.user.name.substring(0, 2).toUpperCase()
+                                : 'B'}
+                        </AvatarFallback>
+                    </Avatar>
                     <div className="flex flex-col gap-1">
                         <Link
                             href={`/interns/${intern.id}`}
@@ -278,6 +279,7 @@ export default function My({
                 <ModuleHeader
                     title="Mis Becarios"
                     description={`Gestiona el seguimiento diario de tus becarios, detecta bloqueos y mantén a mano las tareas que has creado, ${tutor.name}.`}
+                    avatar={tutor.avatar}
                     icon={<GraduationCap className="h-6 w-6" />}
                     metrics={[
                         {
@@ -383,11 +385,10 @@ export default function My({
                                     key={i}
                                     href={link.url ?? '#'}
                                     preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
-                                        link.active
-                                            ? 'scale-105 transform border-primary bg-primary text-primary-foreground shadow-md'
-                                            : 'border-border bg-card text-muted-foreground hover:bg-muted'
-                                    } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
+                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${link.active
+                                        ? 'scale-105 transform border-primary bg-primary text-primary-foreground shadow-md'
+                                        : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                                        } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
                                     dangerouslySetInnerHTML={{
                                         __html: link.label
                                             .replace('Previous', 'Anterior')

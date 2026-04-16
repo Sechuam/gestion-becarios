@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, GraduationCap, Search } from 'lucide-react';
 import { StatusBadge } from '@/components/interns/StatusBadge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ type Tutor = {
     id: number;
     name: string;
     email: string;
+    avatar?: string | null;
     created_at?: string | null;
     assigned_interns_count: number;
     tasks_created_count: number;
@@ -99,14 +101,17 @@ export default function Show({
             <div className="space-y-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border bg-muted text-lg font-semibold text-muted-foreground">
-                            {tutor.name
-                                .split(' ')
-                                .slice(0, 2)
-                                .map((word) => word.charAt(0))
-                                .join('')
-                                .toUpperCase()}
-                        </div>
+                        <Avatar className="flex h-14 w-14 shrink-0 overflow-hidden items-center justify-center rounded-full border border-border bg-muted">
+                            <AvatarImage src={tutor.avatar || ''} alt={tutor.name || ''} />
+                            <AvatarFallback className="text-lg font-semibold text-muted-foreground bg-transparent">
+                                {tutor.name
+                                    .split(' ')
+                                    .slice(0, 2)
+                                    .map((word) => word.charAt(0))
+                                    .join('')
+                                    .toUpperCase()}
+                            </AvatarFallback>
+                        </Avatar>
                         <div>
                             <h1 className="page-title flex items-center gap-3">
                                 <GraduationCap className="h-6 w-6" />

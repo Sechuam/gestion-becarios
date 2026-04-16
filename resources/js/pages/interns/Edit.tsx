@@ -1,6 +1,7 @@
-import { Head, useForm, Link } from '@inertiajs/react';
+import { Head, useForm, Link, router } from '@inertiajs/react';
 import { FileText } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -97,11 +98,14 @@ export default function Edit({
             <div className="page-surface">
                 {/* CABECERA */}
                 <div className="mb-6 flex items-center gap-4 border-b border-border pb-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted text-lg font-semibold text-muted-foreground">
-                        {intern.user?.name
-                            ? intern.user.name.substring(0, 2).toUpperCase()
-                            : 'B'}
-                    </div>
+                    <Avatar className="flex h-14 w-14 shrink-0 overflow-hidden items-center justify-center rounded-full border border-border bg-muted">
+                        <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
+                        <AvatarFallback className="text-lg font-semibold text-muted-foreground bg-transparent">
+                            {intern.user?.name
+                                ? intern.user.name.substring(0, 2).toUpperCase()
+                                : 'B'}
+                        </AvatarFallback>
+                    </Avatar>
                     <div>
                         <h1 className="page-title">Editar perfil</h1>
                         <p className="page-subtitle">

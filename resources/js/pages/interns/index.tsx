@@ -7,6 +7,7 @@ import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
 import { StatusBadge } from '@/components/interns/StatusBadge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -224,11 +225,12 @@ export default function Index({
 
                 return (
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-muted text-xs font-bold text-muted-foreground">
-                            {intern.user?.name
-                                ? intern.user.name.charAt(0).toUpperCase()
-                                : '?'}
-                        </div>
+                        <Avatar className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
+                            <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
+                            <AvatarFallback className="text-xs font-bold text-muted-foreground bg-transparent">
+                                {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
+                            </AvatarFallback>
+                        </Avatar>
                         <div className="flex flex-col gap-1">
                             <span className="font-semibold text-foreground">
                                 {intern.user?.name}

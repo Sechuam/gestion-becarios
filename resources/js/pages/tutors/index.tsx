@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { StatusBadge } from '@/components/interns/StatusBadge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
@@ -19,6 +21,8 @@ type TutorRow = {
     id: number;
     name: string;
     email: string;
+    avatar?: string | null;
+    status: string;
     created_at?: string | null;
     assigned_interns_count: number;
     tasks_created_count: number;
@@ -172,16 +176,19 @@ export default function Index({
             cellClassName: 'text-foreground',
             render: (tutor: TutorRow) => (
                 <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-muted text-xs font-bold text-muted-foreground">
-                        {tutor.name
-                            ? tutor.name
-                                  .split(' ')
-                                  .slice(0, 2)
-                                  .map((word) => word.charAt(0))
-                                  .join('')
-                                  .toUpperCase()
-                            : 'T'}
-                    </div>
+                    <Avatar className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border border-border bg-muted">
+                        <AvatarImage src={tutor.avatar || ''} alt={tutor.name || ''} />
+                        <AvatarFallback className="text-xs font-bold text-muted-foreground bg-transparent">
+                            {tutor.name
+                                ? tutor.name
+                                      .split(' ')
+                                      .slice(0, 2)
+                                      .map((word) => word.charAt(0))
+                                      .join('')
+                                      .toUpperCase()
+                                : 'T'}
+                        </AvatarFallback>
+                    </Avatar>
                     <div className="flex flex-col gap-1">
                         <Link
                             href={`/tutores/${tutor.id}`}
@@ -310,11 +317,10 @@ export default function Index({
                                     key={i}
                                     href={link.url ?? '#'}
                                     preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
-                                        link.active
+                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${link.active
                                             ? 'scale-105 transform border-primary bg-primary text-primary-foreground shadow-md'
                                             : 'border-border bg-card text-muted-foreground hover:bg-muted'
-                                    } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
+                                        } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
                                     dangerouslySetInnerHTML={{
                                         __html: link.label
                                             .replace('Previous', 'Anterior')

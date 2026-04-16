@@ -10,6 +10,7 @@ type Props = {
     title: string;
     description: string;
     icon?: ReactNode;
+    avatar?: string;
     actions?: ReactNode;
     metrics?: Metric[];
 };
@@ -18,6 +19,7 @@ export function ModuleHeader({
     title,
     description,
     icon,
+    avatar,
     actions,
     metrics = [],
 }: Props) {
@@ -27,15 +29,23 @@ export function ModuleHeader({
             <div className="relative flex flex-wrap items-start justify-between gap-5">
                 <div className="space-y-3">
                     <p className="section-kicker">Panel de gestión</p>
-                    <h1 className="page-title flex items-center gap-3">
-                        {icon && (
+                    <div className="flex items-center gap-4">
+                        {avatar ? (
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-primary/10 bg-primary/10 shadow-sm overflow-hidden">
+                                <img src={avatar} className="h-full w-full object-cover" alt={title} />
+                            </div>
+                        ) : icon ? (
                             <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/10 bg-primary/10 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]">
                                 {icon}
                             </span>
-                        )}
-                        <span>{title}</span>
-                    </h1>
-                    <p className="page-subtitle">{description}</p>
+                        ) : null}
+                        <div>
+                            <h1 className="page-title leading-tight">
+                                {title}
+                            </h1>
+                            <p className="page-subtitle mt-0.5">{description}</p>
+                        </div>
+                    </div>
                 </div>
 
                 {actions && (

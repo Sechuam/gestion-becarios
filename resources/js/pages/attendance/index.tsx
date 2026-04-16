@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     Select,
     SelectContent,
@@ -40,12 +41,14 @@ type ManageableIntern = {
     id: number;
     user_id: number;
     name: string;
+    avatar?: string;
     education_center: string | null;
 };
 
 type NonCompliantIntern = {
     id: number;
     name: string;
+    avatar?: string;
     debt: number;
     expected_hours: number;
     total_done: number;
@@ -380,8 +383,13 @@ export default function Index({
                                             variant="destructive"
                                             className="rounded-2xl border-red-200 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100"
                                         >
-                                            <AlertTriangle className="h-4 w-4" />
-                                            <AlertTitle className="text-red-900 dark:text-red-100">
+                                            <AlertTitle className="flex items-center gap-2 text-red-900 dark:text-red-100">
+                                                <Avatar className="h-6 w-6 border-sidebar">
+                                                    <AvatarImage src={intern.avatar} alt={intern.name} />
+                                                    <AvatarFallback className="text-[10px] bg-red-100 text-red-700">
+                                                        {intern.name?.charAt(0)}
+                                                    </AvatarFallback>
+                                                </Avatar>
                                                 {intern.name}
                                             </AlertTitle>
                                             <AlertDescription className="text-red-700 dark:text-red-200">

@@ -64,6 +64,7 @@ class TimeLogController extends Controller
                 'id' => $intern->id,
                 'user_id' => $intern->user_id,
                 'name' => $intern->user->name,
+                'avatar' => $intern->user->getFirstMediaUrl('avatar'),
                 'education_center' => $intern->educationCenter?->name,
             ])->values(),
             'non_compliant_interns' => $service->getNonCompliantInternsForUser($user),

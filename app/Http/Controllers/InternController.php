@@ -178,6 +178,7 @@ class InternController extends Controller
                 'user' => $note->user ? [
                     'id' => $note->user->id,
                     'name' => $note->user->name,
+                    'avatar' => $note->user->getFirstMediaUrl('avatar'),
                 ] : null,
             ]),
 
@@ -190,6 +191,7 @@ class InternController extends Controller
                     'description' => $activity->description,
                     'event' => $activity->event,
                     'causer_name' => $activity->causer->name ?? 'System',
+                    'causer_avatar' => $activity->causer ? $activity->causer->getFirstMediaUrl('avatar') : null,
                     'created_at' => $activity->created_at->format('d/m/Y H:i:'),
                     'properties' => $activity->properties,
                 ]),

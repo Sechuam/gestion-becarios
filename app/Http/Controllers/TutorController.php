@@ -62,6 +62,7 @@ class TutorController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar' => $user->avatar,
                 'created_at' => $user->created_at,
                 'assigned_interns_count' => $user->assigned_interns_count,
                 'tasks_created_count' => $user->tasks_created_count,
@@ -117,6 +118,7 @@ class TutorController extends Controller
                 'user' => [
                     'name' => $intern->user?->name,
                     'email' => $intern->user?->email,
+                    'avatar' => $intern->user?->avatar,
                 ],
                 'education_center' => $intern->educationCenter ? [
                     'id' => $intern->educationCenter->id,
@@ -148,6 +150,7 @@ class TutorController extends Controller
                 'id' => $tutor->id,
                 'name' => $tutor->name,
                 'email' => $tutor->email,
+                'avatar' => $tutor->avatar,
                 'created_at' => $tutor->created_at,
                 'assigned_interns_count' => $tutor->assigned_interns_count,
                 'tasks_created_count' => $tutor->tasks_created_count,
@@ -199,6 +202,7 @@ class TutorController extends Controller
                 'user' => [
                     'name' => $intern->user?->name,
                     'email' => $intern->user?->email,
+                    'avatar' => $intern->user?->avatar,
                 ],
                 'education_center' => $intern->educationCenter ? [
                     'id' => $intern->educationCenter->id,
@@ -241,6 +245,7 @@ class TutorController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar' => $user->avatar,
             ],
             'interns' => $assignedInterns,
             'recent_tasks' => $recentTasks,

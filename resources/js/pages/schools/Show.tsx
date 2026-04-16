@@ -26,6 +26,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -441,13 +442,20 @@ export default function Show({
                                                         <tr key={intern.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                                                             <td className="px-6 py-4">
                                                                 <div className="flex items-center gap-3">
-                                                                    <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-500">
-                                                                        {intern.user.name.substring(0, 2).toUpperCase()}
-                                                                    </div>
+                                                                    <Avatar className="h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+                                                                        <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
+                                                                        <AvatarFallback className="font-bold text-slate-500 bg-transparent">
+                                                                            {intern.user?.name ? intern.user.name.substring(0, 2).toUpperCase() : 'BE'}
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
                                                                     <div className="flex flex-col">
-                                                                        <Link href={`/becarios/${intern.id}`} className="font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 transition-colors">
-                                                                            {intern.user.name}
-                                                                        </Link>
+                                                                        {!isIntern ? (
+                                                                            <Link href={`/becarios/${intern.id}`} className="font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 transition-colors">
+                                                                                {intern.user.name}
+                                                                            </Link>
+                                                                        ) : (
+                                                                            <span className="font-bold text-slate-800 dark:text-slate-100">{intern.user.name}</span>
+                                                                        )}
                                                                         <span className="text-[10px] text-slate-400 font-bold uppercase">{intern.dni}</span>
                                                                     </div>
                                                                 </div>
@@ -459,9 +467,11 @@ export default function Show({
                                                                 <StatusBadge status={intern.status} />
                                                             </td>
                                                             <td className="px-6 py-4 text-right">
-                                                                <Button variant="ghost" size="sm" className="rounded-xl font-bold text-primary hover:bg-white hover:shadow-sm" asChild>
-                                                                    <Link href={`/becarios/${intern.id}`}>Ver Perfil</Link>
-                                                                </Button>
+                                                                {!isIntern && (
+                                                                    <Button variant="ghost" size="sm" className="rounded-xl font-bold text-primary hover:bg-white hover:shadow-sm" asChild>
+                                                                        <Link href={`/becarios/${intern.id}`}>Ver Perfil</Link>
+                                                                    </Button>
+                                                                )}
                                                             </td>
                                                         </tr>
                                                     ))

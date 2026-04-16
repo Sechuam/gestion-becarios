@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
@@ -90,13 +91,12 @@ export default function Show({
 
                 {/* HERO */}
                 <div className="flex items-center gap-6 pb-2">
-                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white shadow-sm border border-sidebar dark:bg-slate-900 overflow-hidden">
-                        {intern.user.avatar ? (
-                            <img src={intern.user.avatar} className="h-full w-full object-cover" alt={intern.user.name} />
-                        ) : (
-                            <User className="h-10 w-10 text-primary" />
-                        )}
-                    </div>
+                    <Avatar className="h-20 w-20 shrink-0 rounded-3xl border border-sidebar shadow-sm">
+                        <AvatarImage src={intern.user.avatar} alt={intern.user.name} className="object-cover" />
+                        <AvatarFallback className="bg-white dark:bg-slate-900 text-primary">
+                            <User className="h-10 w-10" />
+                        </AvatarFallback>
+                    </Avatar>
                     <div className="space-y-1">
                         <div className="flex items-center gap-3">
                             <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
@@ -331,9 +331,11 @@ export default function Show({
 
                                         <div className="space-y-8">
                                             <div className="flex gap-4 p-5 rounded-2xl filter-panel">
-                                                <div className="h-12 w-12 shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center font-bold text-indigo-600">
-                                                    {intern.center_tutor_name?.substring(0, 1) || 'C'}
-                                                </div>
+                                                <Avatar className="h-12 w-12 shrink-0 rounded-full">
+                                                    <AvatarFallback className="bg-indigo-100 dark:bg-indigo-900/40 font-bold text-indigo-600">
+                                                        {intern.center_tutor_name?.substring(0, 1) || 'C'}
+                                                    </AvatarFallback>
+                                                </Avatar>
                                                 <div>
                                                     <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Tutor del Centro</p>
                                                     <p className="text-base font-bold text-slate-800 dark:text-slate-100">{intern.center_tutor_name || 'Sin asignar'}</p>
@@ -342,9 +344,12 @@ export default function Show({
                                             </div>
 
                                             <div className="flex gap-4 p-5 rounded-2xl filter-panel">
-                                                <div className="h-12 w-12 shrink-0 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center font-bold text-emerald-600">
-                                                    {intern.company_tutor?.name?.substring(0, 1) || 'E'}
-                                                </div>
+                                                <Avatar className="h-12 w-12 shrink-0 rounded-full">
+                                                    <AvatarImage src={intern.company_tutor?.avatar} alt={intern.company_tutor?.name || ''} />
+                                                    <AvatarFallback className="bg-emerald-100 dark:bg-emerald-900/40 font-bold text-emerald-600">
+                                                        {intern.company_tutor?.name?.substring(0, 1) || 'E'}
+                                                    </AvatarFallback>
+                                                </Avatar>
                                                 <div>
                                                     <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Tutor de Empresa</p>
                                                     <p className="text-base font-bold text-slate-800 dark:text-slate-100">{intern.company_tutor?.name || 'Sin asignar'}</p>
@@ -489,9 +494,17 @@ export default function Show({
                                                     {intern.internal_notes || 'No se han registrado notas adicionales para este becario.'}
                                                 </p>
                                                 {(intern.notes_updated_by || intern.internal_notes_updated_at) && (
-                                                    <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between opacity-50">
-                                                        <span className="text-[10px] font-bold uppercase tracking-tighter">Última edición</span>
-                                                        <span className="text-[10px] font-bold">{intern.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(intern.internal_notes_updated_at)}</span>
+                                                    <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                                        <span className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Última edición</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <Avatar className="h-6 w-6">
+                                                                <AvatarImage src={intern.notes_updated_by?.avatar} alt={intern.notes_updated_by?.name || ''} />
+                                                                <AvatarFallback className="text-[10px] bg-slate-100 dark:bg-slate-700">
+                                                                    {intern.notes_updated_by?.name?.charAt(0) || 'S'}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            <span className="text-[10px] font-bold text-slate-500">{intern.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(intern.internal_notes_updated_at)}</span>
+                                                        </div>
                                                     </div>
                                                 )}
                                             </div>
@@ -520,7 +533,14 @@ export default function Show({
 
                                                     return (
                                                         <div key={activity.id} className="relative pb-8 group">
-                                                            <div className="absolute -left-8 top-1 h-3.5 w-3.5 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700 group-hover:bg-primary transition-colors z-10" />
+                                                            <div className="absolute -left-10 top-0.5 h-8 w-8 rounded-xl border-4 border-white dark:border-slate-900 bg-white dark:bg-slate-800 shadow-sm overflow-hidden z-10 group-hover:scale-110 transition-transform">
+                                                                <Avatar className="h-full w-full rounded-none">
+                                                                    <AvatarImage src={activity.causer_avatar} alt={activity.causer_name} />
+                                                                    <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-[10px] font-bold">
+                                                                        {activity.causer_name?.charAt(0) || 'S'}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                            </div>
                                                             <div>
                                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{formatDateTimeEs(activity.created_at)}</p>
                                                                 <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-1">

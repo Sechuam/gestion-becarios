@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useInitials } from '@/hooks/use-initials';
 
@@ -7,6 +7,7 @@ type InternAssignment = {
     user?: {
         name?: string | null;
         email?: string | null;
+        avatar?: string | null;
     } | null;
 };
 
@@ -41,6 +42,7 @@ export default function AssignedInternsStack({
                                     key={intern.id}
                                     className="h-8 w-8 border-2 border-background bg-muted shadow-sm"
                                 >
+                                    <AvatarImage src={intern.user?.avatar || ''} alt={name} />
                                     <AvatarFallback className="bg-primary/15 text-[10px] font-semibold text-primary">
                                         {getInitials(name)}
                                     </AvatarFallback>
@@ -64,9 +66,12 @@ export default function AssignedInternsStack({
 
                         return (
                             <div key={intern.id} className="flex items-center gap-2 text-xs">
-                                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 font-semibold text-primary">
-                                    {getInitials(name)}
-                                </span>
+                                <Avatar className="h-6 w-6">
+                                    <AvatarImage src={intern.user?.avatar || ''} alt={name} />
+                                    <AvatarFallback className="inline-flex h-full w-full items-center justify-center bg-primary/15 font-semibold text-primary text-[10px]">
+                                        {getInitials(name)}
+                                    </AvatarFallback>
+                                </Avatar>
                                 <div className="min-w-0">
                                     <p className="truncate font-medium">{name}</p>
                                     {email && (

@@ -152,6 +152,7 @@ class TimeTrackingService
             return [
                 'id' => $intern->id,
                 'name' => $intern->user->name,
+                'avatar' => $intern->user->getFirstMediaUrl('avatar'),
                 'debt' => $stats['debt'],
                 'expected_hours' => $stats['expected_hours'],
                 'total_done' => $stats['total_done'],

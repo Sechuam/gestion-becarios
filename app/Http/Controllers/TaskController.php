@@ -404,6 +404,7 @@ class TaskController extends Controller
                     'user' => $log->user ? [
                         'id' => $log->user->id,
                         'name' => $log->user->name,
+                        'avatar' => $log->user->getFirstMediaUrl('avatar'),
                     ] : null,
                 ]),
         ]);
@@ -616,6 +617,7 @@ class TaskController extends Controller
             'user' => $comment->user ? [
                 'id' => $comment->user->id,
                 'name' => $comment->user->name,
+                'avatar' => $comment->user->getFirstMediaUrl('avatar'),
             ] : null,
             'replies' => $comment->replies
                 ->sortBy('created_at')
@@ -628,6 +630,7 @@ class TaskController extends Controller
                     'user' => $reply->user ? [
                         'id' => $reply->user->id,
                         'name' => $reply->user->name,
+                        'avatar' => $reply->user->getFirstMediaUrl('avatar'),
                     ] : null,
                 ]),
         ];
