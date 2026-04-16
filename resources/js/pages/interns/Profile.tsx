@@ -7,7 +7,7 @@ import type { BreadcrumbItem } from '@/types/navigation';
 import { User, Building2, CalendarRange, Phone, GraduationCap, MapPin, Mail, Camera } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { InputError } from '@/components/input-error'; // Note: might not exist as a named import, but often used in stater kit.
+import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 
 export default function Profile({
