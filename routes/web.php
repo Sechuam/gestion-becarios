@@ -24,6 +24,14 @@ Route::inertia('/', 'welcome', [
 
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Rutas para el área personal del becario
+    Route::get('mi-perfil', [InternController::class, 'myProfile'])
+        ->name('interns.my-profile')
+        ->middleware('role:intern|becario');
+    Route::post('mi-perfil/avatar', [InternController::class, 'updateAvatar'])
+        ->name('interns.update-avatar')
+        ->middleware('role:intern|becario');
+
     // Ruta para que el centro concreto del becario en cuestion
     Route::get('mi-centro', [EducationCenterController::class, 'myCenter'])
         ->name('schools.my');

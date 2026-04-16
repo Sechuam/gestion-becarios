@@ -90,8 +90,12 @@ export default function Show({
 
                 {/* HERO */}
                 <div className="flex items-center gap-6 pb-2">
-                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white shadow-sm border border-sidebar dark:bg-slate-900">
-                        <User className="h-10 w-10 text-primary" />
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white shadow-sm border border-sidebar dark:bg-slate-900 overflow-hidden">
+                        {intern.user.avatar ? (
+                            <img src={intern.user.avatar} className="h-full w-full object-cover" alt={intern.user.name} />
+                        ) : (
+                            <User className="h-10 w-10 text-primary" />
+                        )}
                     </div>
                     <div className="space-y-1">
                         <div className="flex items-center gap-3">

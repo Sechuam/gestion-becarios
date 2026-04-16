@@ -44,6 +44,15 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'remember_token',
     ];
 
+    protected $appends = [
+        'avatar',
+    ];
+
+    public function getAvatarAttribute()
+    {
+        return $this->getFirstMediaUrl('avatar');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -61,6 +70,13 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function intern(): HasOne
     {
         return $this->hasOne(Intern::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
     }
 
     public function schedules()

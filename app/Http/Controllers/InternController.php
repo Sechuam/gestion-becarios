@@ -20,6 +20,29 @@ use App\Services\TimeTrackingService;
 
 class InternController extends Controller
 {
+    public function myProfile()
+    {
+        $user = Auth::user();
+        $intern = $user->intern;
+
+        return Inertia::render('interns/Profile', [
+            'intern' => $intern,
+            'education_center' => $intern?->educationCenter,
+        ]);
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'max:5120'], // Máximo 5MB
+        ]);
+
+        $user = Auth::user();
+        $user->clearMediaCollection('avatar');
+        $user->addMediaFromRequest('avatar')->toMediaCollection('avatar');
+
+        return back()->with('success', 'Foto de perfil actualizada correctamente.');
+    }
     public function index(Request $request)
     {
         $query = Intern::query()

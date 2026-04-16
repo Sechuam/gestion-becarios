@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user() ? array_merge($request->user()->toArray(), [
+                    'avatar' => $request->user()->getFirstMediaUrl('avatar'),
                     'roles' => $request->user()->getRoleNames(),
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
                     'unreadNotifications' => $request->user()->unreadNotifications,

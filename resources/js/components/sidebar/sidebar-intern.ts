@@ -3,7 +3,7 @@ import {
     ClipboardList,
     Clock,
     LayoutGrid,
-    Star,
+    UserCircle,
 } from 'lucide-react';
 import { dashboard } from '@/routes';
 import type { SidebarSection } from '@/components/sidebar/sidebar-types';
@@ -19,9 +19,20 @@ export function getInternSidebar(): SidebarSection[] {
                     icon: LayoutGrid,
                 },
                 {
-                    title: 'Mi centro',
-                    href: '/mi-centro',
-                    icon: Building2,
+                    title: 'Mi área',
+                    href: '#',
+                    icon: UserCircle,
+                    isActive: false,
+                    items: [
+                        {
+                            title: 'Mi perfil',
+                            href: '/mi-perfil',
+                        },
+                        {
+                            title: 'Mi centro',
+                            href: '/mi-centro',
+                        },
+                    ],
                 },
                 {
                     title: 'Seguimiento académico',

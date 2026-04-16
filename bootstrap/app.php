@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'tutor' => \App\Http\Middleware\EnsureTutor::class,
             'staff' => \App\Http\Middleware\EnsureStaff::class,
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
 
         $middleware->web(append: [
