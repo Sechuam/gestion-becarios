@@ -29,119 +29,129 @@ export default function Create() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nuevo tipo de práctica" />
 
-            <div className="page-surface">
-                <div className="mb-6">
-                    <h1 className="page-title">Nuevo tipo de práctica</h1>
-                    <p className="page-subtitle">
-                        Crea un nuevo tipo para clasificar tareas.
-                    </p>
+            <div className="w-full space-y-6 bg-slate-50/50 p-6 dark:bg-slate-950/20 min-h-screen">
+                {/* CABECERA ESTILIZADA */}
+                <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-8 shadow-xl md:p-10">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                    <div className="relative">
+                        <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">
+                            Nuevo Tipo de Práctica
+                        </h1>
+                        <p className="mt-2 max-w-2xl text-lg font-medium text-white/70 italic">
+                            Define una nueva categoría para clasificar y organizar las tareas de los becarios.
+                        </p>
+                    </div>
                 </div>
 
-                <form
-                    onSubmit={submit}
-                    className="space-y-6 rounded-xl border border-border/60 bg-card/90 p-6 shadow-sm"
-                >
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="name">Nombre</Label>
-                            <Input
-                                id="name"
-                                value={data.name}
-                                onChange={(e) =>
-                                    setData('name', e.target.value)
-                                }
-                                className="border-border bg-background text-foreground"
-                            />
-                            {errors.name && (
-                                <p className="text-xs text-red-500">
-                                    {errors.name}
-                                </p>
-                            )}
+                <form onSubmit={submit} className="app-panel rounded-[2rem] border-sidebar/10 bg-white p-8 shadow-2xl dark:bg-slate-900 md:p-12">
+                    {/* SECCIÓN 01: INFORMACIÓN BÁSICA */}
+                    <div className="mb-12">
+                        <div className="mb-8 flex items-center gap-4 border-b border-sidebar/10 pb-4">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar text-xl font-black text-white shadow-lg">01</span>
+                            <div>
+                                <h2 className="text-xl font-black tracking-tight text-slate-800 dark:text-white">Identificación</h2>
+                                <p className="text-sm font-medium text-slate-500">Nombre y descripción general de la categoría.</p>
+                            </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="priority">
-                                Prioridad (opcional)
-                            </Label>
-                            <Input
-                                id="priority"
-                                value={data.priority}
-                                onChange={(e) =>
-                                    setData('priority', e.target.value)
-                                }
-                                className="border-border bg-background text-foreground"
-                            />
-                            {errors.priority && (
-                                <p className="text-xs text-red-500">
-                                    {errors.priority}
-                                </p>
-                            )}
-                        </div>
-                    </div>
+                        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-[#1f4f52]">Nombre del Tipo</Label>
+                                <Input
+                                    id="name"
+                                    value={data.name}
+                                    placeholder="Ej: Desarrollo Frontend, Sistemas..."
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    className="h-12 border-sidebar/20 bg-slate-50/50 rounded-2xl focus:ring-sidebar/20"
+                                />
+                                {errors.name && <p className="text-xs font-bold text-red-500">{errors.name}</p>}
+                            </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Descripción</Label>
-                        <textarea
-                            id="description"
-                            value={data.description}
-                            onChange={(e) =>
-                                setData('description', e.target.value)
-                            }
-                            className="min-h-30 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
-                        />
-                        {errors.description && (
-                            <p className="text-xs text-red-500">
-                                {errors.description}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="color">Color (hex opcional)</Label>
-                            <Input
-                                id="color"
-                                placeholder="#3b82f6"
-                                value={data.color}
-                                onChange={(e) =>
-                                    setData('color', e.target.value)
-                                }
-                                className="border-border bg-background text-foreground"
-                            />
-                            {errors.color && (
-                                <p className="text-xs text-red-500">
-                                    {errors.color}
-                                </p>
-                            )}
+                            <div className="space-y-2">
+                                <Label htmlFor="priority" className="text-xs font-black uppercase tracking-widest text-[#1f4f52]">Prioridad Sugerida</Label>
+                                <Input
+                                    id="priority"
+                                    value={data.priority}
+                                    placeholder="Ej: Alta, Media, Baja o número..."
+                                    onChange={(e) => setData('priority', e.target.value)}
+                                    className="h-12 border-sidebar/20 bg-slate-50/50 rounded-2xl focus:ring-sidebar/20"
+                                />
+                                {errors.priority && <p className="text-xs font-bold text-red-500">{errors.priority}</p>}
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <input
-                                id="is_active"
-                                type="checkbox"
-                                checked={data.is_active}
-                                onChange={(e) =>
-                                    setData('is_active', e.target.checked)
-                                }
+
+                        <div className="mt-8 space-y-2">
+                            <Label htmlFor="description" className="text-xs font-black uppercase tracking-widest text-[#1f4f52]">Descripción</Label>
+                            <textarea
+                                id="description"
+                                value={data.description}
+                                onChange={(e) => setData('description', e.target.value)}
+                                placeholder="Describe brevemente el propósito de este tipo de práctica..."
+                                className="min-h-[120px] w-full rounded-2xl border border-sidebar/20 bg-slate-50/50 p-4 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
                             />
-                            <Label htmlFor="is_active">Activo</Label>
+                            {errors.description && <p className="text-xs font-bold text-red-500">{errors.description}</p>}
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3 border-t border-border pt-6">
+                    {/* SECCIÓN 02: CONFIGURACIÓN VISUAL */}
+                    <div className="mb-12">
+                        <div className="mb-8 flex items-center gap-4 border-b border-sidebar/10 pb-4">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar text-xl font-black text-white shadow-lg">02</span>
+                            <div>
+                                <h2 className="text-xl font-black tracking-tight text-slate-800 dark:text-white">Estética y Estado</h2>
+                                <p className="text-sm font-medium text-slate-500">Personaliza la apariencia en el listado y el estado de activación.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="color" className="text-xs font-black uppercase tracking-widest text-[#1f4f52]">Color Corporativo (HEX)</Label>
+                                <div className="flex gap-3">
+                                    <Input
+                                        id="color"
+                                        placeholder="#3b82f6"
+                                        value={data.color}
+                                        onChange={(e) => setData('color', e.target.value)}
+                                        className="h-12 border-sidebar/20 bg-slate-50/50 rounded-2xl"
+                                    />
+                                    <div 
+                                        className="h-12 w-12 shrink-0 rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" 
+                                        style={{ backgroundColor: data.color || '#e2e8f0' }}
+                                    />
+                                </div>
+                                {errors.color && <p className="text-xs font-bold text-red-500">{errors.color}</p>}
+                            </div>
+
+                            <div className="flex items-center gap-4 pt-8">
+                                <div className="relative inline-flex h-12 items-center cursor-pointer rounded-2xl border border-sidebar/10 bg-slate-50 px-4 transition-all hover:bg-slate-100">
+                                    <input
+                                        id="is_active"
+                                        type="checkbox"
+                                        checked={data.is_active}
+                                        onChange={(e) => setData('is_active', e.target.checked)}
+                                        className="h-5 w-5 rounded border-sidebar/20 text-sidebar focus:ring-sidebar"
+                                    />
+                                    <Label htmlFor="is_active" className="ml-3 cursor-pointer text-sm font-black text-sidebar uppercase tracking-widest">¿Activar Tipo?</Label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-4 border-t border-sidebar/10 pt-8">
                         <Button
                             type="button"
-                            variant="outline"
-                            className="border-border text-foreground hover:bg-muted"
+                            variant="ghost"
+                            className="rounded-xl px-8 font-bold text-slate-500 hover:bg-slate-100"
                             asChild
                         >
                             <Link href="/tipos-practica">Cancelar</Link>
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90"
+                            className="h-12 rounded-2xl bg-sidebar px-10 font-black text-white shadow-xl shadow-sidebar/20 transition-all hover:bg-sidebar/90 active:scale-95"
                             disabled={processing}
                         >
-                            Guardar
+                            {processing ? 'Guardando...' : 'Crear Tipo de Práctica'}
                         </Button>
                     </div>
                 </form>

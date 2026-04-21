@@ -24,53 +24,60 @@ export function ModuleHeader({
     metrics = [],
 }: Props) {
     return (
-        <section className="app-panel relative overflow-hidden p-6">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-22 bg-[linear-gradient(90deg,rgba(15,23,42,0.96)_0%,rgba(15,23,42,0.94)_22%,rgba(30,41,59,0.92)_48%,rgba(51,65,85,0.78)_68%,rgba(100,116,139,0.3)_84%,rgba(255,255,255,0)_94%)]" />
-            <div className="pointer-events-none absolute left-0 top-0 h-22 w-[52rem] bg-[linear-gradient(90deg,rgba(15,23,42,0.2)_0%,rgba(15,23,42,0.14)_62%,rgba(15,23,42,0)_100%)]" />
-            <div className="relative flex flex-wrap items-start justify-between gap-5">
-                <div className="space-y-3">
-                    <p className="section-kicker text-white/80">Panel de gestión</p>
-                    <div className="flex items-start gap-4">
+        <section className="app-panel relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-8 rounded-[2rem]">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+            
+            <div className="relative flex flex-wrap items-center justify-between gap-6">
+                <div className="flex-1 space-y-3">
+                    <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/80 backdrop-blur-md border border-white/20">
+                        Panel de gestión
+                    </p>
+                    
+                    <div className="flex items-center gap-4">
                         {avatar ? (
-                            <div className="-mt-1 flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-sm">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-white/20 bg-white/10 shadow-xl backdrop-blur-md">
                                 <img src={avatar} className="h-full w-full object-cover" alt={title} />
                             </div>
                         ) : icon ? (
-                            <span className="-mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
-                                {icon}
+                            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
+                                <div className="h-6 w-6">
+                                    {icon}
+                                </div>
                             </span>
                         ) : null}
                         <div>
-                            <h1 className="page-title leading-tight text-white">
+                            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
                                 {title}
                             </h1>
+                            <p className="text-xs md:text-sm font-medium text-white/60 leading-relaxed italic mt-1 line-clamp-1 md:line-clamp-none">
+                                {description}
+                            </p>
                         </div>
                     </div>
-                    <p className="page-subtitle max-w-3xl pl-[3.75rem] mt-0.5">{description}</p>
                 </div>
 
                 {actions && (
-                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                    <div className="flex shrink-0 items-center">
                         {actions}
                     </div>
                 )}
             </div>
 
             {metrics.length > 0 && (
-                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                     {metrics.map((metric) => (
                         <div
                             key={metric.label}
-                            className="metric-tile px-4 py-3.5"
+                            className="relative overflow-hidden rounded-xl bg-white/10 p-4 shadow-lg backdrop-blur-md border border-white/20 transition-all hover:bg-white/15"
                         >
-                            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                            <p className="text-[9px] font-black uppercase tracking-widest text-white/50">
                                 {metric.label}
                             </p>
-                            <p className="mt-1 text-[1.45rem] font-semibold tracking-[-0.03em] text-foreground">
+                            <p className="mt-1 text-xl md:text-2xl font-black tracking-tight text-white">
                                 {metric.value}
                             </p>
                             {metric.hint && (
-                                <p className="mt-1 text-xs text-muted-foreground">
+                                <p className="mt-1 text-[10px] font-medium text-white/40 line-clamp-1">
                                     {metric.hint}
                                 </p>
                             )}

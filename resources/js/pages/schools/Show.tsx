@@ -174,77 +174,93 @@ export default function Show({
 
             <div className="w-full space-y-6 bg-slate-50/50 p-6 dark:bg-slate-950/20 min-h-screen">
                 {/* CABECERA DE ACCIÓN RÁPIDA */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between px-2">
                     <Button
                         variant="ghost"
-                        className="text-slate-600 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl"
+                        className="text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-[10px]"
                         asChild
                     >
                         <Link href="/centros">
                             <ArrowLeft className="h-4 w-4 mr-2" /> Volver al listado
                         </Link>
                     </Button>
-                    
-                    <div className="flex gap-2">
-                        {isTrashed ? (
-                            canManage && (
-                                <>
-                                    <Button
-                                        variant="outline"
-                                        className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-xl"
-                                        onClick={() => router.post(`/centros/${educationCenter.id}/restore`)}
-                                    >
-                                        Restaurar centro
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        className="rounded-xl"
-                                        onClick={() => {
-                                            if (confirm('¿Seguro que quieres eliminar definitivamente este centro?')) {
-                                                router.delete(`/centros/${educationCenter.id}/force`);
-                                            }
-                                        }}
-                                    >
-                                        Eliminar definitivo
-                                    </Button>
-                                </>
-                            )
-                        ) : (
-                            canManage && (
-                                <ConfirmNavigationButton
-                                    href={`/centros/${educationCenter.id}/edit`}
-                                    title="Confirmar edición"
-                                    description={`Vas a editar la ficha de ${educationCenter.name}.`}
-                                    confirmLabel="Ir a editar"
-                                    className="bg-primary text-white hover:opacity-90 rounded-xl px-6"
-                                >
-                                    Editar Información
-                                </ConfirmNavigationButton>
-                            )
-                        )}
-                    </div>
                 </div>
 
-                {/* HERO DEL CENTRO */}
-                <div className="flex items-center gap-6 pb-2">
-                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white shadow-sm border border-sidebar dark:bg-slate-900">
-                        <School className="h-10 w-10 text-primary" />
-                    </div>
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
-                                {educationCenter.name}
-                            </h1>
-                            {isTrashed && <Badge variant="destructive" className="rounded-lg">Archivado</Badge>}
+                {/* HERO INTEGRADO CON GRADIENTE */}
+                <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                    <div className="relative flex flex-wrap items-center gap-8">
+                        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/10 border-4 border-white/20 shadow-2xl backdrop-blur-md">
+                            <School className="h-10 w-10 text-white" />
                         </div>
-                        <p className="text-slate-500 dark:text-slate-400 font-medium">
-                            {educationCenter.city || 'Ciudad no especificada'} · {educationCenter.code || 'Sin código de centro'}
-                        </p>
+                        
+                        <div className="flex-1 space-y-2">
+                            <div className="flex flex-wrap items-center gap-4">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
+                                    {educationCenter.name}
+                                </h1>
+                                {isTrashed && (
+                                    <Badge variant="destructive" className="bg-white/20 text-white border-white/30 backdrop-blur-md rounded-lg h-6 text-[10px]">
+                                        Archivado
+                                    </Badge>
+                                )}
+                            </div>
+                            
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
+                                <div className="flex items-center gap-2">
+                                    <MapPin className="h-4 w-4" />
+                                    <span className="font-bold tracking-tight text-xs uppercase">{educationCenter.city || 'Ciudad no especificada'}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Hash className="h-4 w-4" />
+                                    <span className="font-bold tracking-tight text-xs uppercase">{educationCenter.code || 'Sin código'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 pt-2">
+                            {isTrashed ? (
+                                canManage && (
+                                    <>
+                                        <Button
+                                            variant="outline"
+                                            className="bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-2xl px-6 font-bold"
+                                            onClick={() => router.post(`/centros/${educationCenter.id}/restore`)}
+                                        >
+                                            Restaurar
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            className="rounded-2xl px-6 font-bold"
+                                            onClick={() => {
+                                                if (confirm('¿Seguro que quieres eliminar definitivamente este centro?')) {
+                                                    router.delete(`/centros/${educationCenter.id}/force`);
+                                                }
+                                            }}
+                                        >
+                                            Eliminar Definitivo
+                                        </Button>
+                                    </>
+                                )
+                            ) : (
+                                canManage && (
+                                    <ConfirmNavigationButton
+                                        href={`/centros/${educationCenter.id}/edit`}
+                                        title="Confirmar edición"
+                                        description={`Vas a editar la ficha de ${educationCenter.name}.`}
+                                        confirmLabel="Ir a editar"
+                                        className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-8 font-black shadow-lg transition-all"
+                                    >
+                                        Editar Información
+                                    </ConfirmNavigationButton>
+                                )
+                            )}
+                        </div>
                     </div>
                 </div>
 
                 {/* PANEL ÚNICO UNIFICADO */}
-                <Card className="app-panel rounded-3xl overflow-hidden">
+                <Card className="app-panel rounded-[2rem] overflow-hidden border-sidebar/10 shadow-2xl">
                     <Tabs defaultValue="general" className="w-full">
                         {/* NAVEGACIÓN INTEGRADA */}
                         <div className="bg-slate-50/30 dark:bg-slate-800/20 border-b border-sidebar/20 px-6 pt-4">
@@ -389,7 +405,7 @@ export default function Show({
                                     {canExport && (
                                         <Dialog open={exportOpen} onOpenChange={setExportOpen}>
                                             <DialogTrigger asChild>
-                                                <Button className="h-12 px-6 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-2 shadow-lg shadow-slate-900/20">
+                                                <Button className="h-12 px-6 rounded-2xl bg-sidebar hover:bg-sidebar/90 text-sidebar-foreground flex items-center gap-2 shadow-lg shadow-sidebar/20">
                                                     <FileDown className="h-4 w-4" />
                                                     Exportar Excel
                                                 </Button>
@@ -541,7 +557,7 @@ export default function Show({
                                                     placeholder="Añade observaciones internas sobre este centro..."
                                                 />
                                                 <div className="flex gap-2">
-                                                    <Button size="sm" className="rounded-xl px-8 bg-slate-900" onClick={() => router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar</Button>
+                                                    <Button size="sm" className="rounded-xl px-8 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar</Button>
                                                     <Button size="sm" variant="outline" className="rounded-xl px-8" onClick={() => { setNotesValue(educationCenter.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
                                                 </div>
                                             </div>

@@ -13,10 +13,14 @@ export function NotificationBell() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative text-white hover:bg-white/10">
-                    <Bell className="h-5 w-5" />
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="relative h-9 w-9 rounded-full bg-sidebar/85 text-white shadow-md hover:bg-sidebar hover:text-white transition-all duration-300 border border-white/10 group"
+                >
+                    <Bell className="relative h-[18px] w-[18px] transition-transform duration-300 group-hover:scale-125" />
                     {notifications.length > 0 && (
-                        <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                        <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white ring-2 ring-sidebar shadow-sm">
                             {notifications.length}
                         </span>
                     )}

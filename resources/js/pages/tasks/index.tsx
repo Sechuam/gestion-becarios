@@ -726,7 +726,7 @@ export default function Index({
                         <>
                             {isTutor && (
                                 <Button
-                                    className="gap-2"
+                                    className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                                     onClick={() => router.get('/tareas/create')}
                                 >
                                     <PlusCircle className="h-4 w-4" />
@@ -839,6 +839,7 @@ export default function Index({
                         onSort={handleSort}
                         emptyTitle="No hay tareas en esta vista"
                         emptyDescription="Ajusta los filtros, cambia a otra vista o crea una nueva tarea para empezar a mover el tablero."
+                        striped={true}
                     />
                 )}
 

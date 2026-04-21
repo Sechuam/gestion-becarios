@@ -96,13 +96,14 @@ function getRoleName(user: UserRow): string {
     return user.roles?.[0]?.name ?? 'none';
 }
 
-function UserRow({
+function UserRowItem({
     user,
     isSaving,
     roleName,
     roleOptions,
     onRoleChange,
     showBadge = false,
+    isAlternative,
 }: {
     user: UserRow;
     isSaving: boolean;
@@ -110,12 +111,13 @@ function UserRow({
     roleOptions: RoleOption[];
     onRoleChange: (user: UserRow, newRole: string) => void;
     showBadge?: boolean;
+    isAlternative?: boolean;
 }) {
     const meta = ROLE_META[roleName] ?? ROLE_META.none;
     const RoleIcon = meta.icon;
 
     return (
-        <div className="flex items-center gap-3 px-4 py-2 transition-colors hover:bg-muted/40">
+        <div className={`flex items-center gap-3 px-4 py-2 transition-colors hover:bg-muted/40 ${isAlternative ? 'bg-sidebar/5 dark:bg-sidebar/10' : ''}`}>
             <Avatar className="h-7 w-7 shrink-0 border border-border">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className={`text-[10px] font-bold ${meta.color} bg-muted`}>
@@ -276,37 +278,43 @@ export default function UsersIndex({
             <Head title="Gestión de Usuarios" />
 
             <div className="space-y-5">
-                {/* HEADER */}
-                <section className="app-panel relative overflow-hidden p-6">
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-22 bg-[linear-gradient(90deg,rgba(15,23,42,0.96)_0%,rgba(15,23,42,0.94)_22%,rgba(30,41,59,0.92)_48%,rgba(51,65,85,0.78)_68%,rgba(100,116,139,0.3)_84%,rgba(255,255,255,0)_94%)]" />
-                    <div className="pointer-events-none absolute left-0 top-0 h-22 w-[52rem] bg-[linear-gradient(90deg,rgba(15,23,42,0.2)_0%,rgba(15,23,42,0.14)_62%,rgba(15,23,42,0)_100%)]" />
-                    <div className="relative flex flex-wrap items-start justify-between gap-5">
-                        <div className="space-y-2">
-                            <p className="section-kicker text-white/80">Panel de administración</p>
-                            <h1 className="page-title flex items-center gap-3 text-white">
-                                <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
-                                    <Users className="h-5 w-5" />
+                {/* HEADER CON GRADIENTE CORPORATIVO */}
+                <section className="relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-8 rounded-[2rem]">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                    <div className="relative flex flex-wrap items-center justify-between gap-6">
+                        <div className="flex-1 space-y-3">
+                            <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/90 backdrop-blur-md border border-white/20">
+                                Panel de administración
+                            </p>
+                            <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-4 leading-none">
+                                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
+                                    <Users className="h-6 w-6" />
                                 </span>
                                 Gestión de Usuarios
                             </h1>
-                            <p className="page-subtitle">Gestiona roles de los {counts.all} usuarios del sistema.</p>
+                            <p className="max-w-3xl text-sm font-medium text-white/70 leading-relaxed italic line-clamp-1">
+                                Administra roles y permisos de los {counts.all} usuarios registrados.
+                            </p>
                         </div>
-                        <Button onClick={() => setIsInviteModalOpen(true)} className="gap-2 bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">
-                            <MailPlus className="h-4 w-4" />
+                        <Button 
+                            onClick={() => setIsInviteModalOpen(true)} 
+                            className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-6 font-black shadow-lg transition-all h-10 text-xs"
+                        >
+                            <MailPlus className="mr-2 h-4 w-4" />
                             Invitar Usuario
                         </Button>
                     </div>
 
                     <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
                         {[
-                            { key: 'all', label: 'Total', color: 'text-slate-500' },
-                            { key: 'admin', label: 'Admins', color: 'text-rose-500' },
-                            { key: 'tutor', label: 'Tutores', color: 'text-violet-500' },
-                            { key: 'intern', label: 'Becarios', color: 'text-emerald-500' },
+                            { key: 'all', label: 'Total', color: 'text-white' },
+                            { key: 'admin', label: 'Admins', color: 'text-rose-300' },
+                            { key: 'tutor', label: 'Tutores', color: 'text-violet-300' },
+                            { key: 'intern', label: 'Becarios', color: 'text-emerald-300' },
                         ].map(({ key, label, color }) => (
-                            <div key={key} className="metric-tile px-4 py-3.5">
-                                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
-                                <p className={`mt-1 text-[1.45rem] font-semibold tracking-[-0.03em] ${color}`}>{counts[key] ?? 0}</p>
+                            <div key={key} className="relative overflow-hidden rounded-2xl bg-white/10 p-5 shadow-lg backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-white/60">{label}</p>
+                                <p className={`mt-2 text-3xl font-black tracking-tight ${color}`}>{counts[key] ?? 0}</p>
                             </div>
                         ))}
                     </div>
@@ -319,7 +327,7 @@ export default function UsersIndex({
                         placeholder="Busca un usuario por nombre o email..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        className="border-border bg-card pl-10 pr-9 text-foreground placeholder:text-muted-foreground shadow-sm dark:bg-slate-900/60"
+                        className="border-sidebar/20 bg-card pl-10 pr-9 text-foreground placeholder:text-muted-foreground shadow-sm dark:bg-slate-900/60 rounded-2xl h-12"
                     />
                     {isSearching && (
                         <button
@@ -343,7 +351,11 @@ export default function UsersIndex({
                             type="button"
                             variant={activeRole === item.key ? 'default' : 'outline'}
                             onClick={() => setActiveRole(item.key as 'all' | 'admin' | 'tutor' | 'intern')}
-                            className="rounded-full"
+                            className={`rounded-full transition-all ${
+                                activeRole === item.key
+                                    ? 'border-sidebar bg-sidebar text-white shadow-md hover:bg-sidebar/90'
+                                    : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground'
+                            }`}
                         >
                             {item.label} ({counts[item.key] ?? 0})
                         </Button>
@@ -351,7 +363,7 @@ export default function UsersIndex({
                     ))}
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                <div className="overflow-hidden rounded-[2rem] border border-sidebar/10 bg-white dark:bg-slate-900/60 shadow-xl">
                     <p className="border-b border-border px-4 py-2 text-xs font-semibold text-muted-foreground">
                         {filteredUsers.length} usuario{filteredUsers.length !== 1 ? 's' : ''}
                         {filteredUsers.length > 0 && (
@@ -374,8 +386,8 @@ export default function UsersIndex({
                         </div>
                     ) : (
                         <div className="divide-y divide-border/60">
-                            {paginatedUsers.map((user) => (
-                                <UserRow
+                            {paginatedUsers.map((user, index) => (
+                                <UserRowItem
                                     key={user.id}
                                     user={user}
                                     isSaving={savingId === user.id}
@@ -383,6 +395,7 @@ export default function UsersIndex({
                                     roleOptions={roleOptions}
                                     onRoleChange={handleRoleChange}
                                     showBadge={activeRole === 'all' || isSearching}
+                                    isAlternative={index % 2 !== 0}
                                 />
                             ))}
                         </div>

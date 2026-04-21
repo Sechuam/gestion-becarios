@@ -68,50 +68,65 @@ export default function Show({
 
             <div className="w-full space-y-6 p-6 min-h-screen">
                 {/* CABECERA */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between px-2">
                     <Button
                         variant="ghost"
-                        className="text-slate-600 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl"
+                        className="text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-[10px]"
                         asChild
                     >
                         <Link href="/becarios">
                             <ArrowLeft className="h-4 w-4 mr-2" /> Volver al listado
                         </Link>
                     </Button>
-                    <ConfirmNavigationButton
-                        href={`/interns/${intern.id}/edit`}
-                        title="Confirmar edición"
-                        description={`Vas a editar el perfil de ${intern.user.name}.`}
-                        confirmLabel="Ir a editar"
-                        className="bg-primary text-white hover:opacity-90 rounded-xl px-6"
-                    >
-                        Editar perfil
-                    </ConfirmNavigationButton>
                 </div>
 
-                {/* HERO */}
-                <div className="flex items-center gap-6 pb-2">
-                    <Avatar className="h-20 w-20 shrink-0 rounded-3xl border border-sidebar shadow-sm">
-                        <AvatarImage src={intern.user.avatar} alt={intern.user.name} className="object-cover" />
-                        <AvatarFallback className="bg-white dark:bg-slate-900 text-primary">
-                            <User className="h-10 w-10" />
-                        </AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
-                                {intern.user.name}
-                            </h1>
-                            <StatusBadge status={intern.status} />
+                {/* HERO INTEGRADO CON GRADIENTE */}
+                <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-8">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                    <div className="relative flex flex-wrap items-center gap-8">
+                        <Avatar className="h-20 w-20 shrink-0 rounded-2xl border-4 border-white/20 shadow-2xl">
+                            <AvatarImage src={intern.user.avatar} alt={intern.user.name} className="object-cover" />
+                            <AvatarFallback className="bg-white/10 text-white backdrop-blur-md">
+                                <User className="h-10 w-10" />
+                            </AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="flex-1 space-y-2">
+                            <div className="flex flex-wrap items-center gap-4">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
+                                    {intern.user.name}
+                                </h1>
+                                <StatusBadge status={intern.status} className="bg-white/20 text-white border-white/30 backdrop-blur-md h-6 text-[10px]" />
+                            </div>
+                            
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
+                                <div className="flex items-center gap-2">
+                                    <GraduationCap className="h-4 w-4" />
+                                    <span className="font-bold tracking-tight text-xs uppercase">{intern.academic_degree}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <User className="h-4 w-4" />
+                                    <span className="font-bold tracking-tight text-xs uppercase">Becario</span>
+                                </div>
+                            </div>
                         </div>
-                        <p className="text-slate-500 dark:text-slate-400 font-medium">
-                            Becario · {intern.academic_degree}
-                        </p>
+
+                        <div className="flex gap-3 pt-2">
+                            <ConfirmNavigationButton
+                                href={`/interns/${intern.id}/edit`}
+                                title="Confirmar edición"
+                                description={`Vas a editar el perfil de ${intern.user.name}.`}
+                                confirmLabel="Ir a editar"
+                                className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-8 font-black shadow-lg transition-all"
+                            >
+                                Editar perfil
+                            </ConfirmNavigationButton>
+                        </div>
                     </div>
                 </div>
                 {/* TABS INTERFACE */}
                 {/* PANEL ÚNICO UNIFICADO */}
-                <Card className="app-panel rounded-3xl overflow-hidden">
+                <Card className="app-panel rounded-[2rem] overflow-hidden border-sidebar/10 shadow-2xl">
                     <Tabs defaultValue="resumen" className="w-full">
                         {/* NAVEGACIÓN INTEGRADA EN LA CABECERA DEL PANEL */}
                         <div className="bg-slate-50/30 dark:bg-slate-800/20 border-b border-sidebar/20 px-6 pt-4">
@@ -484,7 +499,7 @@ export default function Show({
                                                     placeholder="Añade observaciones sobre el desempeño..."
                                                 />
                                                 <div className="flex gap-2">
-                                                    <Button size="sm" className="rounded-xl px-6 bg-slate-900" onClick={() => router.patch(`/interns/${intern.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar Cambios</Button>
+                                                    <Button size="sm" className="rounded-xl px-6 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/interns/${intern.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar Cambios</Button>
                                                     <Button size="sm" variant="outline" className="rounded-xl" onClick={() => { setNotesValue(intern.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
                                                 </div>
                                             </div>

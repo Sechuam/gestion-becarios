@@ -18,7 +18,7 @@ export function AppSidebarHeader({
                 </div>
             </div>
 
-            <div className="flex items-center rounded-xl border border-sidebar bg-sidebar p-1 shadow-md transition-all hover:opacity-90">
+            <div className="flex items-center rounded-xl border border-sidebar p-1 shadow-sm transition-all hover:bg-stone-200/40">
                 <NotificationBell />
             </div>
 

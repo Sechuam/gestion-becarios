@@ -97,56 +97,51 @@ export default function Edit({
 
             <div className="page-surface">
                 {/* CABECERA */}
-                <div className="mb-6 flex items-center gap-4 border-b border-border pb-4">
-                    <Avatar className="flex h-14 w-14 shrink-0 overflow-hidden items-center justify-center rounded-full border border-border bg-muted">
-                        <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
-                        <AvatarFallback className="text-lg font-semibold text-muted-foreground bg-transparent">
-                            {intern.user?.name
-                                ? intern.user.name.substring(0, 2).toUpperCase()
-                                : 'B'}
-                        </AvatarFallback>
-                    </Avatar>
-                    <div>
-                        <h1 className="page-title">Editar perfil</h1>
-                        <p className="page-subtitle">
-                            Actualiza los datos, documentos y prácticas del
-                            becario.
+                <div className="mb-8 flex items-center gap-6">
+                    <div className="relative">
+                        <Avatar className="h-16 w-16 shrink-0 overflow-hidden items-center justify-center rounded-2xl border-2 border-sidebar/20 bg-white shadow-sm dark:bg-slate-900">
+                            <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
+                            <AvatarFallback className="text-xl font-black text-sidebar/40 bg-transparent">
+                                {intern.user?.name
+                                    ? intern.user.name.substring(0, 2).toUpperCase()
+                                    : 'BE'}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950 shadow-sm" title="Usuario Activo" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                        <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                            Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Expediente</span>
+                        </h1>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                            Actualizando a {intern.user.name} · {intern.dni}
                         </p>
                     </div>
                 </div>
 
-                <form onSubmit={requestConfirmation} className="space-y-6" noValidate>
-                    <Tabs defaultValue="personal" className="w-full">
-                        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-border bg-muted p-1 sm:h-12 sm:grid-cols-4 dark:border-slate-700/70 dark:bg-slate-800/70">
-                            <TabsTrigger
-                                className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground"
-                                value="personal"
-                            >
-                                Datos Personales
-                            </TabsTrigger>
-                            <TabsTrigger
-                                className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground"
-                                value="academic"
-                            >
-                                Académicos
-                            </TabsTrigger>
-                            <TabsTrigger
-                                className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground"
-                                value="documents"
-                            >
-                                Documentos
-                            </TabsTrigger>
-                            <TabsTrigger
-                                className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground"
-                                value="internship"
-                            >
-                                Prácticas
-                            </TabsTrigger>
-                        </TabsList>
+                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-1 md:p-8">
+                    <form onSubmit={requestConfirmation} className="space-y-8" noValidate>
+                        <Tabs defaultValue="personal" className="w-full">
+                            <TabsList className="flex h-auto w-full justify-start gap-8 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-8 px-2 overflow-x-auto scrollbar-none">
+                                {[
+                                    { value: 'personal', label: 'Datos Personales' },
+                                    { value: 'academic', label: 'Académicos' },
+                                    { value: 'documents', label: 'Documentación' },
+                                    { value: 'internship', label: 'Prácticas' }
+                                ].map(tab => (
+                                    <TabsTrigger
+                                        key={tab.value}
+                                        value={tab.value}
+                                        className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                    >
+                                        {tab.label}
+                                    </TabsTrigger>
+                                ))}
+                            </TabsList>
 
                         <TabsContent
                             value="personal"
-                            className="mt-4 space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                            className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div className="space-y-2">
@@ -301,7 +296,7 @@ export default function Edit({
 
                         <TabsContent
                             value="academic"
-                            className="mt-4 space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                            className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div className="space-y-2">
@@ -387,7 +382,7 @@ export default function Edit({
 
                         <TabsContent
                             value="documents"
-                            className="mt-4 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                            className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
                             <div className="w-full space-y-4">
                                 <h3 className="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
@@ -497,7 +492,7 @@ export default function Edit({
 
                         <TabsContent
                             value="internship"
-                            className="mt-4 space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                            className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div className="space-y-2">
@@ -718,38 +713,40 @@ export default function Edit({
                                 )}
                             </div>
                         </TabsContent>
-                    </Tabs>
+                        </Tabs>
 
-                    <div className="mt-4 flex justify-end gap-3 border-t border-border pt-6">
-                        <Button
-                            variant="outline"
-                            className="border-border text-foreground hover:bg-muted"
-                            asChild
-                        >
-                            <Link href={`/interns/${intern.id}`}>Cancelar</Link>
-                        </Button>
-                        <Button
-                            type="button"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90"
-                            disabled={processing}
-                            onClick={requestConfirmation}
-                        >
-                            Guardar Cambios
-                        </Button>
-                    </div>
-                </form>
+                        <div className="flex justify-end gap-3 border-t border-sidebar/10 pt-8 mt-4">
+                            <Button
+                                variant="outline"
+                                className="rounded-xl border-border px-6 text-foreground hover:bg-muted"
+                                asChild
+                            >
+                                <Link href={`/interns/${intern.id}`}>Cancelar</Link>
+                            </Button>
+                            <Button
+                                type="button"
+                                className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all font-bold"
+                                disabled={processing}
+                                onClick={requestConfirmation}
+                            >
+                                Guardar Cambios
+                            </Button>
+                        </div>
+                    </form>
+                </div>
 
                 <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-                    <DialogContent>
-                        <DialogTitle>Confirmar cambios</DialogTitle>
-                        <DialogDescription>
-                            Vas a guardar los cambios del perfil de {intern.user.name}.
+                    <DialogContent className="max-w-md rounded-3xl border-sidebar/10 shadow-2xl">
+                        <DialogTitle className="text-xl font-bold">Confirmar cambios</DialogTitle>
+                        <DialogDescription className="text-slate-500 py-2">
+                            Vas a guardar los cambios en el expediente de <span className="font-bold text-slate-900 dark:text-white">{intern.user.name}</span>. ¿Deseas continuar?
                         </DialogDescription>
-                        <DialogFooter className="gap-2">
+                        <DialogFooter className="gap-2 pt-4">
                             <DialogClose asChild>
-                                <Button variant="secondary">Cancelar</Button>
+                                <Button variant="ghost" className="rounded-xl px-6">Cancelar</Button>
                             </DialogClose>
                             <Button
+                                className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all font-bold"
                                 onClick={() => {
                                     setConfirmOpen(false);
                                     submit();

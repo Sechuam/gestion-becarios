@@ -76,177 +76,194 @@ export default function Edit({
             <Head title="Editar tarea" />
 
             <div className="page-surface">
-                <div className="mb-6">
-                    <h1 className="page-title">Editar tarea</h1>
-                    <p className="page-subtitle">
-                        Actualiza la información de la tarea.
+                <div className="mb-8 flex flex-col gap-1">
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                        Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Tarea</span>
+                    </h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                        Actualizando {task.title}
                     </p>
                 </div>
 
-                <form
-                    onSubmit={submit}
-                    className="space-y-6 rounded-xl border border-border/60 bg-card/90 p-6 shadow-sm"
-                >
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Título</Label>
-                            <Input
-                                id="title"
-                                value={data.title}
-                                onChange={(e) =>
-                                    setData('title', e.target.value)
-                                }
-                                className="border-border bg-background text-foreground"
-                            />
-                            {errors.title && (
+                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-8 md:p-12">
+                    <form onSubmit={submit} className="space-y-12" noValidate>
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">01</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Detalles de la Actividad</h3>
+                            </div>
+                            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Label htmlFor="title">Título</Label>
+                                    <Input
+                                        id="title"
+                                        value={data.title}
+                                        onChange={(e) =>
+                                            setData('title', e.target.value)
+                                        }
+                                        className="border-border bg-background text-foreground"
+                                    />
+                                    {errors.title && (
+                                        <p className="text-xs text-red-500">
+                                            {errors.title}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Tipo de práctica</Label>
+                                    <Select
+                                        value={data.practice_type_id}
+                                        onValueChange={(v) =>
+                                            setData('practice_type_id', v)
+                                        }
+                                    >
+                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                            <SelectValue placeholder="Seleccionar tipo" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {practice_types.map((type) => (
+                                                <SelectItem
+                                                    key={type.id}
+                                                    value={String(type.id)}
+                                                >
+                                                    {type.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.practice_type_id && (
+                                        <p className="text-xs text-red-500">
+                                            {errors.practice_type_id}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Descripción</Label>
+                                <textarea
+                                    id="description"
+                                    value={data.description}
+                                    onChange={(e) =>
+                                        setData('description', e.target.value)
+                                    }
+                                    className="min-h-[120px] w-full rounded-2xl border border-sidebar/10 bg-slate-50/50 dark:bg-slate-950/30 px-4 py-3 text-sm text-foreground shadow-sm outline-none focus-visible:border-sidebar focus-visible:ring-4 focus-visible:ring-sidebar/10 transition-all font-medium"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4 pt-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">02</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Planificación Temporal</h3>
+                            </div>
+                            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                                <div className="space-y-2">
+                                    <Label>Estado</Label>
+                                    <Select
+                                        value={data.status}
+                                        onValueChange={(v) => setData('status', v)}
+                                    >
+                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {STATUS_OPTIONS.map((opt) => (
+                                                <SelectItem
+                                                    key={opt.value}
+                                                    value={opt.value}
+                                                >
+                                                    {opt.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Prioridad</Label>
+                                    <Select
+                                        value={data.priority}
+                                        onValueChange={(v) => setData('priority', v)}
+                                    >
+                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {PRIORITY_OPTIONS.map((opt) => (
+                                                <SelectItem
+                                                    key={opt.value}
+                                                    value={opt.value}
+                                                >
+                                                    {opt.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="due_date">Fecha de entrega</Label>
+                                    <DatePicker
+                                        id="due_date"
+                                        value={data.due_date}
+                                        onChange={(value) =>
+                                            setData('due_date', value)
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4 pt-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">03</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Becarios Asignados</h3>
+                            </div>
+                            <ToggleGroup
+                                type="multiple"
+                                className="flex flex-wrap justify-start gap-3"
+                                value={data.intern_ids.map((id: number) => String(id))}
+                            >
+                                {interns.map((intern) => (
+                                    <ToggleGroupItem
+                                        key={intern.id}
+                                        value={String(intern.id)}
+                                        onClick={() => toggleIntern(intern.id)}
+                                        className="h-10 rounded-xl border border-sidebar/10 bg-white dark:bg-slate-900 px-4 text-xs font-bold transition-all data-[state=on]:bg-sidebar data-[state=on]:text-sidebar-foreground shadow-sm"
+                                    >
+                                        {intern.user?.name ||
+                                            `Becario #${intern.id}`}
+                                    </ToggleGroupItem>
+                                ))}
+                            </ToggleGroup>
+                            {errors.intern_ids && (
                                 <p className="text-xs text-red-500">
-                                    {errors.title}
+                                    {errors.intern_ids}
                                 </p>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label>Tipo de práctica</Label>
-                            <Select
-                                value={data.practice_type_id}
-                                onValueChange={(v) =>
-                                    setData('practice_type_id', v)
-                                }
+                        <div className="flex justify-end gap-3 border-t border-sidebar/10 pt-8 mt-4">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="rounded-xl border-border px-6 text-foreground hover:bg-muted"
+                                asChild
                             >
-                                <SelectTrigger className="border-border bg-background text-foreground">
-                                    <SelectValue placeholder="Seleccionar tipo" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {practice_types.map((type) => (
-                                        <SelectItem
-                                            key={type.id}
-                                            value={String(type.id)}
-                                        >
-                                            {type.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {errors.practice_type_id && (
-                                <p className="text-xs text-red-500">
-                                    {errors.practice_type_id}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Descripción</Label>
-                        <textarea
-                            id="description"
-                            value={data.description}
-                            onChange={(e) =>
-                                setData('description', e.target.value)
-                            }
-                            className="min-h-[120px] w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/40"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div className="space-y-2">
-                            <Label>Estado</Label>
-                            <Select
-                                value={data.status}
-                                onValueChange={(v) => setData('status', v)}
+                                <Link href="/tareas">Cancelar</Link>
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all font-bold"
+                                disabled={processing}
                             >
-                                <SelectTrigger className="border-border bg-background text-foreground">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {STATUS_OPTIONS.map((opt) => (
-                                        <SelectItem
-                                            key={opt.value}
-                                            value={opt.value}
-                                        >
-                                            {opt.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                Guardar cambios
+                            </Button>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label>Prioridad</Label>
-                            <Select
-                                value={data.priority}
-                                onValueChange={(v) => setData('priority', v)}
-                            >
-                                <SelectTrigger className="border-border bg-background text-foreground">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {PRIORITY_OPTIONS.map((opt) => (
-                                        <SelectItem
-                                            key={opt.value}
-                                            value={opt.value}
-                                        >
-                                            {opt.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="due_date">Fecha de entrega</Label>
-                            <DatePicker
-                                id="due_date"
-                                value={data.due_date}
-                                onChange={(value) =>
-                                    setData('due_date', value)
-                                }
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <Label>Becarios asignados</Label>
-                        <ToggleGroup
-                            type="multiple"
-                            className="flex flex-wrap gap-2"
-                        >
-                            {interns.map((intern) => (
-                                <ToggleGroupItem
-                                    key={intern.id}
-                                    value={String(intern.id)}
-                                    onClick={() => toggleIntern(intern.id)}
-                                    className="text-xs"
-                                >
-                                    {intern.user?.name ||
-                                        `Becario #${intern.id}`}
-                                </ToggleGroupItem>
-                            ))}
-                        </ToggleGroup>
-                        {errors.intern_ids && (
-                            <p className="text-xs text-red-500">
-                                {errors.intern_ids}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="flex justify-end gap-3 border-t border-border pt-6">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-border text-foreground hover:bg-muted"
-                            asChild
-                        >
-                            <Link href="/tareas">Cancelar</Link>
-                        </Button>
-                        <Button
-                            type="submit"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90"
-                            disabled={processing}
-                        >
-                            Guardar cambios
-                        </Button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </AppLayout>
     );

@@ -263,31 +263,29 @@ export default function Index({
                     metrics={headerMetrics}
                 />
 
-                <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                    <div className="flex flex-wrap items-center gap-4">
-                        <div className="relative min-w-[240px] flex-1">
-                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <div className="rounded-[2.5rem] border border-sidebar/10 bg-white p-8 shadow-2xl dark:bg-slate-900/60 overflow-hidden">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/50 p-6 rounded-[2rem] border border-sidebar/10 dark:bg-slate-800/50">
+                        <div className="relative min-w-[300px] flex-1">
+                            <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-sidebar/40" />
                             <Input
-                                placeholder="Buscar por nombre o email..."
-                                className="border-border bg-card pl-9 text-foreground placeholder:text-muted-foreground"
+                                placeholder="Buscar por nombre, email o cargo..."
+                                className="h-12 border-sidebar/20 bg-white pl-12 text-foreground placeholder:text-muted-foreground rounded-2xl shadow-sm focus-visible:ring-sidebar transition-all"
                                 defaultValue={filters.search}
-                                onChange={(e) =>
-                                    handleFilter('search', e.target.value)
-                                }
+                                onChange={(e) => handleFilter('search', e.target.value)}
                             />
                         </div>
 
-                        <p className="ml-auto text-sm font-medium whitespace-nowrap text-muted-foreground">
-                            Mostrando {tutors.data.length} de {tutors.total}{' '}
-                            tutores
-                        </p>
+                        <div className="flex items-center gap-4">
+                             <p className="text-sm font-black text-sidebar uppercase tracking-widest bg-sidebar/5 px-4 py-2 rounded-xl border border-sidebar/10">
+                                {tutors.total} Tutores Registrados
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                        <span className="font-medium">
-                            Filtros disponibles:
-                        </span>
-                        <span>Búsqueda por nombre o email</span>
+                    <div className="mt-6 flex flex-wrap items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
+                        <span className="flex items-center gap-1.5"><div className="h-1.5 w-1.5 rounded-full bg-sidebar" /> Filtro por Nombre</span>
+                        <span className="flex items-center gap-1.5"><div className="h-1.5 w-1.5 rounded-full bg-sidebar" /> Filtro por Email</span>
+                        <span className="flex items-center gap-1.5 ml-auto text-sidebar/60 italic font-medium lowercase">Mostrando {tutors.data.length} resultados en esta página</span>
                     </div>
                 </div>
 
@@ -297,14 +295,17 @@ export default function Index({
                     onClearAll={clearAllFilters}
                 />
 
-                <SimpleTable
-                    columns={columns}
-                    rows={tutors.data}
-                    rowKey={(row) => row.id}
-                    sortKey={filters.sort}
-                    sortDirection={filters.direction}
-                    onSort={handleSort}
-                />
+                <div className="rounded-[2.5rem] border border-sidebar/10 bg-white shadow-xl dark:bg-slate-900/60 overflow-hidden">
+                    <SimpleTable
+                        columns={columns}
+                        rows={tutors.data}
+                        rowKey={(row) => row.id}
+                        sortKey={filters.sort}
+                        sortDirection={filters.direction}
+                        onSort={handleSort}
+                        striped={true}
+                    />
+                </div>
 
                 <div className="mt-6 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">

@@ -97,38 +97,42 @@ export default function Create({
             <Head title="Nuevo Becario" />
 
             <div className="page-surface">
-                <div className="mb-6">
-                    <h1 className="page-title">Nuevo becario</h1>
-                    <p className="page-subtitle">
-                        Crea un nuevo becario y completa su información.
+                <div className="mb-8 flex flex-col gap-1">
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                        Nuevo <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Becario</span>
+                    </h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                        Formulario de alta de nuevo expediente
                     </p>
                 </div>
-                <form onSubmit={submit} className="space-y-6" noValidate>
-                    <Tabs defaultValue="personal" className="w-full">
-                        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-border bg-muted p-1 sm:h-12 sm:grid-cols-3 dark:border-slate-700/70 dark:bg-slate-800/70">
-                            <TabsTrigger
-                                value="personal"
-                                className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground"
-                            >
-                                Datos Personales
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="academic"
-                                className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground"
-                            >
-                                Académicos
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="internship"
-                                className="rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground"
-                            >
-                                Prácticas
-                            </TabsTrigger>
-                        </TabsList>
+
+                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-1 md:p-8">
+                    <form onSubmit={submit} className="space-y-8" noValidate>
+                        <Tabs defaultValue="personal" className="w-full">
+                            <TabsList className="flex h-auto w-full justify-start gap-8 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-8 px-2">
+                                <TabsTrigger
+                                    value="personal"
+                                    className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                >
+                                    Datos Personales
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="academic"
+                                    className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                >
+                                    Académicos
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="internship"
+                                    className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                >
+                                    Prácticas
+                                </TabsTrigger>
+                            </TabsList>
 
                         <TabsContent
                             value="personal"
-                            className="mt-4 space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                            className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
@@ -283,7 +287,7 @@ export default function Create({
 
                         <TabsContent
                             value="academic"
-                            className="mt-4 space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                            className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
                             <div className="space-y-4">
                                 <div className="space-y-2">
@@ -370,7 +374,7 @@ export default function Create({
 
                         <TabsContent
                             value="internship"
-                            className="mt-4 space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60"
+                            className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
@@ -667,24 +671,25 @@ export default function Create({
                         </TabsContent>
                     </Tabs>
 
-                    <div className="flex justify-end gap-3 border-t border-border pt-6">
+                    <div className="flex justify-end gap-3 border-t border-sidebar/10 pt-8">
                         <Button
                             variant="outline"
-                            className="border-border text-foreground hover:bg-muted"
+                            className="rounded-xl border-border px-6 text-foreground hover:bg-muted"
                             asChild
                         >
                             <Link href="/becarios">Cancelar</Link>
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90"
+                            className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all font-bold"
                             disabled={processing}
                             onClick={submit}
                         >
                             Guardar Becario
                         </Button>
-                    </div>
-                </form>
+                        </div>
+                    </form>
+                </div>
             </div>
         </AppLayout>
     );

@@ -78,7 +78,7 @@ export function KanbanBoard({
                             size="sm"
                             className={`gap-2 rounded-xl border shadow-sm ${
                                 boardFilter === filter.key
-                                    ? 'border-sidebar bg-[linear-gradient(90deg,rgba(15,23,42,0.96)_0%,rgba(30,41,59,0.92)_55%,rgba(71,85,105,0.82)_100%)] text-white hover:opacity-95'
+                                    ? 'border-sidebar bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white hover:opacity-95'
                                     : 'border-border/90 bg-white text-foreground hover:border-sidebar/35 hover:bg-slate-50'
                             }`}
                             onClick={() => onBoardFilterChange(filter.key)}
@@ -124,8 +124,8 @@ export function KanbanBoard({
                                 key={col.key}
                                 className={`flex min-h-[32rem] w-[18rem] min-w-[18rem] flex-col rounded-2xl border p-3 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
                                     index % 2 === 0
-                                        ? 'border-sidebar/90 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_34%),repeating-linear-gradient(135deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_14px),linear-gradient(180deg,rgba(15,23,42,0.97)_0%,rgba(30,41,59,0.94)_100%)] text-white'
-                                        : 'border-border/80 bg-[radial-gradient(circle_at_top_right,rgba(148,163,184,0.14),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(15,23,42,0.05),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(248,250,252,0.96)_100%)]'
+                                        ? 'border-sidebar/90 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_34%),repeating-linear-gradient(135deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_14px),linear-gradient(180deg,var(--sidebar)_0%,#244655_100%)] text-white'
+                                        : 'border-sidebar/15 bg-[radial-gradient(circle_at_top_right,rgba(148,163,184,0.1),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(220,233,229,0.4)_100%)]'
                                 } ${
                                     tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
                                         ? 'border-amber-300/70'

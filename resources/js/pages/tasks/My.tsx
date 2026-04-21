@@ -402,25 +402,25 @@ export default function My({
                                     setViewMode(value);
                                 }
                             }}
-                            variant="outline"
-                            size="sm"
-                            className="rounded-xl border border-sidebar bg-white p-0.5 shadow-sm"
+                            className="bg-white/10 p-1 rounded-2xl border border-white/20 backdrop-blur-md"
                         >
                             <ToggleGroupItem
                                 value="kanban"
-                                className="rounded-lg border border-sidebar bg-sidebar px-2 text-white hover:bg-sidebar/90 hover:text-white data-[state=on]:border-sidebar data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-sm"
+                                className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
                                 aria-label="Vista kanban"
                                 title="Vista kanban"
                             >
-                                <LayoutGrid className="h-4 w-4" />
+                                <LayoutGrid className="h-4 w-4 mr-2" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Tablero</span>
                             </ToggleGroupItem>
                             <ToggleGroupItem
                                 value="table"
-                                className="rounded-lg border border-sidebar bg-sidebar px-2 text-white hover:bg-sidebar/90 hover:text-white data-[state=on]:border-sidebar data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-sm"
+                                className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
                                 aria-label="Vista tabla"
                                 title="Vista tabla"
                             >
-                                <List className="h-4 w-4" />
+                                <List className="h-4 w-4 mr-2" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Lista</span>
                             </ToggleGroupItem>
                         </ToggleGroup>
                     }
@@ -491,28 +491,33 @@ export default function My({
                         sortKey={filters.sort}
                         sortDirection={filters.direction}
                         onSort={handleSort}
+                        striped={true}
                     />
                 )}
 
-                <div className="flex items-center gap-2">
-                    {tasks.links.map((link: any, i: number) => {
-                        const label = link.label
-                            .replace('Previous', 'Anterior')
-                            .replace('Next', 'Siguiente');
-                        return (
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+                    <span className="text-sm font-medium text-muted-foreground">
+                        Página {tasks.current_page ?? 1} de {tasks.last_page ?? 1}
+                    </span>
+                    <div className="flex items-center gap-2">
+                        {tasks.links.map((link: any, i: number) => (
                             <Link
                                 key={i}
                                 href={link.url ?? '#'}
-                                className={`rounded-xl border px-4 py-2 text-sm font-semibold shadow-sm transition-all ${
-                                    link.active
-                                        ? 'border-sidebar bg-sidebar text-sidebar-foreground'
-                                        : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                dangerouslySetInnerHTML={{ __html: label }}
                                 preserveState
+                                className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
+                                    link.active
+                                        ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
+                                        : 'border-border bg-card text-muted-foreground hover:border-sidebar/40 hover:bg-muted'
+                                } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
+                                dangerouslySetInnerHTML={{
+                                    __html: link.label
+                                        .replace('Previous', 'Anterior')
+                                        .replace('Next', 'Siguiente'),
+                                }}
                             />
-                        );
-                    })}
+                        ))}
+                    </div>
                 </div>
             </div>
 

@@ -123,16 +123,19 @@ export function TableActionMenu({ actions }: { actions: ActionConfig[] }) {
                     if (!open) setPendingAction(null);
                 }}
             >
-                <DialogContent>
-                    <DialogTitle>{pendingAction?.confirm?.title}</DialogTitle>
-                    <DialogDescription>
+                <DialogContent className="max-w-md rounded-3xl border-sidebar/10 shadow-2xl">
+                    <DialogTitle className="text-xl font-bold">{pendingAction?.confirm?.title}</DialogTitle>
+                    <DialogDescription className="text-slate-500 py-2">
                         {pendingAction?.confirm?.description}
                     </DialogDescription>
-                    <DialogFooter className="gap-2">
+                    <DialogFooter className="gap-2 pt-4">
                         <DialogClose asChild>
-                            <Button variant="secondary">Cancelar</Button>
+                            <Button variant="ghost" className="rounded-xl border-border px-6">Cancelar</Button>
                         </DialogClose>
-                        <Button onClick={handleConfirm}>
+                        <Button 
+                            onClick={handleConfirm}
+                            className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all"
+                        >
                             {pendingAction?.confirm?.confirmLabel || 'Continuar'}
                         </Button>
                     </DialogFooter>

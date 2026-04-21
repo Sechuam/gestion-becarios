@@ -219,64 +219,82 @@ export default function Show({
             <Head title={`Tarea: ${task.title}`} />
 
             <div className="w-full space-y-6">
-                {/* Header / Hero Section */}
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" asChild className="rounded-full bg-white/50 shadow-sm dark:bg-slate-800/50">
-                            <Link href="/tareas">
-                                <ArrowLeft className="h-5 w-5" />
-                            </Link>
-                        </Button>
-                        <div>
-                            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-                                {task.title}
-                            </h1>
-                            <div className="mt-1 flex items-center gap-2 text-sm text-slate-500">
-                                <span className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-bold ${
-                                    String(task.status) === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                                    String(task.status) === 'pending' ? 'bg-amber-100 text-amber-700' :
-                                    String(task.status) === 'rejected' ? 'bg-red-100 text-red-700' :
-                                    'bg-slate-100 text-slate-700'
+                <div className="flex items-center justify-between px-2 pb-2">
+                    <Button
+                        variant="ghost"
+                        className="text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                        asChild
+                    >
+                        <Link href="/tareas">
+                            <ArrowLeft className="h-4 w-4 mr-2" /> Volver al listado
+                        </Link>
+                    </Button>
+                </div>
+
+                {/* HERO INTEGRADO CON GRADIENTE */}
+                <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-8">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                    <div className="relative flex flex-wrap items-center gap-6">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 border-2 border-white/20 shadow-2xl backdrop-blur-md">
+                            <LayoutGrid className="h-8 w-8 text-white" />
+                        </div>
+                        
+                        <div className="flex-1 space-y-2">
+                            <div className="flex flex-wrap items-center gap-4">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
+                                    {task.title}
+                                </h1>
+                                <span className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border border-white/30 backdrop-blur-md ${
+                                    String(task.status) === 'completed' ? 'bg-emerald-500/20 text-emerald-100' :
+                                    String(task.status) === 'pending' ? 'bg-amber-500/20 text-amber-100' :
+                                    String(task.status) === 'rejected' ? 'bg-red-500/20 text-red-100' :
+                                    'bg-white/10 text-white'
                                 }`}>
                                     <div className={`h-1.5 w-1.5 rounded-full ${
-                                        String(task.status) === 'completed' ? 'bg-emerald-500' :
-                                        String(task.status) === 'pending' ? 'bg-amber-500' :
-                                        String(task.status) === 'rejected' ? 'bg-red-500' :
-                                        'bg-slate-500'
+                                        String(task.status) === 'completed' ? 'bg-emerald-400' :
+                                        String(task.status) === 'pending' ? 'bg-amber-400' :
+                                        String(task.status) === 'rejected' ? 'bg-red-400' :
+                                        'bg-white'
                                     }`} />
                                     {getTaskStatusLabel(task.status)}
                                 </span>
-                                <span>•</span>
-                                <span className="flex items-center gap-1">
+                            </div>
+                            
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
+                                <div className="flex items-center gap-2">
                                     <Clock className="h-3.5 w-3.5" />
-                                    Vence el {formatDateEs(task.due_date)}
-                                </span>
+                                    <span className="font-bold tracking-tight text-xs uppercase">Vence el {formatDateEs(task.due_date)}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Pencil className="h-3.5 w-3.5" />
+                                    <span className="font-bold tracking-tight text-xs uppercase">Prioridad: {getTaskPriorityLabel(task.priority)}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                        {(canSubmitTask || canTutorComplete) && (
-                            <Button
-                                onClick={submitTask}
-                                disabled={completeForm.processing}
-                                className="h-10 rounded-xl bg-[#1f4f52] px-6 text-white shadow-lg shadow-[#1f4f52]/20 hover:bg-[#1f4f52]/90"
-                            >
-                                <CheckCircle2 className="mr-2 h-4 w-4" />
-                                {canTutorComplete ? 'Completar Tarea' : 'Entregar Trabajo'}
-                            </Button>
-                        )}
-                        {canReject && (
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="h-10 rounded-xl border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                onClick={() => setShowRejectForm((current) => !current)}
-                            >
-                                <XCircle className="mr-2 h-4 w-4" />
-                                Rechazar
-                            </Button>
-                        )}
+                        <div className="flex gap-3 pt-2">
+                            {(canSubmitTask || canTutorComplete) && (
+                                <Button
+                                    onClick={submitTask}
+                                    disabled={completeForm.processing}
+                                    className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-8 font-black shadow-lg transition-all"
+                                >
+                                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                                    {canTutorComplete ? 'Completar Tarea' : 'Entregar Trabajo'}
+                                </Button>
+                            )}
+                            {canReject && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-2xl px-6 font-bold"
+                                    onClick={() => setShowRejectForm((current) => !current)}
+                                >
+                                    <XCircle className="mr-2 h-4 w-4 text-rose-300" />
+                                    Rechazar
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -315,7 +333,7 @@ export default function Show({
                 )}
 
                 {/* Main Content with Tabs */}
-                <Card className="app-panel overflow-hidden border-sidebar bg-white/40 shadow-xl backdrop-blur-sm dark:bg-slate-900/40">
+                <Card className="app-panel rounded-[2rem] overflow-hidden border-sidebar/10 shadow-2xl bg-white/40 backdrop-blur-sm dark:bg-slate-900/40">
                     <Tabs defaultValue="summary" className="w-full">
                         <div className="border-b border-sidebar bg-stone-100/40 px-6 py-2 dark:bg-slate-900/60">
                             <TabsList className="h-12 w-full justify-start gap-6 bg-transparent p-0">
@@ -509,7 +527,7 @@ export default function Show({
                                             <Button
                                                 type="submit"
                                                 disabled={attachmentForm.processing}
-                                                className="w-full rounded-xl bg-slate-900 text-white hover:bg-slate-800"
+                                                className="w-full rounded-xl bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                                             >
                                                 <Download className="mr-2 h-4 w-4" />
                                                 Subir Ahora
@@ -646,7 +664,7 @@ export default function Show({
                                                 <Button
                                                     type="submit"
                                                     disabled={commentForm.processing}
-                                                    className="w-full h-11 rounded-xl bg-[#1f4f52] text-white shadow-lg shadow-[#1f4f52]/20 hover:bg-[#1f4f52]/90"
+                                                    className="w-full h-11 rounded-xl bg-sidebar text-sidebar-foreground shadow-lg shadow-sidebar/20 hover:bg-sidebar/90"
                                                 >
                                                     Publicar en el Hilo
                                                 </Button>

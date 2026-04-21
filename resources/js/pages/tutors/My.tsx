@@ -305,7 +305,7 @@ export default function My({
                     ]}
                     actions={
                         <Button
-                            className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
+                            className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                             onClick={() => router.get('/tareas/create')}
                         >
                             <Plus className="h-4 w-4" />
@@ -314,13 +314,13 @@ export default function My({
                     }
                 />
 
-                <div className="space-y-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                <div className="space-y-4 rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="relative min-w-[240px] flex-1">
-                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por nombre, email, DNI o centro..."
-                                className="border-border bg-card pl-9 text-foreground placeholder:text-muted-foreground"
+                                className="border-sidebar/20 bg-card pl-10 h-12 text-foreground placeholder:text-muted-foreground rounded-2xl shadow-sm"
                                 defaultValue={filters.search}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -334,7 +334,7 @@ export default function My({
                                 handleFilter('status', value)
                             }
                         >
-                            <SelectTrigger className="w-[180px] border-border bg-card text-foreground">
+                            <SelectTrigger className="w-[180px] h-12 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm">
                                 <SelectValue>
                                     {{
                                         active: 'Activos',
@@ -343,7 +343,7 @@ export default function My({
                                     }[filters.status as string] || 'Todos'}
                                 </SelectValue>
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="rounded-2xl border-sidebar/20">
                                 <SelectItem value="all">Todos</SelectItem>
                                 <SelectItem value="active">Activos</SelectItem>
                                 <SelectItem value="completed">
@@ -355,7 +355,7 @@ export default function My({
                             </SelectContent>
                         </Select>
 
-                        <p className="ml-auto text-sm font-medium whitespace-nowrap text-muted-foreground">
+                        <p className="ml-auto text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-3 py-1 rounded-full dark:bg-slate-800">
                             Mostrando {interns.data.length} de {interns.total}{' '}
                             becarios
                         </p>
@@ -372,6 +372,7 @@ export default function My({
                     columns={columns}
                     rows={interns.data}
                     rowKey={(row) => row.id}
+                    striped={true}
                 />
 
                 <div className="mt-6 w-full">
@@ -400,9 +401,9 @@ export default function My({
                     </div>
                 </div>
 
-                <Card>
-                    <CardHeader className="border-b border-border/70 pb-4">
-                        <CardTitle>Tareas recientes creadas por mí</CardTitle>
+                <Card className="app-panel rounded-[2rem] border-sidebar/10 shadow-xl overflow-hidden bg-white dark:bg-slate-900">
+                    <CardHeader className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-sidebar/10 pb-4">
+                        <CardTitle className="text-lg font-black tracking-tight text-slate-800 dark:text-white">Tareas recientes creadas por mí</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3 pt-1">
                         {recent_tasks.length > 0 ? (

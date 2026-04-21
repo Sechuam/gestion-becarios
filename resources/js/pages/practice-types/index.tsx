@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Pencil, Plus, Shapes } from 'lucide-react';
+import { Pencil, Plus, Shapes, Search } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import DeletePracticeTypeModal from '@/components/practice-types/DeletePracticeTypeModal';
@@ -138,27 +138,28 @@ export default function Index({ practice_types, filters = {} }: Props) {
 
             <div className="flex flex-col gap-6">
                 <ModuleHeader
-                    title="Tipos de práctica"
-                    description="Catálogo configurable por el administrador."
+                    title="Tipos de Práctica"
+                    description="Gestiona las categorías y clasificaciones de las tareas para organizar mejor el seguimiento de los becarios."
                     icon={<Shapes className="h-6 w-6" />}
                     actions={
                         isAdmin ? (
                             <Button
-                                className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
+                                className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-8 font-black shadow-lg transition-all pt-2 h-12"
                                 onClick={() => router.get('/tipos-practica/create')}
                             >
-                                <Plus className="h-4 w-4" />
+                                <Plus className="mr-2 h-5 w-5" />
                                 Nuevo tipo
                             </Button>
                         ) : undefined
                     }
                 />
 
-                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                <div className="flex flex-wrap items-center gap-4 rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                     <div className="relative w-full max-w-sm">
+                        <Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar por nombre..."
-                            className="border-border bg-background text-foreground placeholder:text-muted-foreground"
+                            className="border-sidebar/20 bg-card pl-10 h-12 text-foreground placeholder:text-muted-foreground rounded-2xl shadow-sm"
                             defaultValue={filters.search}
                             onChange={(e) =>
                                 handleFilter('search', e.target.value)
@@ -166,12 +167,12 @@ export default function Index({ practice_types, filters = {} }: Props) {
                         />
                     </div>
 
-                    <div className="w-50">
+                    <div className="w-56">
                         <Select
                             value={filters.status || 'all'}
                             onValueChange={(v) => handleFilter('status', v)}
                         >
-                            <SelectTrigger className="w-full border-border bg-background text-foreground">
+                            <SelectTrigger className="w-full h-12 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm">
                                 <SelectValue>
                                     {{
                                         active: 'Activos',
@@ -179,7 +180,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
                                     }[filters.status as string] || 'Todos'}
                                 </SelectValue>
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="rounded-2xl border-sidebar/20">
                                 <SelectItem value="all">Todos</SelectItem>
                                 <SelectItem value="active">Activos</SelectItem>
                                 <SelectItem value="inactive">
@@ -189,40 +190,49 @@ export default function Index({ practice_types, filters = {} }: Props) {
                         </Select>
                     </div>
 
-                    <p className="ml-auto text-sm font-medium text-muted-foreground">
+                    <p className="ml-auto text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-3 py-1 rounded-full dark:bg-slate-800">
                         Mostrando {practice_types.data.length} de{' '}
                         {practice_types.total} tipos
                     </p>
                 </div>
 
-                <SimpleTable
-                    columns={columns}
-                    rows={practice_types.data}
-                    rowKey={(row) => row.id}
-                    sortKey={filters.sort}
-                    sortDirection={filters.direction}
-                    onSort={handleSort}
-                />
+                <div className="rounded-[2.5rem] border border-sidebar/10 bg-white shadow-xl dark:bg-slate-900/60 overflow-hidden">
+                    <SimpleTable
+                        columns={columns}
+                        rows={practice_types.data}
+                        rowKey={(row) => row.id}
+                        sortKey={filters.sort}
+                        sortDirection={filters.direction}
+                        onSort={handleSort}
+                        striped={true}
+                    />
+                </div>
 
-                <div className="flex items-center gap-2">
-                    {practice_types.links.map((link: any, i: number) => {
-                        const label = link.label
-                            .replace('Previous', 'Anterior')
-                            .replace('Next', 'Siguiente');
-                        return (
-                            <Link
-                                key={i}
-                                href={link.url ?? '#'}
-                                className={`rounded-xl border px-4 py-2 text-sm font-semibold shadow-sm transition-all ${
-                                    link.active
-                                        ? 'border-sidebar bg-sidebar text-sidebar-foreground'
-                                        : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                dangerouslySetInnerHTML={{ __html: label }}
-                                preserveState
-                            />
-                        );
-                    })}
+                <div className="mt-6 w-full">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                        <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+                            Página {practice_types.current_page} de {practice_types.last_page}
+                        </span>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {practice_types.links.map((link: any, i: number) => (
+                                <Link
+                                    key={i}
+                                    href={link.url ?? '#'}
+                                    preserveState
+                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all ${
+                                        link.active
+                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
+                                            : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
+                                    } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label
+                                            .replace('Previous', 'Anterior')
+                                            .replace('Next', 'Siguiente'),
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </AppLayout>

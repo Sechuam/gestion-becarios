@@ -26,6 +26,7 @@ type SimpleTableProps<T> = {
     onSort?: (key: string) => void;
     emptyTitle?: string;
     emptyDescription?: string;
+    striped?: boolean;
 };
 
 export function SimpleTable<T>({
@@ -37,6 +38,7 @@ export function SimpleTable<T>({
     onSort,
     emptyTitle = 'No hay datos disponibles',
     emptyDescription = 'Ajusta los filtros o crea un nuevo registro para empezar.',
+    striped = false,
 }: SimpleTableProps<T>) {
     return (
         <div className="app-panel w-full overflow-hidden">
@@ -77,10 +79,14 @@ export function SimpleTable<T>({
                     </TableHeader>
                     <TableBody>
                         {rows.length > 0 ? (
-                            rows.map((row) => (
+                            rows.map((row, index) => (
                                 <TableRow
                                     key={rowKey(row)}
-                                    className="border-b border-border transition-colors hover:bg-muted/35"
+                                    className={`border-b border-sidebar/10 transition-colors hover:bg-muted/35 dark:border-slate-800/50 ${
+                                        striped && index % 2 !== 0
+                                            ? 'bg-sidebar/5 dark:bg-sidebar/10'
+                                            : ''
+                                    }`}
                                 >
                                     {columns.map((col) => (
                                         <TableCell

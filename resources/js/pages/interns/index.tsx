@@ -477,10 +477,10 @@ export default function Index({
                     actions={
                         canManage ? (
                             <Button
-                                className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
+                                className="gap-2 bg-sidebar/80 text-white border-2 border-white/20 hover:bg-white/10 hover:border-white/40 rounded-2xl px-8 font-black shadow-xl backdrop-blur-md transition-all h-12 pt-1"
                                 onClick={() => router.get('/interns/create')}
                             >
-                                <Plus className="h-4 w-4" />
+                                <Plus className="h-5 w-5" />
                                 Añadir Becario
                             </Button>
                         ) : undefined
@@ -518,6 +518,7 @@ export default function Index({
                     onSort={handleSort}
                     emptyTitle="No hay becarios que mostrar"
                     emptyDescription="Prueba con otros filtros o registra un nuevo becario para empezar a poblar el módulo."
+                    striped={true}
                 />
 
                 {/* PAGINACIÓN */}

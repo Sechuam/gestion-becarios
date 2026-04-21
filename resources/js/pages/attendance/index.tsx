@@ -8,6 +8,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { RequestAbsenceModal } from '@/components/attendance/RequestAbsenceModal';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
@@ -189,117 +190,128 @@ export default function Index({
                     ]}
                 />
 
-                <Card className="app-panel overflow-hidden border-sidebar">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-primary">
-                            <CalendarClock className="h-5 w-5" />
-                            Registro diario
+                <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900">
+                    <CardHeader className="border-b border-sidebar/5 p-8 pb-6">
+                        <CardTitle className="flex items-center gap-3 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar text-white shadow-lg shadow-sidebar/20 pt-1">
+                                <CalendarClock className="h-6 w-6" />
+                            </div>
+                            Registro de Jornada
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <p className="text-sm text-slate-500">
-                            Registra la hora exacta a la que empiezas y terminas tu jornada.
-                        </p>
-
-                        <div className="flex flex-wrap items-center gap-2">
-                            <Button
-                                onClick={handleClockIn}
-                                disabled={Boolean(current_log?.clock_in && !current_log?.clock_out)}
-                            >
-                                Entrar a trabajar
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                onClick={handleClockOut}
-                                disabled={!current_log?.clock_in || Boolean(current_log?.clock_out)}
-                            >
-                                Terminar jornada
-                            </Button>
-                            <RequestAbsenceModal />
+                    <CardContent className="p-8 space-y-8">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/50 p-6 rounded-[2rem] border border-sidebar/10 dark:bg-slate-800/50">
+                            <div className="space-y-1">
+                                <p className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">Acciones Rápidas</p>
+                                <p className="text-sm font-medium text-slate-500 italic">Registra la hora exacta a la que empiezas y terminas tu jornada.</p>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-4">
+                                <Button
+                                    onClick={handleClockIn}
+                                    disabled={Boolean(current_log?.clock_in && !current_log?.clock_out)}
+                                    className="h-12 bg-sidebar text-white hover:bg-sidebar/90 rounded-2xl px-8 font-black shadow-xl shadow-sidebar/20 transition-all active:scale-95"
+                                >
+                                    Fichar Entrada
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    onClick={handleClockOut}
+                                    disabled={!current_log?.clock_in || Boolean(current_log?.clock_out)}
+                                    className="h-12 bg-rose-600 text-white hover:bg-rose-700 rounded-2xl px-8 font-black shadow-xl shadow-rose-600/20 transition-all active:scale-95"
+                                >
+                                    Fichar Salida
+                                </Button>
+                                <RequestAbsenceModal />
+                            </div>
                         </div>
 
                         {(today_logs.length > 0 || current_log) && (
-                            <>
-                                <div className="grid gap-3 rounded-[1.1rem] border border-sidebar/30 bg-muted/25 p-4 text-sm md:grid-cols-3">
-                                    <div>
-                                        <p className="text-xs uppercase tracking-wide text-slate-500">Entrada</p>
-                                        <p className="font-medium">{current_log?.clock_in ?? '--:--'}</p>
+                            <div className="grid gap-8">
+                                <div className="grid gap-4 md:grid-cols-3">
+                                    <div className="flex flex-col gap-2 rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Entrada Detectada</p>
+                                        <p className="text-2xl font-black text-slate-800 dark:text-white">{current_log?.clock_in ?? '--:--'}</p>
                                     </div>
-                                    <div>
-                                        <p className="text-xs uppercase tracking-wide text-slate-500">Salida</p>
-                                        <p className="font-medium">{current_log?.clock_out ?? '--:--'}</p>
+                                    <div className="flex flex-col gap-2 rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Salida Registrada</p>
+                                        <p className="text-2xl font-black text-slate-800 dark:text-white">{current_log?.clock_out ?? '--:--'}</p>
                                     </div>
-                                    <div>
-                                        <p className="text-xs uppercase tracking-wide text-slate-500">Total</p>
-                                        <p className="font-medium">
+                                    <div className="flex flex-col gap-2 rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Total Acumulado</p>
+                                        <p className="text-2xl font-black text-slate-800 dark:text-white">
                                             {today_total_hours > 0 ? formatHoursDecimal(today_total_hours) : '0m'}
                                         </p>
                                     </div>
                                 </div>
 
                                 {liveElapsed && (
-                                    <div className="rounded-[1.1rem] border border-sidebar/40 bg-accent/40 p-4 text-sm">
-                                        <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                                            Tiempo trabajando ahora
-                                        </p>
-                                        <div className="mt-2 flex items-center gap-3">
-                                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/60 text-primary">
-                                                <TimerReset className="h-5 w-5" />
+                                    <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-sidebar/5 to-[#1f4f52]/5 p-8 border border-sidebar/10 backdrop-blur-sm">
+                                        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                            <div className="flex items-center gap-5">
+                                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sidebar text-white shadow-xl shadow-sidebar/20 pt-1">
+                                                    <TimerReset className="h-7 w-7 animate-pulse" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sidebar">En Curso</p>
+                                                    <p className="text-4xl font-black tracking-tight text-sidebar leading-none mt-1">
+                                                        {liveElapsed}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <p className="text-2xl font-semibold tracking-[-0.03em] text-primary">
-                                                {liveElapsed}
+                                            <p className="text-sm font-medium text-sidebar/70 italic max-w-[200px]">
+                                                Contabilizando el tramo actual en tiempo real.
                                             </p>
                                         </div>
                                     </div>
                                 )}
 
                                 {today_logs.length > 0 && (
-                                    <div className="rounded-[1.1rem] filter-panel border-sidebar/30 p-4 text-sm">
-                                        <p className="text-xs uppercase tracking-wide text-slate-500">
-                                            Tramos de hoy
-                                        </p>
-
-                                        <div className="mt-3 space-y-2">
+                                    <div className="space-y-4">
+                                        <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest ml-1">Tramos de hoy</h3>
+                                        <div className="grid gap-3">
                                             {today_logs.map((log) => (
                                                 <div
                                                     key={log.id}
-                                                    className="flex items-center justify-between rounded-xl border border-sidebar/20 bg-card/80 px-3 py-2.5"
+                                                    className="flex items-center justify-between gap-4 rounded-2xl border border-sidebar/10 bg-white px-6 py-4 shadow-sm hover:border-sidebar/30 transition-all dark:bg-slate-800"
                                                 >
-                                                    <span>
-                                                        {log.clock_in ?? '--:--'} - {log.clock_out ?? 'En curso'}
-                                                    </span>
-                                                    <span className="text-slate-500">
-                                                        {log.total_hours !== null ? formatHoursDecimal(log.total_hours) : 'Pendiente'}
-                                                    </span>
+                                                    <div className="flex items-center gap-3">
+                                                        <Clock3 className="h-4 w-4 text-sidebar/50" />
+                                                        <span className="font-bold text-slate-700 dark:text-slate-200">
+                                                            {log.clock_in ?? '--:--'} <span className="mx-2 text-slate-300">→</span> {log.clock_out ?? 'En curso'}
+                                                        </span>
+                                                    </div>
+                                                    <Badge variant="outline" className="h-8 rounded-full border-sidebar/20 bg-slate-50 px-4 text-[10px] font-black uppercase tracking-widest text-sidebar">
+                                                        {log.total_hours !== null ? formatHoursDecimal(log.total_hours) : 'Procesando...'}
+                                                    </Badge>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
 
                 {can_manage_attendance && (
                     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                        <Card className="app-panel border-sidebar">
-                            <CardHeader>
-                                <CardTitle>Registro manual por tutor</CardTitle>
+                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900">
+                            <CardHeader className="border-b border-sidebar/5 p-8 pb-6">
+                                <CardTitle className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">Registro Manual</CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <form onSubmit={submitManualLog} className="space-y-4">
-                                    <div className="grid gap-4 md:grid-cols-2">
+                            <CardContent className="p-8">
+                                <form onSubmit={submitManualLog} className="space-y-6">
+                                    <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
-                                            <Label>Becario</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-sidebar ml-1">Becario Asignado</Label>
                                             <Select
                                                 value={manualForm.data.intern_id}
                                                 onValueChange={(value) => manualForm.setData('intern_id', value)}
                                             >
-                                            <SelectTrigger className="border-border bg-card text-foreground">
+                                                <SelectTrigger className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm hover:bg-slate-50 transition-colors">
                                                     <SelectValue placeholder="Selecciona un becario" />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="rounded-2xl border-sidebar/20">
                                                     {manageable_interns && Array.isArray(manageable_interns) && manageable_interns.map((intern) => (
                                                         <SelectItem key={intern.id} value={String(intern.id)}>
                                                             {intern.name}
@@ -309,102 +321,113 @@ export default function Index({
                                                 </SelectContent>
                                             </Select>
                                             {manualForm.errors.intern_id && (
-                                                <p className="text-xs text-red-500">{manualForm.errors.intern_id}</p>
+                                                <p className="text-xs font-bold text-red-500">{manualForm.errors.intern_id}</p>
                                             )}
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label>Fecha</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-sidebar ml-1">Fecha de Registro</Label>
                                             <DatePicker
-                                                className="border-border bg-card text-foreground"
+                                                className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm"
                                                 value={manualForm.data.date}
                                                 onChange={(value) => manualForm.setData('date', value)}
                                             />
                                             {manualForm.errors.date && (
-                                                <p className="text-xs text-red-500">{manualForm.errors.date}</p>
+                                                <p className="text-xs font-bold text-red-500">{manualForm.errors.date}</p>
                                             )}
                                         </div>
                                     </div>
 
-                                    <div className="grid gap-4 md:grid-cols-2">
+                                    <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
-                                            <Label>Entrada</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-sidebar ml-1">Hora de Entrada</Label>
                                             <Input
                                                 type="time"
-                                                className="border-border bg-card text-foreground"
+                                                className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm"
                                                 value={manualForm.data.clock_in}
                                                 onChange={(e) => manualForm.setData('clock_in', e.target.value)}
                                             />
                                             {manualForm.errors.clock_in && (
-                                                <p className="text-xs text-red-500">{manualForm.errors.clock_in}</p>
+                                                <p className="text-xs font-bold text-red-500">{manualForm.errors.clock_in}</p>
                                             )}
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label>Salida</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-sidebar ml-1">Hora de Salida</Label>
                                             <Input
                                                 type="time"
-                                                className="border-border bg-card text-foreground"
+                                                className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm"
                                                 value={manualForm.data.clock_out}
                                                 onChange={(e) => manualForm.setData('clock_out', e.target.value)}
                                             />
                                             {manualForm.errors.clock_out && (
-                                                <p className="text-xs text-red-500">{manualForm.errors.clock_out}</p>
+                                                <p className="text-xs font-bold text-red-500">{manualForm.errors.clock_out}</p>
                                             )}
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>Notas</Label>
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-sidebar ml-1">Notas y Observaciones</Label>
                                         <Input
-                                            className="border-border bg-card text-foreground"
+                                            className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm"
                                             value={manualForm.data.notes}
                                             onChange={(e) => manualForm.setData('notes', e.target.value)}
-                                            placeholder="Motivo del ajuste o comentario"
+                                            placeholder="Motivo del ajuste o comentario aclaratorio..."
                                         />
                                     </div>
 
-                                    <Button type="submit" disabled={manualForm.processing || !manualForm.data.intern_id}>
-                                        Guardar registro manual
+                                    <Button
+                                        type="submit"
+                                        disabled={manualForm.processing || !manualForm.data.intern_id}
+                                        className="h-12 bg-sidebar text-white hover:bg-sidebar/90 rounded-2xl px-10 font-black shadow-xl shadow-sidebar/20 transition-all active:scale-95"
+                                    >
+                                        Guardar Registro Manual
                                     </Button>
                                 </form>
                             </CardContent>
                         </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <ShieldAlert className="h-5 w-5 text-amber-500" />
-                                    Alertas de incumplimiento
+                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900 overflow-hidden">
+                            <CardHeader className="border-b border-sidebar/5 p-8 pb-6 bg-slate-50/30 dark:bg-slate-800/30">
+                                <CardTitle className="flex items-center gap-3 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-600 shadow-inner">
+                                        <ShieldAlert className="h-6 w-6" />
+                                    </div>
+                                    Alertas de Incumplimiento
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-3">
+                            <CardContent className="p-8 space-y-4">
                                 {non_compliant_interns.length > 0 ? (
                                     non_compliant_interns.map((intern) => (
-                                        <Alert
+                                        <div
                                             key={intern.id}
-                                            variant="destructive"
-                                            className="rounded-2xl border-red-200 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100"
+                                            className="group rounded-[1.5rem] border border-rose-100 bg-rose-50/30 p-5 shadow-sm transition-all hover:bg-rose-50 hover:border-rose-200 dark:bg-red-950/20 dark:border-red-900/40"
                                         >
-                                            <AlertTitle className="flex items-center gap-2 text-red-900 dark:text-red-100">
-                                                <Avatar className="h-6 w-6 border-sidebar">
+                                            <div className="flex items-start gap-4">
+                                                <Avatar className="h-12 w-12 border-4 border-white shadow-lg shrink-0">
                                                     <AvatarImage src={intern.avatar} alt={intern.name} />
-                                                    <AvatarFallback className="text-[10px] bg-red-100 text-red-700">
+                                                    <AvatarFallback className="text-sm font-black bg-rose-100 text-rose-600 pt-1">
                                                         {intern.name?.charAt(0)}
                                                     </AvatarFallback>
                                                 </Avatar>
-                                                {intern.name}
-                                            </AlertTitle>
-                                            <AlertDescription className="text-red-700 dark:text-red-200">
-                                                Deuda de {intern.debt}h. Lleva {intern.total_done}h de {intern.expected_hours}h esperadas.
-                                            </AlertDescription>
-                                        </Alert>
-
+                                                <div className="space-y-1">
+                                                    <p className="font-black text-rose-900 dark:text-red-100">{intern.name}</p>
+                                                    <p className="text-sm font-medium text-rose-700/80 leading-snug dark:text-red-200/70">
+                                                        Deuda Crítica: <span className="font-black text-rose-600">{intern.debt}h</span> acumuladas.
+                                                    </p>
+                                                    <div className="flex items-center gap-3 mt-2 text-[10px] font-black uppercase tracking-widest text-rose-400">
+                                                        <span>Progreso: {intern.total_done}h / {intern.expected_hours}h</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     ))
                                 ) : (
-                                    <p className="text-sm text-slate-500">
-                                        No hay becarios con deuda horaria igual o superior a 8 horas.
-                                    </p>
+                                    <div className="flex flex-col items-center justify-center p-8 text-center bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-200">
+                                        <p className="text-sm font-medium text-slate-500 italic">
+                                            No hay becarios con deuda horaria crítica en este momento. <br /> El cumplimiento es óptimo en la red.
+                                        </p>
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
@@ -413,59 +436,52 @@ export default function Index({
 
                 {/* SECCIÓN MIS AUSENCIAS PARA EL BECARIO */}
                 {!can_manage_attendance && absences && Array.isArray(absences) && (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <FileText className="h-5 w-5 text-indigo-500" />
+                    <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900 overflow-hidden">
+                        <CardHeader className="border-b border-sidebar/5 p-8 pb-6 bg-slate-50/30 dark:bg-slate-800/30">
+                            <CardTitle className="flex items-center gap-3 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar shadow-inner">
+                                    <FileText className="h-6 w-6" />
+                                </div>
                                 Mis Ausencias y Permisos
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <div className="space-y-3">
+                        <CardContent className="p-8">
+                            <div className="space-y-4">
                                 {absences.length > 0 ? (
                                     absences.map((abs) => (
-                                        <div key={abs.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-sidebar/30 bg-muted/20 p-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`p-2 rounded-lg ${
-                                                    abs.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                    abs.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
-                                                }`}>
-                                                    <CalendarClock className="h-5 w-5" />
+                                        <div key={abs.id} className="flex flex-wrap items-center justify-between gap-6 rounded-[2rem] border border-sidebar/10 bg-slate-50/50 p-6 shadow-sm transition-all hover:bg-white hover:shadow-md dark:bg-slate-800">
+                                            <div className="flex items-center gap-5">
+                                                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner ${abs.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                                                        abs.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
+                                                    }`}>
+                                                    <CalendarClock className="h-6 w-6" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium text-sm">{abs?.reason || 'Sin motivo'}</p>
-                                                    <p className="text-xs text-slate-500">{abs?.date || '--'}</p>
+                                                    <p className="text-sm font-black text-slate-800 dark:text-white">{abs?.reason || 'Sin motivo detallado'}</p>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">{abs?.date || '--'}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-4">
-                                                <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded-full ${
-                                                    abs.status === 'approved' ? 'bg-green-200 text-green-800' :
-                                                    abs.status === 'rejected' ? 'bg-red-200 text-red-800' : 'bg-amber-200 text-amber-800'
-                                                }`}>
+                                            <div className="flex items-center gap-6">
+                                                <span className={`text-[10px] font-black tracking-widest uppercase px-4 py-1.5 rounded-full border shadow-sm ${abs.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                                                        abs.status === 'rejected' ? 'bg-rose-50 text-rose-700 border-rose-100' : 'bg-amber-50 text-amber-700 border-amber-100'
+                                                    }`}>
                                                     {abs.status === 'approved' ? 'Aprobada' :
-                                                     abs.status === 'rejected' ? 'Denegada' : 'Pendiente'}
+                                                        abs.status === 'rejected' ? 'Denegada' : 'En espera'}
                                                 </span>
 
                                                 {abs.justification_url ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <a
-                                                            href={abs.justification_url}
-                                                            target="_blank"
-                                                            rel="noreferrer"
-                                                            className="flex items-center gap-1 text-xs text-indigo-600 hover:underline"
-                                                            title="Ver justificante"
-                                                        >
-                                                            <ExternalLink className="h-4 w-4" />
-                                                        </a>
-                                                        <a
-                                                            href={abs.justification_url}
-                                                            download
-                                                            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800"
-                                                            title="Descargar"
-                                                        >
-                                                            <Download className="h-4 w-4" />
-                                                        </a>
+                                                    <div className="flex items-center gap-3">
+                                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-sidebar/10 hover:text-sidebar" asChild>
+                                                            <a href={abs.justification_url} target="_blank" rel="noreferrer">
+                                                                <ExternalLink className="h-5 w-5" />
+                                                            </a>
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-sidebar/10 hover:text-sidebar" asChild>
+                                                            <a href={abs.justification_url} download>
+                                                                <Download className="h-5 w-5" />
+                                                            </a>
+                                                        </Button>
                                                     </div>
                                                 ) : (
                                                     <div className="relative">
@@ -478,9 +494,9 @@ export default function Index({
                                                             }}
                                                             accept=".pdf,.jpg,.jpeg,.png"
                                                         />
-                                                        <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs text-amber-600 border-amber-200 bg-amber-50 hover:bg-amber-100">
-                                                            <FilePlus className="h-3.5 w-3.5" />
-                                                            Subir justificante
+                                                        <Button variant="outline" className="h-10 rounded-xl gap-2 text-xs font-black uppercase tracking-widest text-[#1f4f52] border-sidebar/20 bg-white hover:bg-slate-50 shadow-sm">
+                                                            <FilePlus className="h-4 w-4" />
+                                                            Adjuntar PDF
                                                         </Button>
                                                     </div>
                                                 )}
@@ -488,16 +504,18 @@ export default function Index({
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-sm text-slate-500 italic">No has solicitado ninguna ausencia recientemente.</p>
+                                    <div className="flex flex-col items-center justify-center p-8 text-center bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-200">
+                                        <p className="text-sm font-medium text-slate-500 italic">No tienes ausencias registradas recientemente.</p>
+                                    </div>
                                 )}
                             </div>
                         </CardContent>
                     </Card>
                 )}
 
-                <Card>
-                    <CardContent className="p-6">
-                        <div className="rounded-[1.15rem] border border-sidebar/30 bg-background/60 p-3">
+                <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900 p-8">
+                    <CardContent className="p-0">
+                        <div className="rounded-[2rem] border border-sidebar/10 bg-slate-50/50 p-6 shadow-inner transition-all dark:bg-slate-800/50">
                             <FullCalendar
                                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                                 initialView="dayGridMonth"

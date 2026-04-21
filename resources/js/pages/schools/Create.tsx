@@ -49,19 +49,25 @@ export default function Create() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Añadir Centro Educativo" />
 
-            <div className="page-surface">
-                <div className="mb-6">
-                    <h1 className="page-title">Nuevo Centro Educativo</h1>
-                    <p className="page-subtitle">
-                        Completa los datos para dar de alta una nueva
-                        institución.
+            <div className="space-y-6">
+                <div className="mb-8 flex flex-col gap-1">
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                        Nuevo <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Centro Educativo</span>
+                    </h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                        Alta de nueva institución colaboradora
                     </p>
                 </div>
 
-                <form onSubmit={submit} className="space-y-6" noValidate>
-                    {/* DATOS DEL CENTRO */}
-                    <div className="space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-8 md:p-12">
+                    <form onSubmit={submit} className="space-y-12" noValidate>
+                        {/* SECCIÓN: DATOS DEL CENTRO */}
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">01</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Información Institucional</h3>
+                            </div>
+                            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="name"
@@ -149,9 +155,13 @@ export default function Create() {
                         </div>
                     </div>
 
-                    {/* CONTACTO */}
-                    <div className="space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {/* SECCIÓN: CONTACTO */}
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">02</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Coordinación y Contacto</h3>
+                            </div>
+                            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="contact_person"
@@ -220,9 +230,13 @@ export default function Create() {
                         </div>
                     </div>
 
-                    {/* CONTACTO INSTITUCIONAL */}
-                    <div className="space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {/* SECCIÓN: CONTACTO INSTITUCIONAL */}
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">03</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Canales Oficiales</h3>
+                            </div>
+                            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="email"
@@ -292,9 +306,13 @@ export default function Create() {
                         </div>
                     </div>
 
-                    {/* CONVENIO */}
-                    <div className="space-y-6 rounded-xl border border-border bg-card p-6 pt-6 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {/* SECCIÓN: CONVENIO */}
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">04</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Detalles del Convenio</h3>
+                            </div>
+                            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
                                 <Label htmlFor="agreement_signed_at">
                                     Fecha de firma
@@ -374,28 +392,29 @@ export default function Create() {
                                     </p>
                                 )}
                             </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="mt-4 flex justify-end gap-3 border-t border-border pt-6">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-border text-foreground hover:bg-muted"
-                            onClick={() => window.history.back()}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            type="submit"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90"
-                            disabled={processing}
-                            onClick={submit}
-                        >
-                            Guardar Centro
-                        </Button>
-                    </div>
-                </form>
+                        <div className="mt-8 flex justify-end gap-3 border-t border-sidebar/10 pt-8">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="rounded-xl border-border px-6 text-foreground hover:bg-muted"
+                                onClick={() => window.history.back()}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all font-bold"
+                                disabled={processing}
+                                onClick={submit}
+                            >
+                                Guardar Centro
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </AppLayout>
     );
