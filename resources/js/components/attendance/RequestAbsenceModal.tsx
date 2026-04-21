@@ -42,6 +42,7 @@ export function RequestAbsenceModal() {
                         <Label>¿Qué día vas a faltar?</Label>
                         <Input
                             type="date"
+                            className="border-border bg-card text-foreground"
                             value={data.date}
                             onChange={(e) => setData('date', e.target.value)}
                             required
@@ -52,7 +53,7 @@ export function RequestAbsenceModal() {
                     <div className="space-y-2">
                         <Label>Motivo de la ausencia</Label>
                         <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            className="flex h-10 w-full rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                             value={data.reason}
                             onChange={(e) => setData('reason', e.target.value)}
                         >
@@ -68,7 +69,7 @@ export function RequestAbsenceModal() {
                         <Label>Justificante (opcional)</Label>
                         <Input
                             type="file"
-                            className="bg-background text-foreground"
+                            className="border-border bg-card text-foreground"
                             onChange={(e) => setData('justification_file', e.target.files?.[0] || null)}
                         />
                         <p className="text-[10px] text-muted-foreground italic">PDF, JPG, PNG (Max 5MB)</p>

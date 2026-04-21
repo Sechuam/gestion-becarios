@@ -128,7 +128,7 @@ export default function KanbanTaskCard({
         <div
             ref={setNodeRef}
             style={style}
-            className={`group rounded-xl border border-border bg-card p-4 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
+            className={`task-surface-soft group rounded-xl border border-border p-4 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
                 } ${onOpenDetails ? 'cursor-pointer' : ''} ${highlightMove ? 'task-card-drop-highlight' : ''
                 }`}
             onClick={() => onOpenDetails?.(task)}

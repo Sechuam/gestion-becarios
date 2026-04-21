@@ -43,7 +43,7 @@ export function InternFilters({
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar por nombre..."
-                            className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
+                            className="border-border bg-card pl-9 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
                             value={filters.search || ''}
                             onChange={(e) => handleFilterInternal('search', e.target.value)}
                         />
@@ -66,7 +66,7 @@ export function InternFilters({
                             value={filters.center || 'all'}
                             onValueChange={(v) => onFilterChange('center', v)}
                         >
-                            <SelectTrigger className="w-[200px] border-border bg-background text-foreground [&>span]:truncate">
+                            <SelectTrigger className="w-[200px] border-border bg-card text-foreground [&>span]:truncate">
                                 <SelectValue>
                                     {filters.center && filters.center !== 'all'
                                         ? education_centers.find(
@@ -94,7 +94,7 @@ export function InternFilters({
                             value={filters.status || 'all'}
                             onValueChange={(v) => onFilterChange('status', v)}
                         >
-                            <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
+                            <SelectTrigger className="w-[160px] border-border bg-card text-foreground">
                                 <SelectValue>
                                     {{
                                         active: 'Activos',
@@ -120,7 +120,7 @@ export function InternFilters({
                             value={filters.trashed || 'none'}
                             onValueChange={(v) => onFilterChange('trashed', v)}
                         >
-                            <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
+                            <SelectTrigger className="w-[160px] border-border bg-card text-foreground">
                                 <SelectValue>
                                     {{
                                         none: 'Activos',
@@ -144,6 +144,7 @@ export function InternFilters({
                         <DatePicker
                             value={filters.start_from || ''}
                             onChange={(value) => onFilterChange('start_from', value)}
+                            className="border-border bg-card text-foreground"
                         />
                     </div>
 
@@ -154,6 +155,7 @@ export function InternFilters({
                         <DatePicker
                             value={filters.start_to || ''}
                             onChange={(value) => onFilterChange('start_to', value)}
+                            className="border-border bg-card text-foreground"
                         />
                     </div>
                 </div>

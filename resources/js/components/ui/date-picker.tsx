@@ -2,11 +2,17 @@ import { Popover, Transition } from '@headlessui/react';
 import { format, isValid, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { Fragment } from 'react';
-import { DayPicker } from 'react-day-picker';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import 'react-day-picker/dist/style.css';
 
 type DatePickerProps = {
     id?: string;
@@ -40,6 +46,33 @@ export function DatePicker({
     const currentYear = new Date().getFullYear();
     const calendarFromYear = fromYear ?? currentYear - 100;
     const calendarToYear = toYear ?? currentYear + 10;
+    const fallbackMonth = isSelectedValid
+        ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+        : new Date(currentYear, new Date().getMonth(), 1);
+
+    const [viewMonth, setViewMonth] = useState(fallbackMonth);
+
+    useEffect(() => {
+        setViewMonth(fallbackMonth);
+    }, [value]);
+
+    const monthOptions = useMemo(
+        () =>
+            Array.from({ length: 12 }, (_, monthIndex) => ({
+                value: String(monthIndex),
+                label: format(new Date(2026, monthIndex, 1), 'LLLL', { locale: es }),
+            })),
+        [],
+    );
+
+    const yearOptions = useMemo(
+        () =>
+            Array.from(
+                { length: calendarToYear - calendarFromYear + 1 },
+                (_, index) => String(calendarFromYear + index),
+            ),
+        [calendarFromYear, calendarToYear],
+    );
 
     return (
         <Popover className="relative">
@@ -48,7 +81,7 @@ export function DatePicker({
                 type="button"
                 disabled={disabled}
                 className={cn(
-                    'flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-left text-sm text-foreground shadow-sm transition-colors',
+                    'flex h-10 w-full items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-left text-sm text-foreground shadow-sm transition-colors',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                     className,
@@ -68,25 +101,77 @@ export function DatePicker({
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
             >
-                <Popover.Panel className="absolute z-50 mt-2 w-auto rounded-md border border-border bg-card p-3 shadow-lg">
-                    <DayPicker
+                <Popover.Panel className="absolute z-50 mt-2 w-auto rounded-xl border border-border bg-card p-0 shadow-lg">
+                    <div className="flex items-center gap-2 border-b border-border px-3 py-3">
+                        <Select
+                            value={String(viewMonth.getMonth())}
+                            onValueChange={(value) =>
+                                setViewMonth(
+                                    new Date(
+                                        viewMonth.getFullYear(),
+                                        Number(value),
+                                        1,
+                                    ),
+                                )
+                            }
+                        >
+                            <SelectTrigger className="h-9 min-w-32 border-border bg-card text-foreground">
+                                <SelectValue placeholder="Mes" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {monthOptions.map((month) => (
+                                    <SelectItem key={month.value} value={month.value}>
+                                        {month.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select
+                            value={String(viewMonth.getFullYear())}
+                            onValueChange={(value) =>
+                                setViewMonth(
+                                    new Date(Number(value), viewMonth.getMonth(), 1),
+                                )
+                            }
+                        >
+                            <SelectTrigger className="h-9 min-w-24 border-border bg-card text-foreground">
+                                <SelectValue placeholder="Año" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {yearOptions.map((year) => (
+                                    <SelectItem key={year} value={year}>
+                                        {year}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <Calendar
                         mode="single"
+                        month={viewMonth}
+                        onMonthChange={setViewMonth}
                         selected={isSelectedValid ? selectedDate : undefined}
                         onSelect={(date) => {
                             if (!date) {
                                 onChange('');
                                 return;
                             }
+                            setViewMonth(
+                                new Date(date.getFullYear(), date.getMonth(), 1),
+                            );
                             onChange(format(date, 'yyyy-MM-dd'));
                         }}
-                        captionLayout="dropdown"
+                        hideNavigation
                         fromYear={calendarFromYear}
                         toYear={calendarToYear}
                         locale={es}
                         weekStartsOn={1}
+                        className="rounded-xl"
                     />
                     {allowClear && (
-                        <div className="mt-2 flex justify-end">
+                        <div className="flex justify-end border-t border-border px-3 py-2">
                             <Button
                                 type="button"
                                 variant="ghost"

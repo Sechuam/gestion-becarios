@@ -9,6 +9,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { RequestAbsenceModal } from '@/components/attendance/RequestAbsenceModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -295,7 +296,7 @@ export default function Index({
                                                 value={manualForm.data.intern_id}
                                                 onValueChange={(value) => manualForm.setData('intern_id', value)}
                                             >
-                                            <SelectTrigger className="border-sidebar/40 bg-background text-foreground">
+                                            <SelectTrigger className="border-border bg-card text-foreground">
                                                     <SelectValue placeholder="Selecciona un becario" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -314,11 +315,10 @@ export default function Index({
 
                                         <div className="space-y-2">
                                             <Label>Fecha</Label>
-                                            <Input
-                                                type="date"
-                                                className="border-sidebar/40 bg-background text-foreground"
+                                            <DatePicker
+                                                className="border-border bg-card text-foreground"
                                                 value={manualForm.data.date}
-                                                onChange={(e) => manualForm.setData('date', e.target.value)}
+                                                onChange={(value) => manualForm.setData('date', value)}
                                             />
                                             {manualForm.errors.date && (
                                                 <p className="text-xs text-red-500">{manualForm.errors.date}</p>
@@ -331,6 +331,7 @@ export default function Index({
                                             <Label>Entrada</Label>
                                             <Input
                                                 type="time"
+                                                className="border-border bg-card text-foreground"
                                                 value={manualForm.data.clock_in}
                                                 onChange={(e) => manualForm.setData('clock_in', e.target.value)}
                                             />
@@ -343,6 +344,7 @@ export default function Index({
                                             <Label>Salida</Label>
                                             <Input
                                                 type="time"
+                                                className="border-border bg-card text-foreground"
                                                 value={manualForm.data.clock_out}
                                                 onChange={(e) => manualForm.setData('clock_out', e.target.value)}
                                             />
@@ -355,6 +357,7 @@ export default function Index({
                                     <div className="space-y-2">
                                         <Label>Notas</Label>
                                         <Input
+                                            className="border-border bg-card text-foreground"
                                             value={manualForm.data.notes}
                                             onChange={(e) => manualForm.setData('notes', e.target.value)}
                                             placeholder="Motivo del ajuste o comentario"

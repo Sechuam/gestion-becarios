@@ -37,14 +37,14 @@ export function TaskFilters({
 }: TaskFiltersProps) {
     return (
         <div className="space-y-4">
-            <div className="filter-panel space-y-4 p-5">
+            <div className="filter-panel task-surface space-y-4 p-5">
                 {/* Fila 1: Búsqueda */}
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="relative max-w-md min-w-[200px] flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar por título..."
-                            className="border-sidebar/40 bg-background pl-9 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
+                            className="border-border bg-card pl-9 text-foreground placeholder:text-muted-foreground focus:border-primary transition-colors"
                             value={filters.search || ''}
                             onChange={(e) =>
                                 onFilterChange('search', e.target.value)
@@ -67,7 +67,7 @@ export function TaskFilters({
                             value={filters.status || 'all'}
                             onValueChange={(v) => onFilterChange('status', v)}
                         >
-                            <SelectTrigger className="w-[160px] border-sidebar/40 bg-background text-foreground">
+                            <SelectTrigger className="w-[160px] border-border bg-card text-foreground">
                                 <SelectValue>
                                     {{
                                         pending: 'Pendiente',
@@ -97,7 +97,7 @@ export function TaskFilters({
                             value={filters.practice_type || 'all'}
                             onValueChange={(v) => onFilterChange('practice_type', v)}
                         >
-                            <SelectTrigger className="w-[220px] border-sidebar/40 bg-background text-foreground [&>span]:truncate">
+                            <SelectTrigger className="w-[220px] border-border bg-card text-foreground [&>span]:truncate">
                                 <SelectValue>
                                     {filters.practice_type && filters.practice_type !== 'all'
                                         ? practice_types.find(
@@ -125,7 +125,7 @@ export function TaskFilters({
                             value={filters.intern_id || 'all'}
                             onValueChange={(v) => onFilterChange('intern_id', v)}
                         >
-                            <SelectTrigger className="w-[200px] border-sidebar/40 bg-background text-foreground [&>span]:truncate">
+                            <SelectTrigger className="w-[200px] border-border bg-card text-foreground [&>span]:truncate">
                                 <SelectValue>
                                     {filters.intern_id && filters.intern_id !== 'all'
                                         ? interns.find(
@@ -152,6 +152,7 @@ export function TaskFilters({
                         <DatePicker
                             value={filters.due_from || ''}
                             onChange={(value) => onFilterChange('due_from', value)}
+                            className="border-border bg-card text-foreground"
                         />
                     </div>
 
@@ -162,6 +163,7 @@ export function TaskFilters({
                         <DatePicker
                             value={filters.due_to || ''}
                             onChange={(value) => onFilterChange('due_to', value)}
+                            className="border-border bg-card text-foreground"
                         />
                     </div>
                 </div>

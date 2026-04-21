@@ -500,7 +500,7 @@ export default function Show({
                                                     key={i}
                                                     variant={link.active ? 'secondary' : 'ghost'}
                                                     size="sm"
-                                                    className={`h-8 min-w-[32px] rounded-lg text-xs font-bold ${link.active ? 'bg-white shadow-sm' : 'text-slate-400'} ${!link.url ? 'opacity-30 pointer-events-none' : ''}`}
+                                                    className={`h-8 min-w-[32px] rounded-lg border text-xs font-bold ${link.active ? 'border-sidebar bg-sidebar text-sidebar-foreground shadow-sm' : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'} ${!link.url ? 'opacity-45 pointer-events-none' : ''}`}
                                                     asChild={!!link.url}
                                                     disabled={!link.url}
                                                 >

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Download } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Label } from '@/components/ui/label';
 
 type ExportReportModalProps = {
@@ -61,11 +61,11 @@ function ExportReportModal({ intern, isOpen, onClose }: ExportReportModalProps) 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label className="text-slate-700 dark:text-slate-300">Fecha Inicio</Label>
-                            <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                            <DatePicker value={startDate} onChange={setStartDate} />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-slate-700 dark:text-slate-300">Fecha Fin</Label>
-                            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                            <DatePicker value={endDate} onChange={setEndDate} />
                         </div>
                     </div>
                 </div>

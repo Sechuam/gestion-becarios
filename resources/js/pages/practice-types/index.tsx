@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Pencil, Plus } from 'lucide-react';
+import { Pencil, Plus, Shapes } from 'lucide-react';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import DeletePracticeTypeModal from '@/components/practice-types/DeletePracticeTypeModal';
 import { Button } from '@/components/ui/button';
@@ -136,23 +137,22 @@ export default function Index({ practice_types, filters = {} }: Props) {
             <Head title="Tipos de práctica" />
 
             <div className="flex flex-col gap-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h1 className="page-title">Tipos de práctica</h1>
-                        <p className="page-subtitle">
-                            Catálogo configurable por el administrador.
-                        </p>
-                    </div>
-                    {isAdmin && (
-                        <Button
-                            className="gap-2 bg-slate-900 text-white hover:bg-slate-800"
-                            onClick={() => router.get('/tipos-practica/create')}
-                        >
-                            <Plus className="h-4 w-4" />
-                            Nuevo tipo
-                        </Button>
-                    )}
-                </div>
+                <ModuleHeader
+                    title="Tipos de práctica"
+                    description="Catálogo configurable por el administrador."
+                    icon={<Shapes className="h-6 w-6" />}
+                    actions={
+                        isAdmin ? (
+                            <Button
+                                className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
+                                onClick={() => router.get('/tipos-practica/create')}
+                            >
+                                <Plus className="h-4 w-4" />
+                                Nuevo tipo
+                            </Button>
+                        ) : undefined
+                    }
+                />
 
                 <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
                     <div className="relative w-full max-w-sm">
@@ -213,11 +213,11 @@ export default function Index({ practice_types, filters = {} }: Props) {
                             <Link
                                 key={i}
                                 href={link.url ?? '#'}
-                                className={`rounded border border-border px-3 py-1 text-sm ${
+                                className={`rounded-xl border px-4 py-2 text-sm font-semibold shadow-sm transition-all ${
                                     link.active
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'hover:bg-muted'
-                                } ${!link.url ? 'pointer-events-none opacity-40' : ''}`}
+                                        ? 'border-sidebar bg-sidebar text-sidebar-foreground'
+                                        : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
+                                } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
                                 dangerouslySetInnerHTML={{ __html: label }}
                                 preserveState
                             />

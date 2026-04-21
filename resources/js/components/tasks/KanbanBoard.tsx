@@ -68,7 +68,7 @@ export function KanbanBoard({
 }: KanbanBoardProps) {
     return (
         <div className="space-y-4">
-            <div className="app-panel flex flex-wrap items-center justify-between gap-3 p-4">
+            <div className="app-panel task-surface flex flex-wrap items-center justify-between gap-3 p-4">
                 <div className="flex flex-wrap items-center gap-2">
                     {boardQuickFilters.map((filter) => (
                         <Button
@@ -76,11 +76,21 @@ export function KanbanBoard({
                             type="button"
                             variant={boardFilter === filter.key ? 'default' : 'outline'}
                             size="sm"
-                            className="gap-2"
+                            className={`gap-2 rounded-xl border shadow-sm ${
+                                boardFilter === filter.key
+                                    ? 'border-sidebar bg-[linear-gradient(90deg,rgba(15,23,42,0.96)_0%,rgba(30,41,59,0.92)_55%,rgba(71,85,105,0.82)_100%)] text-white hover:opacity-95'
+                                    : 'border-border/90 bg-white text-foreground hover:border-sidebar/35 hover:bg-slate-50'
+                            }`}
                             onClick={() => onBoardFilterChange(filter.key)}
                         >
                             {filter.label}
-                            <span className="rounded-full bg-black/10 px-1.5 py-0.5 text-[10px] dark:bg-white/10">
+                            <span
+                                className={`rounded-full px-1.5 py-0.5 text-[10px] ${
+                                    boardFilter === filter.key
+                                        ? 'bg-white/14 text-white'
+                                        : 'bg-slate-100 text-slate-600'
+                                }`}
+                            >
                                 {filter.count}
                             </span>
                         </Button>
@@ -109,19 +119,23 @@ export function KanbanBoard({
             >
                 <div className="overflow-x-auto pb-2">
                     <div className="flex min-w-max gap-4">
-                        {KANBAN_COLUMNS.map((col) => (
+                        {KANBAN_COLUMNS.map((col, index) => (
                             <div
                                 key={col.key}
-                                className={`flex min-h-[32rem] w-[18rem] min-w-[18rem] flex-col rounded-2xl border bg-card p-3 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
+                                className={`flex min-h-[32rem] w-[18rem] min-w-[18rem] flex-col rounded-2xl border p-3 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
+                                    index % 2 === 0
+                                        ? 'border-sidebar/90 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_34%),repeating-linear-gradient(135deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_14px),linear-gradient(180deg,rgba(15,23,42,0.97)_0%,rgba(30,41,59,0.94)_100%)] text-white'
+                                        : 'border-border/80 bg-[radial-gradient(circle_at_top_right,rgba(148,163,184,0.14),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(15,23,42,0.05),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(248,250,252,0.96)_100%)]'
+                                } ${
                                     tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
                                         ? 'border-amber-300/70'
-                                        : 'border-border'
+                                        : ''
                                 }`}
                             >
                                 <div className="mb-3 flex items-center justify-between gap-3">
                                     <div className="min-w-0">
-                                        <h3 className="text-sm font-semibold text-foreground">{col.label}</h3>
-                                        <p className="text-[11px] text-muted-foreground">
+                                        <h3 className={`text-sm font-semibold ${index % 2 === 0 ? 'text-white' : 'text-foreground'}`}>{col.label}</h3>
+                                        <p className={`text-[11px] ${index % 2 === 0 ? 'text-white/70' : 'text-muted-foreground'}`}>
                                             {tasksByStatus[col.key].length} tareas
                                         </p>
                                     </div>
@@ -143,6 +157,7 @@ export function KanbanBoard({
                                     id={getColumnDropId(col.key)}
                                     label={col.label}
                                     hovered={hoveredColumn === col.key}
+                                    dark={index % 2 === 0}
                                 >
                                     <SortableContext
                                         items={tasksByStatus[col.key].map((task) => getTaskSortableId(task.id))}

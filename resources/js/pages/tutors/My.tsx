@@ -320,7 +320,7 @@ export default function My({
                             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por nombre, email, DNI o centro..."
-                                className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
+                                className="border-border bg-card pl-9 text-foreground placeholder:text-muted-foreground"
                                 defaultValue={filters.search}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -334,7 +334,7 @@ export default function My({
                                 handleFilter('status', value)
                             }
                         >
-                            <SelectTrigger className="w-[180px] border-border bg-background text-foreground">
+                            <SelectTrigger className="w-[180px] border-border bg-card text-foreground">
                                 <SelectValue>
                                     {{
                                         active: 'Activos',
@@ -385,10 +385,10 @@ export default function My({
                                     key={i}
                                     href={link.url ?? '#'}
                                     preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${link.active
-                                        ? 'scale-105 transform border-primary bg-primary text-primary-foreground shadow-md'
-                                        : 'border-border bg-card text-muted-foreground hover:bg-muted'
-                                        } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
+                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all ${link.active
+                                        ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
+                                        : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
+                                        } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
                                     dangerouslySetInnerHTML={{
                                         __html: link.label
                                             .replace('Previous', 'Anterior')

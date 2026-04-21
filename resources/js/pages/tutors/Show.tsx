@@ -350,11 +350,11 @@ export default function Show({
                                             key={i}
                                             href={link.url ?? '#'}
                                             preserveState
-                                            className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
+                                            className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all ${
                                                 link.active
-                                                    ? 'scale-105 transform border-primary bg-primary text-primary-foreground shadow-md'
-                                                    : 'border-border bg-card text-muted-foreground hover:bg-muted'
-                                            } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
+                                                    ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
+                                                    : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
+                                            } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
                                             dangerouslySetInnerHTML={{
                                                 __html: link.label
                                                     .replace(

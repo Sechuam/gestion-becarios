@@ -437,7 +437,7 @@ export default function Index({
                     actions={
                         canManage ? (
                             <Button
-                                className="gap-2"
+                                className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                                 onClick={() => router.get('/centros/create')}
                             >
                                 <Plus className="h-4 w-4" />
@@ -455,7 +455,7 @@ export default function Index({
                             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
                             <Input
                                 placeholder="Buscar por nombre..."
-                                className="border-border bg-background pl-9 text-foreground placeholder:text-muted-foreground"
+                                className="border-border bg-card pl-9 text-foreground placeholder:text-muted-foreground"
                                 defaultValue={filters.search}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -567,7 +567,7 @@ export default function Index({
                                     handleFilter('trashed', v)
                                 }
                             >
-                                <SelectTrigger className="w-[160px] border-border bg-background text-foreground">
+                                <SelectTrigger className="w-[160px] border-border bg-card text-foreground">
                                     <SelectValue>
                                         {{
                                             none: 'Activos',
@@ -618,11 +618,11 @@ export default function Index({
                             <Link
                                 key={i}
                                 href={link.url ?? '#'}
-                                className={`rounded border border-border px-3 py-1 text-sm ${
+                                className={`rounded-xl border px-4 py-2 text-sm font-semibold shadow-sm transition-all ${
                                     link.active
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'hover:bg-muted'
-                                } ${!link.url ? 'pointer-events-none opacity-40' : ''}`}
+                                        ? 'border-sidebar bg-sidebar text-sidebar-foreground'
+                                        : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
+                                } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
                                 dangerouslySetInnerHTML={{ __html: label }}
                                 preserveState
                             />

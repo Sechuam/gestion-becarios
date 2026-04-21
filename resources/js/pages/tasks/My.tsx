@@ -404,11 +404,11 @@ export default function My({
                             }}
                             variant="outline"
                             size="sm"
-                            className="rounded-lg border border-border bg-card/80 p-0.5 shadow-sm"
+                            className="rounded-xl border border-sidebar bg-white p-0.5 shadow-sm"
                         >
                             <ToggleGroupItem
                                 value="kanban"
-                                className="rounded-md px-2"
+                                className="rounded-lg border border-sidebar bg-sidebar px-2 text-white hover:bg-sidebar/90 hover:text-white data-[state=on]:border-sidebar data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-sm"
                                 aria-label="Vista kanban"
                                 title="Vista kanban"
                             >
@@ -416,7 +416,7 @@ export default function My({
                             </ToggleGroupItem>
                             <ToggleGroupItem
                                 value="table"
-                                className="rounded-md px-2"
+                                className="rounded-lg border border-sidebar bg-sidebar px-2 text-white hover:bg-sidebar/90 hover:text-white data-[state=on]:border-sidebar data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-sm"
                                 aria-label="Vista tabla"
                                 title="Vista tabla"
                             >
@@ -503,11 +503,11 @@ export default function My({
                             <Link
                                 key={i}
                                 href={link.url ?? '#'}
-                                className={`rounded border border-border px-3 py-1 text-sm ${
+                                className={`rounded-xl border px-4 py-2 text-sm font-semibold shadow-sm transition-all ${
                                     link.active
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'hover:bg-muted'
-                                } ${!link.url ? 'pointer-events-none opacity-40' : ''}`}
+                                        ? 'border-sidebar bg-sidebar text-sidebar-foreground'
+                                        : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
+                                } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
                                 dangerouslySetInnerHTML={{ __html: label }}
                                 preserveState
                             />

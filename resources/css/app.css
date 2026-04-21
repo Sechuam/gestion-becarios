@@ -205,9 +205,15 @@
     }
 
     .app-panel {
-        background: linear-gradient(180deg,
+        background:
+            linear-gradient(135deg,
+                rgba(15, 23, 42, 0.045) 0%,
+                rgba(71, 85, 105, 0.02) 24%,
+                rgba(255, 255, 255, 0) 58%),
+            linear-gradient(180deg,
                 rgba(255, 255, 255, 0.02) 0%,
-                transparent 100%), var(--card);
+                transparent 100%),
+            var(--card);
         border: 1px solid var(--sidebar);
         border-radius: 1.5rem;
         box-shadow:
@@ -226,7 +232,12 @@
     }
 
     .filter-panel {
-        background: color-mix(in srgb, var(--card) 94%, var(--muted) 6%);
+        background:
+            linear-gradient(135deg,
+                rgba(15, 23, 42, 0.038) 0%,
+                rgba(100, 116, 139, 0.018) 30%,
+                rgba(255, 255, 255, 0) 62%),
+            color-mix(in srgb, var(--card) 94%, var(--muted) 6%);
         border: 1.5px solid var(--sidebar);
         border-radius: 1.25rem;
         box-shadow:
@@ -238,6 +249,10 @@
         border-radius: 1.15rem;
         border: 1px solid var(--sidebar);
         background:
+            linear-gradient(135deg,
+                rgba(15, 23, 42, 0.032) 0%,
+                rgba(100, 116, 139, 0.014) 32%,
+                rgba(255, 255, 255, 0) 68%),
             linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 100%);
         box-shadow:
             0 1px 2px rgba(24, 49, 61, 0.04),
@@ -252,24 +267,44 @@
             0 20px 40px -10px rgba(24, 49, 61, 0.15);
     }
 
-    .section-kicker {
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.25em;
-        text-transform: uppercase;
-        color: var(--primary);
-        display: flex;
-        items-center: center;
-        gap: 0.5rem;
+    .task-surface {
+        background:
+            linear-gradient(90deg,
+                rgba(15, 23, 42, 0.08) 0%,
+                rgba(51, 65, 85, 0.045) 24%,
+                rgba(148, 163, 184, 0.02) 46%,
+                rgba(255, 255, 255, 0) 74%),
+            linear-gradient(180deg,
+                rgba(255, 255, 255, 1) 0%,
+                rgba(248, 250, 252, 0.98) 100%);
+        border-color: color-mix(in srgb, var(--sidebar) 72%, white 28%);
+        box-shadow:
+            0 1px 2px rgba(15, 23, 42, 0.05),
+            0 16px 34px -14px rgba(15, 23, 42, 0.14),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.22);
     }
 
-    .section-kicker::before {
-        content: "";
+    .task-surface-soft {
+        background:
+            linear-gradient(135deg,
+                rgba(15, 23, 42, 0.05) 0%,
+                rgba(100, 116, 139, 0.018) 26%,
+                rgba(255, 255, 255, 0) 62%),
+            linear-gradient(180deg,
+                rgba(255, 255, 255, 1) 0%,
+                rgba(248, 250, 252, 0.98) 100%);
+        border-color: color-mix(in srgb, var(--sidebar) 55%, white 45%);
+    }
+
+    .section-kicker {
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--primary);
         display: block;
-        width: 12px;
-        height: 2px;
-        background: currentColor;
-        border-radius: 1px;
+        margin: 0;
+        line-height: 1;
     }
 
     .empty-state {

@@ -477,7 +477,7 @@ export default function Index({
                     actions={
                         canManage ? (
                             <Button
-                                className="gap-2"
+                                className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                                 onClick={() => router.get('/interns/create')}
                             >
                                 <Plus className="h-4 w-4" />
@@ -534,8 +534,8 @@ export default function Index({
                                     preserveState
                                     className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
                                         link.active
-                                            ? 'scale-105 transform border-primary bg-primary text-primary-foreground shadow-md'
-                                            : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
+                                            : 'border-border bg-card text-muted-foreground hover:border-sidebar/40 hover:bg-muted'
                                     } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
                                     dangerouslySetInnerHTML={{
                                         __html: link.label
