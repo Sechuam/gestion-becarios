@@ -1,5 +1,5 @@
 import { Head, useForm, router } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
     MailPlus,
     Loader2,
@@ -9,7 +9,6 @@ import {
     UserX,
     Search,
     ChevronDown,
-    ChevronRight,
     Check,
     X,
 } from 'lucide-react';
@@ -92,8 +91,6 @@ const ROLE_META: Record<string, {
         icon: UserX,
     },
 };
-
-const ROLE_ORDER = ['admin', 'tutor', 'intern', 'none'];
 
 function getRoleName(user: UserRow): string {
     return user.roles?.[0]?.name ?? 'none';
@@ -178,66 +175,6 @@ function UserRow({
     );
 }
 
-function RoleGroup({
-    roleKey,
-    users,
-    savingId,
-    roleOptions,
-    onRoleChange,
-    defaultOpen = false,
-}: {
-    roleKey: string;
-    users: UserRow[];
-    savingId: number | null;
-    roleOptions: RoleOption[];
-    onRoleChange: (user: UserRow, newRole: string) => void;
-    defaultOpen?: boolean;
-}) {
-    const [open, setOpen] = useState(defaultOpen);
-    const meta = ROLE_META[roleKey] ?? ROLE_META.none;
-    const Icon = meta.icon;
-
-    if (users.length === 0) return null;
-
-    return (
-        <div className="overflow-hidden rounded-xl border border-border shadow-sm">
-            {/* Section header */}
-            <button
-                onClick={() => setOpen((o) => !o)}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left bg-card transition-colors hover:bg-muted/50 dark:bg-slate-900/60 dark:hover:bg-slate-800/60"
-            >
-                <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${meta.border} ${meta.bg}`}>
-                    <Icon className={`h-4 w-4 ${meta.color}`} />
-                </span>
-                <span className="flex-1 text-sm font-semibold text-foreground">{meta.label}</span>
-                <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-xs font-bold text-muted-foreground">
-                    {users.length}
-                </span>
-                {open
-                    ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                    : <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                }
-            </button>
-
-            {/* User rows */}
-            {open && (
-                <div className="divide-y divide-border bg-card dark:bg-slate-900/60">
-                    {users.map((user) => (
-                        <UserRow
-                            key={user.id}
-                            user={user}
-                            isSaving={savingId === user.id}
-                            roleName={getRoleName(user)}
-                            roleOptions={roleOptions}
-                            onRoleChange={onRoleChange}
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-}
-
 export default function UsersIndex({
     users = [] as UserRow[],
     roles = [] as RoleOption[],
@@ -249,8 +186,14 @@ export default function UsersIndex({
     const [savingId, setSavingId] = useState<number | null>(null);
     const [query, setQuery] = useState('');
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+    const [activeRole, setActiveRole] = useState<'all' | 'admin' | 'tutor' | 'intern'>('all');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { data: inviteData, setData: setInviteData, post: postInvite, processing: inviteProcessing, errors: inviteErrors, reset: resetInvite } = useForm({ email: '', role: '' });
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [query, activeRole]);
 
     const submitInvitation = (e: React.FormEvent) => {
         e.preventDefault();
@@ -262,6 +205,8 @@ export default function UsersIndex({
             },
         });
     };
+
+    const USERS_PER_PAGE = 10;
 
     const roleOptions = useMemo(
         () => roles.length ? roles : [
@@ -293,16 +238,25 @@ export default function UsersIndex({
         );
     }, [users, query, isSearching]);
 
-    const grouped = useMemo(() => {
-        const g: Record<string, UserRow[]> = { none: [] };
-        roleOptions.forEach((r) => (g[r.name] = []));
-        users.forEach((u) => {
-            const r = u.roles?.[0]?.name ?? 'none';
-            if (g[r]) g[r].push(u);
-            else g.none.push(u);
-        });
-        return g;
-    }, [users, roleOptions]);
+    const filteredUsers = useMemo(() => {
+        const base = isSearching ? searchResults : users;
+        if (activeRole === 'all') return base;
+        return base.filter((user) => getRoleName(user) === activeRole);
+    }, [users, searchResults, isSearching, activeRole]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE));
+    const paginatedUsers = useMemo(() => {
+        const start = (currentPage - 1) * USERS_PER_PAGE;
+        const end = start + USERS_PER_PAGE;
+
+        return filteredUsers.slice(start, end);
+    }, [filteredUsers, currentPage]);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
 
     const handleRoleChange = (user: UserRow, newRole: string) => {
         const currentRole = getRoleName(user);
@@ -376,97 +330,141 @@ export default function UsersIndex({
                     )}
                 </div>
 
-                {/* SEARCH RESULTS mode */}
-                {isSearching ? (
-                    searchResults.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border py-12 text-muted-foreground">
+                <div className="flex flex-wrap gap-2">
+                    {[
+                        { key: 'all', label: 'Todos' },
+                        { key: 'admin', label: 'Administradores' },
+                        { key: 'tutor', label: 'Tutores' },
+                        { key: 'intern', label: 'Becarios' },
+                    ].map((item) => (
+                        <Button
+                            key={item.key}
+                            type="button"
+                            variant={activeRole === item.key ? 'default' : 'outline'}
+                            onClick={() => setActiveRole(item.key as 'all' | 'admin' | 'tutor' | 'intern')}
+                            className="rounded-full"
+                        >
+                            {item.label} ({counts[item.key] ?? 0})
+                        </Button>
+
+                    ))}
+                </div>
+
+                <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
+                    <p className="border-b border-border px-4 py-2 text-xs font-semibold text-muted-foreground">
+                        {filteredUsers.length} usuario{filteredUsers.length !== 1 ? 's' : ''}
+                        {filteredUsers.length > 0 && (
+                            <span>
+                                {' '}· mostrando {((currentPage - 1) * USERS_PER_PAGE) + 1}-
+                                {Math.min(currentPage * USERS_PER_PAGE, filteredUsers.length)}
+                            </span>
+                        )}
+                        {isSearching ? ` para «${query}»` : ''}
+                    </p>
+
+                    {filteredUsers.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center gap-3 rounded-xl py-12 text-muted-foreground">
                             <UserX className="h-8 w-8 opacity-30" />
-                            <p className="text-sm font-medium">Ningún usuario coincide con «{query}».</p>
+                            <p className="text-sm font-medium">
+                                {isSearching
+                                    ? `Ningún usuario coincide con «${query}».`
+                                    : 'No hay usuarios para este filtro.'}
+                            </p>
                         </div>
                     ) : (
-                        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm dark:border-slate-700/70 dark:bg-slate-900/60">
-                            <p className="border-b border-border px-4 py-2 text-xs font-semibold text-muted-foreground">
-                                {searchResults.length} resultado{searchResults.length !== 1 ? 's' : ''} para «{query}»
+                        <div className="divide-y divide-border/60">
+                            {paginatedUsers.map((user) => (
+                                <UserRow
+                                    key={user.id}
+                                    user={user}
+                                    isSaving={savingId === user.id}
+                                    roleName={getRoleName(user)}
+                                    roleOptions={roleOptions}
+                                    onRoleChange={handleRoleChange}
+                                    showBadge={activeRole === 'all' || isSearching}
+                                />
+                            ))}
+                        </div>
+                    )}
+                    {filteredUsers.length > USERS_PER_PAGE && (
+                        <div className="flex items-center justify-between border-t border-border px-4 py-3">
+                            <p className="text-xs text-muted-foreground">
+                                Página {currentPage} de {totalPages}
                             </p>
-                            <div className="divide-y divide-border/60">
-                                {searchResults.map((user) => (
-                                    <UserRow
-                                        key={user.id}
-                                        user={user}
-                                        isSaving={savingId === user.id}
-                                        roleName={getRoleName(user)}
-                                        roleOptions={roleOptions}
-                                        onRoleChange={handleRoleChange}
-                                        showBadge={true}
-                                    />
-                                ))}
+
+                            <div className="flex gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    Anterior
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    Siguiente
+                                </Button>
                             </div>
                         </div>
-                    )
-                ) : (
-                    /* GROUPED mode */
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3 items-start">
-                        {ROLE_ORDER.map((roleKey) => (
-                            <RoleGroup
-                                key={roleKey}
-                                roleKey={roleKey}
-                                users={grouped[roleKey] ?? []}
-                                savingId={savingId}
-                                roleOptions={roleOptions}
-                                onRoleChange={handleRoleChange}
-                                defaultOpen={roleKey === 'admin'}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
 
-            {/* INVITE MODAL */}
-            <Dialog open={isInviteModalOpen} onOpenChange={setIsInviteModalOpen}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>Invitar al Sistema</DialogTitle>
-                        <DialogDescription>
-                            Envía un correo con un enlace único para que la persona se registre con los permisos asignados.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={submitInvitation} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="invite-email">Correo Electrónico</Label>
-                            <Input
-                                id="invite-email"
-                                type="email"
-                                placeholder="ejemplo@correo.com"
-                                value={inviteData.email}
-                                onChange={(e) => setInviteData('email', e.target.value)}
-                                required
-                            />
-                            {inviteErrors.email && <p className="text-sm text-red-500">{inviteErrors.email}</p>}
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Rol Asignado</Label>
-                            <Select onValueChange={(value) => setInviteData('role', value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Selecciona un rol" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {roles.map((r) => (
-                                        <SelectItem key={r.name} value={r.name}>{r.display_name}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {inviteErrors.role && <p className="text-sm text-red-500">{inviteErrors.role}</p>}
-                        </div>
-                        <DialogFooter className="pt-4">
-                            <Button type="button" variant="outline" onClick={() => setIsInviteModalOpen(false)}>Cancelar</Button>
-                            <Button type="submit" disabled={inviteProcessing} className="gap-2">
-                                {inviteProcessing && <Loader2 className="h-4 w-4 animate-spin" />}
-                                Enviar Invitación
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
+
+                {/* INVITE MODAL */}
+                <Dialog open={isInviteModalOpen} onOpenChange={setIsInviteModalOpen}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Invitar al Sistema</DialogTitle>
+                            <DialogDescription>
+                                Envía un correo con un enlace único para que la persona se registre con los permisos asignados.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={submitInvitation} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="invite-email">Correo Electrónico</Label>
+                                <Input
+                                    id="invite-email"
+                                    type="email"
+                                    placeholder="ejemplo@correo.com"
+                                    value={inviteData.email}
+                                    onChange={(e) => setInviteData('email', e.target.value)}
+                                    required
+                                />
+                                {inviteErrors.email && <p className="text-sm text-red-500">{inviteErrors.email}</p>}
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Rol Asignado</Label>
+                                <Select onValueChange={(value) => setInviteData('role', value)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona un rol" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {roles.map((r) => (
+                                            <SelectItem key={r.name} value={r.name}>{r.display_name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {inviteErrors.role && <p className="text-sm text-red-500">{inviteErrors.role}</p>}
+                            </div>
+                            <DialogFooter className="pt-4">
+                                <Button type="button" variant="outline" onClick={() => setIsInviteModalOpen(false)}>Cancelar</Button>
+                                <Button type="submit" disabled={inviteProcessing} className="gap-2">
+                                    {inviteProcessing && <Loader2 className="h-4 w-4 animate-spin" />}
+                                    Enviar Invitación
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </AppLayout>
     );
 }
