@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EducationCenterController;
+use App\Http\Controllers\EvaluationCriterionController;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\PracticeTypeController;
 use App\Http\Controllers\RolesController;
@@ -177,6 +178,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Ruta para evaluaciones
     Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
+    Route::get('/evaluaciones/criterios', [EvaluationCriterionController::class, 'index'])
+        ->name('evaluation-criteria.index')
+        ->middleware('admin');
+    Route::get('/evaluaciones/criterios/create', [EvaluationCriterionController::class, 'create'])
+        ->name('evaluation-criteria.create')
+        ->middleware('admin');
+    Route::post('/evaluaciones/criterios', [EvaluationCriterionController::class, 'store'])
+        ->name('evaluation-criteria.store')
+        ->middleware('admin');
+    Route::get('/evaluaciones/criterios/{criterion}/edit', [EvaluationCriterionController::class, 'edit'])
+        ->name('evaluation-criteria.edit')
+        ->middleware('admin');
+    Route::patch('/evaluaciones/criterios/{criterion}', [EvaluationCriterionController::class, 'update'])
+        ->name('evaluation-criteria.update')
+        ->middleware('admin');
+    Route::delete('/evaluaciones/criterios/{criterion}', [EvaluationCriterionController::class, 'destroy'])
+        ->name('evaluation-criteria.destroy')
+        ->middleware('admin');
+    Route::patch('/evaluaciones/criterios/{criterion}/toggle', [EvaluationCriterionController::class, 'toggle'])
+        ->name('evaluation-criteria.toggle')
+        ->middleware('admin');
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
     // Roles y permisos (admin)
@@ -206,5 +228,4 @@ Route::middleware('guest')->group(function () {
 
 // rutas públicas o especiales
 require __DIR__ . '/settings.php';
-
 
