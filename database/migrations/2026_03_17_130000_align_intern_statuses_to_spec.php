@@ -14,6 +14,10 @@ return new class extends Migration
         DB::statement("UPDATE interns SET status = 'active' WHERE status = 'pending'");
         DB::statement("UPDATE interns SET status = 'abandoned', abandon_reason = COALESCE(abandon_reason, 'Cancelado') WHERE status = 'cancelled'");
 
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         // Update constraint and default to match the spec.
         DB::statement('ALTER TABLE interns DROP CONSTRAINT interns_status_check');
         DB::statement("ALTER TABLE interns ADD CONSTRAINT interns_status_check CHECK (status IN ('active','completed','abandoned'))");
@@ -27,6 +31,10 @@ return new class extends Migration
     {
         // Bring data back within the old constraint.
         DB::statement("UPDATE interns SET status = 'cancelled' WHERE status = 'abandoned'");
+
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
 
         DB::statement('ALTER TABLE interns DROP CONSTRAINT interns_status_check');
         DB::statement("ALTER TABLE interns ADD CONSTRAINT interns_status_check CHECK (status IN ('pending','active','completed','cancelled'))");

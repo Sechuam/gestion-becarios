@@ -9,12 +9,13 @@ use Carbon\CarbonPeriod;
 class TimeTrackingService
 {
     public const NON_COMPLIANCE_THRESHOLD = 8.0;
+    protected const OPEN_ENDED_SCHEDULE_END = '9999-12-31';
 
     protected function resolveScheduleForDate($schedules, Carbon $date)
     {
         return $schedules
             ->filter(function ($schedule) use ($date) {
-                $endDate = $schedule->end_date ?? Carbon::maxValue();
+                $endDate = $schedule->end_date ?? Carbon::parse(self::OPEN_ENDED_SCHEDULE_END);
 
                 return $date->between($schedule->start_date, $endDate);
             })

@@ -145,19 +145,23 @@ class TimeLogController extends Controller
 
         $log = TimeLog::firstOrNew([
             'user_id' => $intern->user_id,
-            'date' => $validated['date'],
+            'date' => Carbon::parse($validated['date'])->toDateString(),
         ]);
 
         $log->fill([
-            'clock_in' => $validated['clock_in'] ?? $log->clock_in,
-            'clock_out' => $validated['clock_out'] ?? $log->clock_out,
+            'clock_in' => isset($validated['clock_in']) && $validated['clock_in']
+                ? "{$validated['clock_in']}:00"
+                : $log->clock_in,
+            'clock_out' => isset($validated['clock_out']) && $validated['clock_out']
+                ? "{$validated['clock_out']}:00"
+                : $log->clock_out,
             'notes' => $validated['notes'] ?? $log->notes,
             'tutor_user_id' => $request->user()->id,
         ]);
 
         if ($log->clock_in && $log->clock_out) {
-            $clockIn = Carbon::createFromFormat('Y-m-d H:i:s', "{$validated['date']} {$log->clock_in}:00");
-            $clockOut = Carbon::createFromFormat('Y-m-d H:i:s', "{$validated['date']} {$log->clock_out}:00");
+            $clockIn = Carbon::createFromFormat('Y-m-d H:i:s', "{$validated['date']} {$log->clock_in}");
+            $clockOut = Carbon::createFromFormat('Y-m-d H:i:s', "{$validated['date']} {$log->clock_out}");
             $log->total_hours = round($clockIn->diffInMinutes($clockOut) / 60, 2);
         } else {
             $log->total_hours = null;

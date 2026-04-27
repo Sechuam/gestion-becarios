@@ -8,6 +8,7 @@ use App\Models\TimeLog;
 use App\Models\User;
 use App\Services\TimeTrackingService;
 use Carbon\Carbon;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -43,15 +44,17 @@ it('allows an assigned tutor to create a manual time log for an intern', functio
 
     $response->assertRedirect();
 
-    $this->assertDatabaseHas('time_logs', [
-        'user_id' => $internUser->id,
-        'tutor_user_id' => $tutor->id,
-        'date' => '2026-04-14',
-        'clock_in' => '09:00:00',
-        'clock_out' => '13:30:00',
-        'notes' => 'Ajuste manual por incidencia',
-        'total_hours' => 4.50,
-    ]);
+    $timeLog = TimeLog::query()
+        ->where('user_id', $internUser->id)
+        ->where('tutor_user_id', $tutor->id)
+        ->first();
+
+    expect($timeLog)->not->toBeNull()
+        ->and($timeLog->date->toDateString())->toBe('2026-04-14')
+        ->and($timeLog->clock_in)->toBe('09:00:00')
+        ->and($timeLog->clock_out)->toBe('13:30:00')
+        ->and($timeLog->notes)->toBe('Ajuste manual por incidencia')
+        ->and((float) $timeLog->total_hours)->toBe(4.5);
 });
 
 it('prevents a tutor from approving absences for interns not assigned to them', function () {
@@ -175,8 +178,11 @@ it('shows non-compliance alerts in the attendance module for tutors', function (
     $this->actingAs($tutor)
         ->get(route('attendance.index'))
         ->assertOk()
-        ->assertSee('Alertas de incumplimiento')
-        ->assertSee($internUser->name);
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('attendance/index')
+            ->has('non_compliant_interns', 1)
+            ->where('non_compliant_interns.0.name', $internUser->name)
+        );
 
     Carbon::setTestNow();
 });

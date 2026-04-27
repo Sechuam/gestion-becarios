@@ -23,8 +23,10 @@ return new class extends Migration
                 'contact_email' => DB::raw("'coordinator_' || id || '@example.com'"),
             ]);
 
-        // Enforce not-null and uniqueness after backfill.
-        DB::statement('ALTER TABLE education_centers ALTER COLUMN contact_email SET NOT NULL');
+        // SQLite does not support this ALTER COLUMN form during in-memory tests.
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE education_centers ALTER COLUMN contact_email SET NOT NULL');
+        }
         Schema::table('education_centers', function (Blueprint $table) {
             $table->unique('contact_email');
         });
