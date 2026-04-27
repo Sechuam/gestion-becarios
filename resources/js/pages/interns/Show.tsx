@@ -10,6 +10,7 @@ import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import type { BreadcrumbItem } from '@/types/navigation';
 import { CreateScheduleModal } from '@/components/interns/CreateScheduleModal';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { AlertTriangle, ArrowLeft, CalendarRange, CheckCircle2, ChevronLeft, ChevronRight, Clock, Download, FileText, GraduationCap, HardDrive, History as HistoryIcon, User } from 'lucide-react';
 import { ExportReportModal } from '@/components/interns/ExportReportModal';
@@ -48,6 +49,10 @@ export default function Show({
     const displayedActivities = activities.slice(
         (activityPage - 1) * activitiesPerPage,
         activityPage * activitiesPerPage,
+    );
+    const today = new Date().toISOString().split('T')[0];
+    const schedules = [...(intern.user?.schedules ?? [])].sort((a: any, b: any) =>
+        String(b.start_date).localeCompare(String(a.start_date)),
     );
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -389,14 +394,32 @@ export default function Show({
                                         </div>
                                         
                                         <div className="space-y-4">
-                                            {intern.user?.schedules?.length > 0 ? (
-                                                intern.user.schedules.map((schedule: any) => (
+                                            {schedules.length > 0 ? (
+                                                schedules.map((schedule: any) => {
+                                                    const isActive =
+                                                        schedule.start_date <= today &&
+                                                        (!schedule.end_date || schedule.end_date >= today);
+
+                                                    return (
                                                     <div key={schedule.id} className="p-6 rounded-2xl filter-panel">
                                                         <div className="flex justify-between items-start mb-4">
                                                             <div>
-                                                                <h4 className="font-bold text-slate-800 dark:text-slate-100">{schedule.name}</h4>
+                                                                <div className="flex items-center gap-2">
+                                                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{schedule.name}</h4>
+                                                                    {isActive && (
+                                                                        <Badge className="rounded-full bg-emerald-600 text-white hover:bg-emerald-600">
+                                                                            Activo
+                                                                        </Badge>
+                                                                    )}
+                                                                </div>
                                                                 <p className="text-[10px] font-bold text-slate-400 mt-0.5">Vigencia: {formatDateEs(schedule.start_date)} — {schedule.end_date ? formatDateEs(schedule.end_date) : 'Activo'}</p>
                                                             </div>
+                                                            {canManage && (
+                                                                <CreateScheduleModal
+                                                                    userId={intern.user.id}
+                                                                    schedule={schedule}
+                                                                />
+                                                            )}
                                                         </div>
                                                         <div className="grid grid-cols-5 gap-2">
                                                             {['L', 'M', 'X', 'J', 'V'].map((d, i) => {
@@ -410,7 +433,7 @@ export default function Show({
                                                             })}
                                                         </div>
                                                     </div>
-                                                ))
+                                                )})
                                             ) : (
                                                 <div className="text-center py-12 bg-slate-50/30 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
                                                     <CalendarRange className="h-8 w-8 text-slate-300 mx-auto mb-2" />

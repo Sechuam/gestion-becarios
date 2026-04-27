@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Intern;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ScheduleController extends Controller
 {
@@ -25,6 +27,11 @@ class ScheduleController extends Controller
         ]);
 
         $this->authorizeScheduleManagement($request->user(), (int) $validated['user_id']);
+        $this->ensureNoScheduleOverlap(
+            (int) $validated['user_id'],
+            $validated['start_date'],
+            $validated['end_date'] ?? null,
+        );
         Schedule::create($validated);
 
         return back()->with('success', 'Horario asignado al becario correctamente.');
@@ -45,6 +52,12 @@ class ScheduleController extends Controller
         ]);
 
         $this->authorizeScheduleManagement($request->user(), (int) $schedule->user_id);
+        $this->ensureNoScheduleOverlap(
+            (int) $schedule->user_id,
+            $validated['start_date'],
+            $validated['end_date'] ?? null,
+            $schedule->id,
+        );
         $schedule->update($validated);
 
         return back()->with('success', 'Horario actualizado correctamente.');
@@ -66,5 +79,33 @@ class ScheduleController extends Controller
                 || ($user->isTutor() && $intern && $intern->company_tutor_user_id === $user->id),
             403
         );
+    }
+
+    protected function ensureNoScheduleOverlap(
+        int $userId,
+        string $startDate,
+        ?string $endDate,
+        ?int $ignoreScheduleId = null,
+    ): void {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = $endDate ? Carbon::parse($endDate)->endOfDay() : null;
+
+        $query = Schedule::query()
+            ->where('user_id', $userId)
+            ->when($ignoreScheduleId, fn($builder) => $builder->where('id', '!=', $ignoreScheduleId));
+
+        $hasOverlap = $query->get()->contains(function (Schedule $schedule) use ($start, $end) {
+            $existingStart = $schedule->start_date->copy()->startOfDay();
+            $existingEnd = $schedule->end_date?->copy()->endOfDay();
+
+            return $start->lte($existingEnd ?? Carbon::maxValue())
+                && ($end ?? Carbon::maxValue())->gte($existingStart);
+        });
+
+        if ($hasOverlap) {
+            throw ValidationException::withMessages([
+                'start_date' => 'Ya existe un horario activo en parte de ese periodo.',
+            ]);
+        }
     }
 }

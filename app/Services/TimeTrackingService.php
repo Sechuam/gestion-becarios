@@ -10,6 +10,18 @@ class TimeTrackingService
 {
     public const NON_COMPLIANCE_THRESHOLD = 8.0;
 
+    protected function resolveScheduleForDate($schedules, Carbon $date)
+    {
+        return $schedules
+            ->filter(function ($schedule) use ($date) {
+                $endDate = $schedule->end_date ?? Carbon::maxValue();
+
+                return $date->between($schedule->start_date, $endDate);
+            })
+            ->sortByDesc(fn($schedule) => $schedule->start_date?->timestamp ?? 0)
+            ->first();
+    }
+
     /**
      * Calcula estadísticas generales de un becario hasta la fecha actual.
      */
@@ -26,16 +38,14 @@ class TimeTrackingService
 
         if ($startDate->lte($calculationEnd)) {
             $period = CarbonPeriod::create($startDate, $calculationEnd);
-            $schedules = $user->schedules()->get();
+            $schedules = $user->schedules()->orderByDesc('start_date')->get();
             $approvedAbsenceDates = $user->absences()
                 ->where('status', 'approved')
                 ->get()
                 ->map(fn($absence) => Carbon::parse($absence->date)->format('Y-m-d'));
 
             foreach ($period as $date) {
-                $schedule = $schedules->first(function ($s) use ($date) {
-                    return $date->between($s->start_date, $s->end_date ?? Carbon::tomorrow());
-                });
+                $schedule = $this->resolveScheduleForDate($schedules, $date);
 
                 if ($schedule) {
                     $dayName = strtolower($date->format('l'));
@@ -89,7 +99,7 @@ class TimeTrackingService
             ->get()
             ->keyBy(fn($a) => Carbon::parse($a->date)->format('Y-m-d'));
 
-        $schedules = $user->schedules()->get();
+        $schedules = $user->schedules()->orderByDesc('start_date')->get();
 
         $days = [];
         $totalWorked = 0;
@@ -100,7 +110,7 @@ class TimeTrackingService
             $log = $logs->get($dateStr);
             $absence = $absences->get($dateStr);
 
-            $schedule = $schedules->first(fn($s) => $date->between($s->start_date, $s->end_date ?? Carbon::tomorrow()));
+            $schedule = $this->resolveScheduleForDate($schedules, $date);
             $expectedToday = $schedule ? (float) $schedule->{strtolower($date->format('l')) . '_hours'} : 0;
 
             $days[] = [
