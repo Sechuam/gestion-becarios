@@ -2,6 +2,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect, useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import type { EventContentArg, EventMountArg } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -161,6 +162,27 @@ export default function Index({
         current_log?.clock_in && !current_log?.clock_out
             ? formatElapsed(getElapsedSeconds(current_log.clock_in, now))
             : null;
+
+    const renderCalendarEvent = (eventInfo: EventContentArg) => (
+        <div className="attendance-calendar-event-content">
+            <span
+                className="attendance-calendar-event-dot"
+                style={{ backgroundColor: eventInfo.event.backgroundColor }}
+            />
+            <span className="attendance-calendar-event-label">
+                {eventInfo.timeText ? `${eventInfo.timeText} ` : ''}
+                {eventInfo.event.title}
+            </span>
+        </div>
+    );
+
+    const attachEventTooltip = (eventInfo: EventMountArg) => {
+        const tooltip = [eventInfo.timeText, eventInfo.event.title]
+            .filter(Boolean)
+            .join(' · ');
+
+        eventInfo.el.setAttribute('title', tooltip || eventInfo.event.title);
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -515,7 +537,7 @@ export default function Index({
 
                 <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900 p-8">
                     <CardContent className="p-0">
-                        <div className="rounded-[2rem] border border-sidebar/10 bg-slate-50/50 p-6 shadow-inner transition-all dark:bg-slate-800/50">
+                        <div className="attendance-calendar rounded-[2rem] border border-sidebar/10 bg-slate-50/50 p-6 shadow-inner transition-all dark:bg-slate-800/50">
                             <FullCalendar
                                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                                 initialView="dayGridMonth"
@@ -526,7 +548,15 @@ export default function Index({
                                 }}
                                 events="/time-logs/events"
                                 locale="es"
-                                height="auto"
+                                firstDay={1}
+                                contentHeight={720}
+                                fixedWeekCount
+                                expandRows
+                                dayMaxEventRows={3}
+                                moreLinkClick="popover"
+                                eventClassNames={() => ['attendance-calendar-event']}
+                                eventContent={renderCalendarEvent}
+                                eventDidMount={attachEventTooltip}
                                 buttonText={{
                                     today: 'Hoy',
                                     month: 'Mes',
