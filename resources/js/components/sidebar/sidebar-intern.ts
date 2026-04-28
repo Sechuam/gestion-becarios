@@ -25,10 +25,6 @@ export function getInternSidebar(): SidebarSection[] {
                     isActive: false,
                     items: [
                         {
-                            title: 'Mi perfil',
-                            href: '/mi-perfil',
-                        },
-                        {
                             title: 'Mi centro',
                             href: '/mi-centro',
                         },

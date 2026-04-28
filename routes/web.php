@@ -27,11 +27,11 @@ Route::inertia('/', 'welcome', [
 
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Rutas para el área personal del becario
-    Route::get('mi-perfil', [InternController::class, 'myProfile'])
+    // Rutas para el área personal del becario (Redirigidas a Ajustes)
+    Route::get('mi-perfil', fn() => redirect()->route('profile.edit'))
         ->name('interns.my-profile')
         ->middleware('role:intern|becario');
-    Route::post('mi-perfil/avatar', [InternController::class, 'updateAvatar'])
+    Route::post('mi-perfil/avatar', fn() => redirect()->route('profile.avatar', [], 307))
         ->name('interns.update-avatar')
         ->middleware('role:intern|becario');
 
