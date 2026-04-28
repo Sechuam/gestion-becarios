@@ -25,12 +25,45 @@ class EvaluationReportController extends Controller
             'scores.criterion',
         ]);
 
+        // Get evaluation history for graph
+        $previousWeightedScore = null;
+        $history = Evaluation::query()
+            ->where('intern_id', $evaluation->intern_id)
+            ->orderBy('evaluated_at', 'asc')
+            ->orderBy('id', 'asc')
+            ->get([
+                'id',
+                'evaluation_type',
+                'evaluated_at',
+                'weighted_score',
+            ])
+            ->map(function (Evaluation $item) use (&$previousWeightedScore, $evaluation) {
+                $currentWeightedScore = $item->weighted_score !== null ? (float) $item->weighted_score : null;
+                $delta = $currentWeightedScore !== null && $previousWeightedScore !== null
+                    ? round($currentWeightedScore - $previousWeightedScore, 2)
+                    : null;
+
+                if ($currentWeightedScore !== null) {
+                    $previousWeightedScore = $currentWeightedScore;
+                }
+
+                return [
+                    'id' => $item->id,
+                    'evaluated_at' => $item->evaluated_at?->format('Y-m-d'),
+                    'weighted_score' => $currentWeightedScore,
+                    'delta' => $delta,
+                    'is_current' => (int) $item->id === (int) $evaluation->id,
+                ];
+            })
+            ->values();
+
         $fileName = 'evaluacion-' . $evaluation->id . '-' . str($evaluation->intern?->user?->name ?? 'becario')
             ->slug()
             ->value() . '.pdf';
 
         return Pdf::view('pdfs.evaluation-report', [
             'evaluation' => $evaluation,
+            'history' => $history,
         ])
             ->driver('dompdf')
             ->name($fileName);

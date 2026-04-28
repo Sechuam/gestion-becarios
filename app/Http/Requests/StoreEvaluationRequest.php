@@ -30,6 +30,34 @@ class StoreEvaluationRequest extends FormRequest
         ];
     }
 
+    public function after(): array
+    {
+        return [
+            function ($validator) {
+                $scores = $this->input('scores', []);
+                $errors = [];
+                
+                foreach ($scores as $index => $scoreData) {
+                    $score = (float) ($scoreData['score'] ?? 0);
+                    $comment = trim($scoreData['comment'] ?? '');
+                    
+                    // Require comment for extreme scores (< 4 or > 8)
+                    if (($score < 4 || $score > 8) && empty($comment)) {
+                        $errors["scores.$index.comment"] = 
+                            'El comentario es obligatorio para puntuaciones extremas (menor a 4 o mayor a 8).';
+                    }
+                }
+                
+                if (!empty($errors)) {
+                    $validator->errors()->add('scores', 'Hay errores en los comentarios de puntuaciones extremas.');
+                    foreach ($errors as $field => $message) {
+                        $validator->errors()->add($field, $message);
+                    }
+                }
+            }
+        ];
+    }
+
     public function messages(): array
     {
         return [

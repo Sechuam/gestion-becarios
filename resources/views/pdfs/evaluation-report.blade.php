@@ -197,6 +197,62 @@
         </div>
     </div>
 
+    @if(count($history ?? []) > 1)
+    <div style="margin: 22px 0; page-break-inside: avoid;">
+        <h3 style="font-size: 12px; font-weight: bold; color: #475569; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.08em;">Evolución histórica</h3>
+        <svg width="100%" height="200" style="border: 1px solid #e2e8f0; background-color: #f8fafc;">
+            @php
+                $validHistory = collect($history ?? [])->filter(fn($h) => $h['weighted_score'] !== null)->values();
+                $maxScore = $validHistory->max('weighted_score') ?? 10;
+                $minScore = min($validHistory->min('weighted_score') ?? 0, 0);
+                $range = max($maxScore - $minScore, 1);
+                
+                $padding = 30;
+                $width = 600;
+                $height = 140;
+                $graphWidth = $width - (2 * $padding);
+                $graphHeight = $height - (2 * $padding);
+                
+                $xStep = $validHistory->count() > 1 ? $graphWidth / ($validHistory->count() - 1) : 0;
+                $points = [];
+                
+                foreach ($validHistory as $index => $item) {
+                    $x = $padding + ($index * $xStep);
+                    $y = $padding + $graphHeight - (($item['weighted_score'] - $minScore) / $range * $graphHeight);
+                    $points[] = "$x,$y";
+                }
+                
+                $polyline = implode(' ', $points);
+            @endphp
+            
+            <!-- Grid lines -->
+            <line x1="{{ $padding }}" y1="{{ $padding }}" x2="{{ $padding }}" y2="{{ $padding + $graphHeight }}" stroke="#e2e8f0" stroke-width="1"/>
+            <line x1="{{ $padding }}" y1="{{ $padding + $graphHeight }}" x2="{{ $padding + $graphWidth }}" y2="{{ $padding + $graphHeight }}" stroke="#e2e8f0" stroke-width="1"/>
+            
+            <!-- Y axis labels -->
+            <text x="15" y="{{ $padding + 5 }}" font-size="10" fill="#64748b" text-anchor="end">{{ number_format($maxScore, 1) }}</text>
+            <text x="15" y="{{ $padding + $graphHeight + 5 }}" font-size="10" fill="#64748b" text-anchor="end">{{ number_format($minScore, 1) }}</text>
+            
+            <!-- Polyline for evolution -->
+            <polyline points="{{ $polyline }}" stroke="#1f4f52" stroke-width="2" fill="none"/>
+            
+            <!-- Points and labels -->
+            @foreach($validHistory as $index => $item)
+                @php
+                    $x = $padding + ($index * $xStep);
+                    $y = $padding + $graphHeight - (($item['weighted_score'] - $minScore) / $range * $graphHeight);
+                    $dateShort = $item['evaluated_at'] ? \Carbon\Carbon::parse($item['evaluated_at'])->format('d/m') : '—';
+                @endphp
+                <circle cx="{{ $x }}" cy="{{ $y }}" r="3" fill="{{ $item['is_current'] ? '#dc2626' : '#1f4f52' }}"/>
+                <text x="{{ $x }}" y="{{ $padding + $graphHeight + 20 }}" font-size="9" fill="#64748b" text-anchor="middle">{{ $dateShort }}</text>
+            @endforeach
+        </svg>
+        <p style="font-size: 10px; color: #64748b; margin-top: 8px; margin-bottom: 0;">
+            <strong style="color: #1f4f52;">Leyenda:</strong> Línea ponderada de evaluaciones registradas. Punto rojo = evaluación actual.
+        </p>
+    </div>
+    @endif
+
     <table class="main-table">
         <thead>
             <tr>

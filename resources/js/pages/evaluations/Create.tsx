@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -76,12 +77,23 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
         setData('scores', nextScores);
     };
 
+    // Check for missing comments on extreme scores
+    const missingComments = data.scores
+        .map((score, index) => {
+            const scoreNum = parseFloat(score.score);
+            if (!isNaN(scoreNum) && (scoreNum < 4 || scoreNum > 8) && !score.comment.trim()) {
+                return index;
+            }
+            return null;
+        })
+        .filter((idx) => idx !== null);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={isIntern ? 'Nueva autoevaluacion' : 'Nueva evaluacion'} />
 
             <div className="min-h-screen w-full space-y-6 bg-slate-50/50 p-6 dark:bg-slate-950/20">
-                <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-8 shadow-xl md:p-10">
+                <div className="relative overflow-hidden rounded-4xl bg-linear-to-r from-sidebar to-[#1f4f52] p-8 shadow-xl md:p-10">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative">
                         <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">
@@ -97,7 +109,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
 
                 <form
                     onSubmit={submit}
-                    className="app-panel rounded-[2rem] border-sidebar/10 bg-white p-8 shadow-2xl dark:bg-slate-900 md:p-12"
+                    className="app-panel rounded-4xl border-sidebar/10 bg-white p-8 shadow-2xl dark:bg-slate-900 md:p-12"
                 >
                     <div className="mb-12">
                         <div className="mb-8 flex items-center gap-4 border-b border-sidebar/10 pb-4">
@@ -288,6 +300,12 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                             <div className="space-y-2">
                                                 <Label className="text-xs font-black uppercase tracking-widest text-[#1f4f52]">
                                                     Comentario del criterio
+                                                    {(() => {
+                                                        const scoreNum = parseFloat(data.scores[index].score);
+                                                        return scoreNum < 4 || scoreNum > 8 ? (
+                                                            <span className="ml-2 text-amber-600"> *Obligatorio</span>
+                                                        ) : null;
+                                                    })()}
                                                 </Label>
                                                 <Input
                                                     value={data.scores[index].comment}
@@ -295,7 +313,14 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                                         updateScore(index, 'comment', e.target.value)
                                                     }
                                                     placeholder="Observacion breve sobre este criterio..."
-                                                    className="h-12 rounded-2xl border-sidebar/20 bg-white"
+                                                    className={`h-12 rounded-2xl bg-white transition-all ${
+                                                        (() => {
+                                                            const scoreNum = parseFloat(data.scores[index].score);
+                                                            return (scoreNum < 4 || scoreNum > 8) && !data.scores[index].comment.trim()
+                                                                ? 'border-2 border-amber-400 focus:ring-4 focus:ring-amber-100'
+                                                                : 'border-sidebar/20';
+                                                        })()
+                                                    }`}
                                                 />
                                             </div>
                                         </div>
@@ -303,7 +328,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                 ))}
                             </div>
                         ) : (
-                            <div className="rounded-[1.5rem] border border-dashed border-amber-300 bg-amber-50/70 p-6 text-amber-900">
+                            <div className="rounded-3xl border border-dashed border-amber-300 bg-amber-50/70 p-6 text-amber-900">
                                 <p className="text-sm font-black uppercase tracking-widest">
                                     No hay criterios activos
                                 </p>
@@ -316,6 +341,23 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
 
                         {errors.scores && (
                             <p className="mt-4 text-xs font-bold text-red-500">{errors.scores}</p>
+                        )}
+
+                        {missingComments.length > 0 && (
+                            <div className="mt-6 rounded-3xl border-2 border-amber-300 bg-amber-50 p-5 shadow-sm">
+                                <div className="flex gap-3">
+                                    <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
+                                    <div>
+                                        <p className="text-sm font-bold text-amber-900">
+                                            Comentarios obligatorios faltantes
+                                        </p>
+                                        <p className="mt-2 text-xs text-amber-800">
+                                            Los criterios con puntuaciones extremas (menor a 4 o mayor a 8) requieren un comentario. 
+                                            Por favor completa los comentarios para: {missingComments.map(i => criteria[i]?.name).filter(Boolean).join(', ')}.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
 

@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, ClipboardList, Download, MessageSquareText, Minus, Percent, TrendingDown, TrendingUp, UserRound } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ClipboardList, Download, MessageSquareText, Minus, Percent, TrendingDown, TrendingUp, UserRound } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { formatDateEs } from '@/lib/date-format';
@@ -101,11 +101,56 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                 ? 'text-amber-600'
                 : 'text-rose-600';
 
+    // Performance alerts
+    const currentEvaluation = history.find((item) => item.is_current);
+    const significantDrop = currentEvaluation?.delta_from_previous !== null && currentEvaluation?.delta_from_previous !== undefined
+        ? Number(currentEvaluation.delta_from_previous) < -1
+        : false;
+    
+    const recentHistory = history.slice(0, 3).reverse();
+    const downwardTrend = recentHistory.length >= 3
+        ? recentHistory[0].delta_from_previous !== null &&
+          recentHistory[1].delta_from_previous !== null &&
+          Number(recentHistory[0].delta_from_previous) < 0 &&
+          Number(recentHistory[1].delta_from_previous) < 0
+        : false;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Evaluación #${evaluation.id}`} />
 
             <div className="w-full space-y-6">
+                {/* Performance Alerts */}
+                {(significantDrop || downwardTrend) && (
+                    <div className="rounded-4xl border-2 border-rose-200 bg-rose-50 p-6 shadow-md dark:border-rose-900/30 dark:bg-rose-950/20">
+                        <div className="flex items-start gap-4">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-900/40">
+                                <AlertTriangle className="h-5 w-5 text-rose-600" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-black text-rose-900 dark:text-rose-100">
+                                    ⚠️ Alerta de rendimiento
+                                </h3>
+                                {significantDrop && (
+                                    <p className="mt-2 text-sm text-rose-800 dark:text-rose-200">
+                                        <strong>Bajada significativa detectada:</strong> Esta evaluación muestra una <strong>disminución de {Math.abs(Number(currentEvaluation?.delta_from_previous)).toFixed(2)} puntos</strong> respecto a la anterior. Se recomienda revisar los criterios con menor puntuación y planificar actividades de mejora.
+                                    </p>
+                                )}
+                                {downwardTrend && !significantDrop && (
+                                    <p className="mt-2 text-sm text-rose-800 dark:text-rose-200">
+                                        <strong>Tendencia a la baja:</strong> El becario ha mostrado <strong>disminución en las últimas evaluaciones</strong>. Es recomendable realizar una reunión de seguimiento para identificar las causas y ofrecer apoyo.
+                                    </p>
+                                )}
+                                {downwardTrend && significantDrop && (
+                                    <p className="mt-2 text-sm text-rose-800 dark:text-rose-200">
+                                        <strong>Atención urgente:</strong> Se detecta tanto una bajada significativa actual como una tendencia decreciente. Se recomienda intervención inmediata para revertir esta situación.
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex items-center justify-between px-2 pb-2">
                     <Button
                         variant="ghost"
