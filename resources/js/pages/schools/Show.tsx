@@ -1,18 +1,18 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { 
-    Search, 
-    FileDown, 
-    ArrowLeft, 
-    School, 
-    Users, 
-    History as HistoryIcon, 
-    HardDrive, 
-    Calendar, 
-    MapPin, 
-    Mail, 
-    Phone, 
-    Globe, 
-    FileText, 
+import {
+    Search,
+    FileDown,
+    ArrowLeft,
+    School,
+    Users,
+    History as HistoryIcon,
+    HardDrive,
+    Calendar,
+    MapPin,
+    Mail,
+    Phone,
+    Globe,
+    FileText,
     Download,
     GraduationCap,
     Clock,
@@ -193,7 +193,7 @@ export default function Show({
                         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/10 border-4 border-white/20 shadow-2xl backdrop-blur-md">
                             <School className="h-10 w-10 text-white" />
                         </div>
-                        
+
                         <div className="flex-1 space-y-2">
                             <div className="flex flex-wrap items-center gap-4">
                                 <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
@@ -205,7 +205,7 @@ export default function Show({
                                     </Badge>
                                 )}
                             </div>
-                            
+
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
                                 <div className="flex items-center gap-2">
                                     <MapPin className="h-4 w-4" />
@@ -377,7 +377,7 @@ export default function Show({
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: e.target.value, status: filters?.status, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
                                             />
                                         </div>
-                                        
+
                                         <div className="flex items-center gap-2">
                                             <select
                                                 className="h-12 rounded-2xl border border-sidebar/40 bg-white dark:bg-slate-900 px-4 text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm focus:ring-2 focus:ring-primary"
@@ -504,7 +504,7 @@ export default function Show({
                                             </tbody>
                                         </table>
                                     </div>
-                                    
+
                                     {/* PAGINACIÓN INTEGRADA */}
                                     <div className="bg-slate-50/30 dark:bg-slate-800/20 px-6 py-4 border-t border-sidebar/20 flex items-center justify-between">
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">
@@ -521,8 +521,16 @@ export default function Show({
                                                     disabled={!link.url}
                                                 >
                                                     {link.url ? (
-                                                        <Link href={link.url} preserveState preserveScroll dangerouslySetInnerHTML={{ __html: link.label }} />
-                                                    ) : <span dangerouslySetInnerHTML={{ __html: link.label }} />}
+                                                        <Link href={link.url} preserveState preserveScroll dangerouslySetInnerHTML={{
+                                                            __html: link.label
+                                                                .replace('Previous', 'Anterior')
+                                                                .replace('Next', 'Siguiente')
+                                                        }} />
+                                                    ) : <span dangerouslySetInnerHTML={{
+                                                        __html: link.label
+                                                            .replace('Previous', 'Anterior')
+                                                            .replace('Next', 'Siguiente')
+                                                    }} />}
                                                 </Button>
                                             ))}
                                         </div>
@@ -588,7 +596,7 @@ export default function Show({
                                                         contact_person: 'Contacto', contact_email: 'Email centro', phone: 'Teléfono',
                                                         web: 'Web', agreement_signed_at: 'Firma', agreement_expires_at: 'Vencimiento'
                                                     };
-                                                    
+
                                                     const visibleFields = Object.keys(changes).filter(k => k in labels && old[k] !== changes[k]);
 
                                                     return (
@@ -600,7 +608,7 @@ export default function Show({
                                                                     {activity.event === 'updated' ? 'Actualización de ficha' : 'Registro creado'}
                                                                 </p>
                                                                 <p className="text-xs text-slate-500 mt-0.5">Realizado por <span className="font-bold text-slate-700 dark:text-slate-300">{activity.causer_name || 'Sistema'}</span></p>
-                                                                
+
                                                                 {visibleFields.length > 0 && (
                                                                     <div className="mt-4 space-y-2 p-4 rounded-2xl border border-sidebar/20 bg-white dark:bg-slate-900">
                                                                         {visibleFields.map(field => (
