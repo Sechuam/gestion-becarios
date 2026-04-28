@@ -16,6 +16,17 @@ use Inertia\Inertia;
 
 class EvaluationController extends Controller
 {
+    protected function getEvaluationTypeLabel(string $type): string
+    {
+        return match ($type) {
+            'weekly' => 'semanal',
+            'monthly' => 'mensual',
+            'final' => 'final',
+            'self' => 'de autoevaluación',
+            default => 'del mismo tipo',
+        };
+    }
+
     protected function canAccessEvaluations(): void
     {
         if (!Auth::user()?->isAdmin() && !Auth::user()?->isTutor() && !Auth::user()?->isIntern()) {
@@ -49,6 +60,45 @@ class EvaluationController extends Controller
         abort(403);
     }
 
+    protected function canViewEvaluation(Evaluation $evaluation): void
+    {
+        $user = Auth::user();
+
+        if ($user?->isAdmin()) {
+            return;
+        }
+
+        if ($user?->isTutor() && (int) $evaluation->intern?->company_tutor_user_id === (int) $user->id) {
+            return;
+        }
+
+        if ($user?->isIntern() && (int) $evaluation->intern?->user_id === (int) $user->id) {
+            return;
+        }
+
+        abort(403);
+    }
+
+    protected function ensureNoDuplicateEvaluation(array $validated): void
+    {
+        $alreadyExists = Evaluation::query()
+            ->where('intern_id', $validated['intern_id'])
+            ->where('evaluation_type', $validated['evaluation_type'])
+            ->whereDate('period_start', $validated['period_start'])
+            ->whereDate('period_end', $validated['period_end'])
+            ->exists();
+
+        if (!$alreadyExists) {
+            return;
+        }
+
+        $typeLabel = $this->getEvaluationTypeLabel((string) $validated['evaluation_type']);
+
+        throw ValidationException::withMessages([
+            'evaluation_type' => "Ya existe una evaluación {$typeLabel} para este becario en ese período.",
+        ]);
+    }
+
     public function index(Request $request)
     {
         $this->canAccessEvaluations();
@@ -61,7 +111,7 @@ class EvaluationController extends Controller
         if ($user?->isIntern()) {
             $internId = $user->intern?->id;
 
-            if (! $internId) {
+            if (!$internId) {
                 abort(403);
             }
 
@@ -72,7 +122,7 @@ class EvaluationController extends Controller
             });
         }
 
-        if (! $user?->isIntern() && $request->filled('search')) {
+        if (!$user?->isIntern() && $request->filled('search')) {
             $search = trim((string) $request->search);
 
             $query->whereHas('intern.user', function ($builder) use ($search) {
@@ -80,7 +130,7 @@ class EvaluationController extends Controller
             });
         }
 
-        if (! $user?->isIntern() && $request->filled('module')) {
+        if (!$user?->isIntern() && $request->filled('module')) {
             $module = trim((string) $request->module);
 
             $query->whereHas('intern', function ($builder) use ($module) {
@@ -96,7 +146,7 @@ class EvaluationController extends Controller
 
         $modules = collect();
 
-        if (! $user?->isIntern()) {
+        if (!$user?->isIntern()) {
             $modulesQuery = Intern::query();
 
             if ($user?->isTutor()) {
@@ -166,6 +216,75 @@ class EvaluationController extends Controller
         ]);
     }
 
+    public function show(Evaluation $evaluation)
+    {
+        $this->canAccessEvaluations();
+
+        $evaluation->load([
+            'intern.user:id,name,email',
+            'evaluator:id,name,email',
+            'scores.criterion:id,name,category,description,rubric,weight,max_score',
+        ]);
+
+        $this->canViewEvaluation($evaluation);
+
+        $previousWeightedScore = null;
+        $history = Evaluation::query()
+            ->where('intern_id', $evaluation->intern_id)
+            ->with('evaluator:id,name')
+            ->orderBy('evaluated_at')
+            ->orderBy('id')
+            ->get([
+                'id',
+                'intern_id',
+                'evaluator_user_id',
+                'evaluation_type',
+                'evaluated_at',
+                'period_start',
+                'period_end',
+                'weighted_score',
+                'total_score',
+                'is_self_evaluation',
+            ])
+            ->map(function (Evaluation $item) use (&$previousWeightedScore, $evaluation) {
+                $currentWeightedScore = $item->weighted_score !== null ? (float) $item->weighted_score : null;
+                $delta = $currentWeightedScore !== null && $previousWeightedScore !== null
+                    ? round($currentWeightedScore - $previousWeightedScore, 2)
+                    : null;
+
+                $historyItem = [
+                    'id' => $item->id,
+                    'evaluation_type' => $item->evaluation_type,
+                    'evaluated_at' => $item->evaluated_at,
+                    'period_start' => $item->period_start,
+                    'period_end' => $item->period_end,
+                    'weighted_score' => $item->weighted_score,
+                    'total_score' => $item->total_score,
+                    'is_self_evaluation' => $item->is_self_evaluation,
+                    'delta_from_previous' => $delta,
+                    'is_current' => (int) $item->id === (int) $evaluation->id,
+                    'evaluator' => $item->evaluator ? [
+                        'id' => $item->evaluator->id,
+                        'name' => $item->evaluator->name,
+                    ] : null,
+                ];
+
+                if ($currentWeightedScore !== null) {
+                    $previousWeightedScore = $currentWeightedScore;
+                }
+
+                return $historyItem;
+            })
+            ->reverse()
+            ->values();
+
+        return Inertia::render('evaluations/Show', [
+            'evaluation' => $evaluation,
+            'history' => $history,
+            'userMode' => Auth::user()?->isIntern() ? 'intern' : (Auth::user()?->isTutor() ? 'tutor' : 'admin'),
+        ]);
+    }
+
     public function store(StoreEvaluationRequest $request)
     {
         $this->canAccessEvaluations();
@@ -189,6 +308,8 @@ class EvaluationController extends Controller
                 ]);
             }
         }
+
+        $this->ensureNoDuplicateEvaluation($validated);
 
         $criteria = EvaluationCriterion::query()
             ->whereIn('id', collect($validated['scores'])->pluck('criterion_id'))

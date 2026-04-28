@@ -3,6 +3,7 @@
 use App\Http\Controllers\EducationCenterController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\EvaluationCriterionController;
+use App\Http\Controllers\EvaluationReportController;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\PracticeTypeController;
 use App\Http\Controllers\RolesController;
@@ -205,6 +206,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/evaluaciones/criterios/{criterion}/toggle', [EvaluationCriterionController::class, 'toggle'])
         ->name('evaluation-criteria.toggle')
         ->middleware('admin');
+    Route::get('/evaluaciones/{evaluation}', [EvaluationController::class, 'show'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.show');
+    Route::get('/evaluaciones/{evaluation}/pdf', [EvaluationReportController::class, 'download'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.pdf');
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
     // Roles y permisos (admin)

@@ -6,6 +6,7 @@ import { ClipboardList, Plus, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { TableActionMenu } from '@/components/common/TableActionMenu';
 import { formatDateEs } from '@/lib/date-format';
 import { getEvaluationTypeLabel } from '@/lib/evaluation-type-labels';
 import {
@@ -65,6 +66,22 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
         });
     };
 
+    const getScoreTone = (score: number | null) => {
+        if (score === null || Number.isNaN(score)) {
+            return 'bg-slate-100 text-slate-500';
+        }
+
+        if (score >= 8) {
+            return 'bg-emerald-100 text-emerald-700';
+        }
+
+        if (score >= 6) {
+            return 'bg-amber-100 text-amber-700';
+        }
+
+        return 'bg-rose-100 text-rose-700';
+    };
+
     const columns = [
         {
             key: 'intern',
@@ -75,7 +92,19 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
         {
             key: 'evaluator',
             label: 'Evaluador',
-            render: (row: any) => row.evaluator?.name ?? 'Sin evaluador',
+            render: (row: any) => (
+                <div className="space-y-1">
+                    <p className="font-medium text-slate-700">{row.evaluator?.name ?? 'Sin evaluador'}</p>
+                    <span
+                        className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${row.is_self_evaluation
+                                ? 'bg-violet-100 text-violet-700'
+                                : 'bg-slate-100 text-slate-600'
+                            }`}
+                    >
+                        {row.is_self_evaluation ? 'Autoevaluación' : 'Tutor / admin'}
+                    </span>
+                </div>
+            ),
         },
         {
             key: 'evaluation_type',
@@ -94,7 +123,34 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
         {
             key: 'weighted_score',
             label: 'Nota ponderada',
-            render: (row: any) => (row.weighted_score !== null ? row.weighted_score : 'Pendiente'),
+            render: (row: any) => {
+                const numericScore = row.weighted_score !== null ? Number(row.weighted_score) : null;
+
+                return (
+                    <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-black tracking-wide ${getScoreTone(
+                            numericScore,
+                        )}`}
+                    >
+                        {row.weighted_score !== null ? row.weighted_score : 'Pendiente'}
+                    </span>
+                );
+            },
+        },
+        {
+            key: 'actions',
+            label: 'Acciones',
+            render: (row: any) => (
+                <TableActionMenu
+                    actions={[
+                        {
+                            label: 'Ver detalle',
+                            icon: 'view',
+                            href: `/evaluaciones/${row.id}`,
+                        },
+                    ]}
+                />
+            ),
         },
     ];
 
@@ -233,7 +289,7 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                         emptyTitle={isIntern ? 'Aun no tienes evaluaciones registradas' : 'Aun no hay evaluaciones registradas'}
                         emptyDescription={
                             isIntern
-                                ? 'Cuando tu tutor o centro registre una evaluación, aparecerá aquí.'
+                                ? 'Aquí verás las evaluaciones de tu tutor y las autoevaluaciones que vayas enviando.'
                                 : 'Crea la primera evaluacion para empezar a seguir el progreso de los becarios.'
                         }
                         striped
@@ -251,11 +307,10 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                                     key={i}
                                     href={link.url ?? '#'}
                                     preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all ${
-                                        link.active
+                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all ${link.active
                                             ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
                                             : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                    } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
+                                        } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
                                     dangerouslySetInnerHTML={{
                                         __html: link.label
                                             .replace('Previous', 'Anterior')

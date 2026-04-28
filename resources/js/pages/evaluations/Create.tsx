@@ -89,7 +89,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                         </h1>
                         <p className="mt-2 max-w-2xl text-lg font-medium italic text-white/70">
                             {isIntern
-                                ? 'Completa tu propia valoracion con puntuaciones detalladas por criterio.'
+                                ? 'Haz una reflexión honesta sobre tu progreso y valora cada criterio con calma.'
                                 : 'Registra una evaluacion formal con puntuaciones detalladas por criterio.'}
                         </p>
                     </div>
@@ -110,7 +110,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                 </h2>
                                 <p className="text-sm font-medium text-slate-500">
                                     {isIntern
-                                        ? 'Revisa el tipo de evaluacion y el periodo que vas a valorar.'
+                                        ? 'Indica el periodo que quieres revisar y confirma que esta autoevaluación es para ti.'
                                         : 'Selecciona el becario, el tipo de evaluacion y el periodo que vas a valorar.'}
                                 </p>
                             </div>
