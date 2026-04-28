@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { Check, Copy, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { Check, Copy, Pencil, Plus, Shield, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -20,6 +21,42 @@ type RolePermissions = Record<string, number[]>;
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Roles y permisos', href: '/roles' },
+];
+
+const PERMISSION_GROUPS = [
+    {
+        name: 'Becarios',
+        permissions: ['manage interns', 'view internal notes'],
+    },
+    {
+        name: 'Centros Educativos',
+        permissions: ['manage schools'],
+    },
+    {
+        name: 'Tareas',
+        permissions: ['manage tasks'],
+    },
+    {
+        name: 'Control Horario',
+        permissions: ['validate time logs', 'edit time logs'],
+    },
+    {
+        name: 'Evaluaciones',
+        permissions: [
+            'manage evaluations',
+            'view evaluations',
+            'delete evaluations',
+            'manage evaluation criteria',
+        ],
+    },
+    {
+        name: 'Tutores',
+        permissions: ['manage tutors'],
+    },
+    {
+        name: 'Sistema',
+        permissions: ['manage users', 'view reports'],
+    },
 ];
 
 export default function RolesIndex({
@@ -59,6 +96,28 @@ export default function RolesIndex({
 
         return map;
     }, [rolePermissions]);
+
+    const groupedPermissions = useMemo(() => {
+        const result: { name: string; items: Permission[] }[] = [];
+        const handledIds = new Set<number>();
+
+        PERMISSION_GROUPS.forEach((group) => {
+            const items = permissions.filter((p) =>
+                group.permissions.includes(p.name)
+            );
+            if (items.length > 0) {
+                result.push({ name: group.name, items });
+                items.forEach((p) => handledIds.add(p.id));
+            }
+        });
+
+        const others = permissions.filter((p) => !handledIds.has(p.id));
+        if (others.length > 0) {
+            result.push({ name: 'Otros', items: others });
+        }
+
+        return result;
+    }, [permissions]);
 
     const startEdit = (role: Role) => {
         setEditingRoleId(role.id);
@@ -124,19 +183,47 @@ export default function RolesIndex({
         );
     };
 
+    const headerMetrics = useMemo(
+        () => [
+            {
+                label: 'Total Roles',
+                value: roles.length,
+                hint: 'Roles definidos en el sistema',
+            },
+            {
+                label: 'Roles Activos',
+                value: roles.filter((r) => r.is_active).length,
+                hint: 'Roles habilitados actualmente',
+            },
+            {
+                label: 'Permisos',
+                value: permissions.length,
+                hint: 'Capacidades del sistema',
+            },
+        ],
+        [roles, permissions]
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Roles y permisos" />
 
-            <div className="space-y-8 p-6">
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-bold text-foreground">
-                        Roles y permisos
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                        Gestiona los roles del sistema y su matriz de permisos.
-                    </p>
-                </div>
+            <div className="flex flex-col gap-6">
+                <ModuleHeader
+                    title="Roles y permisos"
+                    description="Gestiona los roles del sistema y su matriz de permisos para controlar el acceso a los diferentes módulos."
+                    icon={<Shield className="h-6 w-6" />}
+                    metrics={headerMetrics}
+                    actions={
+                        <Button
+                            className="gap-2 bg-sidebar/80 text-white border-2 border-white/20 hover:bg-white/10 hover:border-white/40 rounded-2xl px-8 font-black shadow-xl backdrop-blur-md transition-all h-12 pt-1"
+                            onClick={() => setCreateOpen(true)}
+                        >
+                            <Plus className="h-5 w-5" />
+                            Crear Rol
+                        </Button>
+                    }
+                />
 
                 <section className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm">
                     <div className="flex items-center justify-between">
@@ -150,13 +237,6 @@ export default function RolesIndex({
                         </div>
 
                         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                            <DialogTrigger asChild>
-                                <Button className="gap-2">
-                                    <Plus className="h-4 w-4" />
-                                    Crear rol
-                                </Button>
-                            </DialogTrigger>
-
                             <DialogContent className="sm:max-w-md">
                                 <DialogHeader>
                                     <DialogTitle>Crear rol</DialogTitle>
@@ -470,108 +550,90 @@ export default function RolesIndex({
                             </thead>
 
                             <tbody>
-                                {permissions.map((permission) => (
-                                    <tr
-                                        key={permission.id}
-                                        className="border-b border-border/60"
-                                    >
-                                        <td className="py-3 pr-4 text-foreground">
-                                            {permissionLabel(permission.name)}
-                                        </td>
-
-                                        {roles.map((role) => {
-                                            const hasPermission =
-                                                rolePermissionMap[
-                                                    role.id
-                                                ]?.has(permission.id) ?? false;
-
-                                            const permissionKey = `${role.id}-${permission.id}`;
-                                            const isUpdating =
-                                                pendingPermissionKey ===
-                                                permissionKey;
-
-                                            return (
-                                                <td
-                                                    key={`${permission.id}-${role.id}`}
-                                                    className="py-3 pr-4"
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        title={
-                                                            hasPermission
-                                                                ? 'Quitar permiso'
-                                                                : 'Asignar permiso'
-                                                        }
-                                                        onClick={() =>
-                                                            togglePermission(
-                                                                role.id,
-                                                                permission.id,
-                                                                !hasPermission
-                                                            )
-                                                        }
-                                                        className={`inline-flex min-w-10 items-center justify-center rounded-md border px-2 py-1 transition ${
-                                                            isUpdating
-                                                                ? 'cursor-not-allowed border-slate-300 bg-slate-100 opacity-60'
-                                                                : 'border-border'
-                                                        }`}
-                                                        disabled={
-                                                            (role.is_protected &&
-                                                                hasPermission) ||
-                                                            isUpdating
-                                                        }
-                                                    >
-                                                        {isUpdating ? (
-                                                            <span className="text-xs text-muted-foreground">
-                                                                ...
-                                                            </span>
-                                                        ) : hasPermission ? (
-                                                            <Check className="h-4 w-4 text-emerald-600" />
-                                                        ) : (
-                                                            <X className="h-4 w-4 text-red-500" />
-                                                        )}
-                                                    </button>
+                                {groupedPermissions.map((group) => (
+                                    <>
+                                        <tr key={group.name} className="bg-muted/30">
+                                            <td
+                                                colSpan={roles.length + 1}
+                                                className="py-2 px-4 text-xs font-black uppercase tracking-widest text-muted-foreground/70"
+                                            >
+                                                {group.name}
+                                            </td>
+                                        </tr>
+                                        {group.items.map((permission) => (
+                                            <tr
+                                                key={permission.id}
+                                                className="border-b border-border/60 hover:bg-muted/10 transition-colors"
+                                            >
+                                                <td className="py-3 pl-8 pr-4 text-foreground font-medium">
+                                                    {permissionLabel(permission.name)}
                                                 </td>
-                                            );
-                                        })}
-                                    </tr>
+
+                                                {roles.map((role) => {
+                                                    const hasPermission =
+                                                        rolePermissionMap[
+                                                            role.id
+                                                        ]?.has(permission.id) ?? false;
+
+                                                    const permissionKey = `${role.id}-${permission.id}`;
+                                                    const isUpdating =
+                                                        pendingPermissionKey ===
+                                                        permissionKey;
+
+                                                    return (
+                                                        <td
+                                                            key={`${permission.id}-${role.id}`}
+                                                            className="py-3 pr-4"
+                                                        >
+                                                            <button
+                                                                type="button"
+                                                                title={
+                                                                    hasPermission
+                                                                        ? 'Quitar permiso'
+                                                                        : 'Asignar permiso'
+                                                                }
+                                                                onClick={() =>
+                                                                    togglePermission(
+                                                                        role.id,
+                                                                        permission.id,
+                                                                        !hasPermission
+                                                                    )
+                                                                }
+                                                                className={`inline-flex min-w-10 items-center justify-center rounded-md border px-2 py-1 transition-all duration-200 ${
+                                                                    isUpdating
+                                                                        ? 'cursor-not-allowed border-slate-300 bg-slate-100 opacity-60'
+                                                                        : hasPermission
+                                                                          ? 'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100/50'
+                                                                          : 'border-border hover:bg-muted'
+                                                                }`}
+                                                                disabled={
+                                                                    (role.is_protected &&
+                                                                        hasPermission) ||
+                                                                    isUpdating
+                                                                }
+                                                            >
+                                                                {isUpdating ? (
+                                                                    <span className="text-xs text-muted-foreground animate-pulse">
+                                                                        ...
+                                                                    </span>
+                                                                ) : hasPermission ? (
+                                                                    <Check className="h-4 w-4 text-emerald-600" />
+                                                                ) : (
+                                                                    <X className="h-4 w-4 text-red-400 opacity-40 hover:opacity-100 transition-opacity" />
+                                                                )}
+                                                            </button>
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        ))}
+                                    </>
                                 ))}
                             </tbody>
                         </table>
                     </div>
                 </section>
 
-                <section className="space-y-3 rounded-xl border border-border bg-card p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-foreground">
-                        Crear / editar roles
-                    </h2>
-
-                    <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-                        <li>Crear rol nuevo (por ejemplo: “Tutor senior”).</li>
-                        <li>Clonar roles existentes.</li>
-                        <li>Editar permisos desde la matriz.</li>
-                    </ul>
-
-                    <div className="flex flex-wrap gap-2 pt-2">
-                        <Button
-                            className="gap-2"
-                            onClick={() => setCreateOpen(true)}
-                            title="Crear un nuevo rol"
-                        >
-                            <Plus className="h-4 w-4" />
-                            Crear rol
-                        </Button>
-
-                        <Button
-                            variant="outline"
-                            className="gap-2"
-                            title="Clonar rol"
-                            disabled
-                        >
-                            <Copy className="h-4 w-4" />
-                            Clonar rol
-                        </Button>
-                    </div>
-                </section>
             </div>
         </AppLayout>
     );

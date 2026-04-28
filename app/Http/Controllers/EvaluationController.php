@@ -29,14 +29,14 @@ class EvaluationController extends Controller
 
     protected function canAccessEvaluations(): void
     {
-        if (!Auth::user()?->isAdmin() && !Auth::user()?->isTutor() && !Auth::user()?->isIntern()) {
+        if (!Auth::user()?->can('view evaluations')) {
             abort(403);
         }
     }
 
     protected function canManageEvaluations(): void
     {
-        if (!Auth::user()?->isAdmin() && !Auth::user()?->isTutor()) {
+        if (!Auth::user()?->can('manage evaluations')) {
             abort(403);
         }
     }

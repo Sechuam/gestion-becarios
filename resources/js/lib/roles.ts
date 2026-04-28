@@ -27,6 +27,10 @@ export const permissionLabel = (permission: string) =>
         'manage users': 'Gestionar usuarios y roles',
         'view internal notes': 'Ver notas internas',
         'manage tutors': 'Gestionar tutores',
+        'manage evaluations': 'Gestionar evaluaciones',
+        'view evaluations': 'Ver evaluaciones',
+        'delete evaluations': 'Eliminar evaluaciones',
+        'manage evaluation criteria': 'Gestionar criterios de evaluación',
     })[permission] || permission;
 
 function formatRoleName(role: string) {
