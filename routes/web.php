@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EducationCenterController;
+use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\EvaluationCriterionController;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\PracticeTypeController;
@@ -177,7 +178,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Ruta para evaluaciones
-    Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
+    Route::get('/evaluaciones', [EvaluationController::class, 'index'])
+        ->name('evaluations.index');
+    Route::get('/evaluaciones/create', [EvaluationController::class, 'create'])
+        ->name('evaluations.create');
+    Route::post('/evaluaciones', [EvaluationController::class, 'store'])
+        ->name('evaluations.store');
     Route::get('/evaluaciones/criterios', [EvaluationCriterionController::class, 'index'])
         ->name('evaluation-criteria.index')
         ->middleware('admin');
@@ -228,4 +234,3 @@ Route::middleware('guest')->group(function () {
 
 // rutas públicas o especiales
 require __DIR__ . '/settings.php';
-

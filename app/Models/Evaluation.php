@@ -11,6 +11,13 @@ class Evaluation extends Model
 {
     use HasFactory;
 
+    public const TYPES = [
+        'weekly',
+        'monthly',
+        'final',
+        'self',
+    ];
+
     protected $fillable = [
         'intern_id',
         'evaluator_user_id',
