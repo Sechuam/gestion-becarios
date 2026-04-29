@@ -114,7 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('staff');
     Route::get('tutores', [TutorController::class, 'index'])
         ->name('tutores.index')
-        ->middleware('admin');
+        ->middleware('can:manage tutors');
     Route::get('tutores/{user}', [TutorController::class, 'show'])
         ->name('tutores.show')
         ->middleware('staff');
@@ -122,15 +122,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para la pestaña Usuarios
     Route::get('usuarios', [UsersController::class, 'index'])
         ->name('users.index')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::patch('usuarios/{user}/role', [UsersController::class, 'updateRole'])
         ->name('users.role')
-        ->middleware('admin');
+        ->middleware('can:manage users');
 
     // Ruta para que el Admin envíe la invitación
     Route::post('invitaciones', [InvitationController::class, 'store'])
         ->name('invitations.store')
-        ->middleware('admin');
+        ->middleware('can:manage users');
 
     // Ruta para los centros educativos
     Route::get('centros', [EducationCenterController::class, 'index'])
@@ -220,19 +220,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Roles y permisos (admin)
     Route::get('/roles', [RolesController::class, 'index'])
         ->name('roles.index')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::post('/roles', [RolesController::class, 'store'])
         ->name('roles.store')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::patch('/roles/{role}', [RolesController::class, 'update'])
         ->name('roles.update')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::delete('/roles/{role}', [RolesController::class, 'destroy'])
         ->name('roles.destroy')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::post('/roles/{role}/permissions/{permission}', [RolesController::class, 'togglePermission'])
         ->name('roles.permissions.toggle')
-        ->middleware('admin');
+        ->middleware('can:manage users');
 
 });
 

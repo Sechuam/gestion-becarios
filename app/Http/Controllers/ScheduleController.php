@@ -73,9 +73,11 @@ class ScheduleController extends Controller
     protected function authorizeScheduleManagement($user, int $userId): void
     {
         $intern = Intern::where('user_id', $userId)->first();
+        $hasPermission = $user->can('manage interns') || $user->can('edit time logs') || $user->can('validate time logs');
 
         abort_unless(
-            $user->can('manage interns')
+            ($user->isAdmin() && $hasPermission)
+                || ($hasPermission && $intern && $intern->company_tutor_user_id === $user->id)
                 || ($user->isTutor() && $intern && $intern->company_tutor_user_id === $user->id),
             403
         );

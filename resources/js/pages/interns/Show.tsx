@@ -41,6 +41,8 @@ export default function Show({
 
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage interns');
+    const canViewNotes = auth.user?.permissions?.includes('view internal notes') || canManage;
+    const canViewReports = auth.user?.permissions?.includes('view reports') || canManage;
     const [editingNotes, setEditingNotes] = useState(false);
     const [notesValue, setNotesValue] = useState(intern.internal_notes || '');
     const [activityPage, setActivityPage] = useState(1);
@@ -198,14 +200,16 @@ export default function Show({
                                             </div>
                                         </div>
 
-                                        <Button
-                                            variant="outline"
-                                            className="w-full py-6 text-primary border-primary/20 hover:bg-accent rounded-2xl font-bold transition-all"
-                                            onClick={() => setIsExportModalOpen(true)}
-                                        >
-                                            <Download className="h-4 w-4 mr-2" />
-                                            Generar Informe de Registro
-                                        </Button>
+                                        {canViewReports && (
+                                            <Button
+                                                variant="outline"
+                                                className="w-full py-6 text-primary border-primary/20 hover:bg-accent rounded-2xl font-bold transition-all"
+                                                onClick={() => setIsExportModalOpen(true)}
+                                            >
+                                                <Download className="h-4 w-4 mr-2" />
+                                                Generar Informe de Registro
+                                            </Button>
+                                        )}
                                     </div>
 
                                     <div className="space-y-6">
@@ -502,54 +506,56 @@ export default function Show({
                             {/* PESTAÑA SEGUIMIENTO UNIFICADA */}
                             <TabsContent value="seguimiento" className="mt-0 animate-in fade-in duration-500">
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-                                    <div className="md:col-span-5 space-y-6">
-                                        <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-800 pb-4">
-                                            <h3 className="text-xl font-bold flex items-center gap-2">
-                                                <FileText className="h-5 w-5 text-primary" />
-                                                Notas de Seguimiento
-                                            </h3>
-                                            {canManage && !editingNotes && (
-                                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-indigo-600 hover:bg-indigo-50" onClick={() => setEditingNotes(true)}>Editar</Button>
-                                            )}
-                                        </div>
-
-                                        {editingNotes ? (
-                                            <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                                                <textarea
-                                                    value={notesValue}
-                                                    onChange={(e) => setNotesValue(e.target.value)}
-                                                    className="min-h-[200px] w-full rounded-2xl border-slate-200 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
-                                                    placeholder="Añade observaciones sobre el desempeño..."
-                                                />
-                                                <div className="flex gap-2">
-                                                    <Button size="sm" className="rounded-xl px-6 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/interns/${intern.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar Cambios</Button>
-                                                    <Button size="sm" variant="outline" className="rounded-xl" onClick={() => { setNotesValue(intern.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="p-6 rounded-2xl filter-panel min-h-[150px]">
-                                                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
-                                                    {intern.internal_notes || 'No se han registrado notas adicionales para este becario.'}
-                                                </p>
-                                                {(intern.notes_updated_by || intern.internal_notes_updated_at) && (
-                                                    <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                                                        <span className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Última edición</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <Avatar className="h-6 w-6">
-                                                                <AvatarImage src={intern.notes_updated_by?.avatar} alt={intern.notes_updated_by?.name || ''} />
-                                                                <AvatarFallback className="text-[10px] bg-slate-100 dark:bg-slate-700">
-                                                                    {intern.notes_updated_by?.name?.charAt(0) || 'S'}
-                                                                </AvatarFallback>
-                                                            </Avatar>
-                                                            <span className="text-[10px] font-bold text-slate-500">{intern.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(intern.internal_notes_updated_at)}</span>
-                                                        </div>
-                                                    </div>
+                                    {canViewNotes && (
+                                        <div className="md:col-span-5 space-y-6">
+                                            <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-800 pb-4">
+                                                <h3 className="text-xl font-bold flex items-center gap-2">
+                                                    <FileText className="h-5 w-5 text-primary" />
+                                                    Notas de Seguimiento
+                                                </h3>
+                                                {canManage && !editingNotes && (
+                                                    <Button variant="ghost" size="sm" className="h-8 rounded-lg text-indigo-600 hover:bg-indigo-50" onClick={() => setEditingNotes(true)}>Editar</Button>
                                                 )}
                                             </div>
-                                        )}
-                                    </div>
 
-                                    <div className="md:col-span-7 space-y-6">
+                                            {editingNotes ? (
+                                                <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                                                    <textarea
+                                                        value={notesValue}
+                                                        onChange={(e) => setNotesValue(e.target.value)}
+                                                        className="min-h-[200px] w-full rounded-2xl border-slate-200 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
+                                                        placeholder="Añade observaciones sobre el desempeño..."
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <Button size="sm" className="rounded-xl px-6 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/interns/${intern.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar Cambios</Button>
+                                                        <Button size="sm" variant="outline" className="rounded-xl" onClick={() => { setNotesValue(intern.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="p-6 rounded-2xl filter-panel min-h-[150px]">
+                                                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                                        {intern.internal_notes || 'No se han registrado notas adicionales para este becario.'}
+                                                    </p>
+                                                    {(intern.notes_updated_by || intern.internal_notes_updated_at) && (
+                                                        <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                                            <span className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Última edición</span>
+                                                            <div className="flex items-center gap-2">
+                                                                <Avatar className="h-6 w-6">
+                                                                    <AvatarImage src={intern.notes_updated_by?.avatar} alt={intern.notes_updated_by?.name || ''} />
+                                                                    <AvatarFallback className="text-[10px] bg-slate-100 dark:bg-slate-700">
+                                                                        {intern.notes_updated_by?.name?.charAt(0) || 'S'}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                                <span className="text-[10px] font-bold text-slate-500">{intern.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(intern.internal_notes_updated_at)}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    <div className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} space-y-6`}>
                                         <h3 className="text-xl font-bold flex items-center gap-2 border-b border-slate-50 dark:border-slate-800 pb-4">
                                             <HistoryIcon className="h-5 w-5 text-slate-500" />
                                             Historial de Auditoría

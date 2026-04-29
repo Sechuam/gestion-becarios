@@ -43,9 +43,9 @@ class AbsenceController extends Controller
         ]);
 
         $intern = $absence->user?->intern;
+        $hasPermission = $request->user()->can('validate time logs') || $request->user()->can('manage interns');
         abort_unless(
-            $request->user()->can('manage interns')
-                || ($request->user()->isTutor() && $intern && $intern->company_tutor_user_id === $request->user()->id),
+            $hasPermission && ($request->user()->isAdmin() || ($request->user()->isTutor() && $intern && $intern->company_tutor_user_id === $request->user()->id)),
             403
         );
 

@@ -12,8 +12,9 @@ class AttendanceReportController extends Controller
     public function download(Request $request, Intern $intern, TimeTrackingService $service)
     {
         $user = $request->user();
+        $hasPermission = $user->can('view reports') || $user->can('manage interns');
         abort_unless(
-            $user->can('manage interns')
+            ($hasPermission && $user->isAdmin())
                 || ($user->isTutor() && $intern->company_tutor_user_id === $user->id)
                 || $intern->user_id === $user->id,
             403

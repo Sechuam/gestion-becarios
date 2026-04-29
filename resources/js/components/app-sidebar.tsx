@@ -4,7 +4,7 @@ import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { getSidebarByRole } from '@/components/sidebar';
+import { buildDynamicSidebar } from '@/components/sidebar/sidebar-dynamic';
 import {
     Sidebar,
     SidebarContent,
@@ -36,13 +36,10 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const { auth } = usePage().props as any;
-    const isIntern =
-        auth?.user?.roles?.includes('intern') ||
-        auth?.user?.roles?.includes('becario');
-    const isAdmin = auth?.user?.roles?.includes('admin');
-    const isTutor = auth?.user?.roles?.includes('tutor');
-    const role = isAdmin ? 'admin' : isTutor ? 'tutor' : 'intern';
-    const sidebarSections = getSidebarByRole(role);
+    const roles: string[] = auth?.user?.roles ?? [];
+    const permissions: string[] = auth?.user?.permissions ?? [];
+
+    const sidebarSections = buildDynamicSidebar({ roles, permissions });
 
     return (
         <Sidebar collapsible="icon" variant="inset" className="group-data-[variant=inset]:p-3">

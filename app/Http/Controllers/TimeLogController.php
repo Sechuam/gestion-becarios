@@ -27,13 +27,16 @@ class TimeLogController extends Controller
 
         $manageableInterns = collect();
 
-        if ($user->can('manage interns')) {
+        $canManage = $user->can('manage interns');
+        $canEdit   = $user->can('edit time logs') || $user->can('validate time logs');
+
+        if ($canManage) {
             $manageableInterns = Intern::query()
                 ->with(['user', 'educationCenter'])
                 ->where('status', 'active')
                 ->orderBy('start_date')
                 ->get();
-        } elseif ($user->isTutor()) {
+        } elseif ($user->isTutor() || $canEdit) {
             $manageableInterns = $user->assignedInterns()
                 ->with(['user', 'educationCenter'])
                 ->where('status', 'active')
@@ -59,7 +62,7 @@ class TimeLogController extends Controller
                 'notes' => $currentLog->notes,
             ] : null,
             'today_total_hours' => round($todayTotalHours, 2),
-            'can_manage_attendance' => $user->can('manage interns') || $user->isTutor(),
+            'can_manage_attendance' => $user->can('manage interns') || $user->isTutor() || $user->can('edit time logs') || $user->can('validate time logs'),
             'manageable_interns' => $manageableInterns->map(fn(Intern $intern) => [
                 'id' => $intern->id,
                 'user_id' => $intern->user_id,
@@ -228,10 +231,24 @@ class TimeLogController extends Controller
 
     protected function authorizeAttendanceManagement($user, Intern $intern): void
     {
-        abort_unless(
-            $user->can('manage interns') || ($user->isTutor() && $intern->company_tutor_user_id === $user->id),
-            403
-        );
+        $hasPermission = $user->can('edit time logs') || $user->can('validate time logs') || $user->can('manage interns');
+
+        // Admin con permiso: acceso a todos
+        if ($user->isAdmin() && $hasPermission) {
+            return;
+        }
+
+        // Tutor con permiso: solo sus becarios asignados
+        if ($user->isTutor() && $hasPermission && $intern->company_tutor_user_id === $user->id) {
+            return;
+        }
+
+        // Usuario con solo el permiso (sin ser admin/tutor): solo sus becarios asignados
+        if ($hasPermission && $user->assignedInterns()->where('id', $intern->id)->exists()) {
+            return;
+        }
+
+        abort(403);
     }
 
 }

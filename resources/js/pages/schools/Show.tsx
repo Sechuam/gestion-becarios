@@ -74,6 +74,7 @@ export default function Show({
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
     const canExport = auth.user?.permissions?.includes('manage interns');
+    const canViewNotes = auth.user?.permissions?.includes('view internal notes') || canManage;
     const [exportOpen, setExportOpen] = useState(false);
     const [editingNotes, setEditingNotes] = useState(false);
     const [notesValue, setNotesValue] = useState(
@@ -548,43 +549,45 @@ export default function Show({
                                         </h3>
                                     </div>
 
-                                    <div className="md:col-span-5 space-y-6">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Notas del Centro</h4>
-                                            {canManage && !editingNotes && (
-                                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-indigo-600" onClick={() => setEditingNotes(true)}>Editar Notas</Button>
-                                            )}
-                                        </div>
-
-                                        {editingNotes ? (
-                                            <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                                                <textarea
-                                                    value={notesValue}
-                                                    onChange={(e) => setNotesValue(e.target.value)}
-                                                    className="min-h-[250px] w-full rounded-3xl border-slate-100 bg-slate-50 dark:bg-slate-800 px-6 py-5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all shadow-inner"
-                                                    placeholder="Añade observaciones internas sobre este centro..."
-                                                />
-                                                <div className="flex gap-2">
-                                                    <Button size="sm" className="rounded-xl px-8 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar</Button>
-                                                    <Button size="sm" variant="outline" className="rounded-xl px-8" onClick={() => { setNotesValue(educationCenter.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="p-8 rounded-3xl filter-panel min-h-[200px] relative">
-                                                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
-                                                    {educationCenter.internal_notes || 'No hay notas redactadas para este centro educativo.'}
-                                                </p>
-                                                {(educationCenter.notes_updated_by || educationCenter.internal_notes_updated_at) && (
-                                                    <div className="mt-12 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between opacity-40">
-                                                        <span className="text-[10px] font-black uppercase tracking-tighter">Editado por</span>
-                                                        <span className="text-[10px] font-black tracking-tighter uppercase">{educationCenter.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(educationCenter.internal_notes_updated_at)}</span>
-                                                    </div>
+                                    {canViewNotes && (
+                                        <div className="md:col-span-5 space-y-6">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Notas del Centro</h4>
+                                                {canManage && !editingNotes && (
+                                                    <Button variant="ghost" size="sm" className="h-8 rounded-lg text-indigo-600" onClick={() => setEditingNotes(true)}>Editar Notas</Button>
                                                 )}
                                             </div>
-                                        )}
-                                    </div>
 
-                                    <div className="md:col-span-7 space-y-8 pl-8 relative before:absolute before:left-0 before:top-4 before:bottom-0 before:w-px before:bg-slate-100 dark:before:bg-slate-800">
+                                            {editingNotes ? (
+                                                <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                                                    <textarea
+                                                        value={notesValue}
+                                                        onChange={(e) => setNotesValue(e.target.value)}
+                                                        className="min-h-[250px] w-full rounded-3xl border-slate-100 bg-slate-50 dark:bg-slate-800 px-6 py-5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all shadow-inner"
+                                                        placeholder="Añade observaciones internas sobre este centro..."
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <Button size="sm" className="rounded-xl px-8 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar</Button>
+                                                        <Button size="sm" variant="outline" className="rounded-xl px-8" onClick={() => { setNotesValue(educationCenter.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="p-8 rounded-3xl filter-panel min-h-[200px] relative">
+                                                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
+                                                        {educationCenter.internal_notes || 'No hay notas redactadas para este centro educativo.'}
+                                                    </p>
+                                                    {(educationCenter.notes_updated_by || educationCenter.internal_notes_updated_at) && (
+                                                        <div className="mt-12 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between opacity-40">
+                                                            <span className="text-[10px] font-black uppercase tracking-tighter">Editado por</span>
+                                                            <span className="text-[10px] font-black tracking-tighter uppercase">{educationCenter.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(educationCenter.internal_notes_updated_at)}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    <div className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} space-y-8 pl-8 relative before:absolute before:left-0 before:top-4 before:bottom-0 before:w-px before:bg-slate-100 dark:before:bg-slate-800`}>
                                         <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-8 font-black">Actividad Reciente</h4>
                                         <div className="space-y-10">
                                             {activities.length > 0 ? (

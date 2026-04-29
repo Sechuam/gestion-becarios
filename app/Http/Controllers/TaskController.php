@@ -173,7 +173,7 @@ class TaskController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || (!$user->isTutor() && !$user->isAdmin())) {
+        if (!$user || !$user->can('manage tasks')) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
         $validated = $request->validated();
@@ -227,7 +227,7 @@ class TaskController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || (!$user->isTutor() && !$user->isAdmin())) {
+        if (!$user || !$user->can('manage tasks')) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
 
@@ -660,7 +660,7 @@ class TaskController extends Controller
 
     protected function canManageTask(?\App\Models\User $user, Task $task): bool
     {
-        if (!$user) {
+        if (!$user || !$user->can('manage tasks')) {
             return false;
         }
 
