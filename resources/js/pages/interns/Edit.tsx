@@ -153,7 +153,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="name"
-                                        className="border-border bg-background text-foreground placeholder:text-muted-foreground"
+                                        className="border-border bg-card text-foreground placeholder:text-muted-foreground"
                                         value={data.name}
                                         onChange={(e) =>
                                             setData('name', e.target.value)
@@ -175,7 +175,7 @@ export default function Edit({
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="border-border bg-background text-foreground placeholder:text-muted-foreground"
+                                        className="border-border bg-card text-foreground placeholder:text-muted-foreground"
                                         value={data.email}
                                         onChange={(e) =>
                                             setData('email', e.target.value)
@@ -196,7 +196,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="dni"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.dni}
                                         onChange={(e) =>
                                             setData('dni', e.target.value)
@@ -237,7 +237,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="phone"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.phone}
                                         onChange={(e) =>
                                             setData('phone', e.target.value)
@@ -258,7 +258,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="city"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.city}
                                         onChange={(e) =>
                                             setData('city', e.target.value)
@@ -279,7 +279,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="address"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.address}
                                         onChange={(e) =>
                                             setData('address', e.target.value)
@@ -309,7 +309,7 @@ export default function Edit({
                                             setData('education_center_id', val)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue placeholder="Centro" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -338,7 +338,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="degree"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.academic_degree}
                                         onChange={(e) =>
                                             setData(
@@ -362,7 +362,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="year"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.academic_year}
                                         onChange={(e) =>
                                             setData(
@@ -545,7 +545,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="center_tutor_name"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.center_tutor_name}
                                         onChange={(e) =>
                                             setData(
@@ -565,7 +565,7 @@ export default function Edit({
                                     <Input
                                         id="center_tutor_email"
                                         type="email"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.center_tutor_email}
                                         onChange={(e) =>
                                             setData(
@@ -584,7 +584,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="center_tutor_phone"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                         value={data.center_tutor_phone}
                                         onChange={(e) =>
                                             setData(
@@ -608,7 +608,7 @@ export default function Edit({
                                             )
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue placeholder="Selecciona un tutor de empresa" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -635,7 +635,7 @@ export default function Edit({
                                         <Input
                                             id="total_hours"
                                             type="number"
-                                            className="border-border bg-background pr-8 text-foreground"
+                                            className="border-border bg-card pr-8 text-foreground"
                                             value={data.total_hours}
                                             onChange={(e) =>
                                                 setData(
@@ -664,7 +664,7 @@ export default function Edit({
                                             setData('status', val)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue placeholder="Selecciona un estado" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -695,7 +695,7 @@ export default function Edit({
                                         </Label>
                                         <Input
                                             id="abandon_reason"
-                                            className="border-border bg-background text-foreground"
+                                            className="border-border bg-card text-foreground"
                                             value={data.abandon_reason}
                                             onChange={(e) =>
                                                 setData(

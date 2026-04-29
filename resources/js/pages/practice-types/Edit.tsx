@@ -66,7 +66,7 @@ export default function Edit({ practiceType }: Props) {
                                     value={data.name}
                                     placeholder="Ej: Desarrollo Frontend, Sistemas..."
                                     onChange={(e) => setData('name', e.target.value)}
-                                    className="h-12 border-sidebar/20 bg-slate-50/50 rounded-2xl focus:ring-sidebar/20"
+                                    className="h-12 border-sidebar/20 bg-card rounded-2xl focus:ring-sidebar/20"
                                 />
                                 {errors.name && <p className="text-xs font-bold text-red-500">{errors.name}</p>}
                             </div>
@@ -78,7 +78,7 @@ export default function Edit({ practiceType }: Props) {
                                     value={data.priority}
                                     placeholder="Ej: Alta, Media, Baja o número..."
                                     onChange={(e) => setData('priority', e.target.value)}
-                                    className="h-12 border-sidebar/20 bg-slate-50/50 rounded-2xl focus:ring-sidebar/20"
+                                    className="h-12 border-sidebar/20 bg-card rounded-2xl focus:ring-sidebar/20"
                                 />
                                 {errors.priority && <p className="text-xs font-bold text-red-500">{errors.priority}</p>}
                             </div>
@@ -91,7 +91,7 @@ export default function Edit({ practiceType }: Props) {
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
                                 placeholder="Describe el propósito de este tipo de práctica..."
-                                className="min-h-[120px] w-full rounded-2xl border border-sidebar/20 bg-slate-50/50 p-4 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
+                                className="min-h-[120px] w-full rounded-2xl border border-sidebar/20 bg-card p-4 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
                             />
                             {errors.description && <p className="text-xs font-bold text-red-500">{errors.description}</p>}
                         </div>
@@ -116,7 +116,7 @@ export default function Edit({ practiceType }: Props) {
                                         placeholder="#3b82f6"
                                         value={data.color}
                                         onChange={(e) => setData('color', e.target.value)}
-                                        className="h-12 border-sidebar/20 bg-slate-50/50 rounded-2xl"
+                                        className="h-12 border-sidebar/20 bg-card rounded-2xl"
                                     />
                                     <div 
                                         className="h-12 w-12 shrink-0 rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" 

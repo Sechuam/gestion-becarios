@@ -27,11 +27,11 @@ export function NavUser() {
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="group rounded-2xl border border-sidebar-border/80 bg-sidebar-accent/70 text-sidebar-accent-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] data-[state=open]:bg-sidebar-accent"
+                            className="group rounded-2xl border border-sidebar-border/80 bg-sidebar-accent/70 text-sidebar-accent-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] data-[state=open]:bg-sidebar-accent group-data-[collapsible=icon]:justify-center"
                             data-test="sidebar-menu-button"
                         >
                             <UserInfo user={auth.user} />
-                            <ChevronsUpDown className="ml-auto size-4" />
+                            <ChevronsUpDown className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

@@ -67,7 +67,7 @@ export default function Edit({ criterion }: Props) {
                                     id="name"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
-                                    className="h-12 rounded-2xl border-sidebar/20 bg-slate-50/50 focus:ring-sidebar/20"
+                                    className="h-12 rounded-2xl border-sidebar/20 bg-card focus:ring-sidebar/20"
                                 />
                                 {errors.name && <p className="text-xs font-bold text-red-500">{errors.name}</p>}
                             </div>
@@ -78,7 +78,7 @@ export default function Edit({ criterion }: Props) {
                                     id="category"
                                     value={data.category}
                                     onChange={(e) => setData('category', e.target.value)}
-                                    className="h-12 rounded-2xl border-sidebar/20 bg-slate-50/50 focus:ring-sidebar/20"
+                                    className="h-12 rounded-2xl border-sidebar/20 bg-card focus:ring-sidebar/20"
                                 />
                                 {errors.category && <p className="text-xs font-bold text-red-500">{errors.category}</p>}
                             </div>
@@ -90,7 +90,7 @@ export default function Edit({ criterion }: Props) {
                                 id="description"
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
-                                className="min-h-[110px] w-full rounded-2xl border border-sidebar/20 bg-slate-50/50 p-4 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
+                                className="min-h-[110px] w-full rounded-2xl border border-sidebar/20 bg-card p-4 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
                             />
                             {errors.description && <p className="text-xs font-bold text-red-500">{errors.description}</p>}
                         </div>
@@ -101,7 +101,7 @@ export default function Edit({ criterion }: Props) {
                                 id="rubric"
                                 value={data.rubric}
                                 onChange={(e) => setData('rubric', e.target.value)}
-                                className="min-h-[140px] w-full rounded-2xl border border-sidebar/20 bg-slate-50/50 p-4 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
+                                className="min-h-[140px] w-full rounded-2xl border border-sidebar/20 bg-card p-4 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
                             />
                             {errors.rubric && <p className="text-xs font-bold text-red-500">{errors.rubric}</p>}
                         </div>
@@ -126,7 +126,7 @@ export default function Edit({ criterion }: Props) {
                                     step="0.01"
                                     value={data.weight}
                                     onChange={(e) => setData('weight', e.target.value)}
-                                    className="h-12 rounded-2xl border-sidebar/20 bg-slate-50/50 focus:ring-sidebar/20"
+                                    className="h-12 rounded-2xl border-sidebar/20 bg-card focus:ring-sidebar/20"
                                 />
                                 {errors.weight && <p className="text-xs font-bold text-red-500">{errors.weight}</p>}
                             </div>
@@ -140,7 +140,7 @@ export default function Edit({ criterion }: Props) {
                                     step="1"
                                     value={data.max_score}
                                     onChange={(e) => setData('max_score', e.target.value)}
-                                    className="h-12 rounded-2xl border-sidebar/20 bg-slate-50/50 focus:ring-sidebar/20"
+                                    className="h-12 rounded-2xl border-sidebar/20 bg-card focus:ring-sidebar/20"
                                 />
                                 {errors.max_score && <p className="text-xs font-bold text-red-500">{errors.max_score}</p>}
                             </div>
@@ -154,7 +154,7 @@ export default function Edit({ criterion }: Props) {
                                     step="1"
                                     value={data.sort_order}
                                     onChange={(e) => setData('sort_order', e.target.value)}
-                                    className="h-12 rounded-2xl border-sidebar/20 bg-slate-50/50 focus:ring-sidebar/20"
+                                    className="h-12 rounded-2xl border-sidebar/20 bg-card focus:ring-sidebar/20"
                                 />
                                 {errors.sort_order && <p className="text-xs font-bold text-red-500">{errors.sort_order}</p>}
                             </div>

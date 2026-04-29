@@ -101,7 +101,7 @@ export default function Edit({
                                         onChange={(e) =>
                                             setData('title', e.target.value)
                                         }
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                     />
                                     {errors.title && (
                                         <p className="text-xs text-red-500">
@@ -118,7 +118,7 @@ export default function Edit({
                                             setData('practice_type_id', v)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue placeholder="Seleccionar tipo" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -148,7 +148,7 @@ export default function Edit({
                                     onChange={(e) =>
                                         setData('description', e.target.value)
                                     }
-                                    className="min-h-[120px] w-full rounded-2xl border border-sidebar/10 bg-slate-50/50 dark:bg-slate-950/30 px-4 py-3 text-sm text-foreground shadow-sm outline-none focus-visible:border-sidebar focus-visible:ring-4 focus-visible:ring-sidebar/10 transition-all font-medium"
+                                    className="min-h-[120px] w-full rounded-2xl border border-sidebar/10 bg-card px-4 py-3 text-sm text-foreground shadow-sm outline-none focus-visible:border-sidebar focus-visible:ring-4 focus-visible:ring-sidebar/10 transition-all font-medium"
                                 />
                             </div>
                         </div>
@@ -165,7 +165,7 @@ export default function Edit({
                                         value={data.status}
                                         onValueChange={(v) => setData('status', v)}
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -187,7 +187,7 @@ export default function Edit({
                                         value={data.priority}
                                         onValueChange={(v) => setData('priority', v)}
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>

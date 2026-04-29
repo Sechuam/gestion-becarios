@@ -95,7 +95,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="name"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.name}
                                     onChange={(e) =>
                                         setData('name', e.target.value)
@@ -113,7 +113,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="code"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.code}
                                     onChange={(e) =>
                                         setData('code', e.target.value)
@@ -134,7 +134,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="address"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.address}
                                     onChange={(e) =>
                                         setData('address', e.target.value)
@@ -152,7 +152,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="city"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.city}
                                     onChange={(e) =>
                                         setData('city', e.target.value)
@@ -183,7 +183,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="contact_person"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.contact_person}
                                     onChange={(e) =>
                                         setData('contact_person', e.target.value)
@@ -205,7 +205,7 @@ export default function Edit({
                                 <Input
                                     id="contact_email"
                                     type="email"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.contact_email}
                                     onChange={(e) =>
                                         setData('contact_email', e.target.value)
@@ -226,7 +226,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="contact_position"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.contact_position}
                                     onChange={(e) =>
                                         setData('contact_position', e.target.value)
@@ -250,7 +250,7 @@ export default function Edit({
                                 <Input
                                     id="email"
                                     type="email"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.email}
                                     onChange={(e) =>
                                         setData('email', e.target.value)
@@ -268,7 +268,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="phone"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.phone}
                                     onChange={(e) =>
                                         setData('phone', e.target.value)
@@ -359,7 +359,7 @@ export default function Edit({
                                     id="agreement_slots"
                                     type="number"
                                     min={1}
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     value={data.agreement_slots}
                                     onChange={(e) =>
                                         setData('agreement_slots', e.target.value)
@@ -402,7 +402,7 @@ export default function Edit({
                                     id="agreement_file"
                                     type="file"
                                     accept="application/pdf"
-                                    className="border-border bg-background text-foreground"
+                                    className="border-border bg-card text-foreground"
                                     onChange={(e) =>
                                         setData(
                                             'agreement_file',
