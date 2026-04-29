@@ -42,11 +42,11 @@ export function AppSidebar() {
     const sidebarSections = buildDynamicSidebar({ roles, permissions });
 
     return (
-        <Sidebar collapsible="icon" variant="inset" className="group-data-[variant=inset]:p-3">
-            <SidebarHeader className="border-b border-sidebar-border/80 px-2 pb-4 pt-2">
+        <Sidebar collapsible="icon" variant="inset">
+            <SidebarHeader className="border-b border-sidebar-border/80 pb-4 pt-2 group-data-[collapsible=icon]:px-0">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild className="rounded-2xl bg-white/8 p-1.5 hover:bg-white/12">
+                        <SidebarMenuButton size="lg" asChild className="rounded-2xl bg-white/8 p-1.5 hover:bg-white/12 group-data-[collapsible=icon]:justify-center">
                             <Link href={dashboard()} prefetch>
                                 <AppLogo />
                             </Link>
@@ -59,7 +59,7 @@ export function AppSidebar() {
                 <NavMain sections={sidebarSections} />
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-sidebar-border/80 px-2 pt-4">
+            <SidebarFooter className="border-t border-sidebar-border/80 pt-4 group-data-[collapsible=icon]:px-0">
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

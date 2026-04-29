@@ -104,7 +104,7 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                 sections.map((section, index) => (
                     <SidebarGroup
                         key={`${section.label ?? 'section'}-${index}`}
-                        className="px-2 py-0"
+                        className="py-0 group-data-[collapsible=icon]:px-0"
                     >
                         {section.label && (
                             <SidebarGroupLabel className="px-3 text-[10px] font-semibold tracking-[0.22em] text-sidebar-foreground/55 uppercase">
@@ -115,7 +115,7 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                     </SidebarGroup>
                 ))
             ) : (
-                <SidebarGroup className="px-2 py-0">
+                <SidebarGroup className="py-0 group-data-[collapsible=icon]:px-0">
                     <SidebarGroupLabel className="px-3 text-[10px] font-semibold tracking-[0.22em] text-sidebar-foreground/55 uppercase">Platform</SidebarGroupLabel>
                     {renderItems(items)}
                 </SidebarGroup>
