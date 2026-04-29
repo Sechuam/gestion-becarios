@@ -41,6 +41,13 @@ class EvaluationController extends Controller
         }
     }
 
+    protected function canDeleteEvaluations(): void
+    {
+        if (!Auth::user()?->can('delete evaluations')) {
+            abort(403);
+        }
+    }
+
     protected function canEvaluateIntern(Intern $intern): void
     {
         $user = Auth::user();
@@ -369,5 +376,14 @@ class EvaluationController extends Controller
         });
 
         return to_route('evaluations.index')->with('success', 'Evaluación creada correctamente.');
+    }
+
+    public function destroy(Evaluation $evaluation)
+    {
+        $this->canDeleteEvaluations();
+
+        $evaluation->delete();
+
+        return to_route('evaluations.index')->with('success', 'Evaluación eliminada correctamente.');
     }
 }

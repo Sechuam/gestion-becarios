@@ -38,6 +38,7 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
 
     const canCreateEvaluation = isAdmin || isTutor;
     const canCreateSelfEvaluation = isIntern;
+    const canDeleteEvaluation = auth?.user?.permissions?.includes('delete evaluations');
 
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
@@ -148,6 +149,17 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             icon: 'view',
                             href: `/evaluaciones/${row.id}`,
                         },
+                        ...(canDeleteEvaluation ? [{
+                            label: 'Eliminar',
+                            icon: 'delete' as const,
+                            variant: 'destructive' as const,
+                            onClick: () => { router.delete(`/evaluaciones/${row.id}`) },
+                            confirm: {
+                                title: '¿Eliminar evaluación?',
+                                description: 'Esta acción no se puede deshacer. Se eliminarán la evaluación y todas sus puntuaciones.',
+                                confirmLabel: 'Eliminar definitivamente',
+                            }
+                        }] : []),
                     ]}
                 />
             ),

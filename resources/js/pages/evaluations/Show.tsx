@@ -1,7 +1,16 @@
-import { Head, Link } from '@inertiajs/react';
-import { AlertTriangle, ArrowLeft, ClipboardList, Download, MessageSquareText, Minus, Percent, TrendingDown, TrendingUp, UserRound } from 'lucide-react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { AlertTriangle, ArrowLeft, ClipboardList, Download, MessageSquareText, Minus, Percent, Trash2, TrendingDown, TrendingUp, UserRound } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { formatDateEs } from '@/lib/date-format';
 import { getEvaluationTypeLabel } from '@/lib/evaluation-type-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
@@ -71,7 +80,9 @@ type Props = {
 };
 
 export default function Show({ evaluation, history = [], userMode }: Props) {
+    const { auth } = usePage().props as any;
     const isIntern = userMode === 'intern';
+    const canDeleteEvaluation = auth?.user?.permissions?.includes('delete evaluations');
     const historyWithScore = history.filter((item) => item.weighted_score !== null && item.weighted_score !== undefined);
     const bestScore = historyWithScore.length
         ? Math.max(...historyWithScore.map((item) => Number(item.weighted_score)))
@@ -163,15 +174,48 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </Link>
                     </Button>
 
-                    <Button
-                        className="h-11 rounded-2xl bg-sidebar px-6 font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:bg-sidebar/90"
-                        asChild
-                    >
-                        <a href={`/evaluaciones/${evaluation.id}/pdf`} target="_blank" rel="noreferrer">
-                            <Download className="mr-2 h-4 w-4" />
-                            Exportar informe
-                        </a>
-                    </Button>
+                    <div className="flex gap-3">
+                        {canDeleteEvaluation && (
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        variant="destructive"
+                                        className="h-11 rounded-2xl px-6 font-black shadow-lg transition-all"
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Eliminar
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-md rounded-3xl border-sidebar/10 shadow-2xl">
+                                    <DialogTitle className="text-xl font-bold">¿Eliminar evaluación?</DialogTitle>
+                                    <DialogDescription className="py-2 text-slate-500">
+                                        Esta acción no se puede deshacer. Se eliminarán la evaluación y todas sus puntuaciones de forma permanente.
+                                    </DialogDescription>
+                                    <DialogFooter className="gap-2 pt-4">
+                                        <DialogClose asChild>
+                                            <Button variant="ghost" className="rounded-xl border-border px-6">Cancelar</Button>
+                                        </DialogClose>
+                                        <Button 
+                                            variant="destructive"
+                                            onClick={() => router.delete(`/evaluaciones/${evaluation.id}`)}
+                                            className="rounded-xl px-8 shadow-lg transition-all"
+                                        >
+                                            Eliminar definitivamente
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        )}
+                        <Button
+                            className="h-11 rounded-2xl bg-sidebar px-6 font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:bg-sidebar/90"
+                            asChild
+                        >
+                            <a href={`/evaluaciones/${evaluation.id}/pdf`} target="_blank" rel="noreferrer">
+                                <Download className="mr-2 h-4 w-4" />
+                                Exportar informe
+                            </a>
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-8">

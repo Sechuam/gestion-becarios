@@ -209,6 +209,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/evaluaciones/{evaluation}', [EvaluationController::class, 'show'])
         ->whereNumber('evaluation')
         ->name('evaluations.show');
+    Route::delete('/evaluaciones/{evaluation}', [EvaluationController::class, 'destroy'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.destroy');
     Route::get('/evaluaciones/{evaluation}/pdf', [EvaluationReportController::class, 'download'])
         ->whereNumber('evaluation')
         ->name('evaluations.pdf');
