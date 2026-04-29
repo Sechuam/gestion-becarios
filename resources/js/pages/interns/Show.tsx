@@ -12,7 +12,7 @@ import { CreateScheduleModal } from '@/components/interns/CreateScheduleModal';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { AlertTriangle, ArrowLeft, CalendarRange, CheckCircle2, ChevronLeft, ChevronRight, Clock, Download, FileText, GraduationCap, HardDrive, History as HistoryIcon, User } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, CalendarRange, CheckCircle2, ChevronLeft, ChevronRight, Clock, Download, FileText, GraduationCap, HardDrive, History as HistoryIcon, Pencil, RotateCcw, Trash2, User } from 'lucide-react';
 import { ExportReportModal } from '@/components/interns/ExportReportModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -566,41 +566,139 @@ export default function Show({
                                                 displayedActivities.map((activity) => {
                                                     const changes = activity.properties?.attributes ?? {};
                                                     const old = activity.properties?.old ?? {};
+                                                    
+                                                    // Mapa de traducciones completo
                                                     const labels: Record<string, string> = {
-                                                        status: 'Estado', progress: 'Progreso', internal_notes: 'Notas', end_date: 'Fecha fin', total_hours: 'Horas'
+                                                        status: 'Estado',
+                                                        progress: 'Progreso',
+                                                        internal_notes: 'Notas internas',
+                                                        notes: 'Observaciones',
+                                                        end_date: 'Fecha de finalización',
+                                                        start_date: 'Fecha de inicio',
+                                                        total_hours: 'Horas totales',
+                                                        hours: 'Horas contrato',
+                                                        academic_degree: 'Titulación',
+                                                        academic_year: 'Curso académico',
+                                                        education_center_id: 'Centro educativo',
+                                                        company_tutor_user_id: 'Tutor de empresa',
+                                                        center_tutor_name: 'Tutor del centro',
+                                                        center_tutor_email: 'Email tutor centro',
+                                                        birth_date: 'Fecha de nacimiento',
+                                                        dni: 'DNI/NIE',
+                                                        phone: 'Teléfono',
+                                                        address: 'Dirección',
+                                                        city: 'Población',
+                                                        abandon_reason: 'Motivo de baja',
+                                                        user_id: 'ID de usuario'
                                                     };
+
                                                     const formatValue = (field: string, value: any) => {
-                                                        if (value === null || value === '') return '—';
-                                                        if (field === 'status') return value === 'active' ? 'Activo' : value === 'completed' ? 'Finalizado' : 'Abandonado';
+                                                        if (value === null || value === undefined || value === '') return '—';
+                                                        
+                                                        // Formatear estados
+                                                        if (field === 'status') {
+                                                            const statusMap: Record<string, string> = {
+                                                                active: 'Activo',
+                                                                completed: 'Finalizado',
+                                                                withdrawn: 'Baja/Abandono',
+                                                                pending: 'Pendiente'
+                                                            };
+                                                            return statusMap[value] || value;
+                                                        }
+
+                                                        // Formatear fechas
+                                                        if (field.endsWith('_at') || field.endsWith('_date')) {
+                                                            try {
+                                                                return formatDateEs(value);
+                                                            } catch (e) {
+                                                                return value;
+                                                            }
+                                                        }
+
                                                         return value;
                                                     };
 
                                                     return (
-                                                        <div key={activity.id} className="relative pb-8 group">
-                                                            <div className="absolute -left-10 top-0.5 h-8 w-8 rounded-xl border-4 border-white dark:border-slate-900 bg-white dark:bg-slate-800 shadow-sm overflow-hidden z-10 group-hover:scale-110 transition-transform">
+                                                        <div key={activity.id} className="relative pb-10 group">
+                                                            {/* Línea vertical y Avatar */}
+                                                            <div className="absolute -left-10 top-0.5 h-8 w-8 rounded-xl border-4 border-white dark:border-slate-900 bg-white dark:bg-slate-800 shadow-sm overflow-hidden z-10 group-hover:scale-110 transition-all ring-1 ring-slate-200 dark:ring-slate-700">
                                                                 <Avatar className="h-full w-full rounded-none">
                                                                     <AvatarImage src={activity.causer_avatar} alt={activity.causer_name} />
-                                                                    <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-[10px] font-bold">
+                                                                    <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-[10px] font-bold text-slate-500">
                                                                         {activity.causer_name?.charAt(0) || 'S'}
                                                                     </AvatarFallback>
                                                                 </Avatar>
                                                             </div>
-                                                            <div>
-                                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{formatDateTimeEs(activity.created_at)}</p>
-                                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-1">
-                                                                    {activity.event === 'updated' ? 'Actualización de perfil' : 'Creación de registro'}
+
+                                                            <div className="space-y-1">
+                                                                <div className="flex items-center gap-3">
+                                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5 rounded-md border border-slate-100 dark:border-slate-800">
+                                                                        {formatDateTimeEs(activity.created_at)}
+                                                                    </p>
+                                                                    <span className="text-[10px] font-bold text-slate-400 opacity-50">•</span>
+                                                                    <span className="text-[10px] font-bold text-sidebar/60 dark:text-white/40 uppercase tracking-tighter">
+                                                                        Por {activity.causer_name || 'Sistema'}
+                                                                    </span>
+                                                                </div>
+
+                                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-1 flex items-center gap-2">
+                                                                    {activity.event === 'updated' ? (
+                                                                        <span className="flex items-center gap-1.5">
+                                                                            <Pencil className="h-3 w-3 text-amber-500" />
+                                                                            Edición de información
+                                                                        </span>
+                                                                    ) : activity.event === 'created' ? (
+                                                                        <span className="flex items-center gap-1.5">
+                                                                            <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                                                                            Alta de nuevo becario
+                                                                        </span>
+                                                                    ) : activity.event === 'deleted' ? (
+                                                                        <span className="flex items-center gap-1.5">
+                                                                            <Trash2 className="h-3 w-3 text-rose-500" />
+                                                                            Eliminación de registro
+                                                                        </span>
+                                                                    ) : activity.event === 'restored' ? (
+                                                                        <span className="flex items-center gap-1.5">
+                                                                            <RotateCcw className="h-3 w-3 text-blue-500" />
+                                                                            Restauración de registro
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="flex items-center gap-1.5 uppercase tracking-tighter text-[10px] opacity-70">
+                                                                            {activity.description}
+                                                                        </span>
+                                                                    )}
                                                                 </p>
-                                                                <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
-                                                                    {Object.keys(changes).map((field) => (
-                                                                        field !== 'updated_at' && (
-                                                                            <div key={field} className="text-xs">
-                                                                                <span className="text-slate-500 font-medium">{labels[field] || field}:</span>
-                                                                                <span className="ml-1.5 line-through opacity-40 italic">{formatValue(field, old[field])}</span>
-                                                                                <span className="mx-1 text-primary/40">→</span>
-                                                                                <span className="font-bold text-primary">{formatValue(field, changes[field])}</span>
+
+                                                                {/* Grid de cambios */}
+                                                                <div className="mt-3 grid grid-cols-1 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                                                                    {Object.keys(changes).map((field) => {
+                                                                        if (['updated_at', 'id', 'created_at'].includes(field)) return null;
+                                                                        
+                                                                        const label = labels[field] || field;
+                                                                        const oldValue = formatValue(field, old[field]);
+                                                                        const newValue = formatValue(field, changes[field]);
+
+                                                                        // Si es creación, no mostrar el valor antiguo
+                                                                        if (activity.event === 'created') {
+                                                                            return (
+                                                                                <div key={field} className="flex flex-col gap-0.5 border-l-2 border-emerald-500/20 pl-3 py-0.5">
+                                                                                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                                                                                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{newValue}</span>
+                                                                                </div>
+                                                                            );
+                                                                        }
+
+                                                                        return (
+                                                                            <div key={field} className="flex flex-col gap-0.5 border-l-2 border-amber-500/20 pl-3 py-0.5">
+                                                                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                                                                                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                                                                                    <span className="line-through opacity-30 text-slate-500">{oldValue}</span>
+                                                                                    <span className="text-primary/40 font-bold">→</span>
+                                                                                    <span className="font-bold text-sidebar dark:text-emerald-400">{newValue}</span>
+                                                                                </div>
                                                                             </div>
-                                                                        )
-                                                                    ))}
+                                                                        );
+                                                                    })}
                                                                 </div>
                                                             </div>
                                                         </div>

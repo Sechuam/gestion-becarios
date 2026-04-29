@@ -12,6 +12,7 @@ import {
     Check,
     X,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import AppLayout from '@/layouts/app-layout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -52,42 +53,27 @@ type UserRow = {
 
 const ROLE_META: Record<string, {
     label: string;
-    color: string;
-    bg: string;
-    border: string;
-    headerBg: string;
+    dotColor: string;
     icon: React.ElementType;
 }> = {
     admin: {
-        label: 'Administradores',
-        color: 'text-rose-600 dark:text-rose-400',
-        bg: 'bg-rose-50 dark:bg-rose-950/40',
-        border: 'border-rose-200 dark:border-rose-800/60',
-        headerBg: 'bg-rose-50/80 dark:bg-rose-950/30',
+        label: 'Admin',
+        dotColor: 'bg-rose-500',
         icon: Shield,
     },
     tutor: {
-        label: 'Tutores',
-        color: 'text-violet-600 dark:text-violet-400',
-        bg: 'bg-violet-50 dark:bg-violet-950/40',
-        border: 'border-violet-200 dark:border-violet-800/60',
-        headerBg: 'bg-violet-50/80 dark:bg-violet-950/30',
+        label: 'Tutor',
+        dotColor: 'bg-violet-400',
         icon: GraduationCap,
     },
     intern: {
-        label: 'Becarios',
-        color: 'text-emerald-600 dark:text-emerald-400',
-        bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-        border: 'border-emerald-200 dark:border-emerald-800/60',
-        headerBg: 'bg-emerald-50/80 dark:bg-emerald-950/30',
+        label: 'Becario',
+        dotColor: 'bg-emerald-400',
         icon: Users,
     },
     none: {
         label: 'Sin rol',
-        color: 'text-slate-500 dark:text-slate-400',
-        bg: 'bg-slate-50 dark:bg-slate-800/40',
-        border: 'border-slate-200 dark:border-slate-700/60',
-        headerBg: 'bg-slate-50/80 dark:bg-slate-800/30',
+        dotColor: 'bg-slate-300',
         icon: UserX,
     },
 };
@@ -120,7 +106,7 @@ function UserRowItem({
         <div className={`flex items-center gap-3 px-4 py-2 transition-colors hover:bg-muted/40 ${isAlternative ? 'bg-sidebar/5 dark:bg-sidebar/10' : ''}`}>
             <Avatar className="h-7 w-7 shrink-0 border border-border">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className={`text-[10px] font-bold ${meta.color} bg-muted`}>
+                <AvatarFallback className="text-[10px] font-bold text-sidebar bg-muted">
                     {user.name.split(' ').slice(0, 2).map((w) => w.charAt(0)).join('').toUpperCase()}
                 </AvatarFallback>
             </Avatar>
@@ -130,15 +116,12 @@ function UserRowItem({
                 <p className="truncate text-xs text-muted-foreground">{user.email}</p>
             </div>
 
-            {/* Role badge — solo visible en modo búsqueda */}
+            {/* Role indicator */}
             {showBadge && (
-                <Badge
-                    variant="outline"
-                    className={`hidden shrink-0 items-center gap-1 border text-[11px] font-semibold sm:flex ${meta.bg} ${meta.border} ${meta.color}`}
-                >
-                    <RoleIcon className="h-2.5 w-2.5" />
-                    {ROLE_META[roleName]?.label ?? 'Sin rol'}
-                </Badge>
+                <div className="hidden items-center gap-1.5 font-medium text-sidebar dark:text-white/80 sm:flex">
+                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", meta.dotColor)} />
+                    <span className="text-[11px] uppercase tracking-wider">{meta.label}</span>
+                </div>
             )}
 
             <DropdownMenu>
@@ -163,10 +146,10 @@ function UserRowItem({
                             <DropdownMenuItem
                                 key={role.name}
                                 onClick={() => onRoleChange(user, role.name)}
-                                className={`flex items-center gap-2 ${isCurrent ? 'font-semibold' : ''}`}
+                                className={`flex items-center gap-2.5 ${isCurrent ? 'font-semibold bg-muted/50' : ''}`}
                             >
-                                <Ico className={`h-4 w-4 ${rm.color}`} />
-                                <span>{rm.label}</span>
+                                <div className={cn("h-2 w-2 rounded-full", rm.dotColor)} />
+                                <span className="text-sm">{rm.label}</span>
                                 {isCurrent && <Check className="ml-auto h-3.5 w-3.5 text-muted-foreground" />}
                             </DropdownMenuItem>
                         );
@@ -279,20 +262,20 @@ export default function UsersIndex({
 
             <div className="space-y-5">
                 {/* HEADER CON GRADIENTE CORPORATIVO */}
-                <section className="relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-8 rounded-[2rem]">
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
-                    <div className="relative flex flex-wrap items-center justify-between gap-6">
-                        <div className="flex-1 space-y-3">
+                <section className="relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-5 shadow-2xl md:px-8 md:py-6 rounded-[2rem]">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                    <div className="relative flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex-1 space-y-1.5">
                             <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/90 backdrop-blur-md border border-white/20">
                                 Panel de administración
                             </p>
-                            <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-4 leading-none">
-                                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
-                                    <Users className="h-6 w-6" />
+                            <h1 className="text-xl font-black tracking-tight text-white flex items-center gap-3 leading-none">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
+                                    <Users className="h-5 w-5" />
                                 </span>
                                 Gestión de Usuarios
                             </h1>
-                            <p className="max-w-3xl text-sm font-medium text-white/70 leading-relaxed italic line-clamp-1">
+                            <p className="max-w-3xl text-xs font-medium text-white/70 leading-relaxed italic line-clamp-1">
                                 Administra roles y permisos de los {counts.all} usuarios registrados.
                             </p>
                         </div>
@@ -305,16 +288,19 @@ export default function UsersIndex({
                         </Button>
                     </div>
 
-                    <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                         {[
-                            { key: 'all', label: 'Total', color: 'text-white' },
-                            { key: 'admin', label: 'Admins', color: 'text-rose-300' },
-                            { key: 'tutor', label: 'Tutores', color: 'text-violet-300' },
-                            { key: 'intern', label: 'Becarios', color: 'text-emerald-300' },
-                        ].map(({ key, label, color }) => (
-                            <div key={key} className="relative overflow-hidden rounded-2xl bg-white/10 p-5 shadow-lg backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/60">{label}</p>
-                                <p className={`mt-2 text-3xl font-black tracking-tight ${color}`}>{counts[key] ?? 0}</p>
+                            { key: 'all', label: 'Total', dot: 'bg-white/40' },
+                            { key: 'admin', label: 'Admins', dot: 'bg-rose-500' },
+                            { key: 'tutor', label: 'Tutores', dot: 'bg-violet-400' },
+                            { key: 'intern', label: 'Becarios', dot: 'bg-emerald-400' },
+                        ].map(({ key, label, dot }) => (
+                            <div key={key} className="relative overflow-hidden rounded-2xl bg-white/10 p-3 shadow-lg backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
+                                <div className="flex items-center justify-between gap-2">
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-white/50">{label}</p>
+                                    <div className={cn("h-1.5 w-1.5 rounded-full", dot)} />
+                                </div>
+                                <p className="mt-1 text-xl font-black tracking-tight text-white">{counts[key] ?? 0}</p>
                             </div>
                         ))}
                     </div>
