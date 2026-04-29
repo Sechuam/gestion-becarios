@@ -11,6 +11,7 @@ import {
 import {
     arrayMove,
 } from '@dnd-kit/sortable';
+import { cn } from '@/lib/utils';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     KanbanSquare,
@@ -18,7 +19,8 @@ import {
     List,
     PlusCircle,
     Sparkles,
-    Loader2
+    Loader2,
+    Calendar
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
@@ -475,12 +477,16 @@ export default function Index({
                 label: 'Estado',
                 sortKey: 'status',
                 render: (task: any) => (
-                    <Badge
-                        variant="outline"
-                        className={getTaskStatusTone(task.status)}
-                    >
-                        {getTaskStatusLabel(task.status)}
-                    </Badge>
+                    <div className="flex items-center gap-2 font-medium text-sidebar dark:text-white/80">
+                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                            'bg-slate-300': task.status === 'pending',
+                            'bg-blue-400': task.status === 'in_progress',
+                            'bg-violet-400': task.status === 'in_review',
+                            'bg-emerald-500': task.status === 'completed',
+                            'bg-rose-500': task.status === 'rejected',
+                        })} />
+                        <span className="text-xs uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                    </div>
                 ),
             },
             {
@@ -488,12 +494,14 @@ export default function Index({
                 label: 'Prioridad',
                 sortKey: 'priority',
                 render: (task: any) => (
-                    <Badge
-                        variant="outline"
-                        className={getTaskPriorityTone(task.priority)}
-                    >
-                        {getTaskPriorityLabel(task.priority)}
-                    </Badge>
+                    <div className="flex items-center gap-2 font-medium text-sidebar dark:text-white/80">
+                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                            'bg-rose-500': task.priority === 'high',
+                            'bg-amber-400': task.priority === 'medium',
+                            'bg-emerald-400': task.priority === 'low',
+                        })} />
+                        <span className="text-xs uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                    </div>
                 ),
             },
             {
@@ -502,29 +510,30 @@ export default function Index({
                 sortKey: 'due_date',
                 render: (task: any) => {
                     const status = dueStatus(task.due_date);
-                    const tone =
+                    const dotClass =
                         status === 'overdue'
-                            ? 'bg-red-50 text-red-700 border-red-200'
+                            ? 'bg-rose-500'
                             : status === 'soon'
-                                ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                : 'bg-transparent text-muted-foreground border-transparent';
+                                ? 'bg-amber-400'
+                                : 'bg-sidebar/20';
+
                     const smartLabel =
                         status === 'overdue'
                             ? 'Atrasada'
                             : status === 'soon'
                                 ? 'Pronto'
                                 : formatDateEs(task.due_date);
+
                     return task.due_date ? (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <span
-                                    className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${tone}`}
-                                >
-                                    {smartLabel}
-                                </span>
+                                <div className="flex items-center gap-2 font-medium text-sidebar dark:text-white/80 cursor-default">
+                                    <div className={cn("h-2 w-2 rounded-full shrink-0", dotClass)} />
+                                    <span className="text-xs uppercase tracking-wider">{smartLabel}</span>
+                                </div>
                             </TooltipTrigger>
-                            <TooltipContent>
-                                Fecha exacta: {formatDateEs(task.due_date)}
+                            <TooltipContent className="rounded-xl border-sidebar/20 font-medium">
+                                Fecha límite: {formatDateEs(task.due_date)}
                             </TooltipContent>
                         </Tooltip>
                     ) : (

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
+import { cn } from '@/lib/utils';
 import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -244,18 +245,14 @@ export default function Show({
                                 <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
                                     {task.title}
                                 </h1>
-                                <span className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border border-white/30 backdrop-blur-md ${
-                                    String(task.status) === 'completed' ? 'bg-emerald-500/20 text-emerald-100' :
-                                    String(task.status) === 'pending' ? 'bg-amber-500/20 text-amber-100' :
-                                    String(task.status) === 'rejected' ? 'bg-red-500/20 text-red-100' :
-                                    'bg-white/10 text-white'
-                                }`}>
-                                    <div className={`h-1.5 w-1.5 rounded-full ${
-                                        String(task.status) === 'completed' ? 'bg-emerald-400' :
-                                        String(task.status) === 'pending' ? 'bg-amber-400' :
-                                        String(task.status) === 'rejected' ? 'bg-red-400' :
-                                        'bg-white'
-                                    }`} />
+                                <span className="flex items-center gap-2 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest border border-white/20 bg-white/5 backdrop-blur-md text-white">
+                                    <div className={cn("h-2 w-2 rounded-full", {
+                                        'bg-emerald-400': String(task.status) === 'completed',
+                                        'bg-amber-400': String(task.status) === 'pending',
+                                        'bg-rose-400': String(task.status) === 'rejected',
+                                        'bg-blue-400': String(task.status) === 'in_progress',
+                                        'bg-violet-400': String(task.status) === 'in_review',
+                                    })} />
                                     {getTaskStatusLabel(task.status)}
                                 </span>
                             </div>
@@ -263,11 +260,15 @@ export default function Show({
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
                                 <div className="flex items-center gap-2">
                                     <Clock className="h-3.5 w-3.5" />
-                                    <span className="font-bold tracking-tight text-xs uppercase">Vence el {formatDateEs(task.due_date)}</span>
+                                    <span className="font-medium tracking-tight text-xs uppercase">Vence el {formatDateEs(task.due_date)}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Pencil className="h-3.5 w-3.5" />
-                                    <span className="font-bold tracking-tight text-xs uppercase">Prioridad: {getTaskPriorityLabel(task.priority)}</span>
+                                    <div className={cn("h-1.5 w-1.5 rounded-full", {
+                                        'bg-rose-400': task.priority === 'high',
+                                        'bg-amber-400': task.priority === 'medium',
+                                        'bg-emerald-400': task.priority === 'low',
+                                    })} />
+                                    <span className="font-medium tracking-tight text-xs uppercase">Prioridad {getTaskPriorityLabel(task.priority)}</span>
                                 </div>
                             </div>
                         </div>
@@ -371,10 +372,14 @@ export default function Show({
 
                                         <div className="grid grid-cols-2 gap-4">
                                             {[
-                                                { label: 'Prioridad', value: getTaskPriorityLabel(task.priority), icon: <Clock className="h-4 w-4 text-[#1f4f52]" /> },
-                                                { label: 'Tipo', value: task.practice_type?.name || '—', icon: <Paperclip className="h-4 w-4 text-[#1f4f52]" /> },
-                                                { label: 'Creada por', value: task.creator?.name || '—', icon: <User className="h-4 w-4 text-[#1f4f52]" /> },
-                                                { label: 'Vencimiento', value: formatDateEs(task.due_date), icon: <Clock className="h-4 w-4 text-[#1f4f52]" /> }
+                                                { label: 'Prioridad', value: getTaskPriorityLabel(task.priority), icon: <div className={cn("h-2 w-2 rounded-full", {
+                                                    'bg-rose-500': task.priority === 'high',
+                                                    'bg-amber-400': task.priority === 'medium',
+                                                    'bg-emerald-400': task.priority === 'low',
+                                                })} /> },
+                                                { label: 'Tipo', value: task.practice_type?.name || '—', icon: <Paperclip className="h-4 w-4 text-sidebar" /> },
+                                                { label: 'Creada por', value: task.creator?.name || '—', icon: <User className="h-4 w-4 text-sidebar" /> },
+                                                { label: 'Vencimiento', value: formatDateEs(task.due_date), icon: <Clock className="h-4 w-4 text-sidebar" /> }
                                             ].map((item, idx) => (
                                                 <div key={idx} className="rounded-xl border border-sidebar bg-stone-50/50 p-4 dark:bg-slate-800/30">
                                                     <div className="mb-2 flex items-center gap-2">

@@ -22,6 +22,7 @@ import {
     SheetTitle,
 } from '@/components/ui/sheet';
 import { formatDateEs } from '@/lib/date-format';
+import { cn } from '@/lib/utils';
 import {
     getTaskPriorityLabel,
     getTaskPriorityTone,
@@ -118,27 +119,40 @@ export default function TaskQuickViewSheet({
                 {task ? (
                     <>
                         <SheetHeader className="space-y-3 border-b border-border/70 pb-5">
-                            <div className="flex flex-wrap items-center gap-2 pr-8">
-                                <Badge
-                                    variant="outline"
-                                    className={getTaskStatusTone(task.status)}
-                                >
-                                    {getTaskStatusLabel(task.status)}
-                                </Badge>
-                                <Badge
-                                    variant="outline"
-                                    className={getTaskPriorityTone(
-                                        task.priority,
-                                    )}
-                                >
-                                    {getTaskPriorityLabel(task.priority)}
-                                </Badge>
-                                <Badge
-                                    variant="outline"
-                                    className={dueMeta.tone}
-                                >
-                                    {dueMeta.label}
-                                </Badge>
+                            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pr-8">
+                                {/* Estado */}
+                                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                                    <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                                        'bg-slate-300': task.status === 'pending',
+                                        'bg-blue-400': task.status === 'in_progress',
+                                        'bg-violet-400': task.status === 'in_review',
+                                        'bg-emerald-500': task.status === 'completed',
+                                        'bg-rose-500': task.status === 'rejected',
+                                    })} />
+                                    <span className="text-[10px] uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                                </div>
+
+                                {/* Prioridad */}
+                                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                                    <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                                        'bg-rose-500': task.priority === 'high',
+                                        'bg-amber-400': task.priority === 'medium',
+                                        'bg-emerald-400': task.priority === 'low',
+                                    })} />
+                                    <span className="text-[10px] uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                                </div>
+
+                                {/* Entrega */}
+                                {task.due_date && (
+                                    <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                                            'bg-rose-500': dueStatus(task.due_date) === 'overdue',
+                                            'bg-amber-400': dueStatus(task.due_date) === 'soon',
+                                            'bg-sidebar/20': dueStatus(task.due_date) === 'none',
+                                        })} />
+                                        <span className="text-[10px] uppercase tracking-wider">{dueMeta.label}</span>
+                                    </div>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <SheetTitle className="text-xl leading-tight">

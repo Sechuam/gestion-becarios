@@ -11,6 +11,7 @@ import {
     Pencil,
 } from 'lucide-react';
 import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -177,31 +178,47 @@ export default function KanbanTaskCard({
                 )}
             </div>
 
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Badge
-                    variant="outline"
-                    className={getTaskStatusTone(task.status)}
-                >
-                    {getTaskStatusLabel(task.status)}
-                </Badge>
-                <Badge
-                    variant="outline"
-                    className={getTaskPriorityTone(task.priority)}
-                >
-                    {getTaskPriorityLabel(task.priority)}
-                </Badge>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Badge variant="outline" className={dueBadge.className}>
-                            {dueBadge.label}
-                        </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        {task.due_date
-                            ? `Entrega: ${formatDateEs(task.due_date)}`
-                            : 'Sin fecha de entrega'}
-                    </TooltipContent>
-                </Tooltip>
+            <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                {/* Estado */}
+                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
+                        'bg-slate-300': task.status === 'pending',
+                        'bg-blue-400': task.status === 'in_progress',
+                        'bg-violet-400': task.status === 'in_review',
+                        'bg-emerald-500': task.status === 'completed',
+                        'bg-rose-500': task.status === 'rejected',
+                    })} />
+                    <span className="text-[10px] uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                </div>
+
+                {/* Prioridad */}
+                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
+                        'bg-rose-500': task.priority === 'high',
+                        'bg-amber-400': task.priority === 'medium',
+                        'bg-emerald-400': task.priority === 'low',
+                    })} />
+                    <span className="text-[10px] uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                </div>
+
+                {/* Entrega */}
+                {task.due_date && (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80 cursor-default">
+                                <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
+                                    'bg-rose-500': dueStatus(task.due_date) === 'overdue',
+                                    'bg-amber-400': dueStatus(task.due_date) === 'soon',
+                                    'bg-sidebar/20': dueStatus(task.due_date) === 'none',
+                                })} />
+                                <span className="text-[10px] uppercase tracking-wider">{dueBadge.label}</span>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="rounded-xl border-sidebar/20 font-medium">
+                            Fecha límite: {formatDateEs(task.due_date)}
+                        </TooltipContent>
+                    </Tooltip>
+                )}
             </div>
 
             <div className="mb-3 flex items-center justify-between gap-3">
