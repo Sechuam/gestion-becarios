@@ -725,7 +725,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Tareas" />
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
                 <ModuleHeader
                     title="Tareas"
                     description="Sigue el trabajo por estado, detecta entregas sensibles y cambia entre kanban y tabla según el momento."
@@ -735,7 +735,7 @@ export default function Index({
                         <>
                             {isTutor && (
                                 <Button
-                                    className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
+                                    className="gap-2 bg-sidebar text-white border border-white/20 hover:bg-sidebar/90 rounded-lg h-8 px-4 text-[10px] font-black uppercase tracking-widest shadow-lg"
                                     onClick={() => router.get('/tareas/create')}
                                 >
                                     <PlusCircle className="h-4 w-4" />
@@ -753,25 +753,23 @@ export default function Index({
                                         setViewMode(value);
                                     }
                                 }}
-                                variant="outline"
-                                size="sm"
-                                className="rounded-xl border border-sidebar bg-white p-0.5 shadow-sm"
+                                className="bg-sidebar/10 p-0.5 rounded-lg border border-sidebar/20"
                             >
                                 <ToggleGroupItem
                                     value="kanban"
-                                    className="rounded-lg border border-sidebar bg-sidebar px-2 text-white hover:bg-sidebar/90 hover:text-white data-[state=on]:border-sidebar data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-sm"
+                                    className="rounded-md h-7 px-2 text-sidebar hover:bg-sidebar/20 data-[state=on]:bg-sidebar data-[state=on]:text-white data-[state=on]:shadow-sm transition-all"
                                     aria-label="Vista kanban"
                                     title="Vista kanban"
                                 >
-                                    <LayoutGrid className="h-4 w-4" />
+                                    <LayoutGrid className="h-3.5 w-3.5" />
                                 </ToggleGroupItem>
                                 <ToggleGroupItem
                                     value="table"
-                                    className="rounded-lg border border-sidebar bg-sidebar px-2 text-white hover:bg-sidebar/90 hover:text-white data-[state=on]:border-sidebar data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-sm"
+                                    className="rounded-md h-7 px-2 text-sidebar hover:bg-sidebar/20 data-[state=on]:bg-sidebar data-[state=on]:text-white data-[state=on]:shadow-sm transition-all"
                                     aria-label="Vista tabla"
                                     title="Vista tabla"
                                 >
-                                    <List className="h-4 w-4" />
+                                    <List className="h-3.5 w-3.5" />
                                 </ToggleGroupItem>
                             </ToggleGroup>
                         </>

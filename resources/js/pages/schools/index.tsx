@@ -428,7 +428,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Centros Educativos" />
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
                 <ModuleHeader
                     title="Centros Educativos"
                     description="Gestiona instituciones, universidades y centros de formación con una visión rápida del estado de tu red de convenios."
@@ -437,10 +437,10 @@ export default function Index({
                     actions={
                         canManage ? (
                             <Button
-                                className="gap-2 bg-sidebar/80 text-white border-2 border-white/20 hover:bg-white/10 hover:border-white/40 rounded-2xl px-8 font-black shadow-xl backdrop-blur-md transition-all h-12 pt-1"
+                                className="gap-2 bg-sidebar/80 text-white border border-white/20 hover:bg-white/10 hover:border-white/40 rounded-lg px-4 font-black shadow-lg backdrop-blur-md transition-all h-8 text-[10px] uppercase tracking-widest"
                                 onClick={() => router.get('/centros/create')}
                             >
-                                <Plus className="h-5 w-5" />
+                                <Plus className="h-4 w-4" />
                                 Añadir Centro
                             </Button>
                         ) : undefined
@@ -448,14 +448,14 @@ export default function Index({
                 />
 
                 {/* FILTROS */}
-                <div className="rounded-[2rem] border border-sidebar/10 bg-white p-8 shadow-xl dark:bg-slate-900/60 transition-all">
+                <div className="rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60 transition-all">
                     {/* Fila 1: Búsqueda y Exportar */}
-                    <div className="flex flex-wrap items-center gap-6 mb-8">
-                        <div className="relative max-w-md min-w-[280px] flex-1">
-                            <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <div className="relative max-w-sm min-w-[240px] flex-1">
+                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
-                                placeholder="Buscar por nombre, código o ciudad..."
-                                className="h-12 border-sidebar/20 bg-slate-50/50 pl-12 text-foreground placeholder:text-muted-foreground rounded-2xl shadow-sm focus:ring-sidebar/20"
+                                placeholder="Buscar centro..."
+                                className="h-8 border-sidebar/20 bg-slate-50/50 pl-10 text-xs text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus:ring-sidebar/20"
                                 defaultValue={filters.search}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -471,9 +471,9 @@ export default function Index({
                                 <DialogTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="h-12 rounded-2xl border-sidebar/20 bg-card px-6 font-bold text-sidebar hover:bg-sidebar hover:text-white transition-all shadow-sm"
+                                        className="h-8 rounded-lg border-sidebar/20 bg-card px-4 text-[10px] font-black uppercase tracking-widest text-sidebar hover:bg-sidebar hover:text-white transition-all shadow-sm"
                                     >
-                                        <FileDown className="mr-2 h-5 w-5" />
+                                        <FileDown className="mr-2 h-4 w-4" />
                                         Exportar Excel
                                     </Button>
                                 </DialogTrigger>
@@ -550,18 +550,18 @@ export default function Index({
                             </Dialog>
                         )}
 
-                        <div className="ml-auto text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-4 py-2 rounded-full dark:bg-slate-800 flex items-center gap-2 border border-sidebar/5 shadow-inner">
-                            <span className="flex h-2 w-2 rounded-full bg-sidebar animate-pulse" />
-                            Mostrando {schools.data.length} de {schools.total}{' '}
+                        <div className="ml-auto text-[9px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-3 py-1 rounded-full dark:bg-slate-800 flex items-center gap-1.5 border border-sidebar/5 shadow-inner">
+                            <span className="flex h-1.5 w-1.5 rounded-full bg-sidebar animate-pulse" />
+                            {schools.data.length} / {schools.total}{' '}
                             centros
                         </div>
                     </div>
 
                     {/* Fila 2: Filtros */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-wrap items-end gap-6">
-                        <div className="space-y-2 lg:min-w-[180px]">
-                            <label className="text-[10px] font-black tracking-[0.12em] text-[#1f4f52]/70 uppercase ml-1">
-                                Tipo de Vista
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap items-end gap-2">
+                        <div className="space-y-1 lg:min-w-[150px]">
+                            <label className="text-[9px] font-black tracking-widest text-[#1f4f52]/70 uppercase ml-0.5">
+                                Vista
                             </label>
                             <Select
                                 value={filters.trashed || 'none'}
@@ -569,7 +569,7 @@ export default function Index({
                                     handleFilter('trashed', v)
                                 }
                             >
-                                <SelectTrigger className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm hover:bg-slate-50 transition-colors">
+                                <SelectTrigger className="h-8 border-sidebar/20 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
                                     <SelectValue>
                                         {{
                                             none: 'Solo Activos',
@@ -579,7 +579,7 @@ export default function Index({
                                             'Solo Activos'}
                                     </SelectValue>
                                 </SelectTrigger>
-                                <SelectContent className="rounded-2xl border-sidebar/20">
+                                <SelectContent className="rounded-lg border-sidebar/20">
                                     <SelectItem value="none">
                                         Solo Activos
                                     </SelectItem>

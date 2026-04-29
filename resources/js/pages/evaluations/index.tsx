@@ -169,37 +169,37 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Evaluaciones" />
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
                 <ModuleHeader
                     title="Evaluaciones"
                     description="Módulo de seguimiento de desempeño, feedback de tutores y autoevaluaciones de becarios."
                     icon={<ClipboardList className="h-6 w-6" />}
                     actions={
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-2">
                             {canCreateEvaluation && (
                                 <Button
-                                    className="h-12 rounded-2xl bg-white px-8 pt-2 font-black text-sidebar shadow-lg transition-all hover:bg-white/90"
+                                    className="gap-2 bg-white text-sidebar border border-white/20 hover:bg-white/90 rounded-lg px-4 font-black shadow-lg transition-all h-8 text-[10px] uppercase tracking-widest"
                                     onClick={() => router.get('/evaluaciones/create')}
                                 >
-                                    <Plus className="mr-2 h-5 w-5" />
+                                    <Plus className="h-4 w-4" />
                                     Nueva evaluacion
                                 </Button>
                             )}
                             {canCreateSelfEvaluation && (
                                 <Button
-                                    className="h-12 rounded-2xl bg-white px-8 pt-2 font-black text-sidebar shadow-lg transition-all hover:bg-white/90"
+                                    className="gap-2 bg-white text-sidebar border border-white/20 hover:bg-white/90 rounded-lg px-4 font-black shadow-lg transition-all h-8 text-[10px] uppercase tracking-widest"
                                     onClick={() => router.get('/evaluaciones/create')}
                                 >
-                                    <Plus className="mr-2 h-5 w-5" />
+                                    <Plus className="h-4 w-4" />
                                     Nueva autoevaluacion
                                 </Button>
                             )}
                             {isAdmin && (
                                 <Button
-                                    className="h-12 rounded-2xl bg-white px-8 pt-2 font-black text-sidebar shadow-lg transition-all hover:bg-white/90"
+                                    className="gap-2 bg-white text-sidebar border border-white/20 hover:bg-white/90 rounded-lg px-4 font-black shadow-lg transition-all h-8 text-[10px] uppercase tracking-widest"
                                     onClick={() => router.get('/evaluaciones/criterios')}
                                 >
-                                    <SlidersHorizontal className="mr-2 h-5 w-5" />
+                                    <SlidersHorizontal className="h-4 w-4" />
                                     Gestionar criterios
                                 </Button>
                             )}
@@ -208,15 +208,15 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                 />
 
                 {isIntern ? (
-                    <div className="flex flex-wrap items-center gap-3 rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-500">
-                            Tipo de evaluacion
+                    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">
+                            Tipo
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-1.5">
                             <Button
                                 type="button"
                                 variant={filters.type ? 'outline' : 'default'}
-                                className="h-10 rounded-full px-5 font-bold"
+                                className="h-7 rounded-lg px-3 text-[10px] font-bold"
                                 onClick={() => handleFilter('type', 'all')}
                             >
                                 Todas
@@ -226,7 +226,7 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                                     key={type}
                                     type="button"
                                     variant={filters.type === type ? 'default' : 'outline'}
-                                    className="h-10 rounded-full px-5 font-bold"
+                                    className="h-7 rounded-lg px-3 text-[10px] font-bold"
                                     onClick={() => handleFilter('type', type)}
                                 >
                                     {getEvaluationTypeLabel(type)}
@@ -234,30 +234,30 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             ))}
                         </div>
 
-                        <p className="ml-auto rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:bg-slate-800">
-                            Mostrando {evaluations.data.length} de {evaluations.total} evaluaciones
+                        <p className="ml-auto rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:bg-slate-800 border border-sidebar/5">
+                            {evaluations.data.length} / {evaluations.total} evaluaciones
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-wrap items-center gap-4 rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
-                        <div className="w-full max-w-sm">
+                    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60">
+                        <div className="w-full max-w-xs">
                             <Input
                                 value={filters.search || ''}
                                 onChange={(e) => handleSearchChange(e.target.value)}
-                                placeholder="Buscar becario por nombre..."
-                                className="h-12 rounded-2xl border-sidebar/20 bg-card text-foreground shadow-sm"
+                                placeholder="Buscar becario..."
+                                className="h-8 rounded-lg border-sidebar/20 bg-card text-xs text-foreground shadow-sm"
                             />
                         </div>
 
-                        <div className="w-full max-w-sm">
+                        <div className="w-full max-w-[180px]">
                             <Select
                                 value={filters.module || 'all'}
                                 onValueChange={(value) => handleFilter('module', value)}
                             >
-                                <SelectTrigger className="h-12 w-full rounded-2xl border-sidebar/20 bg-card text-foreground shadow-sm">
+                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/20 bg-card text-[11px] text-foreground shadow-sm">
                                     <SelectValue placeholder="Todos los modulos" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-2xl border-sidebar/20">
+                                <SelectContent className="rounded-lg border-sidebar/20">
                                     <SelectItem value="all">Todos los modulos</SelectItem>
                                     {modules.map((module) => (
                                         <SelectItem key={module} value={module}>
@@ -268,15 +268,15 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             </Select>
                         </div>
 
-                        <div className="w-56">
+                        <div className="w-40">
                             <Select
                                 value={filters.type || 'all'}
                                 onValueChange={(value) => handleFilter('type', value)}
                             >
-                                <SelectTrigger className="h-12 w-full rounded-2xl border-sidebar/20 bg-card text-foreground shadow-sm">
+                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/20 bg-card text-[11px] text-foreground shadow-sm">
                                     <SelectValue placeholder="Todos los tipos" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-2xl border-sidebar/20">
+                                <SelectContent className="rounded-lg border-sidebar/20">
                                     <SelectItem value="all">Todos los tipos</SelectItem>
                                     {types.map((type) => (
                                         <SelectItem key={type} value={type}>
@@ -287,40 +287,38 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             </Select>
                         </div>
 
-                        <p className="ml-auto rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:bg-slate-800">
-                            Mostrando {evaluations.data.length} de {evaluations.total} evaluaciones
+                        <p className="ml-auto rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:bg-slate-800 border border-sidebar/5">
+                            {evaluations.data.length} / {evaluations.total} evaluaciones
                         </p>
                     </div>
                 )}
 
-                <div className="overflow-hidden rounded-[2.5rem] border border-sidebar/10 bg-white shadow-xl dark:bg-slate-900/60">
-                    <SimpleTable
-                        columns={columns}
-                        rows={evaluations.data}
-                        rowKey={(row) => row.id}
-                        emptyTitle={isIntern ? 'Aun no tienes evaluaciones registradas' : 'Aun no hay evaluaciones registradas'}
-                        emptyDescription={
-                            isIntern
-                                ? 'Aquí verás las evaluaciones de tu tutor y las autoevaluaciones que vayas enviando.'
-                                : 'Crea la primera evaluacion para empezar a seguir el progreso de los becarios.'
-                        }
-                        striped
-                    />
-                </div>
+                <SimpleTable
+                    columns={columns}
+                    rows={evaluations.data}
+                    rowKey={(row) => row.id}
+                    emptyTitle={isIntern ? 'Aun no tienes evaluaciones registradas' : 'Aun no hay evaluaciones registradas'}
+                    emptyDescription={
+                        isIntern
+                            ? 'Aquí verás las evaluaciones de tu tutor y las autoevaluaciones que vayas enviando.'
+                            : 'Crea la primera evaluacion para empezar a seguir el progreso de los becarios.'
+                    }
+                    striped
+                />
 
                 <div className="mt-6 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <span className="whitespace-nowrap text-sm font-medium text-muted-foreground">
                             Pagina {evaluations.current_page} de {evaluations.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-1.5">
                             {evaluations.links.map((link: any, i: number) => (
                                 <Link
                                     key={i}
                                     href={link.url ?? '#'}
                                     preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all ${link.active
-                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
+                                    className={`rounded-lg border px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-all ${link.active
+                                            ? 'scale-105 transform border-sidebar bg-sidebar text-white shadow-md'
                                             : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
                                         } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
                                     dangerouslySetInnerHTML={{

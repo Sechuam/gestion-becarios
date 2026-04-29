@@ -33,24 +33,24 @@ export function ModuleHeader({
                         Panel de gestión
                     </p>
                     
-                    <div className="flex items-center gap-3">
-                        {avatar ? (
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-md">
-                                <img src={avatar} className="h-full w-full object-cover" alt={title} />
-                            </div>
-                        ) : icon ? (
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
-                                {icon}
-                            </span>
-                        ) : null}
-                        <div>
+                    <div className="space-y-0.5">
+                        <div className="flex items-center gap-3">
+                            {avatar ? (
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-md">
+                                    <img src={avatar} className="h-full w-full object-cover" alt={title} />
+                                </div>
+                            ) : icon ? (
+                                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
+                                    {icon}
+                                </span>
+                            ) : null}
                             <h1 className="text-lg md:text-xl font-black tracking-tight text-white leading-none">
                                 {title}
                             </h1>
-                            <p className="text-[10px] font-medium text-white/60 leading-tight italic mt-0.5 line-clamp-1">
-                                {description}
-                            </p>
                         </div>
+                        <p className="text-[10px] font-medium text-white/60 leading-tight italic ml-[44px] line-clamp-1">
+                            {description}
+                        </p>
                     </div>
                 </div>
 
