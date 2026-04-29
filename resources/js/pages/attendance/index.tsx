@@ -1,5 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { EventContentArg, EventMountArg } from '@fullcalendar/core';
@@ -15,14 +15,8 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
+
 import { CalendarClock, AlertTriangle, Clock3, ShieldAlert, TimerReset, FilePlus, ExternalLink, FileText, Download } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 
@@ -112,7 +106,7 @@ export default function Index({
     absences: any[];
 }) {
     const manualForm = useForm({
-        intern_id: manageable_interns[0]?.id ? String(manageable_interns[0].id) : '',
+        intern_id: '',
         date: new Date().toISOString().split('T')[0],
         clock_in: '',
         clock_out: '',
@@ -120,6 +114,38 @@ export default function Index({
     });
 
     const [now, setNow] = useState(() => new Date());
+
+    // ── Búsqueda de becarios ──────────────────────────────────────────────────
+    const [internSearch, setInternSearch] = useState('');
+    const [showInternDropdown, setShowInternDropdown] = useState(false);
+    const internSearchRef = useRef<HTMLDivElement>(null);
+
+    const filteredInterns = (manageable_interns ?? []).filter((i) =>
+        i.name.toLowerCase().includes(internSearch.toLowerCase()) ||
+        (i.education_center ?? '').toLowerCase().includes(internSearch.toLowerCase())
+    );
+
+    const selectedIntern = (manageable_interns ?? []).find(
+        (i) => String(i.id) === manualForm.data.intern_id
+    );
+
+    // Cerrar dropdown al hacer click fuera
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (internSearchRef.current && !internSearchRef.current.contains(e.target as Node)) {
+                setShowInternDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    const selectIntern = (intern: ManageableIntern) => {
+        manualForm.setData('intern_id', String(intern.id));
+        setInternSearch('');
+        setShowInternDropdown(false);
+    };
+    // ─────────────────────────────────────────────────────────────────────────
 
     useEffect(() => {
         if (!current_log?.clock_in || current_log?.clock_out) return;
@@ -317,31 +343,77 @@ export default function Index({
 
                 {can_manage_attendance && (
                     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900">
+                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900">
                             <CardHeader className="border-b border-sidebar/5 p-8 pb-6">
                                 <CardTitle className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">Registro Manual</CardTitle>
                             </CardHeader>
                             <CardContent className="p-8">
                                 <form onSubmit={submitManualLog} className="space-y-6">
                                     <div className="grid gap-6 md:grid-cols-2">
-                                        <div className="space-y-2">
+                                        <div className="space-y-2" ref={internSearchRef}>
                                             <Label className="text-[10px] font-black uppercase tracking-widest text-sidebar ml-1">Becario Asignado</Label>
-                                            <Select
-                                                value={manualForm.data.intern_id}
-                                                onValueChange={(value) => manualForm.setData('intern_id', value)}
-                                            >
-                                                <SelectTrigger className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm hover:bg-slate-50 transition-colors">
-                                                    <SelectValue placeholder="Selecciona un becario" />
-                                                </SelectTrigger>
-                                                <SelectContent className="rounded-2xl border-sidebar/20">
-                                                    {manageable_interns && Array.isArray(manageable_interns) && manageable_interns.map((intern) => (
-                                                        <SelectItem key={intern.id} value={String(intern.id)}>
-                                                            {intern.name}
-                                                            {intern.education_center ? ` · ${intern.education_center}` : ''}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+
+                                            {/* Becario seleccionado */}
+                                            {selectedIntern && !showInternDropdown && (
+                                                <div
+                                                    className="flex items-center justify-between h-11 px-4 rounded-2xl border border-sidebar/20 bg-card shadow-sm cursor-pointer hover:bg-slate-50 transition-colors"
+                                                    onClick={() => { setInternSearch(''); setShowInternDropdown(true); }}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-6 w-6 rounded-full bg-sidebar/20 flex items-center justify-center text-[10px] font-black text-sidebar">
+                                                            {selectedIntern.name.charAt(0)}
+                                                        </div>
+                                                        <span className="text-sm font-bold text-slate-800 dark:text-white">{selectedIntern.name}</span>
+                                                        {selectedIntern.education_center && (
+                                                            <span className="text-[10px] text-slate-400 font-medium">· {selectedIntern.education_center}</span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Cambiar</span>
+                                                </div>
+                                            )}
+
+                                            {/* Campo de búsqueda */}
+                                            {(!selectedIntern || showInternDropdown) && (
+                                                <div className="relative">
+                                                    <Input
+                                                        autoFocus={showInternDropdown}
+                                                        value={internSearch}
+                                                        onChange={(e) => { setInternSearch(e.target.value); setShowInternDropdown(true); }}
+                                                        onFocus={() => setShowInternDropdown(true)}
+                                                        placeholder="Buscar becario por nombre o centro..."
+                                                        className="h-11 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm pl-10"
+                                                    />
+                                                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+
+                                                    {showInternDropdown && (
+                                                        <div className="absolute z-50 top-[calc(100%+4px)] left-0 right-0 max-h-56 overflow-y-auto rounded-2xl border border-sidebar/20 bg-white dark:bg-slate-900 shadow-xl">
+                                                            {filteredInterns.length > 0 ? (
+                                                                filteredInterns.map((intern) => (
+                                                                    <button
+                                                                        key={intern.id}
+                                                                        type="button"
+                                                                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left group"
+                                                                        onClick={() => selectIntern(intern)}
+                                                                    >
+                                                                        <div className="h-8 w-8 shrink-0 rounded-full bg-sidebar/10 flex items-center justify-center text-xs font-black text-sidebar group-hover:bg-sidebar group-hover:text-white transition-colors">
+                                                                            {intern.name.charAt(0)}
+                                                                        </div>
+                                                                        <div>
+                                                                            <p className="text-sm font-bold text-slate-800 dark:text-white leading-none">{intern.name}</p>
+                                                                            {intern.education_center && (
+                                                                                <p className="text-[10px] text-slate-400 font-medium mt-0.5">{intern.education_center}</p>
+                                                                            )}
+                                                                        </div>
+                                                                    </button>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-sm text-slate-400 italic text-center py-6">Sin resultados para &ldquo;{internSearch}&rdquo;</p>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+
                                             {manualForm.errors.intern_id && (
                                                 <p className="text-xs font-bold text-red-500">{manualForm.errors.intern_id}</p>
                                             )}
@@ -409,10 +481,10 @@ export default function Index({
                             </CardContent>
                         </Card>
 
-                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900 overflow-hidden">
+                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900">
                             <CardHeader className="border-b border-sidebar/5 p-8 pb-6 bg-slate-50/30 dark:bg-slate-800/30">
                                 <CardTitle className="flex items-center gap-3 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-600 shadow-inner">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar shadow-inner">
                                         <ShieldAlert className="h-6 w-6" />
                                     </div>
                                     Alertas de Incumplimiento
@@ -423,21 +495,21 @@ export default function Index({
                                     non_compliant_interns.map((intern) => (
                                         <div
                                             key={intern.id}
-                                            className="group rounded-[1.5rem] border border-rose-100 bg-rose-50/30 p-5 shadow-sm transition-all hover:bg-rose-50 hover:border-rose-200 dark:bg-red-950/20 dark:border-red-900/40"
+                                            className="group rounded-[1.5rem] border border-sidebar/5 bg-slate-50/50 p-5 shadow-sm transition-all hover:bg-white hover:shadow-md dark:bg-slate-800/40 dark:border-slate-800"
                                         >
                                             <div className="flex items-start gap-4">
-                                                <Avatar className="h-12 w-12 border-4 border-white shadow-lg shrink-0">
+                                                <Avatar className="h-12 w-12 border-4 border-white shadow-lg shrink-0 dark:border-slate-700">
                                                     <AvatarImage src={intern.avatar} alt={intern.name} />
-                                                    <AvatarFallback className="text-sm font-black bg-rose-100 text-rose-600 pt-1">
+                                                    <AvatarFallback className="text-sm font-black bg-sidebar/10 text-sidebar pt-1">
                                                         {intern.name?.charAt(0)}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div className="space-y-1">
-                                                    <p className="font-black text-rose-900 dark:text-red-100">{intern.name}</p>
-                                                    <p className="text-sm font-medium text-rose-700/80 leading-snug dark:text-red-200/70">
-                                                        Deuda Crítica: <span className="font-black text-rose-600">{intern.debt}h</span> acumuladas.
+                                                    <p className="font-black text-slate-800 dark:text-white">{intern.name}</p>
+                                                    <p className="text-sm font-medium text-slate-500 leading-snug dark:text-slate-400">
+                                                        Deuda de horas: <span className="font-black text-sidebar dark:text-sidebar-foreground">{intern.debt}h</span> acumuladas.
                                                     </p>
-                                                    <div className="flex items-center gap-3 mt-2 text-[10px] font-black uppercase tracking-widest text-rose-400">
+                                                    <div className="flex items-center gap-3 mt-2 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                                                         <span>Progreso: {intern.total_done}h / {intern.expected_hours}h</span>
                                                     </div>
                                                 </div>
