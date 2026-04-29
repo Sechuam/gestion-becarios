@@ -76,23 +76,23 @@ export default function Edit({
             <Head title="Editar tarea" />
 
             <div className="page-surface">
-                <div className="mb-8 flex flex-col gap-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                <div className="mb-4 flex flex-col gap-1">
+                    <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                         Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Tarea</span>
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
                         Actualizando {task.title}
                     </p>
                 </div>
 
-                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-8 md:p-12">
-                    <form onSubmit={submit} className="space-y-12" noValidate>
-                        <div className="space-y-8">
+                <div className="app-panel rounded-[1.5rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-4 md:p-6">
+                    <form onSubmit={submit} className="space-y-6" noValidate>
+                        <div className="space-y-6">
                             <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
                                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">01</span>
                                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Detalles de la Actividad</h3>
                             </div>
-                            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="title">Título</Label>
                                     <Input

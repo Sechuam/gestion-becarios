@@ -71,24 +71,24 @@ export default function Edit({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editar Centro Educativo" />
 
-            <div className="mb-8 flex flex-col gap-1">
-                <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <div className="mb-6 flex flex-col gap-1">
+                <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                     Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Centro Educativo</span>
                 </h1>
-                <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
                     Actualizando a {educationCenter.name} · {educationCenter.code}
                 </p>
             </div>
 
-            <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-8 md:p-12">
-                <form onSubmit={requestConfirmation} className="space-y-12" noValidate>
+            <div className="app-panel rounded-[1.5rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-4 md:p-6">
+                <form onSubmit={requestConfirmation} className="space-y-6" noValidate>
                     {/* SECCIÓN: DATOS DEL CENTRO */}
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                         <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
                             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">01</span>
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Información Institucional</h3>
                         </div>
-                        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
                                 <Label htmlFor="name" className="text-foreground">
                                     Nombre del Centro
@@ -168,7 +168,7 @@ export default function Edit({
                     </div>
 
                     {/* SECCIÓN: CONTACTO */}
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                         <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
                             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">02</span>
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Coordinación y Contacto</h3>
@@ -237,7 +237,7 @@ export default function Edit({
                     </div>
 
                     {/* SECCIÓN: CONTACTO INSTITUCIONAL */}
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                         <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
                             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">03</span>
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Canales Oficiales</h3>
@@ -300,7 +300,7 @@ export default function Edit({
                     </div>
 
                     {/* SECCIÓN: CONVENIO */}
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                         <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
                             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">04</span>
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Detalles del Convenio</h3>

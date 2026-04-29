@@ -114,10 +114,10 @@ export default function Show({
                 </div>
 
                 {/* HERO INTEGRADO CON GRADIENTE */}
-                <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10">
+                <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-5 shadow-2xl md:p-6">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
-                    <div className="relative flex flex-wrap items-center gap-8">
-                        <Avatar className="h-24 w-24 shrink-0 rounded-2xl border-4 border-white/20 shadow-2xl bg-white/10 backdrop-blur-md">
+                    <div className="relative flex flex-wrap items-center gap-6">
+                        <Avatar className="h-20 w-20 shrink-0 rounded-2xl border-4 border-white/20 shadow-2xl bg-white/10 backdrop-blur-md">
                             <AvatarImage src={tutor.avatar || ''} alt={tutor.name || ''} className="object-cover" />
                             <AvatarFallback className="text-white text-2xl font-black">
                                 {tutor.name
@@ -131,7 +131,7 @@ export default function Show({
                         
                         <div className="flex-1 space-y-3">
                             <div className="flex flex-wrap items-center gap-4">
-                                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white leading-none">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
                                     {tutor.name}
                                 </h1>
                                 <Badge variant="outline" className="bg-white/10 text-white/80 border-white/10 backdrop-blur-md rounded-lg h-7 text-[10px] uppercase font-black tracking-[0.2em] px-3">
@@ -161,9 +161,9 @@ export default function Show({
                     </div>
                 </div>
 
-                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-1 md:p-8">
+                <div className="app-panel rounded-[1.5rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-4 md:p-6">
                     <Tabs defaultValue="interns" className="w-full">
-                        <TabsList className="flex h-auto w-full justify-start gap-8 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-8 px-2 overflow-x-auto scrollbar-none">
+                        <TabsList className="flex h-auto w-full justify-start gap-4 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-4 px-2 overflow-x-auto scrollbar-none">
                             {[
                                 { value: 'interns', label: 'Becarios Asignados', icon: Users },
                                 { value: 'tasks', label: 'Tareas Creadas', icon: ClipboardList },

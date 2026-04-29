@@ -97,9 +97,9 @@ export default function Edit({
 
             <div className="page-surface">
                 {/* CABECERA */}
-                <div className="mb-8 flex items-center gap-6">
+                <div className="mb-4 flex items-center gap-4">
                     <div className="relative">
-                        <Avatar className="h-16 w-16 shrink-0 overflow-hidden items-center justify-center rounded-2xl border-2 border-sidebar/20 bg-white shadow-sm dark:bg-slate-900">
+                        <Avatar className="h-14 w-14 shrink-0 overflow-hidden items-center justify-center rounded-2xl border-2 border-sidebar/20 bg-white shadow-sm dark:bg-slate-900">
                             <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
                             <AvatarFallback className="text-xl font-black text-sidebar/40 bg-transparent">
                                 {intern.user?.name
@@ -107,22 +107,22 @@ export default function Edit({
                                     : 'BE'}
                             </AvatarFallback>
                         </Avatar>
-                        <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950 shadow-sm" title="Usuario Activo" />
+                        <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950 shadow-sm" title="Usuario Activo" />
                     </div>
-                    <div className="flex flex-col gap-0.5">
-                        <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                    <div className="flex flex-col gap-0">
+                        <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                             Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Expediente</span>
                         </h1>
-                        <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                        <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
                             Actualizando a {intern.user.name} · {intern.dni}
                         </p>
                     </div>
                 </div>
 
-                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-1 md:p-8">
-                    <form onSubmit={requestConfirmation} className="space-y-8" noValidate>
+                <div className="app-panel rounded-[1.5rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-4 md:p-6">
+                    <form onSubmit={requestConfirmation} className="space-y-6" noValidate>
                         <Tabs defaultValue="personal" className="w-full">
-                            <TabsList className="flex h-auto w-full justify-start gap-8 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-8 px-2 overflow-x-auto scrollbar-none">
+                            <TabsList className="flex h-auto w-full justify-start gap-4 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-6 px-2 overflow-x-auto scrollbar-none">
                                 {[
                                     { value: 'personal', label: 'Datos Personales' },
                                     { value: 'academic', label: 'Académicos' },
@@ -143,7 +143,7 @@ export default function Edit({
                             value="personal"
                             className="mt-0 space-y-6 outline-none animate-in fade-in duration-500"
                         >
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                 <div className="space-y-2">
                                     <Label
                                         htmlFor="name"
