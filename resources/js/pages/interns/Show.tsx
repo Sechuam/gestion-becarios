@@ -12,7 +12,7 @@ import { CreateScheduleModal } from '@/components/interns/CreateScheduleModal';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { AlertTriangle, ArrowLeft, CalendarRange, CheckCircle2, ChevronLeft, ChevronRight, Clock, Download, FileText, GraduationCap, HardDrive, History as HistoryIcon, Pencil, RotateCcw, Trash2, User } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, CalendarRange, CheckCircle2, ChevronLeft, ChevronRight, Clock, Download, FileText, GraduationCap, HardDrive, History as HistoryIcon, Mail, Pencil, RotateCcw, Trash2, User } from 'lucide-react';
 import { ExportReportModal } from '@/components/interns/ExportReportModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -103,17 +103,21 @@ export default function Show({
                                 <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
                                     {intern.user.name}
                                 </h1>
-                                <StatusBadge status={intern.status} className="bg-white/20 text-white border-white/30 backdrop-blur-md h-6 text-[10px]" />
+                                <Badge variant="outline" className="bg-white/10 text-white/80 border-white/10 backdrop-blur-md rounded-lg h-6 text-[9px] uppercase font-black tracking-widest px-2">
+                                    Becario
+                                </Badge>
                             </div>
                             
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
                                 <div className="flex items-center gap-2">
-                                    <GraduationCap className="h-4 w-4" />
-                                    <span className="font-bold tracking-tight text-xs uppercase">{intern.academic_degree}</span>
+                                    <Mail className="h-4 w-4" />
+                                    <a href={`mailto:${intern.user.email}`} className="font-bold tracking-tight text-sm hover:text-white transition-colors">
+                                        {intern.user.email}
+                                    </a>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <User className="h-4 w-4" />
-                                    <span className="font-bold tracking-tight text-xs uppercase">Becario</span>
+                                    <GraduationCap className="h-4 w-4" />
+                                    <span className="font-bold tracking-tight text-xs uppercase">{intern.academic_degree}</span>
                                 </div>
                             </div>
                         </div>

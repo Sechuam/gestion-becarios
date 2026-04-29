@@ -218,9 +218,12 @@ export default function Index({
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col gap-1">
-                            <span className="font-semibold text-foreground">
+                            <Link
+                                href={`/interns/${intern.id}`}
+                                className="font-semibold text-foreground hover:text-sidebar hover:underline transition-colors"
+                            >
                                 {intern.user?.name}
-                            </span>
+                            </Link>
                             <span className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                                 {intern.user?.email ? (
                                     <a

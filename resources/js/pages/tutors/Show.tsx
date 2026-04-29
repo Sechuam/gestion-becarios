@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowLeft, GraduationCap, Mail, MapPin, Hash, Search } from 'lucide-react';
+import { ArrowLeft, GraduationCap, Mail, MapPin, Hash, Search, User } from 'lucide-react';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -133,7 +133,7 @@ export default function Show({
                                 <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
                                     {tutor.name}
                                 </h1>
-                                <Badge variant="outline" className="bg-white/20 text-white border-white/30 backdrop-blur-md rounded-lg h-6 text-[10px]">
+                                <Badge variant="outline" className="bg-white/10 text-white/80 border-white/10 backdrop-blur-md rounded-lg h-6 text-[9px] uppercase font-black tracking-widest px-2">
                                     Tutor
                                 </Badge>
                             </div>
@@ -144,10 +144,6 @@ export default function Show({
                                     <a href={`mailto:${tutor.email}`} className="font-bold tracking-tight text-sm hover:text-white transition-colors">
                                         {tutor.email}
                                     </a>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <GraduationCap className="h-4 w-4" />
-                                    <span className="font-bold tracking-tight text-sm uppercase">Personal</span>
                                 </div>
                             </div>
                         </div>
