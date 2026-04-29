@@ -214,7 +214,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Control Horario" />
 
-            <div className="flex h-full flex-1 flex-col gap-6">
+            <div className="flex h-full flex-1 flex-col gap-3">
                 <ModuleHeader
                     title="Control horario"
                     description="Registra tu jornada, visualiza tus tramos del día y detecta incidencias de cumplimiento sin salir del módulo."
@@ -238,26 +238,26 @@ export default function Index({
                     ]}
                 />
 
-                <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900">
-                    <CardHeader className="border-b border-sidebar/5 p-8 pb-6">
-                        <CardTitle className="flex items-center gap-3 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar text-white shadow-lg shadow-sidebar/20 pt-1">
-                                <CalendarClock className="h-6 w-6" />
+                <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg overflow-hidden dark:bg-slate-900">
+                    <CardHeader className="border-b border-sidebar/5 p-3 pb-2">
+                        <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
+                            <div className="flex h-6 w-6 items-center justify-center rounded bg-sidebar text-white shadow shadow-sidebar/20">
+                                <CalendarClock className="h-4 w-4" />
                             </div>
                             Registro de Jornada
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-8 space-y-8">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/50 p-6 rounded-[2rem] border border-sidebar/10 dark:bg-slate-800/50">
-                            <div className="space-y-1">
-                                <p className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">Acciones Rápidas</p>
-                                <p className="text-sm font-medium text-slate-500 italic">Registra la hora exacta a la que empiezas y terminas tu jornada.</p>
+                    <CardContent className="p-3 space-y-3">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/50 p-2 rounded-xl border border-sidebar/10 dark:bg-slate-800/50">
+                            <div className="space-y-0">
+                                <p className="text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-widest leading-none">Acciones Rápidas</p>
+                                <p className="text-[10px] font-medium text-slate-500 italic leading-none mt-1">Ficha entrada y salida con un clic.</p>
                             </div>
-                            <div className="flex flex-wrap items-center gap-4">
+                            <div className="flex flex-wrap items-center gap-2">
                                 <Button
                                     onClick={handleClockIn}
                                     disabled={Boolean(current_log?.clock_in && !current_log?.clock_out)}
-                                    className="h-12 bg-sidebar text-white hover:bg-sidebar/90 rounded-2xl px-8 font-black shadow-xl shadow-sidebar/20 transition-all active:scale-95"
+                                    className="h-8 bg-sidebar text-white hover:bg-sidebar/90 rounded-lg px-4 text-[10px] font-black shadow shadow-sidebar/20 transition-all active:scale-95"
                                 >
                                     Fichar Entrada
                                 </Button>
@@ -265,7 +265,7 @@ export default function Index({
                                     variant="destructive"
                                     onClick={handleClockOut}
                                     disabled={!current_log?.clock_in || Boolean(current_log?.clock_out)}
-                                    className="h-12 bg-rose-600 text-white hover:bg-rose-700 rounded-2xl px-8 font-black shadow-xl shadow-rose-600/20 transition-all active:scale-95"
+                                    className="h-8 bg-rose-600 text-white hover:bg-rose-700 rounded-lg px-4 text-[10px] font-black shadow shadow-rose-600/20 transition-all active:scale-95"
                                 >
                                     Fichar Salida
                                 </Button>
@@ -275,33 +275,33 @@ export default function Index({
 
                         {(today_logs.length > 0 || current_log) && (
                             <div className="grid gap-8">
-                                <div className="grid gap-4 md:grid-cols-3">
-                                    <div className="flex flex-col gap-2 rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Entrada Detectada</p>
-                                        <p className="text-2xl font-black text-slate-800 dark:text-white">{current_log?.clock_in ?? '--:--'}</p>
+                                <div className="grid gap-2 md:grid-cols-3">
+                                    <div className="flex flex-col gap-0 rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
+                                        <p className="text-[8px] font-black uppercase tracking-widest text-sidebar leading-none">Entrada</p>
+                                        <p className="text-lg font-black text-slate-800 dark:text-white mt-0.5">{current_log?.clock_in ?? '--:--'}</p>
                                     </div>
-                                    <div className="flex flex-col gap-2 rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Salida Registrada</p>
-                                        <p className="text-2xl font-black text-slate-800 dark:text-white">{current_log?.clock_out ?? '--:--'}</p>
+                                    <div className="flex flex-col gap-0 rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
+                                        <p className="text-[8px] font-black uppercase tracking-widest text-sidebar leading-none">Salida</p>
+                                        <p className="text-lg font-black text-slate-800 dark:text-white mt-0.5">{current_log?.clock_out ?? '--:--'}</p>
                                     </div>
-                                    <div className="flex flex-col gap-2 rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Total Acumulado</p>
-                                        <p className="text-2xl font-black text-slate-800 dark:text-white">
+                                    <div className="flex flex-col gap-0 rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
+                                        <p className="text-[8px] font-black uppercase tracking-widest text-sidebar leading-none">Total Hoy</p>
+                                        <p className="text-lg font-black text-slate-800 dark:text-white mt-0.5">
                                             {today_total_hours > 0 ? formatHoursDecimal(today_total_hours) : '0m'}
                                         </p>
                                     </div>
                                 </div>
 
                                 {liveElapsed && (
-                                    <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-sidebar/5 to-[#1f4f52]/5 p-8 border border-sidebar/10 backdrop-blur-sm">
-                                        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                            <div className="flex items-center gap-5">
-                                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sidebar text-white shadow-xl shadow-sidebar/20 pt-1">
-                                                    <TimerReset className="h-7 w-7 animate-pulse" />
+                                    <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar/5 to-[#1f4f52]/5 p-3 border border-sidebar/10 backdrop-blur-sm">
+                                        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar text-white shadow shadow-sidebar/20">
+                                                    <TimerReset className="h-4 w-4 animate-pulse" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sidebar">En Curso</p>
-                                                    <p className="text-4xl font-black tracking-tight text-sidebar leading-none mt-1">
+                                                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-sidebar leading-none">En Curso</p>
+                                                    <p className="text-2xl font-black tracking-tight text-sidebar leading-none mt-1">
                                                         {liveElapsed}
                                                     </p>
                                                 </div>
@@ -320,7 +320,7 @@ export default function Index({
                                             {today_logs.map((log) => (
                                                 <div
                                                     key={log.id}
-                                                    className="flex items-center justify-between gap-4 rounded-2xl border border-sidebar/10 bg-white px-6 py-4 shadow-sm hover:border-sidebar/30 transition-all dark:bg-slate-800"
+                                                    className="flex items-center justify-between gap-2 rounded-lg border border-sidebar/10 bg-white px-3 py-2 shadow-sm hover:border-sidebar/30 transition-all dark:bg-slate-800"
                                                 >
                                                     <div className="flex items-center gap-3">
                                                         <Clock3 className="h-4 w-4 text-sidebar/50" />
@@ -343,12 +343,12 @@ export default function Index({
 
                 {can_manage_attendance && (
                     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900">
-                            <CardHeader className="border-b border-sidebar/5 p-8 pb-6">
-                                <CardTitle className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">Registro Manual</CardTitle>
+                        <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900">
+                            <CardHeader className="border-b border-sidebar/5 p-3 pb-2">
+                                <CardTitle className="text-base font-black tracking-tight text-slate-800 dark:text-white">Registro Manual</CardTitle>
                             </CardHeader>
-                            <CardContent className="p-8">
-                                <form onSubmit={submitManualLog} className="space-y-6">
+                            <CardContent className="p-3">
+                                <form onSubmit={submitManualLog} className="space-y-3">
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2" ref={internSearchRef}>
                                             <Label className="text-[10px] font-black uppercase tracking-widest text-sidebar ml-1">Becario Asignado</Label>
@@ -473,34 +473,34 @@ export default function Index({
                                     <Button
                                         type="submit"
                                         disabled={manualForm.processing || !manualForm.data.intern_id}
-                                        className="h-12 bg-sidebar text-white hover:bg-sidebar/90 rounded-2xl px-10 font-black shadow-xl shadow-sidebar/20 transition-all active:scale-95"
+                                        className="h-8 bg-sidebar text-white hover:bg-sidebar/90 rounded-lg px-6 text-[10px] font-black shadow shadow-sidebar/20 transition-all active:scale-95"
                                     >
-                                        Guardar Registro Manual
+                                        Guardar Registro
                                     </Button>
                                 </form>
                             </CardContent>
                         </Card>
 
-                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900">
-                            <CardHeader className="border-b border-sidebar/5 p-8 pb-6 bg-slate-50/30 dark:bg-slate-800/30">
-                                <CardTitle className="flex items-center gap-3 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar shadow-inner">
-                                        <ShieldAlert className="h-6 w-6" />
+                        <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900">
+                            <CardHeader className="border-b border-sidebar/5 p-3 pb-2 bg-slate-50/30 dark:bg-slate-800/30">
+                                <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
+                                    <div className="flex h-6 w-6 items-center justify-center rounded bg-sidebar/10 text-sidebar shadow-inner">
+                                        <ShieldAlert className="h-4 w-4" />
                                     </div>
-                                    Alertas de Incumplimiento
+                                    Incumplimientos
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-8 space-y-4">
+                            <CardContent className="p-3 space-y-2">
                                 {non_compliant_interns.length > 0 ? (
                                     non_compliant_interns.map((intern) => (
                                         <div
                                             key={intern.id}
-                                            className="group rounded-[1.5rem] border border-sidebar/5 bg-slate-50/50 p-5 shadow-sm transition-all hover:bg-white hover:shadow-md dark:bg-slate-800/40 dark:border-slate-800"
+                                            className="group rounded-xl border border-sidebar/5 bg-slate-50/50 p-4 shadow-sm transition-all hover:bg-white hover:shadow-md dark:bg-slate-800/40 dark:border-slate-800"
                                         >
                                             <div className="flex items-start gap-4">
-                                                <Avatar className="h-12 w-12 border-4 border-white shadow-lg shrink-0 dark:border-slate-700">
+                                                <Avatar className="h-10 w-10 border-2 border-white shadow-md shrink-0 dark:border-slate-700">
                                                     <AvatarImage src={intern.avatar} alt={intern.name} />
-                                                    <AvatarFallback className="text-sm font-black bg-sidebar/10 text-sidebar pt-1">
+                                                    <AvatarFallback className="text-xs font-black bg-sidebar/10 text-sidebar">
                                                         {intern.name?.charAt(0)}
                                                     </AvatarFallback>
                                                 </Avatar>
@@ -530,34 +530,34 @@ export default function Index({
 
                 {/* SECCIÓN MIS AUSENCIAS PARA EL BECARIO */}
                 {!can_manage_attendance && absences && Array.isArray(absences) && (
-                    <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900 overflow-hidden">
-                        <CardHeader className="border-b border-sidebar/5 p-8 pb-6 bg-slate-50/30 dark:bg-slate-800/30">
-                            <CardTitle className="flex items-center gap-3 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar shadow-inner">
-                                    <FileText className="h-6 w-6" />
+                    <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900 overflow-hidden">
+                        <CardHeader className="border-b border-sidebar/5 p-3 pb-2 bg-slate-50/30 dark:bg-slate-800/30">
+                            <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
+                                <div className="flex h-6 w-6 items-center justify-center rounded bg-sidebar/10 text-sidebar shadow-inner">
+                                    <FileText className="h-4 w-4" />
                                 </div>
-                                Mis Ausencias y Permisos
+                                Mis Ausencias
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-8">
+                        <CardContent className="p-3">
                             <div className="space-y-4">
                                 {absences.length > 0 ? (
                                     absences.map((abs) => (
-                                        <div key={abs.id} className="flex flex-wrap items-center justify-between gap-6 rounded-[2rem] border border-sidebar/10 bg-slate-50/50 p-6 shadow-sm transition-all hover:bg-white hover:shadow-md dark:bg-slate-800">
-                                            <div className="flex items-center gap-5">
-                                                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner ${abs.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                                        <div key={abs.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-sidebar/10 bg-slate-50/50 p-4 shadow-sm transition-all hover:bg-white hover:shadow-md dark:bg-slate-800">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`flex h-10 w-10 items-center justify-center rounded-lg shadow-inner ${abs.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
                                                         abs.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
                                                     }`}>
-                                                    <CalendarClock className="h-6 w-6" />
+                                                    <CalendarClock className="h-5 w-5" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black text-slate-800 dark:text-white">{abs?.reason || 'Sin motivo detallado'}</p>
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">{abs?.date || '--'}</p>
+                                                    <p className="text-sm font-black text-slate-800 dark:text-white leading-none">{abs?.reason || 'Sin motivo'}</p>
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">{abs?.date || '--'}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-6">
-                                                <span className={`text-[10px] font-black tracking-widest uppercase px-4 py-1.5 rounded-full border shadow-sm ${abs.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                                            <div className="flex items-center gap-4">
+                                                <span className={`text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full border shadow-sm ${abs.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
                                                         abs.status === 'rejected' ? 'bg-rose-50 text-rose-700 border-rose-100' : 'bg-amber-50 text-amber-700 border-amber-100'
                                                     }`}>
                                                     {abs.status === 'approved' ? 'Aprobada' :
@@ -565,15 +565,15 @@ export default function Index({
                                                 </span>
 
                                                 {abs.justification_url ? (
-                                                    <div className="flex items-center gap-3">
-                                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-sidebar/10 hover:text-sidebar" asChild>
+                                                    <div className="flex items-center gap-2">
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-sidebar/10 hover:text-sidebar" asChild>
                                                             <a href={abs.justification_url} target="_blank" rel="noreferrer">
-                                                                <ExternalLink className="h-5 w-5" />
+                                                                <ExternalLink className="h-4 w-4" />
                                                             </a>
                                                         </Button>
-                                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-sidebar/10 hover:text-sidebar" asChild>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-sidebar/10 hover:text-sidebar" asChild>
                                                             <a href={abs.justification_url} download>
-                                                                <Download className="h-5 w-5" />
+                                                                <Download className="h-4 w-4" />
                                                             </a>
                                                         </Button>
                                                     </div>
@@ -607,9 +607,9 @@ export default function Index({
                     </Card>
                 )}
 
-                <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900 p-8">
+                <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg overflow-hidden dark:bg-slate-900 p-2">
                     <CardContent className="p-0">
-                        <div className="attendance-calendar rounded-[2rem] border border-sidebar/10 bg-slate-50/50 p-6 shadow-inner transition-all dark:bg-slate-800/50">
+                        <div className="attendance-calendar rounded-lg border border-sidebar/10 bg-slate-50/50 p-2 shadow-inner transition-all dark:bg-slate-800/50">
                             <FullCalendar
                                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                                 initialView="dayGridMonth"
@@ -621,7 +621,7 @@ export default function Index({
                                 events="/time-logs/events"
                                 locale="es"
                                 firstDay={1}
-                                contentHeight={720}
+                                contentHeight={500}
                                 fixedWeekCount
                                 expandRows
                                 dayMaxEventRows={3}

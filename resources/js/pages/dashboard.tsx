@@ -46,9 +46,9 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="space-y-6">
+            <div className="space-y-4">
                 {/* HERO SECTION CON GRADIENTE CORPORATIVO */}
-                <section className="relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10 rounded-[2.5rem]">
+                <section className="relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl md:p-6 rounded-2xl">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="absolute inset-y-0 right-0 hidden w-2/5 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_70%)] lg:block" />
                     
@@ -57,7 +57,7 @@ export default function Dashboard() {
                             <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/90 backdrop-blur-md border border-white/20">
                                 Centro de control
                             </p>
-                            <h1 className="text-2xl font-black tracking-tight text-white md:text-3xl leading-none">
+                            <h1 className="text-xl font-black tracking-tight text-white md:text-2xl leading-none">
                                 Visión general <br/> del programa
                             </h1>
                             <p className="max-w-xl text-sm font-medium text-white/70 leading-relaxed italic">
@@ -69,15 +69,15 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="grid min-w-[280px] grid-cols-2 gap-3">
-                            <div className="relative overflow-hidden rounded-2xl bg-white/10 p-4 shadow-2xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
+                        <div className="grid min-w-[240px] grid-cols-2 gap-2">
+                            <div className="relative overflow-hidden rounded-xl bg-white/10 p-3 shadow-xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
                                 <p className="text-[9px] font-black uppercase tracking-widest text-white/60">
                                     Cumplimiento
                                 </p>
                                 <p className="mt-1 text-2xl font-black tracking-tight text-white text-emerald-300">92%</p>
                                 <p className="mt-1 text-[9px] font-bold text-white/50 uppercase tracking-widest">Activo</p>
                             </div>
-                            <div className="relative overflow-hidden rounded-2xl bg-white/10 p-4 shadow-2xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
+                            <div className="relative overflow-hidden rounded-xl bg-white/10 p-3 shadow-xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
                                 <p className="text-[9px] font-black uppercase tracking-widest text-white/60">
                                     Completadas
                                 </p>
@@ -89,10 +89,10 @@ export default function Dashboard() {
                 </section>
 
                 {/* METRICS GRID */}
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                     {metrics.map((metric) => (
-                        <Card key={metric.label} className="rounded-[2rem] border-sidebar/10 bg-white p-2 shadow-xl dark:bg-slate-900 transition-all hover:scale-[1.02] hover:shadow-2xl">
-                            <CardContent className="flex items-start justify-between gap-4 p-6">
+                        <Card key={metric.label} className="rounded-xl border-sidebar/10 bg-white p-1 shadow-lg dark:bg-slate-900 transition-all hover:scale-[1.02] hover:shadow-xl">
+                            <CardContent className="flex items-start justify-between gap-3 p-4">
                                 <div className="space-y-3">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                         {metric.label}

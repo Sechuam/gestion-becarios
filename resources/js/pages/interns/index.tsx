@@ -471,7 +471,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestión de Becarios" />
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
                 <ModuleHeader
                     title="Gestión de Becarios"
                     description="Administra los becarios, sus centros y estados de prácticas con una vista rápida de carga y seguimiento."
@@ -480,10 +480,10 @@ export default function Index({
                     actions={
                         canManage ? (
                             <Button
-                                className="gap-2 bg-sidebar/80 text-white border-2 border-white/20 hover:bg-white/10 hover:border-white/40 rounded-2xl px-8 font-black shadow-xl backdrop-blur-md transition-all h-12 pt-1"
+                                className="gap-2 bg-sidebar/80 text-white border border-white/20 hover:bg-white/10 hover:border-white/40 rounded-lg px-4 font-black shadow-lg backdrop-blur-md transition-all h-8 text-[10px] uppercase tracking-widest"
                                 onClick={() => router.get('/interns/create')}
                             >
-                                <Plus className="h-5 w-5" />
+                                <Plus className="h-4 w-4" />
                                 Añadir Becario
                             </Button>
                         ) : undefined
@@ -525,7 +525,7 @@ export default function Index({
                 />
 
                 {/* PAGINACIÓN */}
-                <div className="mt-6 w-full">
+                <div className="mt-4 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
                             Página {interns.current_page} de {interns.last_page}
@@ -536,7 +536,7 @@ export default function Index({
                                     key={i}
                                     href={link.url ?? '#'}
                                     preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
+                                    className={`rounded-lg border px-3 py-1.5 text-[9px] font-bold tracking-widest uppercase transition-all ${
                                         link.active
                                             ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
                                             : 'border-border bg-card text-muted-foreground hover:border-sidebar/40 hover:bg-muted'

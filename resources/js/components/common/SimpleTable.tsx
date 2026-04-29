@@ -49,7 +49,7 @@ export function SimpleTable<T>({
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.label}
-                                    className={`px-4 py-4 text-left font-semibold text-sidebar-foreground ${col.headClassName ?? ''}`}
+                                    className={`px-3 py-2 text-left font-semibold text-sidebar-foreground ${col.headClassName ?? ''}`}
                                 >
                                     {col.sortKey && onSort ? (
                                         <button
