@@ -451,7 +451,7 @@ export default function Show({
                                                                 </Avatar>
                                                                 <div>
                                                                     <p className="text-sm font-black text-slate-800">{intern.user?.name || `Becario #${intern.id}`}</p>
-                                                                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">{intern.center?.name || 'Sin centro'}</p>
+                                                                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">{intern.education_center?.name || 'Sin centro'}</p>
                                                                 </div>
                                                             </div>
                                                             <Button variant="ghost" size="sm" asChild className="rounded-xl hover:bg-stone-100 text-[10px] font-black uppercase tracking-widest text-[#1f4f52]">

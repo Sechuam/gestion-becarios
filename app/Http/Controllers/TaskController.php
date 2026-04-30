@@ -368,6 +368,7 @@ class TaskController extends Controller
             'practiceType',
             'creator',
             'interns.user',
+            'interns.educationCenter',
             'comments.user',
             'comments.replies.user',
             'statusLogs.user',
