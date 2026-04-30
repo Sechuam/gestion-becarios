@@ -41,7 +41,7 @@ export function SimpleTable<T>({
     striped = false,
 }: SimpleTableProps<T>) {
     return (
-        <div className="app-panel w-full overflow-hidden">
+        <div className="app-panel w-full overflow-hidden border-2 border-sidebar/15 shadow-xl">
             <div className="w-full overflow-x-auto">
                 <Table className="w-full min-w-[900px] text-left text-sm">
                     <TableHeader>

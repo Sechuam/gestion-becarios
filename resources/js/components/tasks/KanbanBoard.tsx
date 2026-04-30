@@ -69,7 +69,7 @@ export function KanbanBoard({
     return (
         <div className="space-y-4">
             <div className="app-panel task-surface flex flex-wrap items-center justify-between gap-3 p-3">
-                <div className="flex flex-wrap items-center gap-2 flex-1 max-w-5xl">
+                <div className="flex flex-wrap items-center gap-2 flex-1">
                     {boardQuickFilters.map((filter) => (
                         <Button
                             key={filter.key}
@@ -96,7 +96,7 @@ export function KanbanBoard({
                         </Button>
                     ))}
                 </div>
-                <div className="hidden xl:flex items-center gap-2 text-[10px] font-medium text-muted-foreground bg-slate-50/50 px-3 py-1.5 rounded-lg border border-slate-100">
+                <div className="hidden lg:flex flex-none items-center gap-2 text-[10px] font-medium text-muted-foreground bg-slate-50/50 px-3 py-1.5 rounded-lg border border-slate-100">
                     <Sparkles className="h-3 w-3 text-sidebar/40" />
                     <span>Filtros rápidos del tablero</span>
                 </div>

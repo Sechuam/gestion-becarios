@@ -732,10 +732,10 @@ export default function Index({
                     icon={<KanbanSquare className="h-6 w-6" />}
                     metrics={headerMetrics}
                     actions={
-                        <>
+                        <div className="flex items-center gap-3">
                             {isTutor && (
                                 <Button
-                                    className="gap-2 bg-sidebar text-white border border-white/20 hover:bg-sidebar/90 rounded-lg h-8 px-4 text-[10px] font-black uppercase tracking-widest shadow-lg"
+                                    className="gap-2 bg-white/10 text-white border border-white/20 hover:bg-white/15 rounded-2xl h-10 px-4 text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md transition-all"
                                     onClick={() => router.get('/tareas/create')}
                                 >
                                     <PlusCircle className="h-4 w-4" />
@@ -746,33 +746,32 @@ export default function Index({
                                 type="single"
                                 value={viewMode}
                                 onValueChange={(value) => {
-                                    if (
-                                        value === 'kanban' ||
-                                        value === 'table'
-                                    ) {
+                                    if (value === 'kanban' || value === 'table') {
                                         setViewMode(value);
                                     }
                                 }}
-                                className="bg-sidebar/10 p-0.5 rounded-lg border border-sidebar/20"
+                                className="bg-white/10 p-1 rounded-2xl border border-white/20 backdrop-blur-md"
                             >
                                 <ToggleGroupItem
                                     value="kanban"
-                                    className="rounded-md h-7 px-2 text-sidebar hover:bg-sidebar/20 data-[state=on]:bg-sidebar data-[state=on]:text-white data-[state=on]:shadow-sm transition-all"
+                                    className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
                                     aria-label="Vista kanban"
                                     title="Vista kanban"
                                 >
-                                    <LayoutGrid className="h-3.5 w-3.5" />
+                                    <LayoutGrid className="h-4 w-4 mr-2" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Tablero</span>
                                 </ToggleGroupItem>
                                 <ToggleGroupItem
                                     value="table"
-                                    className="rounded-md h-7 px-2 text-sidebar hover:bg-sidebar/20 data-[state=on]:bg-sidebar data-[state=on]:text-white data-[state=on]:shadow-sm transition-all"
+                                    className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
                                     aria-label="Vista tabla"
                                     title="Vista tabla"
                                 >
-                                    <List className="h-3.5 w-3.5" />
+                                    <List className="h-4 w-4 mr-2" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Lista</span>
                                 </ToggleGroupItem>
                             </ToggleGroup>
-                        </>
+                        </div>
                     }
                 />
 
