@@ -91,9 +91,9 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
         : null;
     const averageScore = historyWithScore.length
         ? (
-              historyWithScore.reduce((sum, item) => sum + Number(item.weighted_score), 0) /
-              historyWithScore.length
-          ).toFixed(2)
+            historyWithScore.reduce((sum, item) => sum + Number(item.weighted_score), 0) /
+            historyWithScore.length
+        ).toFixed(2)
         : null;
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -109,24 +109,26 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
         currentWeightedScore === null || Number.isNaN(currentWeightedScore)
             ? 'text-slate-900'
             : currentWeightedScore >= 8
-              ? 'text-emerald-600'
-              : currentWeightedScore >= 6
-                ? 'text-amber-600'
-                : 'text-rose-600';
+                ? 'text-emerald-600'
+                : currentWeightedScore >= 6
+                    ? 'text-amber-600'
+                    : 'text-rose-600';
 
     // Performance alerts
     const currentEvaluation = history.find((item) => item.is_current);
     const significantDrop = currentEvaluation?.delta_from_previous !== null && currentEvaluation?.delta_from_previous !== undefined
         ? Number(currentEvaluation.delta_from_previous) < -1
         : false;
-    
+
     const recentHistory = history.slice(0, 3).reverse();
     const downwardTrend = recentHistory.length >= 3
         ? recentHistory[0].delta_from_previous !== null &&
-          recentHistory[1].delta_from_previous !== null &&
-          Number(recentHistory[0].delta_from_previous) < 0 &&
-          Number(recentHistory[1].delta_from_previous) < 0
+        recentHistory[1].delta_from_previous !== null &&
+        Number(recentHistory[0].delta_from_previous) < 0 &&
+        Number(recentHistory[1].delta_from_previous) < 0
         : false;
+
+    return (
 
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Evaluación #${evaluation.id}`} />
@@ -187,7 +189,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                             <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md">
                                 {evaluation.is_self_evaluation ? 'Autoevaluación' : 'Evaluación externa'}
                             </span>
-                            
+
                             <div className="h-4 w-px bg-white/20 mx-1" />
 
                             <Button
@@ -222,7 +224,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             <DialogClose asChild>
                                                 <Button variant="ghost" className="rounded-xl border-border px-6">Cancelar</Button>
                                             </DialogClose>
-                                            <Button 
+                                            <Button
                                                 variant="destructive"
                                                 onClick={() => router.delete(`/evaluaciones/${evaluation.id}`)}
                                                 className="rounded-xl px-8 shadow-lg transition-all"
@@ -507,11 +509,10 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                         return (
                                             <div
                                                 key={item.id}
-                                                className={`rounded-[1.5rem] p-5 shadow-lg transition-all bg-gradient-to-r from-sidebar to-[#1f4f52] ${
-                                                    item.is_current
+                                                className={`rounded-[1.5rem] p-5 shadow-lg transition-all bg-gradient-to-r from-sidebar to-[#1f4f52] ${item.is_current
                                                         ? 'ring-2 ring-white/30 ring-offset-2 ring-offset-sidebar shadow-2xl'
                                                         : 'opacity-90'
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex flex-wrap items-start justify-between gap-4">
                                                     <div className="space-y-2">
@@ -523,11 +524,10 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                                 {formatDateEs(item.evaluated_at)}
                                                             </span>
                                                             <span
-                                                                className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
-                                                                    item.is_self_evaluation
+                                                                className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${item.is_self_evaluation
                                                                         ? 'bg-violet-500/20 text-violet-200'
                                                                         : 'bg-white/20 text-white'
-                                                                }`}
+                                                                    }`}
                                                             >
                                                                 {item.is_self_evaluation ? 'Autoevaluación' : 'Tutor / admin'}
                                                             </span>
@@ -567,13 +567,12 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                                 )}
                                                                 {(isPositive || isNegative || isNeutral) && (
                                                                     <span
-                                                                        className={`text-sm font-black ${
-                                                                            isPositive
+                                                                        className={`text-sm font-black ${isPositive
                                                                                 ? 'text-emerald-600'
                                                                                 : isNegative
-                                                                                  ? 'text-rose-600'
-                                                                                  : 'text-slate-500'
-                                                                        }`}
+                                                                                    ? 'text-rose-600'
+                                                                                    : 'text-slate-500'
+                                                                            }`}
                                                                     >
                                                                         {delta && delta > 0 ? '+' : ''}
                                                                         {delta?.toFixed(2)}
