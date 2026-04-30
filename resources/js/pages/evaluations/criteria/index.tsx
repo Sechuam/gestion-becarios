@@ -1,10 +1,11 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ClipboardList, Pencil, Plus, Search, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Search, SlidersHorizontal } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
 import { HeaderActionButton } from '@/components/common/HeaderActionButton';
-import DeleteEvaluationCriterionModal from '@/components/evaluations/DeleteEvaluationCriterionModal';
+import { TableActionMenu } from '@/components/common/TableActionMenu';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -73,10 +74,10 @@ export default function Index({ criteria, filters = {}, categories = [] }: Props
             sortKey: 'is_active',
             render: (row: any) => (
                 <span
-                    className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest shadow-sm ${
                         row.is_active
-                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                            : 'border-slate-200 bg-slate-100 text-slate-600'
+                            ? 'bg-gradient-to-r from-sidebar to-[#1f4f52] text-white'
+                            : 'bg-slate-100 text-slate-500 border border-slate-200'
                     }`}
                 >
                     {row.is_active ? 'Activo' : 'Inactivo'}
@@ -87,30 +88,31 @@ export default function Index({ criteria, filters = {}, categories = [] }: Props
             key: 'actions',
             label: 'Acciones',
             render: (row: any) => (
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-amber-50 hover:text-amber-600"
-                        asChild
-                    >
-                        <Link href={`/evaluaciones/criterios/${row.id}/edit`}>
-                            <div className="flex items-center">
-                                <Pencil className="mr-1.5 h-4 w-4 text-amber-500/70" />
-                                Editar
-                            </div>
-                        </Link>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-blue-50 hover:text-blue-600"
-                        onClick={() => router.patch(`/evaluaciones/criterios/${row.id}/toggle`)}
-                    >
-                        {row.is_active ? 'Desactivar' : 'Activar'}
-                    </Button>
-                    <DeleteEvaluationCriterionModal criterion={row} />
-                </div>
+                <TableActionMenu
+                    actions={[
+                        {
+                            label: 'Editar',
+                            icon: 'edit',
+                            href: `/evaluaciones/criterios/${row.id}/edit`,
+                        },
+                        {
+                            label: row.is_active ? 'Desactivar' : 'Activar',
+                            icon: 'restore',
+                            onClick: () => router.patch(`/evaluaciones/criterios/${row.id}/toggle`),
+                        },
+                        {
+                            label: 'Eliminar',
+                            icon: 'delete',
+                            variant: 'destructive',
+                            confirm: {
+                                title: '¿Eliminar criterio de evaluacion?',
+                                description: `Esta accion no se puede deshacer. Se eliminara el criterio ${row.name}.`,
+                                confirmLabel: 'Eliminar criterio',
+                            },
+                            onClick: () => router.delete(`/evaluaciones/criterios/${row.id}`),
+                        },
+                    ]}
+                />
             ),
         },
     ];
@@ -125,12 +127,20 @@ export default function Index({ criteria, filters = {}, categories = [] }: Props
                     description="Define los criterios, pesos y categorias que usara el sistema para valorar el desempeno de cada becario."
                     icon={<SlidersHorizontal className="h-6 w-6" />}
                     actions={
-                        isAdmin ? (
+                        <div className="flex gap-2">
+                            {isAdmin && (
+                                <HeaderActionButton 
+                                    label="Nuevo criterio"
+                                    href="/evaluaciones/criterios/create"
+                                />
+                            )}
                             <HeaderActionButton 
-                                label="Nuevo criterio"
-                                href="/evaluaciones/criterios/create"
+                                label="Volver"
+                                href="/evaluaciones"
+                                icon={<ArrowLeft className="mr-1.5 h-3.5 w-3.5" />}
+                                className="min-w-[140px]"
                             />
-                        ) : undefined
+                        </div>
                     }
                 />
 
