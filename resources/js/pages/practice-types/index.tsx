@@ -112,7 +112,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     <span
                         className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest w-24 shadow-sm transition-all ${
                             row.is_active
-                                ? 'bg-sidebar text-white shadow-sidebar/20'
+                                ? 'bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-md border border-white/10'
                                 : 'bg-white text-sidebar border border-sidebar/20'
                         }`}
                     >

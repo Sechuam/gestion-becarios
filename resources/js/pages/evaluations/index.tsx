@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { ClipboardList, Plus, SlidersHorizontal } from 'lucide-react';
+import { ClipboardList, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SimpleTable } from '@/components/common/SimpleTable';
@@ -233,57 +233,66 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60">
-                        <div className="w-full max-w-xs">
-                            <Input
-                                value={filters.search || ''}
-                                onChange={(e) => handleSearchChange(e.target.value)}
-                                placeholder="Buscar becario..."
-                                className="h-8 rounded-lg border-sidebar/20 bg-card text-xs text-foreground shadow-sm"
-                            />
-                        </div>
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg dark:bg-slate-900/60 transition-all">
+                        <div className="flex flex-wrap items-center gap-2">
+                            {/* Búsqueda */}
+                            <div className="relative w-full sm:w-64 flex-none">
+                                <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                                <Input
+                                    value={filters.search || ''}
+                                    onChange={(e) => handleSearchChange(e.target.value)}
+                                    placeholder="Buscar becario..."
+                                    className="h-8 border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus:ring-sidebar/20"
+                                />
+                            </div>
 
-                        <div className="w-full max-w-[180px]">
-                            <Select
-                                value={filters.module || 'all'}
-                                onValueChange={(value) => handleFilter('module', value)}
-                            >
-                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/20 bg-card text-[11px] text-foreground shadow-sm">
-                                    <SelectValue placeholder="Todos los modulos" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-lg border-sidebar/20">
-                                    <SelectItem value="all">Todos los modulos</SelectItem>
-                                    {modules.map((module) => (
-                                        <SelectItem key={module} value={module}>
-                                            {module}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                            {/* Filtros de Selección (Distribuidos) */}
+                            <div className="flex-1 min-w-[150px]">
+                                <Select
+                                    value={filters.module || 'all'}
+                                    onValueChange={(value) => handleFilter('module', value)}
+                                >
+                                    <SelectTrigger className="h-8 w-full border-sidebar/10 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                                        <SelectValue placeholder="Todos los módulos" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-lg border-sidebar/20">
+                                        <SelectItem value="all">Todos los módulos</SelectItem>
+                                        {modules.map((module) => (
+                                            <SelectItem key={module} value={module}>
+                                                {module}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                        <div className="w-40">
-                            <Select
-                                value={filters.type || 'all'}
-                                onValueChange={(value) => handleFilter('type', value)}
-                            >
-                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/20 bg-card text-[11px] text-foreground shadow-sm">
-                                    <SelectValue placeholder="Todos los tipos" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-lg border-sidebar/20">
-                                    <SelectItem value="all">Todos los tipos</SelectItem>
-                                    {types.map((type) => (
-                                        <SelectItem key={type} value={type}>
-                                            {getEvaluationTypeLabel(type)}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                            <div className="flex-1 min-w-[150px]">
+                                <Select
+                                    value={filters.type || 'all'}
+                                    onValueChange={(value) => handleFilter('type', value)}
+                                >
+                                    <SelectTrigger className="h-8 w-full border-sidebar/10 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                                        <SelectValue placeholder="Todos los tipos" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-lg border-sidebar/20">
+                                        <SelectItem value="all">Todos los tipos</SelectItem>
+                                        {types.map((type) => (
+                                            <SelectItem key={type} value={type}>
+                                                {getEvaluationTypeLabel(type)}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                        <p className="ml-auto rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:bg-slate-800 border border-sidebar/5">
-                            {evaluations.data.length} / {evaluations.total} evaluaciones
-                        </p>
+                            {/* Contador */}
+                            <div className="flex-none flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg dark:bg-slate-800 border border-sidebar/5 ml-auto">
+                                <span className="flex h-1 w-1 rounded-full bg-sidebar animate-pulse" />
+                                <span className="text-[10px] font-bold text-muted-foreground tabular-nums whitespace-nowrap">
+                                    {evaluations.data.length} / {evaluations.total} registrados
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 )}
 
