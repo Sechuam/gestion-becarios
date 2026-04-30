@@ -114,14 +114,15 @@ export default function TaskQuickViewSheet({
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent
                 side="right"
-                className="w-full gap-0 overflow-y-auto border-l border-border/80 sm:max-w-xl"
+                className="w-full gap-0 overflow-y-auto border-l border-sidebar/20 bg-background p-0 sm:max-w-xl flex flex-col"
             >
                 {task ? (
                     <>
-                        <SheetHeader className="space-y-3 border-b border-border/70 pb-5">
-                            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pr-8">
+                        <SheetHeader className="relative space-y-3 bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 pb-6 pt-8 text-white shadow-xl">
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                            <div className="relative flex flex-wrap items-center gap-x-5 gap-y-2 pr-8">
                                 {/* Estado */}
-                                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                                <div className="flex items-center gap-1.5 font-medium text-white/90">
                                     <div className={cn("h-2 w-2 rounded-full shrink-0", {
                                         'bg-slate-300': task.status === 'pending',
                                         'bg-blue-400': task.status === 'in_progress',
@@ -133,7 +134,7 @@ export default function TaskQuickViewSheet({
                                 </div>
 
                                 {/* Prioridad */}
-                                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                                <div className="flex items-center gap-1.5 font-medium text-white/90">
                                     <div className={cn("h-2 w-2 rounded-full shrink-0", {
                                         'bg-rose-500': task.priority === 'high',
                                         'bg-amber-400': task.priority === 'medium',
@@ -144,30 +145,30 @@ export default function TaskQuickViewSheet({
 
                                 {/* Entrega */}
                                 {task.due_date && (
-                                    <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                                    <div className="flex items-center gap-1.5 font-medium text-white/90">
                                         <div className={cn("h-2 w-2 rounded-full shrink-0", {
                                             'bg-rose-500': dueStatus(task.due_date) === 'overdue',
                                             'bg-amber-400': dueStatus(task.due_date) === 'soon',
-                                            'bg-sidebar/20': dueStatus(task.due_date) === 'none',
+                                            'bg-white/20': dueStatus(task.due_date) === 'none',
                                         })} />
                                         <span className="text-[10px] uppercase tracking-wider">{dueMeta.label}</span>
                                     </div>
                                 )}
                             </div>
-                            <div className="space-y-2">
-                                <SheetTitle className="text-xl leading-tight">
+                            <div className="relative space-y-2">
+                                <SheetTitle className="text-xl leading-tight text-white drop-shadow-sm">
                                     {task.title}
                                 </SheetTitle>
-                                <SheetDescription className="text-sm leading-6">
+                                <SheetDescription className="text-sm leading-6 text-white/80">
                                     {task.description ||
                                         'Sin descripción disponible.'}
                                 </SheetDescription>
                             </div>
                         </SheetHeader>
 
-                        <div className="space-y-6 p-4">
+                        <div className="flex-1 space-y-6 p-6">
                             <section className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
                                     <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Contexto
                                     </p>
@@ -214,12 +215,12 @@ export default function TaskQuickViewSheet({
                                     </div>
                                 </div>
 
-                                <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
                                     <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Señales rápidas
                                     </p>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <div className="rounded-lg border border-border/70 bg-background px-3 py-2">
+                                        <div className="rounded-lg border border-sidebar/5 bg-slate-50/50 px-3 py-2 dark:bg-slate-800">
                                             <p className="text-[11px] text-muted-foreground">
                                                 Comentarios
                                             </p>
@@ -230,7 +231,7 @@ export default function TaskQuickViewSheet({
                                                 )}
                                             </p>
                                         </div>
-                                        <div className="rounded-lg border border-border/70 bg-background px-3 py-2">
+                                        <div className="rounded-lg border border-sidebar/5 bg-slate-50/50 px-3 py-2 dark:bg-slate-800">
                                             <p className="text-[11px] text-muted-foreground">
                                                 Adjuntos
                                             </p>
@@ -245,11 +246,12 @@ export default function TaskQuickViewSheet({
                                 </div>
                             </section>
 
-                            <section className="rounded-xl border border-border/70 bg-card p-4">
-                                <div className="mb-3 flex items-center justify-between gap-3">
+                            <section className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl">
+                                <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                                <div className="relative mb-3 flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                        <h3 className="text-sm font-semibold text-foreground">
+                                        <Users className="h-4 w-4 text-white/70" />
+                                        <h3 className="text-sm font-semibold text-white">
                                             Becarios asignados
                                         </h3>
                                     </div>
@@ -257,30 +259,32 @@ export default function TaskQuickViewSheet({
                                         interns={task.interns || []}
                                     />
                                 </div>
-                                {task.interns?.length ? (
-                                    <div className="flex flex-wrap gap-2">
-                                        {task.interns.map((intern: any) => (
-                                            <span
-                                                key={intern.id}
-                                                className="rounded-full border border-border/70 bg-muted/20 px-3 py-1 text-xs text-foreground"
-                                            >
-                                                {intern.user?.name ||
-                                                    `Becario #${intern.id}`}
-                                            </span>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        Esta tarea todavía no tiene becarios
-                                        asignados.
-                                    </p>
-                                )}
+                                <div className="relative">
+                                    {task.interns?.length ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {task.interns.map((intern: any) => (
+                                                <span
+                                                    key={intern.id}
+                                                    className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs text-white backdrop-blur-md"
+                                                >
+                                                    {intern.user?.name ||
+                                                        `Becario #${intern.id}`}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-white/70">
+                                            Esta tarea todavía no tiene becarios
+                                            asignados.
+                                        </p>
+                                    )}
+                                </div>
                             </section>
 
                             {task &&
                                 onMoveTask &&
                                 availableStatuses.length > 0 && (
-                                    <section className="rounded-xl border border-border/70 bg-card p-4">
+                                    <section className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
                                         <div className="mb-3">
                                             <h3 className="text-sm font-semibold text-foreground">
                                                 Mover a otra columna
@@ -318,7 +322,7 @@ export default function TaskQuickViewSheet({
                                 )}
                         </div>
 
-                        <SheetFooter className="border-t border-border/70 bg-background/95">
+                        <SheetFooter className="mt-auto border-t border-sidebar/10 bg-white p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)] dark:bg-slate-900/90">
                             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
                                 <Button variant="outline" asChild>
                                     <Link href={`/tareas/${task.id}`}>

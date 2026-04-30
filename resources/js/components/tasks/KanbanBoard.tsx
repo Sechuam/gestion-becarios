@@ -129,11 +129,11 @@ export function KanbanBoard({
                 onDragCancel={onDragCancel}
             >
                 <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-sidebar/20">
-                    <div className="flex min-w-max gap-3">
+                    <div className="flex min-w-max lg:min-w-0 lg:w-full gap-3">
                         {KANBAN_COLUMNS.map((col, index) => (
                             <div
                                 key={col.key}
-                                className={`flex min-h-[32rem] w-[15.5rem] min-w-[15.5rem] flex-col rounded-2xl border-2 p-2.5 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
+                                className={`flex min-h-[32rem] w-[14rem] min-w-[14rem] flex-col rounded-2xl border-2 p-2 shadow-sm lg:w-auto lg:min-w-0 lg:flex-1 ${
                                     index % 2 === 0
                                         ? 'border-white/10 bg-gradient-to-br from-sidebar to-[#1f4f52] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]'
                                         : 'border-sidebar/20 bg-gradient-to-b from-white to-[#dce9e5]/30'
