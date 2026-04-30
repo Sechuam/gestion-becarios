@@ -68,27 +68,27 @@ export function KanbanBoard({
 }: KanbanBoardProps) {
     return (
         <div className="space-y-4">
-            <div className="app-panel task-surface flex flex-wrap items-center justify-between gap-3 p-4">
-                <div className="flex flex-wrap items-center gap-2">
+            <div className="app-panel task-surface flex flex-wrap items-center justify-between gap-3 p-3">
+                <div className="flex flex-wrap items-center gap-2 flex-1 max-w-5xl">
                     {boardQuickFilters.map((filter) => (
                         <Button
                             key={filter.key}
                             type="button"
                             variant={boardFilter === filter.key ? 'default' : 'outline'}
                             size="sm"
-                            className={`gap-2 rounded-xl border shadow-sm ${
+                            className={`flex-1 min-w-[140px] h-9 gap-2 rounded-xl border shadow-sm transition-all duration-200 ${
                                 boardFilter === filter.key
                                     ? 'border-sidebar bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white hover:opacity-95'
                                     : 'border-border/90 bg-white text-foreground hover:border-sidebar/35 hover:bg-slate-50'
                             }`}
                             onClick={() => onBoardFilterChange(filter.key)}
                         >
-                            {filter.label}
+                            <span className="truncate text-[11px] font-bold uppercase tracking-tight">{filter.label}</span>
                             <span
-                                className={`rounded-full px-1.5 py-0.5 text-[10px] ${
+                                className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums ${
                                     boardFilter === filter.key
-                                        ? 'bg-white/14 text-white'
-                                        : 'bg-slate-100 text-slate-600'
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-slate-100 text-slate-600 border border-slate-200/50'
                                 }`}
                             >
                                 {filter.count}
@@ -96,9 +96,9 @@ export function KanbanBoard({
                         </Button>
                     ))}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Vista operativa con filtros rápidos y acciones directas.
+                <div className="hidden xl:flex items-center gap-2 text-[10px] font-medium text-muted-foreground bg-slate-50/50 px-3 py-1.5 rounded-lg border border-slate-100">
+                    <Sparkles className="h-3 w-3 text-sidebar/40" />
+                    <span>Filtros rápidos del tablero</span>
                 </div>
             </div>
 
@@ -117,12 +117,12 @@ export function KanbanBoard({
                 onDragEnd={onDragEnd}
                 onDragCancel={onDragCancel}
             >
-                <div className="overflow-x-auto pb-2">
-                    <div className="flex min-w-max gap-4">
+                <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-sidebar/20">
+                    <div className="flex min-w-max gap-3">
                         {KANBAN_COLUMNS.map((col, index) => (
                             <div
                                 key={col.key}
-                                className={`flex min-h-[32rem] w-[18rem] min-w-[18rem] flex-col rounded-2xl border p-3 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
+                                className={`flex min-h-[32rem] w-[15.5rem] min-w-[15.5rem] flex-col rounded-2xl border p-2.5 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
                                     index % 2 === 0
                                         ? 'border-sidebar/90 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_34%),repeating-linear-gradient(135deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_14px),linear-gradient(180deg,var(--sidebar)_0%,#244655_100%)] text-white'
                                         : 'border-sidebar/15 bg-[radial-gradient(circle_at_top_right,rgba(148,163,184,0.1),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(220,233,229,0.4)_100%)]'
