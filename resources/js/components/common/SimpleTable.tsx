@@ -45,7 +45,9 @@ export function SimpleTable<T>({
             <div className="w-full overflow-x-auto">
                 <Table className="w-full min-w-[900px] text-left text-sm">
                     <TableHeader>
-                        <TableRow className="border-b border-sidebar/70 bg-sidebar text-sidebar-foreground hover:bg-sidebar">
+                        <TableRow 
+                            className="border-b-2 border-white/20 bg-gradient-to-r from-sidebar to-[#1f4f52] text-sidebar-foreground hover:opacity-100"
+                        >
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.label}
@@ -82,7 +84,7 @@ export function SimpleTable<T>({
                             rows.map((row, index) => (
                                 <TableRow
                                     key={rowKey(row)}
-                                    className={`border-b border-sidebar/10 transition-colors hover:bg-muted/35 dark:border-slate-800/50 ${
+                                    className={`border-b border-sidebar/10 transition-colors hover:bg-muted/35 ${
                                         striped && index % 2 !== 0
                                             ? 'bg-sidebar/5 dark:bg-sidebar/10'
                                             : ''

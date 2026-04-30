@@ -122,13 +122,13 @@ export function KanbanBoard({
                         {KANBAN_COLUMNS.map((col, index) => (
                             <div
                                 key={col.key}
-                                className={`flex min-h-[32rem] w-[15.5rem] min-w-[15.5rem] flex-col rounded-2xl border p-2.5 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
+                                className={`flex min-h-[32rem] w-[15.5rem] min-w-[15.5rem] flex-col rounded-2xl border-2 p-2.5 shadow-sm xl:w-auto xl:min-w-0 xl:flex-1 ${
                                     index % 2 === 0
-                                        ? 'border-sidebar/90 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_34%),repeating-linear-gradient(135deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_14px),linear-gradient(180deg,var(--sidebar)_0%,#244655_100%)] text-white'
-                                        : 'border-sidebar/15 bg-[radial-gradient(circle_at_top_right,rgba(148,163,184,0.1),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(220,233,229,0.4)_100%)]'
+                                        ? 'border-white/10 bg-gradient-to-br from-sidebar to-[#1f4f52] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]'
+                                        : 'border-sidebar/20 bg-gradient-to-b from-white to-[#dce9e5]/30'
                                 } ${
                                     tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
-                                        ? 'border-amber-300/70'
+                                        ? 'ring-2 ring-amber-300/50 border-amber-300/50'
                                         : ''
                                 }`}
                             >
