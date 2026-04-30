@@ -173,7 +173,7 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Centro: ${educationCenter.name}`} />
 
-            <div className="w-full space-y-6 bg-slate-50/50 p-6 dark:bg-slate-950/20 min-h-screen">
+            <div className="space-y-6">
                 {/* CABECERA DE ACCIÓN RÁPIDA */}
                 <div className="flex items-center justify-between px-2">
                     <Button
@@ -188,7 +188,7 @@ export default function Show({
                 </div>
 
                 {/* HERO INTEGRADO CON GRADIENTE */}
-                <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative flex flex-wrap items-center gap-8">
                         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/10 border-4 border-white/20 shadow-2xl backdrop-blur-md">
@@ -261,7 +261,7 @@ export default function Show({
                 </div>
 
                 {/* PANEL ÚNICO UNIFICADO */}
-                <Card className="app-panel rounded-[2rem] overflow-hidden border-sidebar/10 shadow-2xl">
+                <Card className="app-panel rounded-3xl overflow-hidden border-sidebar/10 shadow-2xl">
                     <Tabs defaultValue="general" className="w-full">
                         {/* NAVEGACIÓN INTEGRADA */}
                         <div className="bg-slate-50/30 dark:bg-slate-800/20 border-b border-sidebar/20 px-6 pt-4">

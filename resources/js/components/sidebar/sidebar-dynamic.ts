@@ -42,18 +42,12 @@ export function buildDynamicSidebar({ roles, permissions }: BuildSidebarOptions)
         ],
     });
 
-    // ─── SECCIÓN MI ÁREA (solo becarios que no son admin/tutor) ────────────────
+    // ─── MI CENTRO (solo becarios que no son admin/tutor) ──────────────────────
     if (isIntern && !isAdmin && !isTutor) {
-        const myAreaItems: any[] = [
-            { title: 'Mi centro', href: '/mi-centro' },
-        ];
-
         sections[0].items.push({
-            title: 'Mi área',
-            href: '#',
-            icon: UserCircle,
-            isActive: false,
-            items: myAreaItems,
+            title: 'Mi centro',
+            href: '/mi-centro',
+            icon: Building2,
         });
     }
 
