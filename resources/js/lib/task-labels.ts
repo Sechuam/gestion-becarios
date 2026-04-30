@@ -2,7 +2,7 @@ export const TASK_STATUS_LABELS: Record<string, string> = {
     pending: 'Pendiente',
     in_progress: 'En progreso',
     in_review: 'En revisión',
-    completed: 'Completada',
+    completed: 'Finalizada',
     rejected: 'Rechazada',
 };
 

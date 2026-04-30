@@ -2,7 +2,7 @@ export const KANBAN_COLUMNS = [
     { key: 'pending', label: 'Pendiente' },
     { key: 'in_progress', label: 'En progreso' },
     { key: 'in_review', label: 'En revisión' },
-    { key: 'completed', label: 'Completada' },
+    { key: 'completed', label: 'Finalizada' },
     { key: 'rejected', label: 'Rechazada' },
 ];
 

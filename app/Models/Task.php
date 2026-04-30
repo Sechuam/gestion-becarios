@@ -19,6 +19,7 @@ class Task extends Model implements HasMedia
         'status',
         'priority',
         'due_date',
+        'completed_at',
         'created_by',
         'practice_type_id',
     ];

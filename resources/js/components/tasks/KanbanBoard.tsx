@@ -11,7 +11,7 @@ import {
     SortableContext,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Sparkles, AlertTriangle } from 'lucide-react';
+import { Sparkles, AlertTriangle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Tooltip,
@@ -71,29 +71,40 @@ export function KanbanBoard({
             <div className="app-panel task-surface flex flex-wrap items-center justify-between gap-3 p-3">
                 <div className="flex flex-wrap items-center gap-2 flex-1">
                     {boardQuickFilters.map((filter) => (
-                        <Button
-                            key={filter.key}
-                            type="button"
-                            variant={boardFilter === filter.key ? 'default' : 'outline'}
-                            size="sm"
-                            className={`flex-1 min-w-[140px] h-9 gap-2 rounded-xl border shadow-sm transition-all duration-200 ${
-                                boardFilter === filter.key
-                                    ? 'border-sidebar bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white hover:opacity-95'
-                                    : 'border-border/90 bg-white text-foreground hover:border-sidebar/35 hover:bg-slate-50'
-                            }`}
-                            onClick={() => onBoardFilterChange(filter.key)}
-                        >
-                            <span className="truncate text-[11px] font-bold uppercase tracking-tight">{filter.label}</span>
-                            <span
-                                className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums ${
-                                    boardFilter === filter.key
-                                        ? 'bg-white/20 text-white'
-                                        : 'bg-slate-100 text-slate-600 border border-slate-200/50'
-                                }`}
-                            >
-                                {filter.count}
-                            </span>
-                        </Button>
+                        <Tooltip key={filter.key}>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    type="button"
+                                    variant={boardFilter === filter.key ? 'default' : 'outline'}
+                                    size="sm"
+                                    className={`flex-1 min-w-[140px] h-9 gap-2 rounded-xl border shadow-sm transition-all duration-200 ${
+                                        boardFilter === filter.key
+                                            ? 'border-sidebar bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white hover:opacity-95'
+                                            : 'border-border/90 bg-white text-foreground hover:border-sidebar/35 hover:bg-slate-50'
+                                    }`}
+                                    onClick={() => onBoardFilterChange(filter.key)}
+                                >
+                                    <div className="flex items-center gap-1.5 truncate">
+                                        <span className="text-[11px] font-bold uppercase tracking-tight">{filter.label}</span>
+                                        {filter.tooltip && <Info className="h-3 w-3 opacity-50 shrink-0" />}
+                                    </div>
+                                    <span
+                                        className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums ${
+                                            boardFilter === filter.key
+                                                ? 'bg-white/20 text-white'
+                                                : 'bg-slate-100 text-slate-600 border border-slate-200/50'
+                                        }`}
+                                    >
+                                        {filter.count}
+                                    </span>
+                                </Button>
+                            </TooltipTrigger>
+                            {filter.tooltip && (
+                                <TooltipContent className="rounded-xl border-sidebar/20 text-xs max-w-xs text-center font-medium">
+                                    {filter.tooltip}
+                                </TooltipContent>
+                            )}
+                        </Tooltip>
                     ))}
                 </div>
                 <div className="hidden lg:flex flex-none items-center gap-2 text-[10px] font-medium text-muted-foreground bg-slate-50/50 px-3 py-1.5 rounded-lg border border-slate-100">

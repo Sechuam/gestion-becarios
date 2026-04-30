@@ -28,6 +28,7 @@ import {
 } from '@/lib/task-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
 import { TaskFilters } from '@/components/tasks/TaskFilters';
+import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
 import { KanbanBoard } from '@/components/tasks/KanbanBoard';
 import { KANBAN_COLUMNS, KANBAN_WIP_LIMIT, TaskViewMode, BoardQuickFilter } from '@/lib/task-constants';
 import { dueStatus, parseTaskSortableId } from '@/lib/task-utils';
@@ -139,7 +140,7 @@ export default function My({
         return tasks.data.filter((task: any) => {
             if (boardFilter === 'urgent') {
                 const due = dueStatus(task.due_date);
-                return due === 'overdue' || due === 'soon';
+                return (due === 'overdue' || due === 'soon') && task.status !== 'completed';
             }
 
             if (boardFilter === 'high') {
@@ -226,8 +227,10 @@ export default function My({
                 key: 'status',
                 label: 'Estado',
                 sortKey: 'status',
+                headClassName: 'text-center',
+                cellClassName: 'text-center',
                 render: (task: any) => (
-                    <div className="flex items-center gap-2 font-medium text-sidebar dark:text-white/80">
+                    <div className="flex items-center justify-center gap-2 font-medium text-sidebar dark:text-white/80">
                         <div className={cn("h-2 w-2 rounded-full shrink-0", {
                             'bg-slate-300': task.status === 'pending',
                             'bg-blue-400': task.status === 'in_progress',
@@ -243,14 +246,22 @@ export default function My({
                 key: 'priority',
                 label: 'Prioridad',
                 sortKey: 'priority',
+                headClassName: 'text-center',
+                cellClassName: 'text-center',
                 render: (task: any) => (
-                    <div className="flex items-center gap-2 font-medium text-sidebar dark:text-white/80">
-                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
-                            'bg-rose-500': task.priority === 'high',
-                            'bg-amber-400': task.priority === 'medium',
-                            'bg-emerald-400': task.priority === 'low',
-                        })} />
-                        <span className="text-xs uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                    <div className="flex justify-center">
+                        <span
+                            className={cn(
+                                "inline-flex items-center justify-center rounded-full px-2 py-1 text-[9px] font-black uppercase tracking-widest w-20 shadow-sm transition-all",
+                                {
+                                    'bg-sidebar text-white shadow-sidebar/20': task.priority === 'high',
+                                    'bg-sidebar/70 text-white shadow-sidebar/10': task.priority === 'medium',
+                                    'bg-white text-sidebar border border-sidebar/20': task.priority === 'low',
+                                }
+                            )}
+                        >
+                            {getTaskPriorityLabel(task.priority)}
+                        </span>
                     </div>
                 ),
             },
@@ -260,16 +271,22 @@ export default function My({
                 sortKey: 'due_date',
                 render: (task: any) => {
                     const status = dueStatus(task.due_date);
-                    const dotClass =
-                        status === 'overdue'
+                    const isCompleted = task.status === 'completed';
+                    const isLate = isCompleted && task.completed_at && task.due_date && 
+                                   new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
+
+                    const dotClass = isCompleted
+                        ? (isLate ? 'bg-orange-500' : 'bg-emerald-500')
+                        : status === 'overdue'
                             ? 'bg-rose-500'
                             : status === 'soon'
                                 ? 'bg-amber-400'
                                 : 'bg-sidebar/20';
 
-                    const smartLabel =
-                        status === 'overdue'
-                            ? 'Atrasada'
+                    const smartLabel = isCompleted
+                        ? (isLate ? 'Tarde' : 'Completada')
+                        : status === 'overdue'
+                            ? 'No entregada'
                             : status === 'soon'
                                 ? 'Pronto'
                                 : formatDateEs(task.due_date);
@@ -304,6 +321,18 @@ export default function My({
                 key: 'status',
                 label: `Estado: ${getTaskStatusLabel(filters.status)}`,
             });
+        if (filters.delivery_status) {
+            const labels: any = {
+                completed_ontime: 'Completada',
+                late: 'Tarde',
+                not_delivered: 'No entregada',
+                soon: 'Pronto',
+            };
+            chips.push({
+                key: 'delivery_status',
+                label: `Entrega: ${labels[filters.delivery_status] || filters.delivery_status}`,
+            });
+        }
         if (filters.practice_type) {
             const typeName = practice_types.find(
                 (type: any) =>
@@ -324,24 +353,27 @@ export default function My({
 
     const boardQuickFilters = useMemo(
         () => [
-            { key: 'all' as const, label: 'Todas', count: tasks.data.length },
+            { key: 'all' as const, label: 'Todas', tooltip: 'Muestra todas las tareas sin filtrar', count: tasks.data.length },
             {
                 key: 'urgent' as const,
                 label: 'Urgentes',
+                tooltip: 'Muestra tareas vencidas o que vencen pronto, que no han sido finalizadas',
                 count: tasks.data.filter((task: any) => {
                     const due = dueStatus(task.due_date);
-                    return due === 'overdue' || due === 'soon';
+                    return (due === 'overdue' || due === 'soon') && task.status !== 'completed';
                 }).length,
             },
             {
                 key: 'high' as const,
                 label: 'Alta prioridad',
+                tooltip: 'Muestra solo tareas marcadas con prioridad Alta',
                 count: tasks.data.filter((task: any) => task.priority === 'high')
                     .length,
             },
             {
                 key: 'review' as const,
                 label: 'En revisión',
+                tooltip: 'Muestra tareas que esperan la revisión del tutor',
                 count: tasks.data.filter(
                     (task: any) => task.status === 'in_review',
                 ).length,
@@ -452,6 +484,8 @@ export default function My({
                     onClearAll={clearAllFilters}
                     activeFilterChips={activeFilterChips}
                 />
+
+                <DeliveryLegend />
 
                 {viewMode === 'kanban' ? (
                     <KanbanBoard

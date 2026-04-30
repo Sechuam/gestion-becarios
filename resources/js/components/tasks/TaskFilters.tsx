@@ -64,8 +64,26 @@ export function TaskFilters({
                                 <SelectItem value="pending">Pendiente</SelectItem>
                                 <SelectItem value="in_progress">En progreso</SelectItem>
                                 <SelectItem value="in_review">En revisión</SelectItem>
-                                <SelectItem value="completed">Completada</SelectItem>
+                                <SelectItem value="completed">Finalizada</SelectItem>
                                 <SelectItem value="rejected">Rechazada</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="flex-1 min-w-[120px]">
+                        <Select
+                            value={filters.delivery_status || 'all'}
+                            onValueChange={(v) => onFilterChange('delivery_status', v)}
+                        >
+                            <SelectTrigger className="h-8 w-full border-sidebar/10 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                                <SelectValue placeholder="Entrega" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-lg border-sidebar/20">
+                                <SelectItem value="all">Todas las entregas</SelectItem>
+                                <SelectItem value="completed_ontime">Completada</SelectItem>
+                                <SelectItem value="late">Tarde</SelectItem>
+                                <SelectItem value="not_delivered">No entregada</SelectItem>
+                                <SelectItem value="soon">Pronto</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

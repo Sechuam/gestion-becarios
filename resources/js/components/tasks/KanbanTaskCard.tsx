@@ -212,15 +212,35 @@ export default function KanbanTaskCard({
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80 cursor-default">
-                                <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
-                                    'bg-emerald-500': task.status === 'completed',
-                                    'bg-rose-500': task.status !== 'completed' && dueStatus(task.due_date) === 'overdue',
-                                    'bg-amber-400': task.status !== 'completed' && dueStatus(task.due_date) === 'soon',
-                                    'bg-sidebar/20': task.status !== 'completed' && dueStatus(task.due_date) === 'none',
-                                })} />
-                                <span className="text-[10px] uppercase tracking-wider">
-                                    {task.status === 'completed' ? formatDateEs(task.due_date) : dueBadge.label}
-                                </span>
+                                {(() => {
+                                    const dStatus = dueStatus(task.due_date);
+                                    const isCompleted = task.status === 'completed';
+                                    const isLate = isCompleted && task.completed_at && task.due_date &&
+                                                   new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
+
+                                    const dotClass = isCompleted
+                                        ? (isLate ? 'bg-orange-500' : 'bg-emerald-500')
+                                        : dStatus === 'overdue'
+                                            ? 'bg-rose-500'
+                                            : dStatus === 'soon'
+                                                ? 'bg-amber-400'
+                                                : 'bg-sidebar/20';
+
+                                    const smartLabel = isCompleted
+                                        ? (isLate ? 'Tarde' : 'Completada')
+                                        : dStatus === 'overdue'
+                                            ? 'No entregada'
+                                            : dStatus === 'soon'
+                                                ? 'Pronto'
+                                                : formatDateEs(task.due_date);
+
+                                    return (
+                                        <>
+                                            <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", dotClass)} />
+                                            <span className="text-[10px] uppercase tracking-wider">{smartLabel}</span>
+                                        </>
+                                    );
+                                })()}
                             </div>
                         </TooltipTrigger>
                         <TooltipContent className="rounded-xl border-sidebar/20 font-medium">
