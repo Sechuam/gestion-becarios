@@ -104,8 +104,8 @@ export default function Show({
             <div className="page-surface space-y-6">
                 <div className="flex items-center justify-between px-2">
                     <Button
-                        variant="ghost"
-                        className="text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                        variant="default"
+                        className="bg-gradient-to-r from-sidebar to-[#1f4f52] text-white hover:opacity-95 shadow-sm rounded-xl font-bold uppercase tracking-widest text-[10px] border-0"
                         asChild
                     >
                         <Link href="/tutores">

@@ -115,6 +115,7 @@ export default function TaskQuickViewSheet({
             <SheetContent
                 side="right"
                 className="w-full gap-0 overflow-y-auto border-l border-sidebar/20 bg-background p-0 sm:max-w-xl flex flex-col"
+                closeClassName="text-white hover:text-white/80 focus:ring-white/50"
             >
                 {task ? (
                     <>
@@ -220,27 +221,33 @@ export default function TaskQuickViewSheet({
                                         Señales rápidas
                                     </p>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <div className="rounded-lg border border-sidebar/5 bg-slate-50/50 px-3 py-2 dark:bg-slate-800">
-                                            <p className="text-[11px] text-muted-foreground">
-                                                Comentarios
-                                            </p>
-                                            <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                                                <MessageSquareText className="h-4 w-4 text-muted-foreground" />
-                                                {Number(
-                                                    task.comments_count ?? 0,
-                                                )}
-                                            </p>
+                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 py-2 shadow-inner">
+                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
+                                            <div className="relative">
+                                                <p className="text-[11px] text-white/70">
+                                                    Comentarios
+                                                </p>
+                                                <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-white">
+                                                    <MessageSquareText className="h-4 w-4 text-white/70" />
+                                                    {Number(
+                                                        task.comments_count ?? 0,
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="rounded-lg border border-sidebar/5 bg-slate-50/50 px-3 py-2 dark:bg-slate-800">
-                                            <p className="text-[11px] text-muted-foreground">
-                                                Adjuntos
-                                            </p>
-                                            <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                                                <Paperclip className="h-4 w-4 text-muted-foreground" />
-                                                {Number(
-                                                    task.attachments_count ?? 0,
-                                                )}
-                                            </p>
+                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 py-2 shadow-inner">
+                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
+                                            <div className="relative">
+                                                <p className="text-[11px] text-white/70">
+                                                    Adjuntos
+                                                </p>
+                                                <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-white">
+                                                    <Paperclip className="h-4 w-4 text-white/70" />
+                                                    {Number(
+                                                        task.attachments_count ?? 0,
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -265,7 +272,7 @@ export default function TaskQuickViewSheet({
                                             {task.interns.map((intern: any) => (
                                                 <span
                                                     key={intern.id}
-                                                    className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs text-white backdrop-blur-md"
+                                                    className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-sidebar shadow-sm"
                                                 >
                                                     {intern.user?.name ||
                                                         `Becario #${intern.id}`}
@@ -322,16 +329,17 @@ export default function TaskQuickViewSheet({
                                 )}
                         </div>
 
-                        <SheetFooter className="mt-auto border-t border-sidebar/10 bg-white p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)] dark:bg-slate-900/90">
-                            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
-                                <Button variant="outline" asChild>
+                        <SheetFooter className="relative mt-auto overflow-hidden border-t border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.15)]">
+                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(0deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
+                            <div className="relative flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+                                <Button variant="outline" className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar" asChild>
                                     <Link href={`/tareas/${task.id}`}>
                                         Ver ficha completa
                                         <ChevronRight className="h-4 w-4" />
                                     </Link>
                                 </Button>
                                 {canEdit && (
-                                    <Button variant="outline" asChild>
+                                <Button variant="outline" className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar" asChild>
                                         <Link href={`/tareas/${task.id}/edit`}>
                                             <Pencil className="h-4 w-4" />
                                             Editar
@@ -344,8 +352,9 @@ export default function TaskQuickViewSheet({
                                         String(task.status),
                                     ) && (
                                         <Button
+                                            variant="secondary"
                                             onClick={() => onComplete(task)}
-                                            className="gap-2"
+                                            className="gap-2 border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar"
                                         >
                                             <CheckCircle2 className="h-4 w-4" />
                                             {completeLabel}
