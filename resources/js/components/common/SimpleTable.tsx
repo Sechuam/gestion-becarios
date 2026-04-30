@@ -51,7 +51,7 @@ export function SimpleTable<T>({
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.label}
-                                    className={`px-3 py-2 text-left font-semibold text-sidebar-foreground ${col.headClassName ?? ''}`}
+                                    className={`px-3 py-2 text-left font-black uppercase tracking-widest text-[10px] text-sidebar-foreground ${col.headClassName ?? ''}`}
                                 >
                                     {col.sortKey && onSort ? (
                                         <button
@@ -59,17 +59,17 @@ export function SimpleTable<T>({
                                             onClick={() =>
                                                 onSort(col.sortKey as string)
                                             }
-                                            className="inline-flex items-center gap-1 text-sidebar-foreground/95 hover:text-sidebar-foreground"
+                                            className="inline-flex items-center gap-1 text-sidebar-foreground/95 hover:text-sidebar-foreground uppercase font-black tracking-widest"
                                         >
                                             <span>{col.label}</span>
                                             {sortKey === col.sortKey ? (
                                                 sortDirection === 'desc' ? (
-                                                    <ChevronDown className="h-4 w-4 text-sidebar-foreground" />
+                                                    <ChevronDown className="h-3 w-3 text-sidebar-foreground" />
                                                 ) : (
-                                                    <ChevronUp className="h-4 w-4 text-sidebar-foreground" />
+                                                    <ChevronUp className="h-3 w-3 text-sidebar-foreground" />
                                                 )
                                             ) : (
-                                                <ArrowUpDown className="h-4 w-4 text-sidebar-foreground/60" />
+                                                <ArrowUpDown className="h-3 w-3 text-sidebar-foreground/60" />
                                             )}
                                         </button>
                                     ) : (

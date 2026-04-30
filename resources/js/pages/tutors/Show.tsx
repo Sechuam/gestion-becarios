@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
 import { getTaskStatusLabel, getTaskStatusTone } from '@/lib/task-labels';
+import { Pagination } from '@/components/common/Pagination';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Tutor = {
@@ -267,23 +268,7 @@ export default function Show({
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                         Página {assigned_interns.current_page} de {assigned_interns.last_page}
                                     </p>
-                                    <div className="flex gap-2">
-                                        {assigned_interns.links.map((link, i) => (
-                                            <Link
-                                                key={i}
-                                                href={link.url ?? '#'}
-                                                preserveState
-                                                className={`rounded-xl border px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-all ${
-                                                    link.active
-                                                        ? 'bg-sidebar text-white border-sidebar shadow-lg shadow-sidebar/20'
-                                                        : 'bg-white dark:bg-slate-800 border-sidebar/10 text-slate-600 hover:border-sidebar/40'
-                                                } ${!link.url ? 'opacity-30 pointer-events-none' : ''}`}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: link.label.replace('Previous', 'Anterior').replace('Next', 'Siguiente')
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
+                                    <Pagination links={assigned_interns.links} />
                                 </div>
                             </div>
                         </TabsContent>
@@ -366,8 +351,5 @@ export default function Show({
                 </div>
             </div>
         </AppLayout>
-    );
-}
-
     );
 }

@@ -10,6 +10,8 @@ import { KanbanSquare, LayoutGrid, List, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -59,6 +61,8 @@ export default function My({
     const isIntern =
         auth?.user?.roles?.includes('intern') ||
         auth?.user?.roles?.includes('becario');
+    const isTutor = auth?.user?.roles?.includes('tutor');
+    const isAdmin = auth?.user?.roles?.includes('admin');
     const [boardFilter, setBoardFilter] = useState<BoardQuickFilter>('all');
     const [lastMoveMessage, setLastMoveMessage] = useState<string | null>(null);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
@@ -402,35 +406,39 @@ export default function My({
                         },
                     ]}
                     actions={
-                        <ToggleGroup
-                            type="single"
-                            value={viewMode}
-                            onValueChange={(value) => {
-                                if (value === 'kanban' || value === 'table') {
-                                    setViewMode(value);
-                                }
-                            }}
-                            className="bg-white/10 p-1 rounded-2xl border border-white/20 backdrop-blur-md"
-                        >
-                            <ToggleGroupItem
-                                value="kanban"
-                                className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
-                                aria-label="Vista kanban"
-                                title="Vista kanban"
+                        <div className="flex items-center gap-3">
+                            {isTutor && (
+                                <HeaderActionButton 
+                                    label="Nueva tarea"
+                                    href="/tareas/create"
+                                />
+                            )}
+                            <ToggleGroup
+                                type="single"
+                                value={viewMode}
+                                onValueChange={(value) => {
+                                    if (value) setViewMode(value as TaskViewMode);
+                                }}
+                                className="bg-white/10 p-1 rounded-2xl border border-white/20 backdrop-blur-md"
                             >
-                                <LayoutGrid className="h-4 w-4 mr-2" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Tablero</span>
-                            </ToggleGroupItem>
-                            <ToggleGroupItem
-                                value="table"
-                                className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
-                                aria-label="Vista tabla"
-                                title="Vista tabla"
-                            >
-                                <List className="h-4 w-4 mr-2" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Lista</span>
-                            </ToggleGroupItem>
-                        </ToggleGroup>
+                                <ToggleGroupItem
+                                    value="kanban"
+                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
+                                    aria-label="Vista kanban"
+                                >
+                                    <LayoutGrid className="h-4 w-4 mr-2" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Tablero</span>
+                                </ToggleGroupItem>
+                                <ToggleGroupItem
+                                    value="table"
+                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
+                                    aria-label="Vista tabla"
+                                >
+                                    <List className="h-4 w-4 mr-2" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Lista</span>
+                                </ToggleGroupItem>
+                            </ToggleGroup>
+                        </div>
                     }
                 />
 
@@ -507,25 +515,7 @@ export default function My({
                     <span className="text-sm font-medium text-muted-foreground">
                         Página {tasks.current_page ?? 1} de {tasks.last_page ?? 1}
                     </span>
-                    <div className="flex items-center gap-2">
-                        {tasks.links.map((link: any, i: number) => (
-                            <Link
-                                key={i}
-                                href={link.url ?? '#'}
-                                preserveState
-                                className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
-                                    link.active
-                                        ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
-                                        : 'border-border bg-card text-muted-foreground hover:border-sidebar/40 hover:bg-muted'
-                                } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
-                                dangerouslySetInnerHTML={{
-                                    __html: link.label
-                                        .replace('Previous', 'Anterior')
-                                        .replace('Next', 'Siguiente'),
-                                }}
-                            />
-                        ))}
-                    </div>
+                    <Pagination links={tasks.links} />
                 </div>
             </div>
 

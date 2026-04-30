@@ -2,6 +2,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { Check, Copy, Pencil, Plus, Shield, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -215,13 +216,10 @@ export default function RolesIndex({
                     icon={<Shield className="h-6 w-6" />}
                     metrics={headerMetrics}
                     actions={
-                        <Button
-                            className="gap-2 bg-sidebar/80 text-white border-2 border-white/20 hover:bg-white/10 hover:border-white/40 rounded-2xl px-8 font-black shadow-xl backdrop-blur-md transition-all h-12 pt-1"
+                        <HeaderActionButton 
+                            label="Crear Rol"
                             onClick={() => setCreateOpen(true)}
-                        >
-                            <Plus className="h-5 w-5" />
-                            Crear Rol
-                        </Button>
+                        />
                     }
                 />
 

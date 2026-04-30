@@ -129,11 +129,17 @@ export default function KanbanTaskCard({
         <div
             ref={setNodeRef}
             style={style}
-            className={`task-surface-soft group rounded-xl border border-border p-4 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
+            className={`relative task-surface-soft group rounded-xl border border-border p-4 pl-5 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
                 } ${onOpenDetails ? 'cursor-pointer' : ''} ${highlightMove ? 'task-card-drop-highlight' : ''
                 }`}
             onClick={() => onOpenDetails?.(task)}
         >
+            {task.practice_type?.color && (
+                <div 
+                    className="absolute left-0 top-4 bottom-4 w-1 rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"
+                    style={{ backgroundColor: task.practice_type.color }}
+                />
+            )}
             <div className="mb-3 flex items-start justify-between gap-3">
                 <div className="min-w-0 space-y-1">
                     {onOpenDetails ? (
@@ -207,11 +213,14 @@ export default function KanbanTaskCard({
                         <TooltipTrigger asChild>
                             <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80 cursor-default">
                                 <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
-                                    'bg-rose-500': dueStatus(task.due_date) === 'overdue',
-                                    'bg-amber-400': dueStatus(task.due_date) === 'soon',
-                                    'bg-sidebar/20': dueStatus(task.due_date) === 'none',
+                                    'bg-emerald-500': task.status === 'completed',
+                                    'bg-rose-500': task.status !== 'completed' && dueStatus(task.due_date) === 'overdue',
+                                    'bg-amber-400': task.status !== 'completed' && dueStatus(task.due_date) === 'soon',
+                                    'bg-sidebar/20': task.status !== 'completed' && dueStatus(task.due_date) === 'none',
                                 })} />
-                                <span className="text-[10px] uppercase tracking-wider">{dueBadge.label}</span>
+                                <span className="text-[10px] uppercase tracking-wider">
+                                    {task.status === 'completed' ? formatDateEs(task.due_date) : dueBadge.label}
+                                </span>
                             </div>
                         </TooltipTrigger>
                         <TooltipContent className="rounded-xl border-sidebar/20 font-medium">

@@ -19,6 +19,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { CalendarClock, AlertTriangle, Clock3, ShieldAlert, TimerReset, FilePlus, ExternalLink, FileText, Download } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { cn } from '@/lib/utils';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -236,6 +238,23 @@ export default function Index({
                             hint: current_log ? 'Hay un tramo abierto en curso' : 'No hay fichaje activo',
                         },
                     ]}
+                    actions={
+                        <div className="flex flex-wrap items-center gap-2">
+                            <HeaderActionButton 
+                                label="Fichar Entrada"
+                                onClick={handleClockIn}
+                                icon={<Clock3 className="h-4 w-4 mr-1.5" />}
+                                className={cn(current_log?.clock_in && !current_log?.clock_out && "opacity-50 pointer-events-none")}
+                            />
+                            <HeaderActionButton 
+                                label="Fichar Salida"
+                                onClick={handleClockOut}
+                                icon={<Clock3 className="h-4 w-4 mr-1.5" />}
+                                className={cn((!current_log?.clock_in || current_log?.clock_out) && "opacity-50 pointer-events-none")}
+                            />
+                            <RequestAbsenceModal />
+                        </div>
+                    }
                 />
 
                 <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg overflow-hidden dark:bg-slate-900">
@@ -249,27 +268,9 @@ export default function Index({
                     </CardHeader>
                     <CardContent className="p-3 space-y-3">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/50 p-2 rounded-xl border border-sidebar/10 dark:bg-slate-800/50">
-                            <div className="space-y-0">
-                                <p className="text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-widest leading-none">Acciones Rápidas</p>
-                                <p className="text-[10px] font-medium text-slate-500 italic leading-none mt-1">Ficha entrada y salida con un clic.</p>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2">
-                                <Button
-                                    onClick={handleClockIn}
-                                    disabled={Boolean(current_log?.clock_in && !current_log?.clock_out)}
-                                    className="h-8 bg-sidebar text-white hover:bg-sidebar/90 rounded-lg px-4 text-[10px] font-black shadow shadow-sidebar/20 transition-all active:scale-95"
-                                >
-                                    Fichar Entrada
-                                </Button>
-                                <Button
-                                    variant="destructive"
-                                    onClick={handleClockOut}
-                                    disabled={!current_log?.clock_in || Boolean(current_log?.clock_out)}
-                                    className="h-8 bg-rose-600 text-white hover:bg-rose-700 rounded-lg px-4 text-[10px] font-black shadow shadow-rose-600/20 transition-all active:scale-95"
-                                >
-                                    Fichar Salida
-                                </Button>
-                                <RequestAbsenceModal />
+                            <div className="space-y-0 px-2">
+                                <p className="text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-widest leading-none">Monitor de Actividad</p>
+                                <p className="text-[10px] font-medium text-slate-500 italic leading-none mt-1">Sigue tu jornada en tiempo real desde la cabecera superior.</p>
                             </div>
                         </div>
 

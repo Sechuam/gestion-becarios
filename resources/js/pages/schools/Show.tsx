@@ -23,6 +23,7 @@ import {
     Hash,
     ExternalLink
 } from 'lucide-react';
+import { Pagination } from '@/components/common/Pagination';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
@@ -511,30 +512,7 @@ export default function Show({
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">
                                             Mostrando {interns.from || 0} a {interns.to || 0} de {interns.total} alumnos
                                         </p>
-                                        <div className="flex gap-1">
-                                            {interns.links.map((link: any, i: number) => (
-                                                <Button
-                                                    key={i}
-                                                    variant={link.active ? 'secondary' : 'ghost'}
-                                                    size="sm"
-                                                    className={`h-8 min-w-[32px] rounded-lg border text-xs font-bold ${link.active ? 'border-sidebar bg-sidebar text-sidebar-foreground shadow-sm' : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'} ${!link.url ? 'opacity-45 pointer-events-none' : ''}`}
-                                                    asChild={!!link.url}
-                                                    disabled={!link.url}
-                                                >
-                                                    {link.url ? (
-                                                        <Link href={link.url} preserveState preserveScroll dangerouslySetInnerHTML={{
-                                                            __html: link.label
-                                                                .replace('Previous', 'Anterior')
-                                                                .replace('Next', 'Siguiente')
-                                                        }} />
-                                                    ) : <span dangerouslySetInnerHTML={{
-                                                        __html: link.label
-                                                            .replace('Previous', 'Anterior')
-                                                            .replace('Next', 'Siguiente')
-                                                    }} />}
-                                                </Button>
-                                            ))}
-                                        </div>
+                                        <Pagination links={interns.links} />
                                     </div>
                                 </div>
                             </TabsContent>

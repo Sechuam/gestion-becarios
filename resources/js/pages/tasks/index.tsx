@@ -26,6 +26,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
 import { Badge } from '@/components/ui/badge';
@@ -215,6 +217,8 @@ export default function Index({
     const isIntern =
         auth?.user?.roles?.includes('intern') ||
         auth?.user?.roles?.includes('becario');
+    const isTutor = auth?.user?.roles?.includes('tutor');
+    const isAdmin = auth?.user?.roles?.includes('admin');
     const [boardFilter, setBoardFilter] = useState<BoardQuickFilter>('all');
     const [lastMoveMessage, setLastMoveMessage] = useState<string | null>(null);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
@@ -303,8 +307,6 @@ export default function Index({
             },
         );
     };
-
-    const isTutor = auth?.user?.roles?.includes('tutor');
 
     const completeTask = (task: any, closePanel = false) => {
         const nextStatus = isIntern ? 'in_review' : 'completed';
@@ -510,15 +512,19 @@ export default function Index({
                 sortKey: 'due_date',
                 render: (task: any) => {
                     const status = dueStatus(task.due_date);
-                    const dotClass =
-                        status === 'overdue'
+                    const isCompleted = task.status === 'completed';
+                    
+                    const dotClass = isCompleted
+                        ? 'bg-emerald-500'
+                        : status === 'overdue'
                             ? 'bg-rose-500'
                             : status === 'soon'
                                 ? 'bg-amber-400'
                                 : 'bg-sidebar/20';
 
-                    const smartLabel =
-                        status === 'overdue'
+                    const smartLabel = isCompleted
+                        ? formatDateEs(task.due_date)
+                        : status === 'overdue'
                             ? 'Atrasada'
                             : status === 'soon'
                                 ? 'Pronto'
@@ -734,38 +740,31 @@ export default function Index({
                     actions={
                         <div className="flex items-center gap-3">
                             {isTutor && (
-                                <Button
-                                    className="gap-2 bg-white/10 text-white border border-white/20 hover:bg-white/15 rounded-2xl h-10 px-4 text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md transition-all"
-                                    onClick={() => router.get('/tareas/create')}
-                                >
-                                    <PlusCircle className="h-4 w-4" />
-                                    Nueva tarea
-                                </Button>
+                                <HeaderActionButton 
+                                    label="Nueva tarea"
+                                    href="/tareas/create"
+                                />
                             )}
                             <ToggleGroup
                                 type="single"
                                 value={viewMode}
                                 onValueChange={(value) => {
-                                    if (value === 'kanban' || value === 'table') {
-                                        setViewMode(value);
-                                    }
+                                    if (value) setViewMode(value as TaskViewMode);
                                 }}
                                 className="bg-white/10 p-1 rounded-2xl border border-white/20 backdrop-blur-md"
                             >
                                 <ToggleGroupItem
                                     value="kanban"
-                                    className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
+                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
                                     aria-label="Vista kanban"
-                                    title="Vista kanban"
                                 >
                                     <LayoutGrid className="h-4 w-4 mr-2" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Tablero</span>
                                 </ToggleGroupItem>
                                 <ToggleGroupItem
                                     value="table"
-                                    className="rounded-xl px-4 h-10 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all"
+                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
                                     aria-label="Vista tabla"
-                                    title="Vista tabla"
                                 >
                                     <List className="h-4 w-4 mr-2" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Lista</span>
@@ -849,24 +848,11 @@ export default function Index({
                     />
                 )}
 
-                <div className="flex items-center gap-2">
-                    {tasks.links.map((link: any, i: number) => {
-                        const label = link.label
-                            .replace('Previous', 'Anterior')
-                            .replace('Next', 'Siguiente');
-                        return (
-                            <Link
-                                key={i}
-                                href={link.url ?? '#'}
-                                className={`rounded-xl border px-4 py-2 text-sm font-semibold shadow-sm transition-all ${link.active
-                                    ? 'border-sidebar bg-sidebar text-sidebar-foreground'
-                                    : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                    } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                dangerouslySetInnerHTML={{ __html: label }}
-                                preserveState
-                            />
-                        );
-                    })}
+                <div className="flex flex-wrap items-center justify-between gap-4 mt-6">
+                    <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+                        Página {tasks.current_page} de {tasks.last_page}
+                    </span>
+                    <Pagination links={tasks.links} />
                 </div>
             </div>
 

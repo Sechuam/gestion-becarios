@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { formatDateEs } from '@/lib/date-format';
 import { getEvaluationTypeLabel } from '@/lib/evaluation-type-labels';
 import {
@@ -177,31 +179,23 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                     actions={
                         <div className="flex flex-wrap gap-2">
                             {canCreateEvaluation && (
-                                <Button
-                                    className="gap-2 bg-white text-sidebar border border-white/20 hover:bg-white/90 rounded-lg px-4 font-black shadow-lg transition-all h-8 text-[10px] uppercase tracking-widest"
-                                    onClick={() => router.get('/evaluaciones/create')}
-                                >
-                                    <Plus className="h-4 w-4" />
-                                    Nueva evaluacion
-                                </Button>
+                                <HeaderActionButton 
+                                    label="Nueva evaluacion"
+                                    href="/evaluaciones/create"
+                                />
                             )}
                             {canCreateSelfEvaluation && (
-                                <Button
-                                    className="gap-2 bg-white text-sidebar border border-white/20 hover:bg-white/90 rounded-lg px-4 font-black shadow-lg transition-all h-8 text-[10px] uppercase tracking-widest"
-                                    onClick={() => router.get('/evaluaciones/create')}
-                                >
-                                    <Plus className="h-4 w-4" />
-                                    Nueva autoevaluacion
-                                </Button>
+                                <HeaderActionButton 
+                                    label="Nueva autoevaluacion"
+                                    href="/evaluaciones/create"
+                                />
                             )}
                             {isAdmin && (
-                                <Button
-                                    className="gap-2 bg-white text-sidebar border border-white/20 hover:bg-white/90 rounded-lg px-4 font-black shadow-lg transition-all h-8 text-[10px] uppercase tracking-widest"
-                                    onClick={() => router.get('/evaluaciones/criterios')}
-                                >
-                                    <SlidersHorizontal className="h-4 w-4" />
-                                    Gestionar criterios
-                                </Button>
+                                <HeaderActionButton 
+                                    label="Gestionar criterios"
+                                    href="/evaluaciones/criterios"
+                                    icon={<SlidersHorizontal className="h-3.5 w-3.5 mr-1.5" />}
+                                />
                             )}
                         </div>
                     }
@@ -311,24 +305,7 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                         <span className="whitespace-nowrap text-sm font-medium text-muted-foreground">
                             Pagina {evaluations.current_page} de {evaluations.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-1.5">
-                            {evaluations.links.map((link: any, i: number) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`rounded-lg border px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-all ${link.active
-                                            ? 'scale-105 transform border-sidebar bg-sidebar text-white shadow-md'
-                                            : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                        } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente'),
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <Pagination links={evaluations.links} />
                     </div>
                 </div>
             </div>

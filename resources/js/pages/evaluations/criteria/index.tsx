@@ -2,6 +2,8 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ClipboardList, Pencil, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import DeleteEvaluationCriterionModal from '@/components/evaluations/DeleteEvaluationCriterionModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -124,13 +126,10 @@ export default function Index({ criteria, filters = {}, categories = [] }: Props
                     icon={<SlidersHorizontal className="h-6 w-6" />}
                     actions={
                         isAdmin ? (
-                            <Button
-                                className="h-12 rounded-2xl bg-white px-8 pt-2 font-black text-sidebar shadow-lg transition-all hover:bg-white/90"
-                                onClick={() => router.get('/evaluaciones/criterios/create')}
-                            >
-                                <Plus className="mr-2 h-5 w-5" />
-                                Nuevo criterio
-                            </Button>
+                            <HeaderActionButton 
+                                label="Nuevo criterio"
+                                href="/evaluaciones/criterios/create"
+                            />
                         ) : undefined
                     }
                 />
@@ -203,25 +202,7 @@ export default function Index({ criteria, filters = {}, categories = [] }: Props
                         <span className="whitespace-nowrap text-sm font-medium text-muted-foreground">
                             Pagina {criteria.current_page} de {criteria.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {criteria.links.map((link: any, i: number) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all ${
-                                        link.active
-                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
-                                            : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                    } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente'),
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <Pagination links={criteria.links} />
                     </div>
                 </div>
             </div>

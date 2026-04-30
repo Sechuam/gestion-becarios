@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import AppLayout from '@/layouts/app-layout';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { dueStatus } from '@/lib/task-utils';
 import { cn } from '@/lib/utils';
 import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
@@ -270,25 +271,18 @@ export default function Show({
                     actions={
                         <div className="flex gap-3">
                             {(canSubmitTask || canTutorComplete) && (
-                                <Button
+                                <HeaderActionButton 
+                                    label={canTutorComplete ? 'Completar' : 'Entregar'}
                                     onClick={submitTask}
-                                    disabled={completeForm.processing}
-                                    className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-6 h-10 text-[10px] font-black uppercase tracking-widest shadow-lg transition-all"
-                                >
-                                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                                    {canTutorComplete ? 'Completar' : 'Entregar'}
-                                </Button>
+                                    icon={<CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />}
+                                />
                             )}
                             {canReject && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-2xl px-6 h-10 text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md"
+                                <HeaderActionButton 
+                                    label="Rechazar"
                                     onClick={() => setShowRejectForm((current) => !current)}
-                                >
-                                    <XCircle className="mr-2 h-4 w-4 text-rose-300" />
-                                    Rechazar
-                                </Button>
+                                    icon={<XCircle className="h-3.5 w-3.5 mr-1.5 text-rose-500" />}
+                                />
                             )}
                         </div>
                     }
@@ -543,8 +537,9 @@ export default function Show({
                                             <Button
                                                 type="submit"
                                                 disabled={attachmentForm.processing}
-                                                className="w-full h-11 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-lg shadow-sidebar/20 hover:opacity-90 transition-all font-black uppercase tracking-widest text-[10px]"
+                                                className="relative w-full h-11 overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-lg shadow-sidebar/20 hover:opacity-95 transition-all font-black uppercase tracking-widest text-[10px] border-none"
                                             >
+                                                <div className="pointer-events-none absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-white/10 to-transparent" />
                                                 <Download className="mr-2 h-4 w-4" />
                                                 Subir Ahora
                                             </Button>

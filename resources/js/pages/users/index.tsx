@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AppLayout from '@/layouts/app-layout';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -279,13 +280,11 @@ export default function UsersIndex({
                                 Administra roles y permisos de los {counts.all} usuarios registrados.
                             </p>
                         </div>
-                        <Button 
-                            onClick={() => setIsInviteModalOpen(true)} 
-                            className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-6 font-black shadow-lg transition-all h-10 text-xs"
-                        >
-                            <MailPlus className="mr-2 h-4 w-4" />
-                            Invitar Usuario
-                        </Button>
+                        <HeaderActionButton 
+                            label="Invitar Usuario"
+                            onClick={() => setIsInviteModalOpen(true)}
+                            icon={<MailPlus className="mr-2 h-4 w-4" />}
+                        />
                     </div>
 
                     <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">

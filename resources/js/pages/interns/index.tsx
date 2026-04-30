@@ -6,6 +6,8 @@ import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -479,13 +481,10 @@ export default function Index({
                     metrics={headerMetrics}
                     actions={
                         canManage ? (
-                            <Button
-                                className="gap-2 bg-sidebar/80 text-white border border-white/20 hover:bg-white/10 hover:border-white/40 rounded-lg px-4 font-black shadow-lg backdrop-blur-md transition-all h-8 text-[10px] uppercase tracking-widest"
-                                onClick={() => router.get('/interns/create')}
-                            >
-                                <Plus className="h-4 w-4" />
-                                Añadir Becario
-                            </Button>
+                            <HeaderActionButton 
+                                label="Añadir Becario"
+                                href="/interns/create"
+                            />
                         ) : undefined
                     }
                 />
@@ -530,25 +529,7 @@ export default function Index({
                         <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
                             Página {interns.current_page} de {interns.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {interns.links.map((link: any, i: number) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`rounded-lg border px-3 py-1.5 text-[9px] font-bold tracking-widest uppercase transition-all ${
-                                        link.active
-                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
-                                            : 'border-border bg-card text-muted-foreground hover:border-sidebar/40 hover:bg-muted'
-                                    } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente'),
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <Pagination links={interns.links} />
                     </div>
                 </div>
             </div>
