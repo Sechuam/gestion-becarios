@@ -52,35 +52,39 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                 icon={<Settings className="h-6 w-6 text-white" />}
             />
 
-            <div className="space-y-6">
-                <nav
-                    className="flex overflow-x-auto space-x-1 border-b border-sidebar/10 pb-px"
-                    aria-label="Settings"
-                >
-                    {sidebarNavItems.map((item, index) => {
-                        const active = isCurrentOrParentUrl(item.href);
-                        return (
-                            <Link 
-                                key={`${toUrl(item.href)}-${index}`}
-                                href={item.href}
-                                className={cn(
-                                    "flex items-center gap-2 px-4 py-3 text-sm font-bold transition-all border-b-2",
-                                    active 
-                                        ? "border-primary text-primary bg-primary/5" 
-                                        : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
-                                )}
-                            >
-                                {item.icon && (
-                                    <item.icon className="h-4 w-4" />
-                                )}
-                                {item.title}
-                            </Link>
-                        );
-                    })}
-                </nav>
+            <div className="app-panel w-full overflow-hidden border-2 border-sidebar/15 shadow-2xl rounded-[2rem] bg-white dark:bg-slate-900">
+                <div className="border-b border-sidebar/20 bg-stone-100/50 dark:bg-slate-800/50 p-2">
+                    <nav
+                        className="flex flex-wrap md:grid md:grid-cols-4 gap-2 bg-transparent p-0 min-h-12"
+                        aria-label="Settings"
+                    >
+                        {sidebarNavItems.map((item, index) => {
+                            const active = isCurrentOrParentUrl(item.href);
+                            return (
+                                <Link 
+                                    key={`${toUrl(item.href)}-${index}`}
+                                    href={item.href}
+                                    className={cn(
+                                        "relative h-10 flex flex-1 items-center justify-center rounded-xl border-none px-2 text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap",
+                                        active 
+                                            ? "bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-lg" 
+                                            : "bg-transparent text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 dark:hover:text-slate-300"
+                                    )}
+                                >
+                                    {item.icon && (
+                                        <item.icon className="mr-2 h-4 w-4 shrink-0" />
+                                    )}
+                                    <span className="truncate">{item.title}</span>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
 
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                    {children}
+                <div className="p-6 md:p-8">
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        {children}
+                    </div>
                 </div>
             </div>
         </div>
