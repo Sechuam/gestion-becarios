@@ -26,6 +26,7 @@ export default function Show({
     dni_url,
     agreement_url,
     insurance_url,
+    internal_notes,
     activities,
     absences,
 
@@ -35,6 +36,7 @@ export default function Show({
     dni_url: string;
     agreement_url: string;
     insurance_url: string;
+    internal_notes: any[];
     activities: any[];
     absences: any[];
 }) {
@@ -44,10 +46,16 @@ export default function Show({
     const canManage = auth.user?.permissions?.includes('manage interns');
     const canViewNotes = auth.user?.permissions?.includes('view internal notes') || canManage;
     const canViewReports = auth.user?.permissions?.includes('view reports') || canManage;
-    const [editingNotes, setEditingNotes] = useState(false);
-    const [notesValue, setNotesValue] = useState(intern.internal_notes || '');
+    const latestInternalNote = internal_notes?.[0] ?? null;
+    const visibleNoteContent = intern.internal_notes || latestInternalNote?.content || '';
+    const visibleNoteAuthor = intern.notes_updated_by || latestInternalNote?.user || null;
+    const visibleNoteDate = intern.internal_notes_updated_at || latestInternalNote?.edited_at || latestInternalNote?.created_at || null;
+    const previousInternalNotes = (internal_notes ?? []).filter(
+        (note) => note.content !== visibleNoteContent || note.id !== latestInternalNote?.id,
+    );
+    const [notesValue, setNotesValue] = useState(visibleNoteContent);
     const [activityPage, setActivityPage] = useState(1);
-    const activitiesPerPage = 5;
+    const activitiesPerPage = 3;
     const totalActivityPages = Math.ceil(activities.length / activitiesPerPage);
     const displayedActivities = activities.slice(
         (activityPage - 1) * activitiesPerPage,
@@ -155,14 +163,14 @@ export default function Show({
                                         </div>
 
                                         <div className="flex items-baseline gap-2">
-                                            <span className={`text-5xl font-black tracking-tight ${time_stats.debt >= 8 ? 'text-rose-600' : 'text-slate-900 dark:text-white'}`}>
+                                            <span className="text-5xl font-black tracking-tight text-slate-900 dark:text-white">
                                                 {time_stats.total_done}h
                                             </span>
                                             <span className="text-slate-400 font-medium">/ {time_stats.expected_hours}h esperadas</span>
                                         </div>
 
                                         <div className="flex items-center gap-4 bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 rounded-2xl shadow-xl shadow-sidebar/10">
-                                            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${time_stats.debt > 0 ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
+                                            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${time_stats.debt > 0 ? 'bg-white text-rose-600' : 'bg-emerald-500/20 text-emerald-300'}`}>
                                                 {time_stats.debt > 0 ? <AlertTriangle className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
                                             </div>
                                             <div>
@@ -196,7 +204,11 @@ export default function Show({
                                             <span className="text-2xl font-black text-sidebar">{Math.round((time_stats.total_done / time_stats.target_total) * 100)}%</span>
                                         </div>
 
-                                        <Progress value={(time_stats.total_done / time_stats.target_total) * 100} className="h-3 bg-slate-100 dark:bg-slate-800 rounded-full" />
+                                        <Progress
+                                            value={(time_stats.total_done / time_stats.target_total) * 100}
+                                            className="h-4 rounded-full bg-slate-200 dark:bg-slate-700"
+                                            indicatorClassName="bg-slate-700 dark:bg-slate-200"
+                                        />
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="p-5 rounded-2xl bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10 border-none">
@@ -219,8 +231,8 @@ export default function Show({
 
                             {/* PESTAÑA PERSONAL UNIFICADA */}
                             <TabsContent value="personal" className="mt-0 animate-in fade-in duration-500">
-                                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-                                    <div className="md:col-span-12 items-center mb-4 pb-4 border-b border-slate-50 dark:border-slate-800 flex justify-between">
+                                <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
+                                    <div className="md:col-span-12 flex items-center justify-between border-b border-slate-50 pb-3 dark:border-slate-800">
                                         <h3 className="text-xl font-bold flex items-center gap-2">
                                             <User className="h-5 w-5 text-primary" />
                                             Ficha de Expediente
@@ -249,8 +261,8 @@ export default function Show({
                                     </div>
 
                                     <div className="md:col-span-4 space-y-6">
-                                        <div className="filter-panel p-6 rounded-3xl space-y-4">
-                                            <h4 className="text-xs font-black uppercase text-slate-500 flex items-center gap-2 mb-4">
+                                        <div className="rounded-3xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-6 shadow-xl shadow-sidebar/10 space-y-4">
+                                            <h4 className="mb-4 flex items-center gap-2 text-xs font-black uppercase text-white/75">
                                                 <HardDrive className="h-3 w-3" /> Documentación Digital
                                             </h4>
                                             {[
@@ -259,18 +271,18 @@ export default function Show({
                                                 { label: 'Seguro de Accidentes', url: insurance_url }
                                             ].map((doc, idx) => (
                                                 <div key={idx} className="flex items-center justify-between group">
-                                                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400">{doc.label}</span>
+                                                    <span className="text-xs font-medium text-white">{doc.label}</span>
                                                     {doc.url ? (
                                                         <div className="flex gap-2">
-                                                            <a href={doc.url} target="_blank" className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-primary transition-colors shadow-none hover:shadow-sm">
+                                                            <a href={doc.url} target="_blank" className="rounded-lg bg-white/15 p-1.5 text-white transition-colors hover:bg-white/25">
                                                                 <FileText className="h-4 w-4" />
                                                             </a>
-                                                            <a href={doc.url} download className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-400 transition-colors">
+                                                            <a href={doc.url} download className="rounded-lg bg-white/10 p-1.5 text-white/80 transition-colors hover:bg-white/20 hover:text-white">
                                                                 <Download className="h-4 w-4" />
                                                             </a>
                                                         </div>
                                                     ) : (
-                                                        <span className="text-[9px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full">Pendiente</span>
+                                                        <span className="rounded-full bg-white/15 px-2 py-0.5 text-[9px] font-bold text-white/85">Pendiente</span>
                                                     )}
                                                 </div>
                                             ))}
@@ -321,36 +333,36 @@ export default function Show({
                                     <div className="space-y-8">
                                         <div className="border-b border-slate-50 dark:border-slate-800 pb-4">
                                             <h3 className="text-xl font-bold flex items-center gap-2">
-                                                <User className="h-5 w-5 text-emerald-500" />
+                                                <User className="h-5 w-5 text-black dark:text-white" />
                                                 Tutorización
                                             </h3>
                                         </div>
 
                                         <div className="space-y-8">
-                                            <div className="flex gap-4 p-5 rounded-2xl filter-panel">
+                                            <div className="flex gap-4 rounded-2xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-5 shadow-xl shadow-sidebar/10">
                                                 <Avatar className="h-12 w-12 shrink-0 rounded-full">
-                                                    <AvatarFallback className="bg-indigo-100 dark:bg-indigo-900/40 font-bold text-indigo-600">
+                                                    <AvatarFallback className="bg-white/20 font-bold text-white">
                                                         {intern.center_tutor_name?.substring(0, 1) || 'C'}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div>
-                                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Tutor del Centro</p>
-                                                    <p className="text-base font-bold text-slate-800 dark:text-slate-100">{intern.center_tutor_name || 'Sin asignar'}</p>
-                                                    <p className="text-xs text-slate-500">{intern.center_tutor_email || 'No email'}</p>
+                                                    <p className="mb-1 text-[10px] uppercase font-black tracking-widest text-white/70">Tutor del Centro</p>
+                                                    <p className="text-base font-bold text-white">{intern.center_tutor_name || 'Sin asignar'}</p>
+                                                    <p className="text-xs text-white/80">{intern.center_tutor_email || 'No email'}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex gap-4 p-5 rounded-2xl filter-panel">
+                                            <div className="flex gap-4 rounded-2xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-5 shadow-xl shadow-sidebar/10">
                                                 <Avatar className="h-12 w-12 shrink-0 rounded-full">
                                                     <AvatarImage src={intern.company_tutor?.avatar} alt={intern.company_tutor?.name || ''} />
-                                                    <AvatarFallback className="bg-emerald-100 dark:bg-emerald-900/40 font-bold text-emerald-600">
+                                                    <AvatarFallback className="bg-white/20 font-bold text-white">
                                                         {intern.company_tutor?.name?.substring(0, 1) || 'E'}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div>
-                                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Tutor de Empresa</p>
-                                                    <p className="text-base font-bold text-slate-800 dark:text-slate-100">{intern.company_tutor?.name || 'Sin asignar'}</p>
-                                                    <p className="text-xs text-slate-500">{intern.company_tutor?.email || 'No email'}</p>
+                                                    <p className="mb-1 text-[10px] uppercase font-black tracking-widest text-white/70">Tutor de Empresa</p>
+                                                    <p className="text-base font-bold text-white">{intern.company_tutor?.name || 'Sin asignar'}</p>
+                                                    <p className="text-xs text-white/80">{intern.company_tutor?.email || 'No email'}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -364,10 +376,15 @@ export default function Show({
                                     <div className="md:col-span-5 space-y-6">
                                         <div className="flex items-center justify-between">
                                             <h3 className="text-xl font-bold flex items-center gap-2">
-                                                <Clock className="h-5 w-5 text-primary" />
+                                                <Clock className="h-5 w-5 text-black dark:text-white" />
                                                 Horarios Activos
                                             </h3>
-                                            {canManage && <CreateScheduleModal userId={intern.user.id} />}
+                                            {canManage && (
+                                                <CreateScheduleModal
+                                                    userId={intern.user.id}
+                                                    createButtonClassName="border-none bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-lg shadow-sidebar/10 hover:opacity-95"
+                                                />
+                                            )}
                                         </div>
 
                                         <div className="space-y-4">
@@ -378,18 +395,18 @@ export default function Show({
                                                         (!schedule.end_date || schedule.end_date >= today);
 
                                                     return (
-                                                        <div key={schedule.id} className="p-6 rounded-2xl filter-panel">
+                                                        <div key={schedule.id} className="rounded-2xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-6 shadow-xl shadow-sidebar/10">
                                                             <div className="flex justify-between items-start mb-4">
                                                                 <div>
                                                                     <div className="flex items-center gap-2">
-                                                                        <h4 className="font-bold text-slate-800 dark:text-slate-100">{schedule.name}</h4>
+                                                                        <h4 className="font-bold text-white">{schedule.name}</h4>
                                                                         {isActive && (
                                                                             <Badge className="rounded-full bg-emerald-600 text-white hover:bg-emerald-600">
                                                                                 Activo
                                                                             </Badge>
                                                                         )}
                                                                     </div>
-                                                                    <p className="text-[10px] font-bold text-slate-400 mt-0.5">Vigencia: {formatDateEs(schedule.start_date)} — {schedule.end_date ? formatDateEs(schedule.end_date) : 'Activo'}</p>
+                                                                    <p className="mt-0.5 text-[10px] font-bold text-white/70">Vigencia: {formatDateEs(schedule.start_date)} — {schedule.end_date ? formatDateEs(schedule.end_date) : 'Activo'}</p>
                                                                 </div>
                                                                 {canManage && (
                                                                     <CreateScheduleModal
@@ -402,9 +419,9 @@ export default function Show({
                                                                 {['L', 'M', 'X', 'J', 'V'].map((d, i) => {
                                                                     const h = [schedule.monday_hours, schedule.tuesday_hours, schedule.wednesday_hours, schedule.thursday_hours, schedule.friday_hours][i];
                                                                     return (
-                                                                        <div key={d} className="flex flex-col items-center p-2 rounded-xl bg-white dark:bg-slate-900 border border-sidebar/20 shadow-sm">
-                                                                            <span className="text-[10px] font-black text-slate-300 mb-1">{d}</span>
-                                                                            <span className="text-sm font-bold text-primary">{h}h</span>
+                                                                        <div key={d} className="flex flex-col items-center rounded-xl border border-white/15 bg-white/10 p-2 shadow-sm backdrop-blur-sm">
+                                                                            <span className="mb-1 text-[10px] font-black text-white/55">{d}</span>
+                                                                            <span className="text-sm font-bold text-white">{h}h</span>
                                                                         </div>
                                                                     );
                                                                 })}
@@ -423,7 +440,7 @@ export default function Show({
 
                                     <div className="md:col-span-7 space-y-6">
                                         <h3 className="text-xl font-bold flex items-center gap-2">
-                                            <AlertTriangle className="h-5 w-5 text-amber-500" />
+                                            <AlertTriangle className="h-5 w-5 text-black dark:text-white" />
                                             Gestión de Ausencias
                                         </h3>
 
@@ -485,49 +502,93 @@ export default function Show({
                                                     <FileText className="h-5 w-5 text-primary" />
                                                     Notas de Seguimiento
                                                 </h3>
-                                                {canManage && !editingNotes && (
-                                                    <Button variant="ghost" size="sm" className="h-8 rounded-lg text-indigo-600 hover:bg-indigo-50" onClick={() => setEditingNotes(true)}>Editar</Button>
-                                                )}
                                             </div>
 
-                                            {editingNotes ? (
-                                                <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                                            <div className="space-y-4">
+                                                <div className="rounded-2xl border border-sidebar/15 bg-white p-5 shadow-sm dark:bg-slate-900">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nota de seguimiento</p>
+                                                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                                        Escribe aquí las observaciones del becario y guarda los cambios cuando quieras.
+                                                    </p>
                                                     <textarea
                                                         value={notesValue}
                                                         onChange={(e) => setNotesValue(e.target.value)}
-                                                        className="min-h-[200px] w-full rounded-2xl border-slate-200 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
+                                                        className="mt-4 min-h-[220px] w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-700 outline-none transition-all focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-800"
                                                         placeholder="Añade observaciones sobre el desempeño..."
                                                     />
-                                                    <div className="flex gap-2">
-                                                        <Button size="sm" className="rounded-xl px-6 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/interns/${intern.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar Cambios</Button>
-                                                        <Button size="sm" variant="outline" className="rounded-xl" onClick={() => { setNotesValue(intern.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
+                                                    <div className="mt-4 flex justify-end gap-2">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="rounded-xl"
+                                                            onClick={() => {
+                                                                setNotesValue(visibleNoteContent);
+                                                            }}
+                                                        >
+                                                            Cancelar
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            className="rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-white hover:opacity-95"
+                                                            onClick={() =>
+                                                                router.patch(`/interns/${intern.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true })
+                                                            }
+                                                        >
+                                                            Guardar
+                                                        </Button>
                                                     </div>
-                                                </div>
-                                            ) : (
-                                                <div className="p-6 rounded-2xl filter-panel min-h-[150px]">
-                                                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
-                                                        {intern.internal_notes || 'No se han registrado notas adicionales para este becario.'}
-                                                    </p>
-                                                    {(intern.notes_updated_by || intern.internal_notes_updated_at) && (
-                                                        <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+
+                                                    {(visibleNoteAuthor || visibleNoteDate) && (
+                                                        <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
                                                             <span className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Última edición</span>
                                                             <div className="flex items-center gap-2">
                                                                 <Avatar className="h-6 w-6">
-                                                                    <AvatarImage src={intern.notes_updated_by?.avatar} alt={intern.notes_updated_by?.name || ''} />
-                                                                    <AvatarFallback className="text-[10px] bg-slate-100 dark:bg-slate-700">
-                                                                        {intern.notes_updated_by?.name?.charAt(0) || 'S'}
+                                                                    <AvatarImage src={visibleNoteAuthor?.avatar} alt={visibleNoteAuthor?.name || ''} />
+                                                                    <AvatarFallback className="bg-slate-100 text-[10px] dark:bg-slate-700">
+                                                                        {visibleNoteAuthor?.name?.charAt(0) || 'S'}
                                                                     </AvatarFallback>
                                                                 </Avatar>
-                                                                <span className="text-[10px] font-bold text-slate-500">{intern.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(intern.internal_notes_updated_at)}</span>
+                                                                <span className="text-[10px] font-bold text-slate-500">
+                                                                    {visibleNoteAuthor?.name || 'Sistema'}
+                                                                    {visibleNoteDate ? ` · ${formatDateTimeEs(visibleNoteDate)}` : ''}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     )}
                                                 </div>
-                                            )}
+
+                                                {previousInternalNotes.length > 0 && (
+                                                    <div className="rounded-2xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900">
+                                                        <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                                            Historial de notas
+                                                        </p>
+                                                        <div className="space-y-3">
+                                                            {previousInternalNotes.map((note) => (
+                                                                <div
+                                                                    key={note.id}
+                                                                    className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 dark:border-slate-700 dark:bg-slate-800/70"
+                                                                >
+                                                                    <div className="mb-2 flex items-center justify-between gap-2">
+                                                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                                                            {note.user?.name || 'Sistema'}
+                                                                        </span>
+                                                                        <span className="text-[10px] font-medium text-slate-400">
+                                                                            {formatDateTimeEs(note.edited_at || note.created_at)}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                                                                        {note.content}
+                                                                    </p>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
 
-                                    <div className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} space-y-6`}>
+                                    <div className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} min-w-0 space-y-6`}>
                                         <h3 className="text-xl font-bold flex items-center gap-2 border-b border-slate-50 dark:border-slate-800 pb-4">
                                             <HistoryIcon className="h-5 w-5 text-slate-500" />
                                             Historial de Auditoría
@@ -544,6 +605,8 @@ export default function Show({
                                                         status: 'Estado',
                                                         progress: 'Progreso',
                                                         internal_notes: 'Notas internas',
+                                                        internal_notes_updated_at: 'Fecha de actualización de notas',
+                                                        internal_notes_updated_by: 'Actualizado por',
                                                         notes: 'Observaciones',
                                                         end_date: 'Fecha de finalización',
                                                         start_date: 'Fecha de inicio',
@@ -553,6 +616,7 @@ export default function Show({
                                                         academic_year: 'Curso académico',
                                                         education_center_id: 'Centro educativo',
                                                         company_tutor_user_id: 'Tutor de empresa',
+                                                        tutor_name: 'Tutor de empresa',
                                                         center_tutor_name: 'Tutor del centro',
                                                         center_tutor_email: 'Email tutor centro',
                                                         birth_date: 'Fecha de nacimiento',
@@ -642,7 +706,7 @@ export default function Show({
                                                                 </p>
 
                                                                 {/* Grid de cambios */}
-                                                                <div className="mt-3 grid grid-cols-1 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                                                                <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-2">
                                                                     {Object.keys(changes).map((field) => {
                                                                         if (['updated_at', 'id', 'created_at'].includes(field)) return null;
 
@@ -653,20 +717,20 @@ export default function Show({
                                                                         // Si es creación, no mostrar el valor antiguo
                                                                         if (activity.event === 'created') {
                                                                             return (
-                                                                                <div key={field} className="flex flex-col gap-0.5 border-l-2 border-emerald-500/20 pl-3 py-0.5">
+                                                                                <div key={field} className="flex min-w-0 flex-col gap-0.5 border-l-2 border-sidebar/40 py-0.5 pl-3">
                                                                                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</span>
-                                                                                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{newValue}</span>
+                                                                                    <span className="break-words text-xs font-bold text-slate-700 dark:text-slate-300">{newValue}</span>
                                                                                 </div>
                                                                             );
                                                                         }
 
                                                                         return (
-                                                                            <div key={field} className="flex flex-col gap-0.5 border-l-2 border-amber-500/20 pl-3 py-0.5">
+                                                                            <div key={field} className="flex min-w-0 flex-col gap-0.5 border-l-2 border-sidebar/40 py-0.5 pl-3">
                                                                                 <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</span>
                                                                                 <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                                                                                    <span className="line-through opacity-30 text-slate-500">{oldValue}</span>
+                                                                                    <span className="break-words line-through opacity-30 text-slate-500">{oldValue}</span>
                                                                                     <span className="text-primary/40 font-bold">→</span>
-                                                                                    <span className="font-bold text-sidebar dark:text-emerald-400">{newValue}</span>
+                                                                                    <span className="break-words font-bold text-sidebar dark:text-emerald-400">{newValue}</span>
                                                                                 </div>
                                                                             </div>
                                                                         );
@@ -683,11 +747,11 @@ export default function Show({
                                             {totalActivityPages > 1 && (
                                                 <div className="flex items-center justify-between border-t border-sidebar/20 pt-8 mt-8">
                                                     <Button
-                                                        variant="outline"
+                                                        variant="default"
                                                         size="sm"
                                                         disabled={activityPage === 1}
                                                         onClick={() => setActivityPage((p) => p - 1)}
-                                                        className="h-10 px-4 rounded-xl border-sidebar/30 hover:bg-white"
+                                                        className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
                                                     >
                                                         <ChevronLeft className="h-4 w-4 mr-2" />
                                                         Anterior
@@ -698,11 +762,11 @@ export default function Show({
                                                     </span>
 
                                                     <Button
-                                                        variant="outline"
+                                                        variant="default"
                                                         size="sm"
                                                         disabled={activityPage === totalActivityPages}
                                                         onClick={() => setActivityPage((p) => p + 1)}
-                                                        className="h-10 px-4 rounded-xl border-sidebar/30 hover:bg-white"
+                                                        className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
                                                     >
                                                         Siguiente
                                                         <ChevronRight className="h-4 w-4 ml-2" />

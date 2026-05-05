@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 
 type ScheduleItem = {
@@ -23,6 +24,7 @@ type ScheduleItem = {
 type CreateScheduleModalProps = {
     userId: number;
     schedule?: ScheduleItem;
+    createButtonClassName?: string;
 };
 
 const defaultScheduleData = (userId: number) => ({
@@ -59,7 +61,7 @@ const buildScheduleData = (userId: number, schedule?: ScheduleItem) => {
     };
 };
 
-export function CreateScheduleModal({ userId, schedule }: CreateScheduleModalProps) {
+export function CreateScheduleModal({ userId, schedule, createButtonClassName }: CreateScheduleModalProps) {
     const [open, setOpen] = useState(false);
     const isEditing = Boolean(schedule);
 
@@ -161,7 +163,7 @@ export function CreateScheduleModal({ userId, schedule }: CreateScheduleModalPro
                         <Pencil className="h-4 w-4" />
                     </Button>
                 ) : (
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className={cn(createButtonClassName)}>
                         <Plus className="h-4 w-4" />
                         Anadir horario
                     </Button>

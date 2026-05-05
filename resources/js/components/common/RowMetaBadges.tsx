@@ -27,7 +27,7 @@ export function RowMetaBadges({
             {note && (
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <span className="cursor-help rounded-full border border-border/80 bg-accent/60 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-foreground/70 uppercase">
+                        <span className="cursor-default rounded-full border border-border/80 bg-accent/60 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-foreground/70 uppercase">
                             {noteLabel}
                         </span>
                     </TooltipTrigger>
