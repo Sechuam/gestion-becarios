@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -88,60 +89,38 @@ export default function Show({
                 </div>
 
                 {/* HERO INTEGRADO CON GRADIENTE */}
-                <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-8">
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
-                    <div className="relative flex flex-wrap items-center gap-8">
-                        <Avatar className="h-20 w-20 shrink-0 rounded-2xl border-4 border-white/20 shadow-2xl">
-                            <AvatarImage src={intern.user.avatar} alt={intern.user.name} className="object-cover" />
-                            <AvatarFallback className="bg-white/10 text-white backdrop-blur-md">
-                                <User className="h-10 w-10" />
-                            </AvatarFallback>
-                        </Avatar>
-                        
-                        <div className="flex-1 space-y-2">
-                            <div className="flex flex-wrap items-center gap-4">
-                                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
-                                    {intern.user.name}
-                                </h1>
-                                <Badge variant="outline" className="bg-white/10 text-white/80 border-white/10 backdrop-blur-md rounded-lg h-6 text-[9px] uppercase font-black tracking-widest px-2">
-                                    Becario
-                                </Badge>
-                            </div>
-                            
-                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
-                                <div className="flex items-center gap-2">
-                                    <Mail className="h-4 w-4" />
-                                    <a href={`mailto:${intern.user.email}`} className="font-bold tracking-tight text-sm hover:text-white transition-colors">
-                                        {intern.user.email}
-                                    </a>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <GraduationCap className="h-4 w-4" />
-                                    <span className="font-bold tracking-tight text-xs uppercase">{intern.academic_degree}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-3 pt-2">
+                <ModuleHeader
+                    title={intern.user.name}
+                    description={`${intern.user.email} • ${intern.academic_degree || 'Sin titulación'}`}
+                    avatar={intern.user.avatar}
+                    metrics={[
+                        { label: 'Centro', value: intern.education_center?.name || 'Sin asignar' },
+                        { label: 'Estado', value: { active: 'Activo', completed: 'Finalizado', withdrawn: 'Baja/Abandono', pending: 'Pendiente' }[intern.status as string] || intern.status },
+                        { label: 'Horas', value: `${time_stats.total_done} / ${time_stats.target_total}h` },
+                        { label: 'Progreso', value: `${Math.round((time_stats.total_done / time_stats.target_total) * 100) || 0}%` },
+                    ]}
+                    actions={
+                        canManage ? (
                             <ConfirmNavigationButton
                                 href={`/interns/${intern.id}/edit`}
                                 title="Confirmar edición"
                                 description={`Vas a editar el perfil de ${intern.user.name}.`}
                                 confirmLabel="Ir a editar"
-                                className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-8 font-black shadow-lg transition-all"
+                                className="h-8 rounded-lg bg-white px-4 text-[10px] font-black uppercase tracking-widest text-sidebar shadow-lg hover:bg-white/90 border-none flex items-center"
                             >
-                                Editar perfil
+                                <Pencil className="h-3.5 w-3.5 mr-1.5" />
+                                Editar Perfil
                             </ConfirmNavigationButton>
-                        </div>
-                    </div>
-                </div>
+                        ) : undefined
+                    }
+                />
                 {/* TABS INTERFACE */}
                 {/* PANEL ÚNICO UNIFICADO */}
-                <Card className="app-panel rounded-[2rem] overflow-hidden border-sidebar/10 shadow-2xl">
+                <Card className="app-panel w-full overflow-hidden border-2 border-sidebar/15 shadow-2xl">
                     <Tabs defaultValue="resumen" className="w-full">
                         {/* NAVEGACIÓN INTEGRADA EN LA CABECERA DEL PANEL */}
-                        <div className="bg-slate-50/30 dark:bg-slate-800/20 border-b border-sidebar/20 px-6 pt-4">
-                            <TabsList className="flex bg-transparent h-auto p-0 gap-8 justify-start">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                            <TabsList className="h-auto md:h-12 w-full grid grid-cols-1 md:grid-cols-5 gap-2 bg-transparent p-0">
                                 {[
                                     { value: 'resumen', label: 'Resumen', icon: Clock },
                                     { value: 'personal', label: 'Información Personal', icon: User },
@@ -152,62 +131,52 @@ export default function Show({
                                     <TabsTrigger
                                         key={tab.value}
                                         value={tab.value}
-                                        className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-semibold text-slate-500 transition-all data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary dark:text-slate-400 dark:data-[state=active]:text-primary"
+                                        className="relative h-10 rounded-xl border-none bg-transparent px-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 shadow-none transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg w-full"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <tab.icon className="h-4 w-4" />
-                                            {tab.label}
+                                            <tab.icon className="h-4 w-4 shrink-0" />
+                                            <span className="truncate">{tab.label}</span>
                                         </div>
                                     </TabsTrigger>
                                 ))}
                             </TabsList>
                         </div>
 
-                        <CardContent className="p-8">
+                        <CardContent className="p-6">
                             {/* PESTAÑA RESUMEN UNIFICADA */}
                             <TabsContent value="resumen" className="mt-0 space-y-8 animate-in fade-in duration-500">
-                                {time_stats.is_non_compliant && (
-                                    <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-800 dark:bg-red-950/30 dark:text-red-400 rounded-2xl">
-                                        <AlertTriangle className="h-4 w-4" />
-                                        <AlertTitle className="font-bold text-sm">Incumplimiento de Horario</AlertTitle>
-                                        <AlertDescription className="text-xs">
-                                            Se ha detectado una deuda acumulada de <strong>{time_stats.debt} horas</strong>.
-                                        </AlertDescription>
-                                    </Alert>
-                                )}
-
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                     <div className="space-y-6">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-accent rounded-xl">
-                                                <Clock className="h-5 w-5 text-primary" />
+                                            <div className="p-2 bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-md shadow-sidebar/20 rounded-xl">
+                                                <Clock className="h-5 w-5 text-white" />
                                             </div>
                                             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Estado de Horas</h3>
                                         </div>
-                                        
+
                                         <div className="flex items-baseline gap-2">
                                             <span className={`text-5xl font-black tracking-tight ${time_stats.debt >= 8 ? 'text-rose-600' : 'text-slate-900 dark:text-white'}`}>
                                                 {time_stats.total_done}h
                                             </span>
                                             <span className="text-slate-400 font-medium">/ {time_stats.expected_hours}h esperadas</span>
                                         </div>
-                                        
-                                        <div className="flex items-center gap-4 filter-panel p-4 rounded-2xl">
-                                            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${time_stats.debt > 0 ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'}`}>
+
+                                        <div className="flex items-center gap-4 bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 rounded-2xl shadow-xl shadow-sidebar/10">
+                                            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${time_stats.debt > 0 ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
                                                 {time_stats.debt > 0 ? <AlertTriangle className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
                                             </div>
                                             <div>
-                                                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                                                <p className="text-sm font-bold text-white">
                                                     {time_stats.debt > 0 ? `Deuda de ${time_stats.debt} horas` : `Adelanto de ${Math.abs(time_stats.debt)} horas`}
                                                 </p>
-                                                <p className="text-xs text-slate-500">Balance comparativo respecto al horario asignado</p>
+                                                <p className="text-xs text-white/60">Balance comparativo respecto al horario asignado</p>
                                             </div>
                                         </div>
 
                                         {canViewReports && (
                                             <Button
-                                                variant="outline"
-                                                className="w-full py-6 text-primary border-primary/20 hover:bg-accent rounded-2xl font-bold transition-all"
+                                                variant="default"
+                                                className="w-full py-6 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white hover:opacity-95 rounded-2xl font-bold transition-all shadow-xl shadow-sidebar/10 border-none"
                                                 onClick={() => setIsExportModalOpen(true)}
                                             >
                                                 <Download className="h-4 w-4 mr-2" />
@@ -219,30 +188,30 @@ export default function Show({
                                     <div className="space-y-6">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl">
-                                                    <GraduationCap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                                                <div className="p-2 bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-md shadow-sidebar/20 rounded-xl">
+                                                    <GraduationCap className="h-5 w-5 text-white" />
                                                 </div>
                                                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Progreso Total</h3>
                                             </div>
-                                            <span className="text-2xl font-black text-emerald-600">{Math.round((time_stats.total_done / time_stats.target_total) * 100)}%</span>
+                                            <span className="text-2xl font-black text-sidebar">{Math.round((time_stats.total_done / time_stats.target_total) * 100)}%</span>
                                         </div>
 
                                         <Progress value={(time_stats.total_done / time_stats.target_total) * 100} className="h-3 bg-slate-100 dark:bg-slate-800 rounded-full" />
-                                        
+
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div className="p-5 rounded-2xl border border-sidebar/30 bg-white dark:bg-slate-900 shadow-sm">
-                                                <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Horas Fichadas</p>
-                                                <p className="text-2xl font-bold">{time_stats.worked_hours}h</p>
+                                            <div className="p-5 rounded-2xl bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10 border-none">
+                                                <p className="text-[10px] uppercase font-black text-white/60 tracking-widest mb-1">Horas Fichadas</p>
+                                                <p className="text-2xl font-bold text-white">{time_stats.worked_hours}h</p>
                                             </div>
-                                            <div className="p-5 rounded-2xl border border-sidebar/30 bg-white dark:bg-slate-900 shadow-sm">
-                                                <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Horas Justificadas</p>
-                                                <p className="text-2xl font-bold text-primary">{time_stats.justified_hours}h</p>
+                                            <div className="p-5 rounded-2xl bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10 border-none">
+                                                <p className="text-[10px] uppercase font-black text-white/60 tracking-widest mb-1">Horas Justificadas</p>
+                                                <p className="text-2xl font-bold text-white">{time_stats.justified_hours}h</p>
                                             </div>
                                         </div>
-                                        
-                                        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-sidebar/20 rounded-2xl flex items-center justify-between">
-                                            <p className="text-xs font-bold text-amber-800 dark:text-amber-200">Faltan por completar:</p>
-                                            <p className="text-lg font-black text-amber-700 dark:text-amber-400">{Math.max(0, time_stats.target_total - time_stats.total_done)}h</p>
+
+                                        <div className="p-4 bg-gradient-to-r from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10 rounded-2xl border-none flex items-center justify-between">
+                                            <p className="text-xs font-bold text-white/80">Faltan por completar:</p>
+                                            <p className="text-lg font-black text-white">{Number(Math.max(0, time_stats.target_total - time_stats.total_done).toFixed(1))}h</p>
                                         </div>
                                     </div>
                                 </div>
@@ -320,7 +289,7 @@ export default function Show({
                                                 Formación y Centro
                                             </h3>
                                         </div>
-                                        
+
                                         <div className="grid grid-cols-1 gap-8">
                                             <div className="space-y-2">
                                                 <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Centro Educativo</p>
@@ -330,7 +299,7 @@ export default function Show({
                                                     </Link>
                                                 ) : <p className="text-lg font-bold">Sin asignar</p>}
                                             </div>
-                                            
+
                                             <div className="space-y-2">
                                                 <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Grado o Titulación</p>
                                                 <p className="text-base font-bold text-slate-800 dark:text-slate-100">{intern.academic_degree}</p>
@@ -400,7 +369,7 @@ export default function Show({
                                             </h3>
                                             {canManage && <CreateScheduleModal userId={intern.user.id} />}
                                         </div>
-                                        
+
                                         <div className="space-y-4">
                                             {schedules.length > 0 ? (
                                                 schedules.map((schedule: any) => {
@@ -409,39 +378,40 @@ export default function Show({
                                                         (!schedule.end_date || schedule.end_date >= today);
 
                                                     return (
-                                                    <div key={schedule.id} className="p-6 rounded-2xl filter-panel">
-                                                        <div className="flex justify-between items-start mb-4">
-                                                            <div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{schedule.name}</h4>
-                                                                    {isActive && (
-                                                                        <Badge className="rounded-full bg-emerald-600 text-white hover:bg-emerald-600">
-                                                                            Activo
-                                                                        </Badge>
-                                                                    )}
-                                                                </div>
-                                                                <p className="text-[10px] font-bold text-slate-400 mt-0.5">Vigencia: {formatDateEs(schedule.start_date)} — {schedule.end_date ? formatDateEs(schedule.end_date) : 'Activo'}</p>
-                                                            </div>
-                                                            {canManage && (
-                                                                <CreateScheduleModal
-                                                                    userId={intern.user.id}
-                                                                    schedule={schedule}
-                                                                />
-                                                            )}
-                                                        </div>
-                                                        <div className="grid grid-cols-5 gap-2">
-                                                            {['L', 'M', 'X', 'J', 'V'].map((d, i) => {
-                                                                const h = [schedule.monday_hours, schedule.tuesday_hours, schedule.wednesday_hours, schedule.thursday_hours, schedule.friday_hours][i];
-                                                                return (
-                                                                    <div key={d} className="flex flex-col items-center p-2 rounded-xl bg-white dark:bg-slate-900 border border-sidebar/20 shadow-sm">
-                                                                        <span className="text-[10px] font-black text-slate-300 mb-1">{d}</span>
-                                                                        <span className="text-sm font-bold text-primary">{h}h</span>
+                                                        <div key={schedule.id} className="p-6 rounded-2xl filter-panel">
+                                                            <div className="flex justify-between items-start mb-4">
+                                                                <div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <h4 className="font-bold text-slate-800 dark:text-slate-100">{schedule.name}</h4>
+                                                                        {isActive && (
+                                                                            <Badge className="rounded-full bg-emerald-600 text-white hover:bg-emerald-600">
+                                                                                Activo
+                                                                            </Badge>
+                                                                        )}
                                                                     </div>
-                                                                );
-                                                            })}
+                                                                    <p className="text-[10px] font-bold text-slate-400 mt-0.5">Vigencia: {formatDateEs(schedule.start_date)} — {schedule.end_date ? formatDateEs(schedule.end_date) : 'Activo'}</p>
+                                                                </div>
+                                                                {canManage && (
+                                                                    <CreateScheduleModal
+                                                                        userId={intern.user.id}
+                                                                        schedule={schedule}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                            <div className="grid grid-cols-5 gap-2">
+                                                                {['L', 'M', 'X', 'J', 'V'].map((d, i) => {
+                                                                    const h = [schedule.monday_hours, schedule.tuesday_hours, schedule.wednesday_hours, schedule.thursday_hours, schedule.friday_hours][i];
+                                                                    return (
+                                                                        <div key={d} className="flex flex-col items-center p-2 rounded-xl bg-white dark:bg-slate-900 border border-sidebar/20 shadow-sm">
+                                                                            <span className="text-[10px] font-black text-slate-300 mb-1">{d}</span>
+                                                                            <span className="text-sm font-bold text-primary">{h}h</span>
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )})
+                                                    )
+                                                })
                                             ) : (
                                                 <div className="text-center py-12 bg-slate-50/30 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
                                                     <CalendarRange className="h-8 w-8 text-slate-300 mx-auto mb-2" />
@@ -456,16 +426,15 @@ export default function Show({
                                             <AlertTriangle className="h-5 w-5 text-amber-500" />
                                             Gestión de Ausencias
                                         </h3>
-                                        
+
                                         <div className="space-y-4">
                                             {absences?.length > 0 ? (
                                                 absences.map((abs: any) => (
                                                     <div key={abs.id} className="flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-slate-900 border border-sidebar/20 group hover:shadow-md transition-all">
                                                         <div className="flex items-center gap-4">
-                                                            <div className={`h-10 w-10 shrink-0 rounded-xl flex items-center justify-center ${
-                                                                abs.status === 'approved' ? 'bg-emerald-50 text-emerald-600' :
-                                                                abs.status === 'rejected' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'
-                                                            }`}>
+                                                            <div className={`h-10 w-10 shrink-0 rounded-xl flex items-center justify-center ${abs.status === 'approved' ? 'bg-emerald-50 text-emerald-600' :
+                                                                    abs.status === 'rejected' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'
+                                                                }`}>
                                                                 <FileText className="h-5 w-5" />
                                                             </div>
                                                             <div>
@@ -490,9 +459,8 @@ export default function Show({
                                                                     </Button>
                                                                 </div>
                                                             ) : (
-                                                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
-                                                                    abs.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-                                                                }`}>
+                                                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${abs.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                                                                    }`}>
                                                                     {abs.status === 'approved' ? 'Aprobada' : 'Denegada'}
                                                                 </span>
                                                             )}
@@ -564,13 +532,13 @@ export default function Show({
                                             <HistoryIcon className="h-5 w-5 text-slate-500" />
                                             Historial de Auditoría
                                         </h3>
-                                        
+
                                         <div className="relative pl-8 space-y-1 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100 dark:before:bg-slate-800">
                                             {displayedActivities.length > 0 ? (
                                                 displayedActivities.map((activity) => {
                                                     const changes = activity.properties?.attributes ?? {};
                                                     const old = activity.properties?.old ?? {};
-                                                    
+
                                                     // Mapa de traducciones completo
                                                     const labels: Record<string, string> = {
                                                         status: 'Estado',
@@ -598,7 +566,7 @@ export default function Show({
 
                                                     const formatValue = (field: string, value: any) => {
                                                         if (value === null || value === undefined || value === '') return '—';
-                                                        
+
                                                         // Formatear estados
                                                         if (field === 'status') {
                                                             const statusMap: Record<string, string> = {
@@ -677,7 +645,7 @@ export default function Show({
                                                                 <div className="mt-3 grid grid-cols-1 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
                                                                     {Object.keys(changes).map((field) => {
                                                                         if (['updated_at', 'id', 'created_at'].includes(field)) return null;
-                                                                        
+
                                                                         const label = labels[field] || field;
                                                                         const oldValue = formatValue(field, old[field]);
                                                                         const newValue = formatValue(field, changes[field]);
