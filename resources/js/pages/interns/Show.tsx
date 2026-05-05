@@ -116,7 +116,7 @@ export default function Show({
                 />
                 {/* TABS INTERFACE */}
                 {/* PANEL ÚNICO UNIFICADO */}
-                <Card className="app-panel w-full overflow-hidden border-2 border-sidebar/15 shadow-2xl">
+                <Card className="app-panel w-full overflow-hidden border-2 border-sidebar/15 pt-0 pb-0 shadow-2xl">
                     <Tabs defaultValue="resumen" className="w-full">
                         {/* NAVEGACIÓN INTEGRADA EN LA CABECERA DEL PANEL */}
                         <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">

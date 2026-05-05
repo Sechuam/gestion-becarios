@@ -262,11 +262,11 @@ export default function Show({
                 </div>
 
                 {/* PANEL ÚNICO UNIFICADO */}
-                <Card className="app-panel rounded-3xl overflow-hidden border-sidebar/10 shadow-2xl">
+                <Card className="app-panel rounded-3xl overflow-hidden border-sidebar/10 pt-0 pb-0 shadow-2xl">
                     <Tabs defaultValue="general" className="w-full">
                         {/* NAVEGACIÓN INTEGRADA */}
-                        <div className="bg-slate-50/30 dark:bg-slate-800/20 border-b border-sidebar/20 px-6 pt-4">
-                            <TabsList className="flex bg-transparent h-auto p-0 gap-8 justify-start">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                            <TabsList className="h-auto w-full grid grid-cols-1 gap-2 bg-transparent p-0 md:h-12 md:grid-cols-3">
                                 {[
                                     { value: 'general', label: 'Información General', icon: Info },
                                     { value: 'becarios', label: `Becarios (${interns.total})`, icon: Users },
@@ -275,11 +275,11 @@ export default function Show({
                                     <TabsTrigger
                                         key={tab.value}
                                         value={tab.value}
-                                        className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-semibold text-slate-500 transition-all data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary dark:text-slate-400 dark:data-[state=active]:text-primary"
+                                        className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 shadow-none transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg"
                                     >
                                         <div className="flex items-center gap-2">
                                             <tab.icon className="h-4 w-4" />
-                                            {tab.label}
+                                            <span className="truncate">{tab.label}</span>
                                         </div>
                                     </TabsTrigger>
                                 ))}
