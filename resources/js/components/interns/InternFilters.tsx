@@ -36,44 +36,30 @@ export function InternFilters({
 }: InternFiltersProps) {
     return (
         <div className="space-y-2">
-            <div className="rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60 transition-all">
-                {/* Fila 1: Búsqueda y Acciones Extra (Exportar) */}
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <div className="relative max-w-sm min-w-[240px] flex-1">
-                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                <div className="flex flex-wrap items-center gap-2">
+                    <div className="relative w-full flex-none sm:w-64">
+                        <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar becario..."
-                            className="h-8 border-sidebar/20 bg-slate-50/50 pl-10 text-xs text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus:ring-sidebar/20"
+                            className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
                             value={filters.search || ''}
                             onChange={(e) => handleFilterInternal('search', e.target.value)}
                         />
                     </div>
 
-                    {children}
-
-                    <div className="ml-auto text-[9px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-3 py-1 rounded-full dark:bg-slate-800 flex items-center gap-1.5 border border-sidebar/5 shadow-inner">
-                        <span className="flex h-1.5 w-1.5 rounded-full bg-sidebar animate-pulse" />
-                        {internsCount} / {totalInterns} becarios
-                    </div>
-                </div>
-
-                {/* Fila 2: Filtros de centro, estado, vista y fechas */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap items-end gap-2">
-                    <div className="space-y-1 lg:min-w-[180px]">
-                        <label className="text-[9px] font-black tracking-widest text-[#1f4f52]/70 uppercase ml-0.5">
-                            Centro
-                        </label>
+                    <div className="min-w-[150px] flex-1">
                         <Select
                             value={filters.center || 'all'}
                             onValueChange={(v) => onFilterChange('center', v)}
                         >
-                            <SelectTrigger className="h-8 border-sidebar/20 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
                                 <SelectValue>
                                     {filters.center && filters.center !== 'all'
                                         ? education_centers.find(
                                               (c) => c.id.toString() === filters.center?.toString(),
                                           )?.name
-                                        : 'Todos'}
+                                        : 'Centro'}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
@@ -87,21 +73,18 @@ export function InternFilters({
                         </Select>
                     </div>
 
-                    <div className="space-y-1 lg:min-w-[120px]">
-                        <label className="text-[9px] font-black tracking-widest text-[#1f4f52]/70 uppercase ml-0.5">
-                            Estado
-                        </label>
+                    <div className="min-w-[120px] flex-1">
                         <Select
                             value={filters.status || 'all'}
                             onValueChange={(v) => onFilterChange('status', v)}
                         >
-                            <SelectTrigger className="h-8 border-sidebar/20 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
                                 <SelectValue>
                                     {{
                                         active: 'Activos',
                                         completed: 'Completados',
                                         abandoned: 'Abandonados',
-                                    }[filters.status as string] || 'Todos'}
+                                    }[filters.status as string] || 'Estado'}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
@@ -113,21 +96,18 @@ export function InternFilters({
                         </Select>
                     </div>
 
-                    <div className="space-y-1 lg:min-w-[120px]">
-                        <label className="text-[9px] font-black tracking-widest text-[#1f4f52]/70 uppercase ml-0.5">
-                            Vista
-                        </label>
+                    <div className="min-w-[120px] flex-1">
                         <Select
                             value={filters.trashed || 'none'}
                             onValueChange={(v) => onFilterChange('trashed', v)}
                         >
-                            <SelectTrigger className="h-8 border-sidebar/20 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
                                 <SelectValue>
                                     {{
                                         none: 'Solo Activos',
                                         only: 'Archivados',
                                         with: 'Ver Todos',
-                                    }[filters.trashed as string] || 'Solo Activos'}
+                                    }[filters.trashed as string] || 'Vista'}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
@@ -138,26 +118,31 @@ export function InternFilters({
                         </Select>
                     </div>
 
-                    <div className="space-y-1 lg:min-w-[110px]">
-                        <label className="text-[9px] font-black tracking-widest text-[#1f4f52]/70 uppercase ml-0.5">
-                            Desde
-                        </label>
+                    <div className="min-w-[120px] flex-1">
                         <DatePicker
                             value={filters.start_from || ''}
                             onChange={(value) => onFilterChange('start_from', value)}
-                            className="h-8 border-sidebar/20 bg-card text-[11px] text-foreground rounded-lg shadow-sm"
+                            className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm"
+                            placeholder="Desde..."
                         />
                     </div>
 
-                    <div className="space-y-1 lg:min-w-[110px]">
-                        <label className="text-[9px] font-black tracking-widest text-[#1f4f52]/70 uppercase ml-0.5">
-                            Hasta
-                        </label>
+                    <div className="min-w-[120px] flex-1">
                         <DatePicker
                             value={filters.start_to || ''}
                             onChange={(value) => onFilterChange('start_to', value)}
-                            className="h-8 border-sidebar/20 bg-card text-[11px] text-foreground rounded-lg shadow-sm"
+                            className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm"
+                            placeholder="Hasta..."
                         />
+                    </div>
+
+                    {children}
+
+                    <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
+                        <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                        <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                            {internsCount} / {totalInterns}
+                        </span>
                     </div>
                 </div>
             </div>

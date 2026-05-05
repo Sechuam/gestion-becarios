@@ -35,10 +35,9 @@ export function InternExportDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
                 <Button
-                    variant="outline"
-                    className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                    className="h-8 gap-2 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-[10px] font-black uppercase tracking-widest text-white shadow-sm hover:opacity-95"
                 >
-                    <FileDown className="h-4 w-4" />
+                    <FileDown className="h-3.5 w-3.5" />
                     Exportar Excel
                 </Button>
             </DialogTrigger>

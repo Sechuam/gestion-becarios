@@ -374,21 +374,21 @@ export default function Show({
                             {/* PESTAÑA BECARIOS */}
                             <TabsContent value="becarios" className="mt-0 space-y-8 animate-in fade-in duration-500">
                                 {/* BARRA DE HERRAMIENTAS DE BECARIOS */}
-                                <div className="mb-8 flex flex-col justify-between gap-6 rounded-3xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-6 shadow-xl shadow-sidebar/10 md:flex-row md:items-center">
-                                    <div className="flex flex-1 items-center gap-4">
-                                        <div className="relative w-full max-w-md">
-                                            <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-white/60" />
+                                <div className="mb-8 rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <div className="relative w-full flex-none sm:w-64">
+                                            <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                                             <Input
                                                 placeholder="Buscar por nombre o DNI..."
-                                                className="h-12 rounded-2xl border border-white/20 bg-white/10 pl-11 font-medium text-white placeholder:text-white/60 shadow-sm transition-all focus:ring-2 focus:ring-white/25"
+                                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
                                                 defaultValue={filters?.search}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: e.target.value, status: filters?.status, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
                                             />
                                         </div>
 
-                                        <div className="flex items-center gap-2">
+                                        <div className="min-w-[150px] flex-1">
                                             <select
-                                                className="h-12 rounded-2xl border border-white/20 bg-white/10 px-4 text-sm font-bold text-white shadow-sm focus:ring-2 focus:ring-white/25"
+                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:bg-slate-50"
                                                 value={filters?.status ?? ''}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: e.target.value || undefined, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
                                             >
@@ -398,8 +398,11 @@ export default function Show({
                                                 <option value="abandoned">Abandonados</option>
                                             </select>
 
+                                        </div>
+
+                                        <div className="min-w-[150px] flex-1">
                                             <select
-                                                className="h-12 rounded-2xl border border-white/20 bg-white/10 px-4 text-sm font-bold text-white shadow-sm focus:ring-2 focus:ring-white/25"
+                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:bg-slate-50"
                                                 value={filters?.order ?? 'az'}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: filters?.status, order: e.target.value }, { preserveState: true, preserveScroll: true, replace: true })}
                                             >
@@ -408,44 +411,51 @@ export default function Show({
                                                 <option value="recent">Nuevos primero</option>
                                             </select>
                                         </div>
-                                    </div>
 
-                                    {canExport && (
+                                        {canExport && (
                                             <Dialog open={exportOpen} onOpenChange={setExportOpen}>
                                                 <DialogTrigger asChild>
-                                                <Button className="flex h-12 items-center gap-2 rounded-2xl bg-white px-6 text-sidebar shadow-lg shadow-sidebar/20 hover:bg-white/90">
-                                                    <FileDown className="h-4 w-4" />
-                                                    Exportar Excel
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-xl rounded-3xl border-none p-8">
-                                                <DialogHeader>
-                                                    <DialogTitle className="text-xl font-bold">Personalizar Exportación</DialogTitle>
-                                                    <DialogDescription className="text-slate-500 py-2">
-                                                        Selecciona los campos que deseas incluir en el informe de {interns.total} alumnos.
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="grid grid-cols-2 gap-3 py-6">
-                                                    {exportColumns.map((column) => (
-                                                        <label key={column.key} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
-                                                            <Checkbox
-                                                                checked={selectedColumns.includes(column.key)}
-                                                                onCheckedChange={(checked) => {
-                                                                    if (checked) setSelectedColumns([...selectedColumns, column.key]);
-                                                                    else setSelectedColumns(selectedColumns.filter(c => c !== column.key));
-                                                                }}
-                                                            />
-                                                            <span className="text-sm font-medium">{column.label}</span>
-                                                        </label>
-                                                    ))}
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button variant="outline" className="rounded-xl px-6" onClick={() => setExportOpen(false)}>Cerrar</Button>
-                                                    <Button className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-700" onClick={handleExport}>Descargar Listado</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
-                                    )}
+                                                    <Button className="h-8 flex-1 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-[10px] font-black uppercase tracking-widest text-white shadow-sm sm:flex-none">
+                                                        <FileDown className="mr-1.5 h-3.5 w-3.5" />
+                                                        Exportar Excel
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="max-w-xl rounded-3xl border-none p-8">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="text-xl font-bold">Personalizar Exportación</DialogTitle>
+                                                        <DialogDescription className="text-slate-500 py-2">
+                                                            Selecciona los campos que deseas incluir en el informe de {interns.total} alumnos.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="grid grid-cols-2 gap-3 py-6">
+                                                        {exportColumns.map((column) => (
+                                                            <label key={column.key} className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 p-3 transition-colors hover:bg-slate-50">
+                                                                <Checkbox
+                                                                    checked={selectedColumns.includes(column.key)}
+                                                                    onCheckedChange={(checked) => {
+                                                                        if (checked) setSelectedColumns([...selectedColumns, column.key]);
+                                                                        else setSelectedColumns(selectedColumns.filter(c => c !== column.key));
+                                                                    }}
+                                                                />
+                                                                <span className="text-sm font-medium">{column.label}</span>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    <DialogFooter>
+                                                        <Button variant="outline" className="rounded-xl px-6" onClick={() => setExportOpen(false)}>Cerrar</Button>
+                                                        <Button className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-700" onClick={handleExport}>Descargar Listado</Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        )}
+
+                                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
+                                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                                            <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                                                {interns.data.length} / {interns.total}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* LISTADO DE BECARIOS (TABLA INTEGRADA) */}
