@@ -7,9 +7,6 @@ export function NotificationBell() {
     const { auth } = usePage().props as any;
     const notifications = auth?.user?.unreadNotifications || [];
 
-    const canManage = auth?.user?.permissions?.includes('manage interns');
-    if (!canManage) return null;
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

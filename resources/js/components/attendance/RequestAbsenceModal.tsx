@@ -4,6 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { CalendarClock } from 'lucide-react';
 
 export function RequestAbsenceModal() {
     const [open, setOpen] = useState(false);
@@ -29,9 +31,10 @@ export function RequestAbsenceModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="text-amber-600 border-amber-200 hover:bg-amber-50 mx-4">
-                    📅 Registrar Ausencia / Día libre
-                </Button>
+                <HeaderActionButton 
+                    label="Registrar Ausencia"
+                    icon={<CalendarClock className="h-4 w-4 mr-1.5 text-amber-600" />}
+                />
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

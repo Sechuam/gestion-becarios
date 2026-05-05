@@ -11,6 +11,7 @@ import {
     Pencil,
 } from 'lucide-react';
 import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -128,11 +129,17 @@ export default function KanbanTaskCard({
         <div
             ref={setNodeRef}
             style={style}
-            className={`task-surface-soft group rounded-xl border border-border p-4 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
+            className={`relative task-surface-soft group rounded-xl border border-border p-4 pl-5 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
                 } ${onOpenDetails ? 'cursor-pointer' : ''} ${highlightMove ? 'task-card-drop-highlight' : ''
                 }`}
             onClick={() => onOpenDetails?.(task)}
         >
+            {task.practice_type?.color && (
+                <div 
+                    className="absolute left-0 top-4 bottom-4 w-1 rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"
+                    style={{ backgroundColor: task.practice_type.color }}
+                />
+            )}
             <div className="mb-3 flex items-start justify-between gap-3">
                 <div className="min-w-0 space-y-1">
                     {onOpenDetails ? (
@@ -177,31 +184,70 @@ export default function KanbanTaskCard({
                 )}
             </div>
 
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Badge
-                    variant="outline"
-                    className={getTaskStatusTone(task.status)}
-                >
-                    {getTaskStatusLabel(task.status)}
-                </Badge>
-                <Badge
-                    variant="outline"
-                    className={getTaskPriorityTone(task.priority)}
-                >
-                    {getTaskPriorityLabel(task.priority)}
-                </Badge>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Badge variant="outline" className={dueBadge.className}>
-                            {dueBadge.label}
-                        </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        {task.due_date
-                            ? `Entrega: ${formatDateEs(task.due_date)}`
-                            : 'Sin fecha de entrega'}
-                    </TooltipContent>
-                </Tooltip>
+            <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                {/* Estado */}
+                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
+                        'bg-slate-300': task.status === 'pending',
+                        'bg-blue-400': task.status === 'in_progress',
+                        'bg-violet-400': task.status === 'in_review',
+                        'bg-emerald-500': task.status === 'completed',
+                        'bg-rose-500': task.status === 'rejected',
+                    })} />
+                    <span className="text-[10px] uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                </div>
+
+                {/* Prioridad */}
+                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
+                        'bg-rose-500': task.priority === 'high',
+                        'bg-amber-400': task.priority === 'medium',
+                        'bg-emerald-400': task.priority === 'low',
+                    })} />
+                    <span className="text-[10px] uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                </div>
+
+                {/* Entrega */}
+                {task.due_date && (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80 cursor-default">
+                                {(() => {
+                                    const dStatus = dueStatus(task.due_date);
+                                    const isCompleted = task.status === 'completed';
+                                    const isLate = isCompleted && task.completed_at && task.due_date &&
+                                                   new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
+
+                                    const dotClass = isCompleted
+                                        ? (isLate ? 'bg-orange-500' : 'bg-emerald-500')
+                                        : dStatus === 'overdue'
+                                            ? 'bg-rose-500'
+                                            : dStatus === 'soon'
+                                                ? 'bg-amber-400'
+                                                : 'bg-sidebar/20';
+
+                                    const smartLabel = isCompleted
+                                        ? (isLate ? 'Tarde' : 'Completada')
+                                        : dStatus === 'overdue'
+                                            ? 'No entregada'
+                                            : dStatus === 'soon'
+                                                ? 'Pronto'
+                                                : formatDateEs(task.due_date);
+
+                                    return (
+                                        <>
+                                            <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", dotClass)} />
+                                            <span className="text-[10px] uppercase tracking-wider">{smartLabel}</span>
+                                        </>
+                                    );
+                                })()}
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="rounded-xl border-sidebar/20 font-medium">
+                            Fecha límite: {formatDateEs(task.due_date)}
+                        </TooltipContent>
+                    </Tooltip>
+                )}
             </div>
 
             <div className="mb-3 flex items-center justify-between gap-3">
@@ -274,7 +320,7 @@ export default function KanbanTaskCard({
                     completeStatuses.includes(String(task.status)) && (
                         <Button
                             size="sm"
-                            className="h-8 w-full gap-1.5 px-3"
+                            className="h-8 w-full gap-1.5 px-3 bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white hover:opacity-95 border-0 shadow-sm"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();

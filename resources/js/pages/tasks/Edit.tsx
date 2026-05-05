@@ -76,23 +76,23 @@ export default function Edit({
             <Head title="Editar tarea" />
 
             <div className="page-surface">
-                <div className="mb-8 flex flex-col gap-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                <div className="mb-4 flex flex-col gap-1">
+                    <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                         Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Tarea</span>
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
+                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
                         Actualizando {task.title}
                     </p>
                 </div>
 
-                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-8 md:p-12">
-                    <form onSubmit={submit} className="space-y-12" noValidate>
-                        <div className="space-y-8">
+                <div className="app-panel rounded-[1.5rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-4 md:p-6">
+                    <form onSubmit={submit} className="space-y-6" noValidate>
+                        <div className="space-y-6">
                             <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
                                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">01</span>
                                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Detalles de la Actividad</h3>
                             </div>
-                            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="title">Título</Label>
                                     <Input
@@ -101,7 +101,7 @@ export default function Edit({
                                         onChange={(e) =>
                                             setData('title', e.target.value)
                                         }
-                                        className="border-border bg-background text-foreground"
+                                        className="border-border bg-card text-foreground"
                                     />
                                     {errors.title && (
                                         <p className="text-xs text-red-500">
@@ -118,7 +118,7 @@ export default function Edit({
                                             setData('practice_type_id', v)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue placeholder="Seleccionar tipo" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -148,7 +148,7 @@ export default function Edit({
                                     onChange={(e) =>
                                         setData('description', e.target.value)
                                     }
-                                    className="min-h-[120px] w-full rounded-2xl border border-sidebar/10 bg-slate-50/50 dark:bg-slate-950/30 px-4 py-3 text-sm text-foreground shadow-sm outline-none focus-visible:border-sidebar focus-visible:ring-4 focus-visible:ring-sidebar/10 transition-all font-medium"
+                                    className="min-h-[120px] w-full rounded-2xl border border-sidebar/10 bg-card px-4 py-3 text-sm text-foreground shadow-sm outline-none focus-visible:border-sidebar focus-visible:ring-4 focus-visible:ring-sidebar/10 transition-all font-medium"
                                 />
                             </div>
                         </div>
@@ -165,7 +165,7 @@ export default function Edit({
                                         value={data.status}
                                         onValueChange={(v) => setData('status', v)}
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -187,7 +187,7 @@ export default function Edit({
                                         value={data.priority}
                                         onValueChange={(v) => setData('priority', v)}
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-border bg-card text-foreground">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>

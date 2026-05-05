@@ -1,18 +1,18 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { 
-    Search, 
-    FileDown, 
-    ArrowLeft, 
-    School, 
-    Users, 
-    History as HistoryIcon, 
-    HardDrive, 
-    Calendar, 
-    MapPin, 
-    Mail, 
-    Phone, 
-    Globe, 
-    FileText, 
+import {
+    Search,
+    FileDown,
+    ArrowLeft,
+    School,
+    Users,
+    History as HistoryIcon,
+    HardDrive,
+    Calendar,
+    MapPin,
+    Mail,
+    Phone,
+    Globe,
+    FileText,
     Download,
     GraduationCap,
     Clock,
@@ -23,6 +23,7 @@ import {
     Hash,
     ExternalLink
 } from 'lucide-react';
+import { Pagination } from '@/components/common/Pagination';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
@@ -74,10 +75,17 @@ export default function Show({
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage schools');
     const canExport = auth.user?.permissions?.includes('manage interns');
+    const canViewNotes = auth.user?.permissions?.includes('view internal notes') || canManage;
     const [exportOpen, setExportOpen] = useState(false);
-    const [editingNotes, setEditingNotes] = useState(false);
     const [notesValue, setNotesValue] = useState(
         educationCenter.internal_notes || '',
+    );
+    const [activityPage, setActivityPage] = useState(1);
+    const activitiesPerPage = 3;
+    const totalActivityPages = Math.ceil(activities.length / activitiesPerPage);
+    const displayedActivities = activities.slice(
+        (activityPage - 1) * activitiesPerPage,
+        activityPage * activitiesPerPage,
     );
     const lastEmptyKeyRef = useRef<string>('');
 
@@ -172,12 +180,12 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Centro: ${educationCenter.name}`} />
 
-            <div className="w-full space-y-6 bg-slate-50/50 p-6 dark:bg-slate-950/20 min-h-screen">
+            <div className="space-y-6">
                 {/* CABECERA DE ACCIÓN RÁPIDA */}
                 <div className="flex items-center justify-between px-2">
                     <Button
-                        variant="ghost"
-                        className="text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                        variant="default"
+                        className="bg-gradient-to-r from-sidebar to-[#1f4f52] text-white hover:opacity-95 shadow-sm rounded-xl font-bold uppercase tracking-widest text-[10px] border-0"
                         asChild
                     >
                         <Link href="/centros">
@@ -187,13 +195,13 @@ export default function Show({
                 </div>
 
                 {/* HERO INTEGRADO CON GRADIENTE */}
-                <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative flex flex-wrap items-center gap-8">
                         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/10 border-4 border-white/20 shadow-2xl backdrop-blur-md">
                             <School className="h-10 w-10 text-white" />
                         </div>
-                        
+
                         <div className="flex-1 space-y-2">
                             <div className="flex flex-wrap items-center gap-4">
                                 <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
@@ -205,7 +213,7 @@ export default function Show({
                                     </Badge>
                                 )}
                             </div>
-                            
+
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
                                 <div className="flex items-center gap-2">
                                     <MapPin className="h-4 w-4" />
@@ -260,11 +268,11 @@ export default function Show({
                 </div>
 
                 {/* PANEL ÚNICO UNIFICADO */}
-                <Card className="app-panel rounded-[2rem] overflow-hidden border-sidebar/10 shadow-2xl">
+                <Card className="app-panel rounded-3xl overflow-hidden border-sidebar/10 pt-0 pb-0 shadow-2xl">
                     <Tabs defaultValue="general" className="w-full">
                         {/* NAVEGACIÓN INTEGRADA */}
-                        <div className="bg-slate-50/30 dark:bg-slate-800/20 border-b border-sidebar/20 px-6 pt-4">
-                            <TabsList className="flex bg-transparent h-auto p-0 gap-8 justify-start">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                            <TabsList className="h-auto w-full grid grid-cols-1 gap-2 bg-transparent p-0 md:h-12 md:grid-cols-3">
                                 {[
                                     { value: 'general', label: 'Información General', icon: Info },
                                     { value: 'becarios', label: `Becarios (${interns.total})`, icon: Users },
@@ -273,11 +281,11 @@ export default function Show({
                                     <TabsTrigger
                                         key={tab.value}
                                         value={tab.value}
-                                        className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-semibold text-slate-500 transition-all data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary dark:text-slate-400 dark:data-[state=active]:text-primary"
+                                        className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 shadow-none transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg"
                                     >
                                         <div className="flex items-center gap-2">
                                             <tab.icon className="h-4 w-4" />
-                                            {tab.label}
+                                            <span className="truncate">{tab.label}</span>
                                         </div>
                                     </TabsTrigger>
                                 ))}
@@ -328,32 +336,32 @@ export default function Show({
                                     </div>
 
                                     <div className="md:col-span-4 translate-y-[-10px]">
-                                        <div className="filter-panel p-6 space-y-4">
-                                            <h4 className="text-xs font-black uppercase text-slate-500 flex items-center gap-2 mb-4">
+                                        <div className="space-y-4 rounded-3xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-6 shadow-xl shadow-sidebar/10">
+                                            <h4 className="mb-4 flex items-center gap-2 text-xs font-black uppercase text-white/75">
                                                 <FileText className="h-3 w-3" /> Convenio de Prácticas
                                             </h4>
 
                                             <div className="space-y-4">
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-medium text-indigo-600/70">Fecha Firma</span>
-                                                    <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100">{formatDateEs(educationCenter.agreement_signed_at)}</span>
+                                                    <span className="text-xs font-medium text-white/70">Fecha Firma</span>
+                                                    <span className="text-sm font-bold text-white">{formatDateEs(educationCenter.agreement_signed_at)}</span>
                                                 </div>
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-medium text-indigo-600/70">Vencimiento</span>
-                                                    <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100">{formatDateEs(educationCenter.agreement_expires_at)}</span>
+                                                    <span className="text-xs font-medium text-white/70">Vencimiento</span>
+                                                    <span className="text-sm font-bold text-white">{formatDateEs(educationCenter.agreement_expires_at)}</span>
                                                 </div>
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-medium text-primary/70">Plazas Máximas</span>
-                                                    <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100">{educationCenter.agreement_slots ?? 'Ilimitadas'}</span>
+                                                    <span className="text-xs font-medium text-white/70">Plazas Máximas</span>
+                                                    <span className="text-sm font-bold text-white">{educationCenter.agreement_slots ?? 'Ilimitadas'}</span>
                                                 </div>
                                             </div>
 
                                             {agreement_url && (
                                                 <div className="pt-2 grid grid-cols-2 gap-3">
-                                                    <Button variant="outline" size="sm" className="rounded-xl border-primary/20 bg-white text-primary hover:bg-accent" asChild>
+                                                    <Button variant="outline" size="sm" className="rounded-xl border-white/25 bg-white/10 text-white hover:bg-white/20" asChild>
                                                         <a href={agreement_url} target="_blank">Ver</a>
                                                     </Button>
-                                                    <Button size="sm" className="rounded-xl bg-primary hover:opacity-90 text-white" asChild>
+                                                    <Button size="sm" className="rounded-xl bg-white text-sidebar hover:bg-white/90" asChild>
                                                         <a href={agreement_url} download>Descargar</a>
                                                     </Button>
                                                 </div>
@@ -366,21 +374,21 @@ export default function Show({
                             {/* PESTAÑA BECARIOS */}
                             <TabsContent value="becarios" className="mt-0 space-y-8 animate-in fade-in duration-500">
                                 {/* BARRA DE HERRAMIENTAS DE BECARIOS */}
-                                <div className="filter-panel flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 p-6 rounded-3xl">
-                                    <div className="flex flex-1 items-center gap-4">
-                                        <div className="relative w-full max-w-md">
-                                            <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <div className="mb-8 rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <div className="relative w-full flex-none sm:w-64">
+                                            <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                                             <Input
                                                 placeholder="Buscar por nombre o DNI..."
-                                                className="h-12 border border-sidebar/40 bg-white dark:bg-slate-900 pl-11 rounded-2xl shadow-sm focus:ring-2 focus:ring-primary transition-all font-medium"
+                                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
                                                 defaultValue={filters?.search}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: e.target.value, status: filters?.status, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
                                             />
                                         </div>
-                                        
-                                        <div className="flex items-center gap-2">
+
+                                        <div className="min-w-[150px] flex-1">
                                             <select
-                                                className="h-12 rounded-2xl border border-sidebar/40 bg-white dark:bg-slate-900 px-4 text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm focus:ring-2 focus:ring-primary"
+                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:bg-slate-50"
                                                 value={filters?.status ?? ''}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: e.target.value || undefined, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
                                             >
@@ -390,8 +398,11 @@ export default function Show({
                                                 <option value="abandoned">Abandonados</option>
                                             </select>
 
+                                        </div>
+
+                                        <div className="min-w-[150px] flex-1">
                                             <select
-                                                className="h-12 rounded-2xl border border-sidebar/40 bg-white dark:bg-slate-900 px-4 text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm focus:ring-2 focus:ring-primary"
+                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:bg-slate-50"
                                                 value={filters?.order ?? 'az'}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: filters?.status, order: e.target.value }, { preserveState: true, preserveScroll: true, replace: true })}
                                             >
@@ -400,91 +411,98 @@ export default function Show({
                                                 <option value="recent">Nuevos primero</option>
                                             </select>
                                         </div>
-                                    </div>
 
-                                    {canExport && (
-                                        <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-                                            <DialogTrigger asChild>
-                                                <Button className="h-12 px-6 rounded-2xl bg-sidebar hover:bg-sidebar/90 text-sidebar-foreground flex items-center gap-2 shadow-lg shadow-sidebar/20">
-                                                    <FileDown className="h-4 w-4" />
-                                                    Exportar Excel
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-xl rounded-3xl border-none p-8">
-                                                <DialogHeader>
-                                                    <DialogTitle className="text-xl font-bold">Personalizar Exportación</DialogTitle>
-                                                    <DialogDescription className="text-slate-500 py-2">
-                                                        Selecciona los campos que deseas incluir en el informe de {interns.total} alumnos.
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="grid grid-cols-2 gap-3 py-6">
-                                                    {exportColumns.map((column) => (
-                                                        <label key={column.key} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
-                                                            <Checkbox
-                                                                checked={selectedColumns.includes(column.key)}
-                                                                onCheckedChange={(checked) => {
-                                                                    if (checked) setSelectedColumns([...selectedColumns, column.key]);
-                                                                    else setSelectedColumns(selectedColumns.filter(c => c !== column.key));
-                                                                }}
-                                                            />
-                                                            <span className="text-sm font-medium">{column.label}</span>
-                                                        </label>
-                                                    ))}
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button variant="outline" className="rounded-xl px-6" onClick={() => setExportOpen(false)}>Cerrar</Button>
-                                                    <Button className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-700" onClick={handleExport}>Descargar Listado</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
-                                    )}
+                                        {canExport && (
+                                            <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button className="h-8 flex-1 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-[10px] font-black uppercase tracking-widest text-white shadow-sm sm:flex-none">
+                                                        <FileDown className="mr-1.5 h-3.5 w-3.5" />
+                                                        Exportar Excel
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="max-w-xl rounded-3xl border-none p-8">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="text-xl font-bold">Personalizar Exportación</DialogTitle>
+                                                        <DialogDescription className="text-slate-500 py-2">
+                                                            Selecciona los campos que deseas incluir en el informe de {interns.total} alumnos.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="grid grid-cols-2 gap-3 py-6">
+                                                        {exportColumns.map((column) => (
+                                                            <label key={column.key} className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 p-3 transition-colors hover:bg-slate-50">
+                                                                <Checkbox
+                                                                    checked={selectedColumns.includes(column.key)}
+                                                                    onCheckedChange={(checked) => {
+                                                                        if (checked) setSelectedColumns([...selectedColumns, column.key]);
+                                                                        else setSelectedColumns(selectedColumns.filter(c => c !== column.key));
+                                                                    }}
+                                                                />
+                                                                <span className="text-sm font-medium">{column.label}</span>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    <DialogFooter>
+                                                        <Button variant="outline" className="rounded-xl px-6" onClick={() => setExportOpen(false)}>Cerrar</Button>
+                                                        <Button className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-700" onClick={handleExport}>Descargar Listado</Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        )}
+
+                                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
+                                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                                            <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                                                {interns.data.length} / {interns.total}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* LISTADO DE BECARIOS (TABLA INTEGRADA) */}
-                                <div className="w-full overflow-hidden rounded-3xl border border-sidebar/30 bg-white dark:bg-slate-900 shadow-sm">
+                                <div className="w-full overflow-hidden rounded-3xl border border-sidebar/30 bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10">
                                     <div className="w-full overflow-x-auto">
                                         <table className="w-full text-left text-sm border-collapse">
                                             <thead>
-                                                <tr className="border-b border-sidebar/20 bg-slate-50/50 dark:bg-slate-800/50">
-                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400">Alumno</th>
-                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400">Titulación</th>
-                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400">Estado</th>
-                                                    <th className="px-6 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400 text-right">Acción</th>
+                                                <tr className="border-b border-white/15 bg-white/10">
+                                                    <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-white/70">Alumno</th>
+                                                    <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-white/70">Titulación</th>
+                                                    <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-white/70">Estado</th>
+                                                    <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-white/70">Acción</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-sidebar/10">
+                                            <tbody className="divide-y divide-white/10">
                                                 {interns.data.length > 0 ? (
                                                     interns.data.map((intern: any) => (
-                                                        <tr key={intern.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                                        <tr key={intern.id} className="transition-colors hover:bg-white/5">
                                                             <td className="px-6 py-4">
                                                                 <div className="flex items-center gap-3">
-                                                                    <Avatar className="h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+                                                                    <Avatar className="h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-xl bg-white/15">
                                                                         <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
-                                                                        <AvatarFallback className="font-bold text-slate-500 bg-transparent">
+                                                                        <AvatarFallback className="bg-transparent font-bold text-white">
                                                                             {intern.user?.name ? intern.user.name.substring(0, 2).toUpperCase() : 'BE'}
                                                                         </AvatarFallback>
                                                                     </Avatar>
                                                                     <div className="flex flex-col">
                                                                         {!isIntern ? (
-                                                                            <Link href={`/becarios/${intern.id}`} className="font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 transition-colors">
+                                                                            <Link href={`/becarios/${intern.id}`} className="font-bold text-white transition-colors hover:text-white/80">
                                                                                 {intern.user.name}
                                                                             </Link>
                                                                         ) : (
-                                                                            <span className="font-bold text-slate-800 dark:text-slate-100">{intern.user.name}</span>
+                                                                            <span className="font-bold text-white">{intern.user.name}</span>
                                                                         )}
-                                                                        <span className="text-[10px] text-slate-400 font-bold uppercase">{intern.dni}</span>
+                                                                        <span className="text-[10px] font-bold uppercase text-white/60">{intern.dni}</span>
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                <span className="font-medium text-slate-600 dark:text-slate-400">{intern.academic_degree}</span>
+                                                                <span className="font-medium text-white/85">{intern.academic_degree}</span>
                                                             </td>
                                                             <td className="px-6 py-4">
                                                                 <StatusBadge status={intern.status} />
                                                             </td>
                                                             <td className="px-6 py-4 text-right">
                                                                 {!isIntern && (
-                                                                    <Button variant="ghost" size="sm" className="rounded-xl font-bold text-primary hover:bg-white hover:shadow-sm" asChild>
+                                                                    <Button variant="ghost" size="sm" className="rounded-xl border border-white/20 bg-white text-sidebar hover:bg-white/90 hover:shadow-sm" asChild>
                                                                         <Link href={`/becarios/${intern.id}`}>Ver Perfil</Link>
                                                                     </Button>
                                                                 )}
@@ -495,8 +513,8 @@ export default function Show({
                                                     <tr>
                                                         <td colSpan={4} className="px-6 py-20 text-center">
                                                             <div className="flex flex-col items-center">
-                                                                <Users className="h-10 w-10 text-slate-200 mb-4" />
-                                                                <p className="text-slate-400 font-medium">No se encontraron becarios con estos filtros.</p>
+                                                                <Users className="mb-4 h-10 w-10 text-white/35" />
+                                                                <p className="font-medium text-white/70">No se encontraron becarios con estos filtros.</p>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -504,91 +522,105 @@ export default function Show({
                                             </tbody>
                                         </table>
                                     </div>
-                                    
+
                                     {/* PAGINACIÓN INTEGRADA */}
-                                    <div className="bg-slate-50/30 dark:bg-slate-800/20 px-6 py-4 border-t border-sidebar/20 flex items-center justify-between">
-                                        <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">
+                                    <div className="flex items-center justify-between border-t border-white/15 bg-white/10 px-6 py-4">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                                             Mostrando {interns.from || 0} a {interns.to || 0} de {interns.total} alumnos
                                         </p>
-                                        <div className="flex gap-1">
-                                            {interns.links.map((link: any, i: number) => (
-                                                <Button
-                                                    key={i}
-                                                    variant={link.active ? 'secondary' : 'ghost'}
-                                                    size="sm"
-                                                    className={`h-8 min-w-[32px] rounded-lg border text-xs font-bold ${link.active ? 'border-sidebar bg-sidebar text-sidebar-foreground shadow-sm' : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'} ${!link.url ? 'opacity-45 pointer-events-none' : ''}`}
-                                                    asChild={!!link.url}
-                                                    disabled={!link.url}
-                                                >
-                                                    {link.url ? (
-                                                        <Link href={link.url} preserveState preserveScroll dangerouslySetInnerHTML={{ __html: link.label }} />
-                                                    ) : <span dangerouslySetInnerHTML={{ __html: link.label }} />}
-                                                </Button>
-                                            ))}
-                                        </div>
+                                        <Pagination links={interns.links} />
                                     </div>
                                 </div>
                             </TabsContent>
 
                             {/* PESTAÑA SEGUIMIENTO */}
                             <TabsContent value="seguimiento" className="mt-0 animate-in fade-in duration-500">
-                                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-                                    <div className="md:col-span-12 items-center mb-8 pb-4 border-b border-slate-50 dark:border-slate-800 flex justify-between tracking-tight">
+                                <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
+                                    <div className="md:col-span-12 flex items-center justify-between border-b border-slate-50 pb-3 tracking-tight dark:border-slate-800">
                                         <h3 className="text-xl font-bold flex items-center gap-2">
                                             <HistoryIcon className="h-5 w-5 text-slate-500" />
                                             Historial y Notas de Auditoría
                                         </h3>
                                     </div>
 
-                                    <div className="md:col-span-5 space-y-6">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Notas del Centro</h4>
-                                            {canManage && !editingNotes && (
-                                                <Button variant="ghost" size="sm" className="h-8 rounded-lg text-indigo-600" onClick={() => setEditingNotes(true)}>Editar Notas</Button>
-                                            )}
-                                        </div>
+                                    {canViewNotes && (
+                                        <div className="md:col-span-5 space-y-6">
+                                            <div className="space-y-4">
+                                                <div className="rounded-2xl border border-sidebar/15 bg-white p-5 shadow-sm dark:bg-slate-900">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Notas del centro</p>
+                                                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                                        Escribe aquí observaciones internas sobre este centro educativo y guarda cuando quieras.
+                                                    </p>
+                                                    <textarea
+                                                        value={notesValue}
+                                                        onChange={(e) => setNotesValue(e.target.value)}
+                                                        className="mt-4 min-h-[220px] w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-700 outline-none transition-all focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-800"
+                                                        placeholder="Añade observaciones internas sobre este centro..."
+                                                    />
+                                                    <div className="mt-4 flex justify-end gap-2">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="rounded-xl px-6"
+                                                            onClick={() => setNotesValue(educationCenter.internal_notes || '')}
+                                                        >
+                                                            Cancelar
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            className="rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-white hover:opacity-95"
+                                                            onClick={() =>
+                                                                router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true })
+                                                            }
+                                                        >
+                                                            Guardar
+                                                        </Button>
+                                                    </div>
 
-                                        {editingNotes ? (
-                                            <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                                                <textarea
-                                                    value={notesValue}
-                                                    onChange={(e) => setNotesValue(e.target.value)}
-                                                    className="min-h-[250px] w-full rounded-3xl border-slate-100 bg-slate-50 dark:bg-slate-800 px-6 py-5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all shadow-inner"
-                                                    placeholder="Añade observaciones internas sobre este centro..."
-                                                />
-                                                <div className="flex gap-2">
-                                                    <Button size="sm" className="rounded-xl px-8 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90" onClick={() => router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true, onSuccess: () => setEditingNotes(false) })}>Guardar</Button>
-                                                    <Button size="sm" variant="outline" className="rounded-xl px-8" onClick={() => { setNotesValue(educationCenter.internal_notes || ''); setEditingNotes(false); }}>Cancelar</Button>
+                                                    {(educationCenter.notes_updated_by || educationCenter.internal_notes_updated_at) && (
+                                                        <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+                                                            <span className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Última edición</span>
+                                                            <span className="text-[10px] font-bold text-slate-500">
+                                                                {educationCenter.notes_updated_by?.name || 'Sistema'}
+                                                                {educationCenter.internal_notes_updated_at ? ` · ${formatDateTimeEs(educationCenter.internal_notes_updated_at)}` : ''}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                        ) : (
-                                            <div className="p-8 rounded-3xl filter-panel min-h-[200px] relative">
-                                                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
-                                                    {educationCenter.internal_notes || 'No hay notas redactadas para este centro educativo.'}
-                                                </p>
-                                                {(educationCenter.notes_updated_by || educationCenter.internal_notes_updated_at) && (
-                                                    <div className="mt-12 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between opacity-40">
-                                                        <span className="text-[10px] font-black uppercase tracking-tighter">Editado por</span>
-                                                        <span className="text-[10px] font-black tracking-tighter uppercase">{educationCenter.notes_updated_by?.name || 'Sistema'} · {formatDateTimeEs(educationCenter.internal_notes_updated_at)}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
 
-                                    <div className="md:col-span-7 space-y-8 pl-8 relative before:absolute before:left-0 before:top-4 before:bottom-0 before:w-px before:bg-slate-100 dark:before:bg-slate-800">
-                                        <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-8 font-black">Actividad Reciente</h4>
+                                    <div className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} relative min-w-0 space-y-6 pl-8 before:absolute before:bottom-0 before:left-0 before:top-4 before:w-px before:bg-slate-100 dark:before:bg-slate-800`}>
+                                        <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-slate-400">Actividad Reciente</h4>
                                         <div className="space-y-10">
-                                            {activities.length > 0 ? (
-                                                activities.map((activity) => {
+                                            {displayedActivities.length > 0 ? (
+                                                displayedActivities.map((activity) => {
                                                     const changes = activity.properties?.attributes ?? {};
                                                     const old = activity.properties?.old ?? {};
                                                     const labels: Record<string, string> = {
                                                         name: 'Nombre', code: 'Código', address: 'Dirección', city: 'Ciudad',
                                                         contact_person: 'Contacto', contact_email: 'Email centro', phone: 'Teléfono',
-                                                        web: 'Web', agreement_signed_at: 'Firma', agreement_expires_at: 'Vencimiento'
+                                                        web: 'Web', agreement_signed_at: 'Firma', agreement_expires_at: 'Vencimiento',
+                                                        internal_notes: 'Notas internas',
+                                                        internal_notes_updated_at: 'Fecha de actualización de notas',
+                                                        internal_notes_updated_by: 'Actualizado por',
                                                     };
-                                                    
+
+                                                    const formatValue = (field: string, value: any) => {
+                                                        if (value === null || value === undefined || value === '') return '—';
+
+                                                        if (field.endsWith('_at') || field.endsWith('_date')) {
+                                                            try {
+                                                                return formatDateEs(value);
+                                                            } catch (e) {
+                                                                return value;
+                                                            }
+                                                        }
+
+                                                        return String(value);
+                                                    };
+
                                                     const visibleFields = Object.keys(changes).filter(k => k in labels && old[k] !== changes[k]);
 
                                                     return (
@@ -600,16 +632,16 @@ export default function Show({
                                                                     {activity.event === 'updated' ? 'Actualización de ficha' : 'Registro creado'}
                                                                 </p>
                                                                 <p className="text-xs text-slate-500 mt-0.5">Realizado por <span className="font-bold text-slate-700 dark:text-slate-300">{activity.causer_name || 'Sistema'}</span></p>
-                                                                
+
                                                                 {visibleFields.length > 0 && (
                                                                     <div className="mt-4 space-y-2 p-4 rounded-2xl border border-sidebar/20 bg-white dark:bg-slate-900">
                                                                         {visibleFields.map(field => (
                                                                             <div key={field} className="text-[11px] grid grid-cols-12 gap-2">
                                                                                 <span className="col-span-4 text-slate-500 font-bold">{labels[field]}:</span>
                                                                                 <div className="col-span-8">
-                                                                                    <span className="line-through opacity-30 italic">{String(old[field]) || '—'}</span>
+                                                                                    <span className="line-through opacity-30 italic">{formatValue(field, old[field])}</span>
                                                                                     <span className="mx-2 text-primary/40">→</span>
-                                                                                    <span className="font-bold text-primary">{String(changes[field]) || '—'}</span>
+                                                                                    <span className="font-bold text-primary">{formatValue(field, changes[field])}</span>
                                                                                 </div>
                                                                             </div>
                                                                         ))}
@@ -623,6 +655,36 @@ export default function Show({
                                                 <p className="text-sm text-slate-400 italic py-4">Aún no hay actividad registrada para este centro.</p>
                                             )}
                                         </div>
+
+                                        {totalActivityPages > 1 && (
+                                            <div className="mt-8 flex items-center justify-between border-t border-sidebar/20 pt-8">
+                                                <Button
+                                                    variant="default"
+                                                    size="sm"
+                                                    disabled={activityPage === 1}
+                                                    onClick={() => setActivityPage((p) => p - 1)}
+                                                    className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
+                                                >
+                                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                                    Anterior
+                                                </Button>
+
+                                                <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                                                    Página {activityPage} de {totalActivityPages}
+                                                </span>
+
+                                                <Button
+                                                    variant="default"
+                                                    size="sm"
+                                                    disabled={activityPage === totalActivityPages}
+                                                    onClick={() => setActivityPage((p) => p + 1)}
+                                                    className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
+                                                >
+                                                    Siguiente
+                                                    <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </TabsContent>

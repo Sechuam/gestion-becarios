@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -304,13 +306,10 @@ export default function My({
                         },
                     ]}
                     actions={
-                        <Button
-                            className="gap-2 bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
-                            onClick={() => router.get('/tareas/create')}
-                        >
-                            <Plus className="h-4 w-4" />
-                            Nueva tarea
-                        </Button>
+                        <HeaderActionButton 
+                            label="Nueva tarea"
+                            href="/tareas/create"
+                        />
                     }
                 />
 
@@ -380,24 +379,7 @@ export default function My({
                         <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
                             Página {interns.current_page} de {interns.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {interns.links.map((link, i) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all ${link.active
-                                        ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
-                                        : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                        } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente'),
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <Pagination links={interns.links} />
                     </div>
                 </div>
 

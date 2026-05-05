@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { Pagination } from '@/components/common/Pagination';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -255,7 +256,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Tutores" />
 
-            <div className="space-y-6">
+            <div className="space-y-3">
                 <ModuleHeader
                     title="Módulo de Tutores"
                     description="Consulta los tutores de empresa, su carga de becarios y la actividad reciente que generan en el sistema."
@@ -263,29 +264,29 @@ export default function Index({
                     metrics={headerMetrics}
                 />
 
-                <div className="rounded-[2.5rem] border border-sidebar/10 bg-white p-8 shadow-2xl dark:bg-slate-900/60 overflow-hidden">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/50 p-6 rounded-[2rem] border border-sidebar/10 dark:bg-slate-800/50">
-                        <div className="relative min-w-[300px] flex-1">
-                            <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-sidebar/40" />
+                <div className="rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60 overflow-hidden">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/50 p-2 rounded-lg border border-sidebar/10 dark:bg-slate-800/50">
+                        <div className="relative min-w-[240px] flex-1">
+                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-sidebar/40" />
                             <Input
-                                placeholder="Buscar por nombre, email o cargo..."
-                                className="h-12 border-sidebar/20 bg-white pl-12 text-foreground placeholder:text-muted-foreground rounded-2xl shadow-sm focus-visible:ring-sidebar transition-all"
+                                placeholder="Buscar tutor..."
+                                className="h-8 border-sidebar/20 bg-white pl-10 text-xs text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus-visible:ring-sidebar transition-all"
                                 defaultValue={filters.search}
                                 onChange={(e) => handleFilter('search', e.target.value)}
                             />
                         </div>
 
-                        <div className="flex items-center gap-4">
-                             <p className="text-sm font-black text-sidebar uppercase tracking-widest bg-sidebar/5 px-4 py-2 rounded-xl border border-sidebar/10">
-                                {tutors.total} Tutores Registrados
+                        <div className="flex items-center gap-2">
+                             <p className="text-[9px] font-black text-sidebar uppercase tracking-widest bg-sidebar/5 px-3 py-1.5 rounded-lg border border-sidebar/10">
+                                {tutors.total} Tutores
                             </p>
                         </div>
                     </div>
 
-                    <div className="mt-6 flex flex-wrap items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                        <span className="flex items-center gap-1.5"><div className="h-1.5 w-1.5 rounded-full bg-sidebar" /> Filtro por Nombre</span>
-                        <span className="flex items-center gap-1.5"><div className="h-1.5 w-1.5 rounded-full bg-sidebar" /> Filtro por Email</span>
-                        <span className="flex items-center gap-1.5 ml-auto text-sidebar/60 italic font-medium lowercase">Mostrando {tutors.data.length} resultados en esta página</span>
+                    <div className="mt-3 flex flex-wrap items-center gap-3 text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">
+                        <span className="flex items-center gap-1.5"><div className="h-1 w-1 rounded-full bg-sidebar" /> Nombre</span>
+                        <span className="flex items-center gap-1.5"><div className="h-1 w-1 rounded-full bg-sidebar" /> Email</span>
+                        <span className="flex items-center gap-1.5 ml-auto text-sidebar/60 italic font-medium lowercase">Mostrando {tutors.data.length} resultados</span>
                     </div>
                 </div>
 
@@ -295,7 +296,7 @@ export default function Index({
                     onClearAll={clearAllFilters}
                 />
 
-                <div className="rounded-[2.5rem] border border-sidebar/10 bg-white shadow-xl dark:bg-slate-900/60 overflow-hidden">
+                <div className="rounded-xl border border-sidebar/10 bg-white shadow-lg dark:bg-slate-900/60 overflow-hidden">
                     <SimpleTable
                         columns={columns}
                         rows={tutors.data}
@@ -307,29 +308,12 @@ export default function Index({
                     />
                 </div>
 
-                <div className="mt-6 w-full">
+                <div className="mt-4 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
                             Página {tutors.current_page} de {tutors.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {tutors.links.map((link, i) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all ${link.active
-                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
-                                            : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                        } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente'),
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <Pagination links={tutors.links} />
                     </div>
                 </div>
             </div>

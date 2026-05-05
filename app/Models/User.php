@@ -94,6 +94,11 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasMany(TimeLog::class);
     }
 
+    public function evaluationsGiven(): HasMany
+    {
+        return $this->hasMany(Evaluation::class, 'evaluator_user_id');
+    }
+
 
     public function assignedInterns(): HasMany
     {

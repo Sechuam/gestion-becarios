@@ -2,7 +2,10 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Pencil, Plus, Shapes, Search } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import DeletePracticeTypeModal from '@/components/practice-types/DeletePracticeTypeModal';
+import { TableActionMenu } from '@/components/common/TableActionMenu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,6 +16,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
@@ -61,72 +65,92 @@ export default function Index({ practice_types, filters = {} }: Props) {
             sortKey: 'name',
         },
         { key: 'description', label: 'Descripción', sortKey: 'description' },
-        { key: 'priority', label: 'Prioridad', sortKey: 'priority' },
+        { 
+            key: 'priority', 
+            label: 'Prioridad', 
+            sortKey: 'priority',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
+            render: (row: any) => (
+                <div className="flex justify-center">
+                    <span className="inline-block w-20 text-center text-[10px] font-black uppercase tracking-widest text-white bg-gradient-to-r from-sidebar to-[#1f4f52] py-1 rounded-lg shadow-md border border-white/10">
+                        {row.priority || '—'}
+                    </span>
+                </div>
+            )
+        },
         {
             key: 'color',
-            label: 'Color',
+            label: 'Identificador',
             sortKey: 'color',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
             render: (row: any) =>
                 row.color ? (
-                    <span className="inline-flex items-center gap-2">
-                        <span
-                            className="h-3 w-3 rounded-full border"
-                            style={{ backgroundColor: row.color }}
-                            title={row.color}
+                    <div className="flex items-center justify-center gap-2">
+                        <div
+                            className="h-4 w-4 rounded-full border-2 border-white shadow-sm transition-transform hover:scale-110"
+                            style={{ 
+                                backgroundColor: row.color,
+                                boxShadow: `0 0 10px ${row.color}50`
+                            }}
+                            title={`Color identificativo: ${row.color}`}
                         />
-                        <span className="text-xs text-muted-foreground">
-                            {row.color}
-                        </span>
-                    </span>
+                    </div>
                 ) : (
-                    '—'
+                    <span className="text-slate-300">—</span>
                 ),
         },
         {
             key: 'is_active',
             label: 'Estado',
             sortKey: 'is_active',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
             render: (row: any) => (
-                <span
-                    className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
-                        row.is_active
-                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                            : 'border-slate-200 bg-slate-100 text-slate-600'
-                    }`}
-                >
-                    {row.is_active ? 'Activo' : 'Inactivo'}
-                </span>
+                <div className="flex justify-center">
+                    <span
+                        className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest w-24 shadow-sm transition-all ${
+                            row.is_active
+                                ? 'bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-md border border-white/10'
+                                : 'bg-white text-sidebar border border-sidebar/20'
+                        }`}
+                    >
+                        {row.is_active ? 'Activo' : 'Inactivo'}
+                    </span>
+                </div>
             ),
         },
         {
             key: 'actions',
             label: 'Acciones',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
             render: (row: any) => (
-                <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-amber-50 hover:text-amber-600"
-                        asChild
-                    >
-                        <Link href={`/tipos-practica/${row.id}/edit`}>
-                            <div className="flex items-center">
-                                <Pencil className="mr-1.5 h-4 w-4 text-amber-500/70" />{' '}
-                                Editar
-                            </div>
-                        </Link>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-border bg-card font-medium text-muted-foreground shadow-none hover:bg-blue-50 hover:text-blue-600"
-                        onClick={() =>
-                            router.patch(`/tipos-practica/${row.id}/toggle`)
-                        }
-                    >
-                        {row.is_active ? 'Desactivar' : 'Activar'}
-                    </Button>
-                    <DeletePracticeTypeModal practiceType={row} />
+                <div className="flex justify-center">
+                    <TableActionMenu
+                        actions={[
+                            {
+                                label: 'Editar',
+                                icon: 'edit',
+                                href: `/tipos-practica/${row.id}/edit`,
+                            },
+                            {
+                                label: row.is_active ? 'Desactivar' : 'Activar',
+                                onClick: () => router.patch(`/tipos-practica/${row.id}/toggle`),
+                            },
+                            {
+                                label: 'Eliminar',
+                                icon: 'delete',
+                                variant: 'destructive',
+                                onClick: () => {
+                                    if (confirm(`¿Seguro que quieres eliminar "${row.name}"?`)) {
+                                        router.delete(`/tipos-practica/${row.id}`);
+                                    }
+                                }
+                            }
+                        ]}
+                    />
                 </div>
             ),
         },
@@ -143,95 +167,76 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     icon={<Shapes className="h-6 w-6" />}
                     actions={
                         isAdmin ? (
-                            <Button
-                                className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-8 font-black shadow-lg transition-all pt-2 h-12"
-                                onClick={() => router.get('/tipos-practica/create')}
-                            >
-                                <Plus className="mr-2 h-5 w-5" />
-                                Nuevo tipo
-                            </Button>
+                            <HeaderActionButton 
+                                label="Nuevo tipo"
+                                href="/tipos-practica/create"
+                            />
                         ) : undefined
                     }
                 />
 
-                <div className="flex flex-wrap items-center gap-4 rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
-                    <div className="relative w-full max-w-sm">
-                        <Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                            placeholder="Buscar por nombre..."
-                            className="border-sidebar/20 bg-card pl-10 h-12 text-foreground placeholder:text-muted-foreground rounded-2xl shadow-sm"
-                            defaultValue={filters.search}
-                            onChange={(e) =>
-                                handleFilter('search', e.target.value)
-                            }
-                        />
-                    </div>
+                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg dark:bg-slate-900/60 transition-all">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="relative flex-1">
+                            <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                                placeholder="Buscar por nombre..."
+                                className="h-8 border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus:ring-sidebar/20 w-full"
+                                defaultValue={filters.search}
+                                onChange={(e) =>
+                                    handleFilter('search', e.target.value)
+                                }
+                            />
+                        </div>
 
-                    <div className="w-56">
-                        <Select
-                            value={filters.status || 'all'}
-                            onValueChange={(v) => handleFilter('status', v)}
-                        >
-                            <SelectTrigger className="w-full h-12 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm">
-                                <SelectValue>
-                                    {{
-                                        active: 'Activos',
-                                        inactive: 'Inactivos',
-                                    }[filters.status as string] || 'Todos'}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent className="rounded-2xl border-sidebar/20">
-                                <SelectItem value="all">Todos</SelectItem>
-                                <SelectItem value="active">Activos</SelectItem>
-                                <SelectItem value="inactive">
-                                    Inactivos
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                        <div className="flex-1">
+                            <Select
+                                value={filters.status || 'all'}
+                                onValueChange={(v) => handleFilter('status', v)}
+                            >
+                                <SelectTrigger className="h-8 w-full border-sidebar/10 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                                    <SelectValue>
+                                        {{
+                                            active: 'Activos',
+                                            inactive: 'Inactivos',
+                                        }[filters.status as string] || 'Todos'}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent className="rounded-lg border-sidebar/20">
+                                    <SelectItem value="all">Todos</SelectItem>
+                                    <SelectItem value="active">Activos</SelectItem>
+                                    <SelectItem value="inactive">
+                                        Inactivos
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <p className="ml-auto text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-3 py-1 rounded-full dark:bg-slate-800">
-                        Mostrando {practice_types.data.length} de{' '}
-                        {practice_types.total} tipos
-                    </p>
+                        <div className="flex-none flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg dark:bg-slate-800 border border-sidebar/5 h-8">
+                            <span className="flex h-1 w-1 rounded-full bg-sidebar animate-pulse" />
+                            <span className="text-[10px] font-bold text-muted-foreground tabular-nums whitespace-nowrap uppercase tracking-widest">
+                                {practice_types.data.length} / {practice_types.total} TIPOS
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="rounded-[2.5rem] border border-sidebar/10 bg-white shadow-xl dark:bg-slate-900/60 overflow-hidden">
-                    <SimpleTable
-                        columns={columns}
-                        rows={practice_types.data}
-                        rowKey={(row) => row.id}
-                        sortKey={filters.sort}
-                        sortDirection={filters.direction}
-                        onSort={handleSort}
-                        striped={true}
-                    />
-                </div>
+                <SimpleTable
+                    columns={columns}
+                    rows={practice_types.data}
+                    rowKey={(row) => row.id}
+                    sortKey={filters.sort}
+                    sortDirection={filters.direction}
+                    onSort={handleSort}
+                    striped={true}
+                />
 
                 <div className="mt-6 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
                             Página {practice_types.current_page} de {practice_types.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {practice_types.links.map((link: any, i: number) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all ${
-                                        link.active
-                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
-                                            : 'border-border/90 bg-white text-foreground hover:border-sidebar/40 hover:bg-slate-50'
-                                    } ${!link.url ? 'pointer-events-none opacity-45' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente'),
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <Pagination links={practice_types.links} />
                     </div>
                 </div>
             </div>

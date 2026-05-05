@@ -41,15 +41,17 @@ export function SimpleTable<T>({
     striped = false,
 }: SimpleTableProps<T>) {
     return (
-        <div className="app-panel w-full overflow-hidden">
+        <div className="app-panel w-full overflow-hidden border-2 border-sidebar/15 shadow-xl">
             <div className="w-full overflow-x-auto">
                 <Table className="w-full min-w-[900px] text-left text-sm">
                     <TableHeader>
-                        <TableRow className="border-b border-sidebar/70 bg-sidebar text-sidebar-foreground hover:bg-sidebar">
+                        <TableRow 
+                            className="border-b-2 border-white/20 bg-gradient-to-r from-sidebar to-[#1f4f52] text-sidebar-foreground hover:opacity-100"
+                        >
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.label}
-                                    className={`px-4 py-4 text-left font-semibold text-sidebar-foreground ${col.headClassName ?? ''}`}
+                                    className={`px-3 py-2 text-left font-black uppercase tracking-widest text-[10px] text-sidebar-foreground ${col.headClassName ?? ''}`}
                                 >
                                     {col.sortKey && onSort ? (
                                         <button
@@ -57,17 +59,17 @@ export function SimpleTable<T>({
                                             onClick={() =>
                                                 onSort(col.sortKey as string)
                                             }
-                                            className="inline-flex items-center gap-1 text-sidebar-foreground/95 hover:text-sidebar-foreground"
+                                            className="inline-flex items-center gap-1 text-sidebar-foreground/95 hover:text-sidebar-foreground uppercase font-black tracking-widest"
                                         >
                                             <span>{col.label}</span>
                                             {sortKey === col.sortKey ? (
                                                 sortDirection === 'desc' ? (
-                                                    <ChevronDown className="h-4 w-4 text-sidebar-foreground" />
+                                                    <ChevronDown className="h-3 w-3 text-sidebar-foreground" />
                                                 ) : (
-                                                    <ChevronUp className="h-4 w-4 text-sidebar-foreground" />
+                                                    <ChevronUp className="h-3 w-3 text-sidebar-foreground" />
                                                 )
                                             ) : (
-                                                <ArrowUpDown className="h-4 w-4 text-sidebar-foreground/60" />
+                                                <ArrowUpDown className="h-3 w-3 text-sidebar-foreground/60" />
                                             )}
                                         </button>
                                     ) : (
@@ -82,7 +84,7 @@ export function SimpleTable<T>({
                             rows.map((row, index) => (
                                 <TableRow
                                     key={rowKey(row)}
-                                    className={`border-b border-sidebar/10 transition-colors hover:bg-muted/35 dark:border-slate-800/50 ${
+                                    className={`border-b border-sidebar/10 transition-colors hover:bg-muted/35 ${
                                         striped && index % 2 !== 0
                                             ? 'bg-sidebar/5 dark:bg-sidebar/10'
                                             : ''

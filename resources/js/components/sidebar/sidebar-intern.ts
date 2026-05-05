@@ -19,20 +19,9 @@ export function getInternSidebar(): SidebarSection[] {
                     icon: LayoutGrid,
                 },
                 {
-                    title: 'Mi área',
-                    href: '#',
-                    icon: UserCircle,
-                    isActive: false,
-                    items: [
-                        {
-                            title: 'Mi perfil',
-                            href: '/mi-perfil',
-                        },
-                        {
-                            title: 'Mi centro',
-                            href: '/mi-centro',
-                        },
-                    ],
+                    title: 'Mi centro',
+                    href: '/mi-centro',
+                    icon: Building2,
                 },
                 {
                     title: 'Seguimiento académico',

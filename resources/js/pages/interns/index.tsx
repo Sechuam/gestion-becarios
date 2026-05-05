@@ -6,6 +6,8 @@ import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
+import { Pagination } from '@/components/common/Pagination';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -218,9 +220,12 @@ export default function Index({
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col gap-1">
-                            <span className="font-semibold text-foreground">
+                            <Link
+                                href={`/interns/${intern.id}`}
+                                className="font-semibold text-foreground hover:text-sidebar hover:underline transition-colors"
+                            >
                                 {intern.user?.name}
-                            </span>
+                            </Link>
                             <span className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                                 {intern.user?.email ? (
                                     <a
@@ -468,7 +473,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestión de Becarios" />
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
                 <ModuleHeader
                     title="Gestión de Becarios"
                     description="Administra los becarios, sus centros y estados de prácticas con una vista rápida de carga y seguimiento."
@@ -476,13 +481,10 @@ export default function Index({
                     metrics={headerMetrics}
                     actions={
                         canManage ? (
-                            <Button
-                                className="gap-2 bg-sidebar/80 text-white border-2 border-white/20 hover:bg-white/10 hover:border-white/40 rounded-2xl px-8 font-black shadow-xl backdrop-blur-md transition-all h-12 pt-1"
-                                onClick={() => router.get('/interns/create')}
-                            >
-                                <Plus className="h-5 w-5" />
-                                Añadir Becario
-                            </Button>
+                            <HeaderActionButton 
+                                label="Añadir Becario"
+                                href="/interns/create"
+                            />
                         ) : undefined
                     }
                 />
@@ -522,30 +524,12 @@ export default function Index({
                 />
 
                 {/* PAGINACIÓN */}
-                <div className="mt-6 w-full">
+                <div className="mt-4 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
                             Página {interns.current_page} de {interns.last_page}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {interns.links.map((link: any, i: number) => (
-                                <Link
-                                    key={i}
-                                    href={link.url ?? '#'}
-                                    preserveState
-                                    className={`rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${
-                                        link.active
-                                            ? 'scale-105 transform border-sidebar bg-sidebar text-sidebar-foreground shadow-md'
-                                            : 'border-border bg-card text-muted-foreground hover:border-sidebar/40 hover:bg-muted'
-                                    } ${!link.url ? 'pointer-events-none opacity-30' : ''}`}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label
-                                            .replace('Previous', 'Anterior')
-                                            .replace('Next', 'Siguiente'),
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <Pagination links={interns.links} />
                     </div>
                 </div>
             </div>

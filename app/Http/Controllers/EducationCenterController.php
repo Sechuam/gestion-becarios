@@ -113,7 +113,9 @@ class EducationCenterController extends Controller
         $currentIntern = $isIntern
         ? $user->intern()->with('companyTutor')->first()
         : null;
-        $school = EducationCenter::withTrashed()->findOrFail($school);
+        $school = EducationCenter::withTrashed()
+            ->with('notesUpdatedBy')
+            ->findOrFail($school);
         $internsQuery = $school->interns()
             ->join('users', 'users.id', '=', 'interns.user_id')
             ->with('user')
@@ -146,6 +148,19 @@ class EducationCenterController extends Controller
             'filters' => $request->only(['search', 'status', 'order']),
             'is_intern' => $isIntern,
             'current_intern' => $currentIntern,
+            'activities' => $school->activities()
+                ->with('causer')
+                ->latest()
+                ->get()
+                ->map(fn($activity) => [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'event' => $activity->event,
+                    'causer_name' => $activity->causer->name ?? 'System',
+                    'causer_avatar' => $activity->causer ? $activity->causer->getFirstMediaUrl('avatar') : null,
+                    'created_at' => $activity->created_at->format('d/m/Y H:i:s'),
+                    'properties' => $activity->properties,
+                ]),
         ]);
 
     }
@@ -245,8 +260,10 @@ class EducationCenterController extends Controller
             'internal_notes' => 'nullable|string|max:1000',
         ]);
 
-        $school->updateQuietly([
+        $school->update([
             'internal_notes' => $request->input('internal_notes'),
+            'internal_notes_updated_by' => Auth::id(),
+            'internal_notes_updated_at' => now(),
         ]);
 
         return back()->with('success', 'Notas actualizadas correctamente');

@@ -19,10 +19,31 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+        $intern = $user->intern;
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'intern' => $intern,
+            'education_center' => $intern?->educationCenter,
         ]);
+    }
+
+    /**
+     * Update the user's avatar.
+     */
+    public function updateAvatar(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'max:5120'], // Máximo 5MB
+        ]);
+
+        $user = $request->user();
+        $user->clearMediaCollection('avatar');
+        $user->addMediaFromRequest('avatar')->toMediaCollection('avatar');
+
+        return back()->with('success', 'Foto de perfil actualizada correctamente.');
     }
 
     /**

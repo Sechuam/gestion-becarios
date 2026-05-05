@@ -22,6 +22,7 @@ import {
     SheetTitle,
 } from '@/components/ui/sheet';
 import { formatDateEs } from '@/lib/date-format';
+import { cn } from '@/lib/utils';
 import {
     getTaskPriorityLabel,
     getTaskPriorityTone,
@@ -113,47 +114,62 @@ export default function TaskQuickViewSheet({
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent
                 side="right"
-                className="w-full gap-0 overflow-y-auto border-l border-border/80 sm:max-w-xl"
+                className="w-full gap-0 overflow-y-auto border-l border-sidebar/20 bg-background p-0 sm:max-w-xl flex flex-col"
+                closeClassName="text-white hover:text-white/80 focus:ring-white/50"
             >
                 {task ? (
                     <>
-                        <SheetHeader className="space-y-3 border-b border-border/70 pb-5">
-                            <div className="flex flex-wrap items-center gap-2 pr-8">
-                                <Badge
-                                    variant="outline"
-                                    className={getTaskStatusTone(task.status)}
-                                >
-                                    {getTaskStatusLabel(task.status)}
-                                </Badge>
-                                <Badge
-                                    variant="outline"
-                                    className={getTaskPriorityTone(
-                                        task.priority,
-                                    )}
-                                >
-                                    {getTaskPriorityLabel(task.priority)}
-                                </Badge>
-                                <Badge
-                                    variant="outline"
-                                    className={dueMeta.tone}
-                                >
-                                    {dueMeta.label}
-                                </Badge>
+                        <SheetHeader className="relative space-y-3 bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 pb-6 pt-8 text-white shadow-xl">
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                            <div className="relative flex flex-wrap items-center gap-x-5 gap-y-2 pr-8">
+                                {/* Estado */}
+                                <div className="flex items-center gap-1.5 font-medium text-white/90">
+                                    <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                                        'bg-slate-300': task.status === 'pending',
+                                        'bg-blue-400': task.status === 'in_progress',
+                                        'bg-violet-400': task.status === 'in_review',
+                                        'bg-emerald-500': task.status === 'completed',
+                                        'bg-rose-500': task.status === 'rejected',
+                                    })} />
+                                    <span className="text-[10px] uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                                </div>
+
+                                {/* Prioridad */}
+                                <div className="flex items-center gap-1.5 font-medium text-white/90">
+                                    <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                                        'bg-rose-500': task.priority === 'high',
+                                        'bg-amber-400': task.priority === 'medium',
+                                        'bg-emerald-400': task.priority === 'low',
+                                    })} />
+                                    <span className="text-[10px] uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                                </div>
+
+                                {/* Entrega */}
+                                {task.due_date && (
+                                    <div className="flex items-center gap-1.5 font-medium text-white/90">
+                                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
+                                            'bg-rose-500': dueStatus(task.due_date) === 'overdue',
+                                            'bg-amber-400': dueStatus(task.due_date) === 'soon',
+                                            'bg-white/20': dueStatus(task.due_date) === 'none',
+                                        })} />
+                                        <span className="text-[10px] uppercase tracking-wider">{dueMeta.label}</span>
+                                    </div>
+                                )}
                             </div>
-                            <div className="space-y-2">
-                                <SheetTitle className="text-xl leading-tight">
+                            <div className="relative space-y-2">
+                                <SheetTitle className="text-xl leading-tight text-white drop-shadow-sm">
                                     {task.title}
                                 </SheetTitle>
-                                <SheetDescription className="text-sm leading-6">
+                                <SheetDescription className="text-sm leading-6 text-white/80">
                                     {task.description ||
                                         'Sin descripción disponible.'}
                                 </SheetDescription>
                             </div>
                         </SheetHeader>
 
-                        <div className="space-y-6 p-4">
+                        <div className="flex-1 space-y-6 p-6">
                             <section className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
                                     <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Contexto
                                     </p>
@@ -200,42 +216,49 @@ export default function TaskQuickViewSheet({
                                     </div>
                                 </div>
 
-                                <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
                                     <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Señales rápidas
                                     </p>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <div className="rounded-lg border border-border/70 bg-background px-3 py-2">
-                                            <p className="text-[11px] text-muted-foreground">
-                                                Comentarios
-                                            </p>
-                                            <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                                                <MessageSquareText className="h-4 w-4 text-muted-foreground" />
-                                                {Number(
-                                                    task.comments_count ?? 0,
-                                                )}
-                                            </p>
+                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 py-2 shadow-inner">
+                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
+                                            <div className="relative">
+                                                <p className="text-[11px] text-white/70">
+                                                    Comentarios
+                                                </p>
+                                                <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-white">
+                                                    <MessageSquareText className="h-4 w-4 text-white/70" />
+                                                    {Number(
+                                                        task.comments_count ?? 0,
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="rounded-lg border border-border/70 bg-background px-3 py-2">
-                                            <p className="text-[11px] text-muted-foreground">
-                                                Adjuntos
-                                            </p>
-                                            <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                                                <Paperclip className="h-4 w-4 text-muted-foreground" />
-                                                {Number(
-                                                    task.attachments_count ?? 0,
-                                                )}
-                                            </p>
+                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 py-2 shadow-inner">
+                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
+                                            <div className="relative">
+                                                <p className="text-[11px] text-white/70">
+                                                    Adjuntos
+                                                </p>
+                                                <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-white">
+                                                    <Paperclip className="h-4 w-4 text-white/70" />
+                                                    {Number(
+                                                        task.attachments_count ?? 0,
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </section>
 
-                            <section className="rounded-xl border border-border/70 bg-card p-4">
-                                <div className="mb-3 flex items-center justify-between gap-3">
+                            <section className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl">
+                                <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                                <div className="relative mb-3 flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                        <h3 className="text-sm font-semibold text-foreground">
+                                        <Users className="h-4 w-4 text-white/70" />
+                                        <h3 className="text-sm font-semibold text-white">
                                             Becarios asignados
                                         </h3>
                                     </div>
@@ -243,30 +266,32 @@ export default function TaskQuickViewSheet({
                                         interns={task.interns || []}
                                     />
                                 </div>
-                                {task.interns?.length ? (
-                                    <div className="flex flex-wrap gap-2">
-                                        {task.interns.map((intern: any) => (
-                                            <span
-                                                key={intern.id}
-                                                className="rounded-full border border-border/70 bg-muted/20 px-3 py-1 text-xs text-foreground"
-                                            >
-                                                {intern.user?.name ||
-                                                    `Becario #${intern.id}`}
-                                            </span>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        Esta tarea todavía no tiene becarios
-                                        asignados.
-                                    </p>
-                                )}
+                                <div className="relative">
+                                    {task.interns?.length ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {task.interns.map((intern: any) => (
+                                                <span
+                                                    key={intern.id}
+                                                    className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-sidebar shadow-sm"
+                                                >
+                                                    {intern.user?.name ||
+                                                        `Becario #${intern.id}`}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-white/70">
+                                            Esta tarea todavía no tiene becarios
+                                            asignados.
+                                        </p>
+                                    )}
+                                </div>
                             </section>
 
                             {task &&
                                 onMoveTask &&
                                 availableStatuses.length > 0 && (
-                                    <section className="rounded-xl border border-border/70 bg-card p-4">
+                                    <section className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
                                         <div className="mb-3">
                                             <h3 className="text-sm font-semibold text-foreground">
                                                 Mover a otra columna
@@ -304,16 +329,17 @@ export default function TaskQuickViewSheet({
                                 )}
                         </div>
 
-                        <SheetFooter className="border-t border-border/70 bg-background/95">
-                            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
-                                <Button variant="outline" asChild>
+                        <SheetFooter className="relative mt-auto overflow-hidden border-t border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.15)]">
+                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(0deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
+                            <div className="relative flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
+                                <Button variant="outline" className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar" asChild>
                                     <Link href={`/tareas/${task.id}`}>
                                         Ver ficha completa
                                         <ChevronRight className="h-4 w-4" />
                                     </Link>
                                 </Button>
                                 {canEdit && (
-                                    <Button variant="outline" asChild>
+                                <Button variant="outline" className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar" asChild>
                                         <Link href={`/tareas/${task.id}/edit`}>
                                             <Pencil className="h-4 w-4" />
                                             Editar
@@ -326,8 +352,9 @@ export default function TaskQuickViewSheet({
                                         String(task.status),
                                     ) && (
                                         <Button
+                                            variant="secondary"
                                             onClick={() => onComplete(task)}
-                                            className="gap-2"
+                                            className="gap-2 border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar"
                                         >
                                             <CheckCircle2 className="h-4 w-4" />
                                             {completeLabel}

@@ -15,6 +15,7 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { NavItem } from '@/types';
 import type { SidebarSection } from '@/components/sidebar/sidebar-types';
@@ -31,6 +32,8 @@ type NavMainProps = {
 
 export function NavMain({ items = [], sections }: NavMainProps) {
     const { isCurrentUrl } = useCurrentUrl();
+    const { state } = useSidebar();
+    const isCollapsed = state === 'collapsed';
 
     const renderItems = (menuItems: NavMainItem[]) => (
         <SidebarMenu>
@@ -60,15 +63,30 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                         className="group/collapsible"
                     >
                         <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
+                            {isCollapsed ? (
                                 <SidebarMenuButton
+                                    asChild
+                                    isActive={item.items.some((sub) =>
+                                        isCurrentUrl(sub.href),
+                                    )}
                                     tooltip={{ children: item.title }}
                                 >
-                                    {item.icon && <item.icon />}
-                                    <span>{item.title}</span>
-                                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                    <Link href={item.items[0].href}>
+                                        {item.icon && <item.icon />}
+                                        <span>{item.title}</span>
+                                    </Link>
                                 </SidebarMenuButton>
-                            </CollapsibleTrigger>
+                            ) : (
+                                <CollapsibleTrigger asChild>
+                                    <SidebarMenuButton
+                                        tooltip={{ children: item.title }}
+                                    >
+                                        {item.icon && <item.icon />}
+                                        <span>{item.title}</span>
+                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                    </SidebarMenuButton>
+                                </CollapsibleTrigger>
+                            )}
                             <CollapsibleContent>
                                 <SidebarMenuSub>
                                     {item.items.map((subItem) => (
@@ -104,7 +122,7 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                 sections.map((section, index) => (
                     <SidebarGroup
                         key={`${section.label ?? 'section'}-${index}`}
-                        className="px-2 py-0"
+                        className="py-0 group-data-[collapsible=icon]:px-0"
                     >
                         {section.label && (
                             <SidebarGroupLabel className="px-3 text-[10px] font-semibold tracking-[0.22em] text-sidebar-foreground/55 uppercase">
@@ -115,7 +133,7 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                     </SidebarGroup>
                 ))
             ) : (
-                <SidebarGroup className="px-2 py-0">
+                <SidebarGroup className="py-0 group-data-[collapsible=icon]:px-0">
                     <SidebarGroupLabel className="px-3 text-[10px] font-semibold tracking-[0.22em] text-sidebar-foreground/55 uppercase">Platform</SidebarGroupLabel>
                     {renderItems(items)}
                 </SidebarGroup>

@@ -61,6 +61,32 @@ class TaskController extends Controller
         if ($request->filled('due_to')) {
             $query->whereDate('due_date', '<=', $request->due_to);
         }
+        
+        if ($request->filled('delivery_status')) {
+            $delivery = $request->delivery_status;
+            if ($delivery === 'completed_ontime') {
+                // Completada a tiempo
+                $query->where('status', 'completed')
+                      ->where(function($q) {
+                          $q->whereNull('completed_at')
+                            ->orWhereRaw('CAST(completed_at AS DATE) <= due_date');
+                      });
+            } elseif ($delivery === 'late') {
+                // Completada tarde
+                $query->where('status', 'completed')
+                      ->whereNotNull('completed_at')
+                      ->whereRaw('CAST(completed_at AS DATE) > due_date');
+            } elseif ($delivery === 'not_delivered') {
+                // No entregada (vencida, sin completar)
+                $query->where('status', '!=', 'completed')
+                      ->where('due_date', '<', now()->startOfDay());
+            } elseif ($delivery === 'soon') {
+                // Próxima (<=3 días, sin completar)
+                $query->where('due_date', '>=', now()->startOfDay())
+                      ->where('due_date', '<=', now()->addDays(3)->endOfDay())
+                      ->where('status', '!=', 'completed');
+            }
+        }
 
         $sort = $request->input('sort');
         $direction = strtolower($request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
@@ -86,11 +112,11 @@ class TaskController extends Controller
                 ->latest();
         }
 
-        $tasks = $query->paginate(10)->withQueryString();
+        $tasks = $query->paginate(1000)->withQueryString();
 
         return Inertia::render('tasks/index', [
             'tasks' => $tasks,
-            'filters' => $request->only(['status', 'practice_type', 'intern_id', 'due_from', 'due_to', 'search', 'sort', 'direction']),
+            'filters' => $request->only(['status', 'practice_type', 'intern_id', 'due_from', 'due_to', 'search', 'sort', 'direction', 'delivery_status']),
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
             'interns' => Intern::query()
                 ->with('user:id,name')
@@ -136,6 +162,32 @@ class TaskController extends Controller
             $query->whereDate('due_date', '<=', $request->due_to);
         }
 
+        if ($request->filled('delivery_status')) {
+            $delivery = $request->delivery_status;
+            if ($delivery === 'completed_ontime') {
+                // Completada a tiempo
+                $query->where('status', 'completed')
+                      ->where(function($q) {
+                          $q->whereNull('completed_at')
+                            ->orWhereRaw('CAST(completed_at AS DATE) <= due_date');
+                      });
+            } elseif ($delivery === 'late') {
+                // Completada tarde
+                $query->where('status', 'completed')
+                      ->whereNotNull('completed_at')
+                      ->whereRaw('CAST(completed_at AS DATE) > due_date');
+            } elseif ($delivery === 'not_delivered') {
+                // No entregada (vencida, sin completar)
+                $query->where('status', '!=', 'completed')
+                      ->where('due_date', '<', now()->startOfDay());
+            } elseif ($delivery === 'soon') {
+                // Próxima (<=3 días, sin completar)
+                $query->where('due_date', '>=', now()->startOfDay())
+                      ->where('due_date', '<=', now()->addDays(3)->endOfDay())
+                      ->where('status', '!=', 'completed');
+            }
+        }
+
         $sort = $request->input('sort');
         $direction = strtolower($request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
         $sortable = [
@@ -160,11 +212,11 @@ class TaskController extends Controller
                 ->latest();
         }
 
-        $tasks = $query->paginate(10)->withQueryString();
+        $tasks = $query->paginate(1000)->withQueryString();
 
         return Inertia::render('tasks/My', [
             'tasks' => $tasks,
-            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search', 'sort', 'direction']),
+            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search', 'sort', 'direction', 'delivery_status']),
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
         ]);
     }
@@ -173,7 +225,7 @@ class TaskController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || (!$user->isTutor() && !$user->isAdmin())) {
+        if (!$user || !$user->can('manage tasks')) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
         $validated = $request->validated();
@@ -227,7 +279,7 @@ class TaskController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || (!$user->isTutor() && !$user->isAdmin())) {
+        if (!$user || !$user->can('manage tasks')) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
 
@@ -262,15 +314,18 @@ class TaskController extends Controller
 
         $fromStatus = $task->status;
         $validated = $request->validated();
-        $task->update(Arr::only($validated, [
-            'title',
-            'description',
-            'status',
-            'priority',
-            'due_date',
-            'practice_type_id',
-            'reject_reason',
-        ]));
+        $task->update([
+            ...Arr::only($validated, [
+                'title',
+                'description',
+                'status',
+                'priority',
+                'due_date',
+                'practice_type_id',
+                'reject_reason',
+            ]),
+            'completed_at' => ($request->filled('status') && $request->status === 'completed') ? ($task->completed_at ?? now()) : ($request->filled('status') ? null : $task->completed_at),
+        ]);
 
         if ($request->has('intern_ids')) {
             $task->interns()->sync($validated['intern_ids'] ?? []);
@@ -322,6 +377,7 @@ class TaskController extends Controller
         $fromStatus = $task->status;
         $task->update([
             'status' => $request->status,
+            'completed_at' => $request->status === 'completed' ? now() : null,
             'reject_reason' => $request->input('status') === 'rejected'
                 ? $request->input('reject_reason')
                 : null,
@@ -368,6 +424,7 @@ class TaskController extends Controller
             'practiceType',
             'creator',
             'interns.user',
+            'interns.educationCenter',
             'comments.user',
             'comments.replies.user',
             'statusLogs.user',
@@ -462,7 +519,7 @@ class TaskController extends Controller
         }
 
         $fromStatus = $task->status;
-        $task->update(['status' => 'completed']);
+        $task->update(['status' => 'completed', 'completed_at' => now()]);
 
         TaskStatusLog::create([
             'task_id' => $task->id,
@@ -580,10 +637,14 @@ class TaskController extends Controller
 
         DB::transaction(function () use ($validated) {
             foreach ($validated['items'] as $item) {
-                Task::whereKey($item['id'])->update([
-                    'status' => $item['status'],
-                    'kanban_position' => $item['position'],
-                ]);
+                $task = Task::find($item['id']);
+                if ($task) {
+                    $task->update([
+                        'status' => $item['status'],
+                        'kanban_position' => $item['position'],
+                        'completed_at' => $item['status'] === 'completed' ? ($task->completed_at ?? now()) : null,
+                    ]);
+                }
             }
         });
 
@@ -660,7 +721,7 @@ class TaskController extends Controller
 
     protected function canManageTask(?\App\Models\User $user, Task $task): bool
     {
-        if (!$user) {
+        if (!$user || !$user->can('manage tasks')) {
             return false;
         }
 

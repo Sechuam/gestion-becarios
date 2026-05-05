@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\EducationCenterController;
+use App\Http\Controllers\EvaluationController;
+use App\Http\Controllers\EvaluationCriterionController;
+use App\Http\Controllers\EvaluationReportController;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\PracticeTypeController;
 use App\Http\Controllers\RolesController;
@@ -24,11 +27,11 @@ Route::inertia('/', 'welcome', [
 
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Rutas para el área personal del becario
-    Route::get('mi-perfil', [InternController::class, 'myProfile'])
+    // Rutas para el área personal del becario (Redirigidas a Ajustes)
+    Route::get('mi-perfil', fn() => redirect()->route('profile.edit'))
         ->name('interns.my-profile')
         ->middleware('role:intern|becario');
-    Route::post('mi-perfil/avatar', [InternController::class, 'updateAvatar'])
+    Route::post('mi-perfil/avatar', fn() => redirect()->route('profile.avatar', [], 307))
         ->name('interns.update-avatar')
         ->middleware('role:intern|becario');
 
@@ -111,7 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('staff');
     Route::get('tutores', [TutorController::class, 'index'])
         ->name('tutores.index')
-        ->middleware('admin');
+        ->middleware('can:manage tutors');
     Route::get('tutores/{user}', [TutorController::class, 'show'])
         ->name('tutores.show')
         ->middleware('staff');
@@ -119,15 +122,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para la pestaña Usuarios
     Route::get('usuarios', [UsersController::class, 'index'])
         ->name('users.index')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::patch('usuarios/{user}/role', [UsersController::class, 'updateRole'])
         ->name('users.role')
-        ->middleware('admin');
+        ->middleware('can:manage users');
 
     // Ruta para que el Admin envíe la invitación
     Route::post('invitaciones', [InvitationController::class, 'store'])
         ->name('invitations.store')
-        ->middleware('admin');
+        ->middleware('can:manage users');
 
     // Ruta para los centros educativos
     Route::get('centros', [EducationCenterController::class, 'index'])
@@ -176,25 +179,60 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Ruta para evaluaciones
-    Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
+    Route::get('/evaluaciones', [EvaluationController::class, 'index'])
+        ->name('evaluations.index');
+    Route::get('/evaluaciones/create', [EvaluationController::class, 'create'])
+        ->name('evaluations.create');
+    Route::post('/evaluaciones', [EvaluationController::class, 'store'])
+        ->name('evaluations.store');
+    Route::get('/evaluaciones/criterios', [EvaluationCriterionController::class, 'index'])
+        ->name('evaluation-criteria.index')
+        ->middleware('admin');
+    Route::get('/evaluaciones/criterios/create', [EvaluationCriterionController::class, 'create'])
+        ->name('evaluation-criteria.create')
+        ->middleware('admin');
+    Route::post('/evaluaciones/criterios', [EvaluationCriterionController::class, 'store'])
+        ->name('evaluation-criteria.store')
+        ->middleware('admin');
+    Route::get('/evaluaciones/criterios/{criterion}/edit', [EvaluationCriterionController::class, 'edit'])
+        ->name('evaluation-criteria.edit')
+        ->middleware('admin');
+    Route::patch('/evaluaciones/criterios/{criterion}', [EvaluationCriterionController::class, 'update'])
+        ->name('evaluation-criteria.update')
+        ->middleware('admin');
+    Route::delete('/evaluaciones/criterios/{criterion}', [EvaluationCriterionController::class, 'destroy'])
+        ->name('evaluation-criteria.destroy')
+        ->middleware('admin');
+    Route::patch('/evaluaciones/criterios/{criterion}/toggle', [EvaluationCriterionController::class, 'toggle'])
+        ->name('evaluation-criteria.toggle')
+        ->middleware('admin');
+    Route::get('/evaluaciones/{evaluation}', [EvaluationController::class, 'show'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.show');
+    Route::delete('/evaluaciones/{evaluation}', [EvaluationController::class, 'destroy'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.destroy');
+    Route::get('/evaluaciones/{evaluation}/pdf', [EvaluationReportController::class, 'download'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.pdf');
     // Ruta para reportes
     Route::inertia('/reportes', 'reports/index')->name('reports.index');
     // Roles y permisos (admin)
     Route::get('/roles', [RolesController::class, 'index'])
         ->name('roles.index')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::post('/roles', [RolesController::class, 'store'])
         ->name('roles.store')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::patch('/roles/{role}', [RolesController::class, 'update'])
         ->name('roles.update')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::delete('/roles/{role}', [RolesController::class, 'destroy'])
         ->name('roles.destroy')
-        ->middleware('admin');
+        ->middleware('can:manage users');
     Route::post('/roles/{role}/permissions/{permission}', [RolesController::class, 'togglePermission'])
         ->name('roles.permissions.toggle')
-        ->middleware('admin');
+        ->middleware('can:manage users');
 
 });
 
@@ -206,5 +244,3 @@ Route::middleware('guest')->group(function () {
 
 // rutas públicas o especiales
 require __DIR__ . '/settings.php';
-
-
