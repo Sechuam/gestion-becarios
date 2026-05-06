@@ -140,12 +140,12 @@ export default function KanbanTaskCard({
                     style={{ backgroundColor: task.practice_type.color }}
                 />
             )}
-            <div className="mb-3 flex items-start justify-between gap-3">
-                <div className="min-w-0 space-y-1">
+            <div className="relative mb-3">
+                <div className="min-w-0 space-y-1 pr-12">
                     {onOpenDetails ? (
                         <button
                             type="button"
-                            className="block truncate text-left font-semibold text-foreground hover:underline"
+                            className="block line-clam-2 text-left font-semibold leading-tight text-foreground hover:underline"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();
@@ -157,7 +157,7 @@ export default function KanbanTaskCard({
                     ) : (
                         <Link
                             href={`/tareas/${task.id}`}
-                            className="block truncate font-semibold text-foreground hover:underline"
+                            className="block line-clamp-2 font-semibold leading-tight text-foreground hover:underline"
                         >
                             {task.title}
                         </Link>
@@ -169,7 +169,8 @@ export default function KanbanTaskCard({
                 {canDrag && (
                     <button
                         type="button"
-                        className="mt-0.5 inline-flex shrink-0 cursor-grab items-center rounded-md border border-border/70 bg-muted/30 p-1.5 text-muted-foreground/70 shadow-sm transition hover:border-primary/30 hover:bg-primary/8 hover:text-foreground active:cursor-grabbing"
+                        className="absolute right-0 top-0 inline-flex cursor-grab items-center rounded-md border border-border/70 bg-muted/30 p-1.5 text-muted-foreground/70 shadow-sm transition hover:border-primary/30 hover:bg-primary/8 hover:text-foreground active:cursor-grabbing"
+                        
                         {...listeners}
                         {...attributes}
                         onClick={(event) => {

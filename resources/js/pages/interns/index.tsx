@@ -264,7 +264,7 @@ export default function Index({
                         <TooltipTrigger asChild>
                             <Link
                                 href={`/centros/${intern.education_center.id}`}
-                                className="block max-w-[220px] truncate hover:underline"
+                                className="block max-w-55 truncate hover:underline"
                             >
                                 {intern.education_center.name}
                             </Link>
