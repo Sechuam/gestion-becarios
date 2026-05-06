@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
     Select,
     SelectContent,
@@ -119,9 +120,10 @@ function UserRowItem({
 
             {/* Role indicator */}
             {showBadge && (
-                <div className="hidden items-center gap-1.5 font-medium text-sidebar dark:text-white/80 sm:flex">
-                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", meta.dotColor)} />
-                    <span className="text-[11px] uppercase tracking-wider">{meta.label}</span>
+                <div className="hidden sm:flex">
+                    <span className="inline-flex h-8 min-w-[112px] items-center justify-center rounded-lg border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] px-2.5 py-1 text-xs font-medium text-white shadow-sm">
+                        {meta.label}
+                    </span>
                 </div>
             )}
 
@@ -129,7 +131,7 @@ function UserRowItem({
                 <DropdownMenuTrigger asChild>
                     <button
                         disabled={isSaving}
-                        className="flex shrink-0 items-center gap-1 rounded-lg border border-border bg-background px-2 py-1 text-xs font-medium text-muted-foreground shadow-sm transition hover:bg-muted hover:text-foreground disabled:opacity-50"
+                        className="flex h-8 shrink-0 items-center gap-1 rounded-lg border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] px-2.5 py-1 text-xs font-medium text-white shadow-sm transition hover:opacity-95 disabled:opacity-50"
                     >
                         {isSaving
                             ? <Loader2 className="h-3 w-3 animate-spin" />
@@ -141,17 +143,21 @@ function UserRowItem({
                 <DropdownMenuContent align="end" className="w-44">
                     {roleOptions.map((role) => {
                         const rm = ROLE_META[role.name] ?? ROLE_META.none;
-                        const Ico = rm.icon;
                         const isCurrent = roleName === role.name;
                         return (
                             <DropdownMenuItem
                                 key={role.name}
                                 onClick={() => onRoleChange(user, role.name)}
-                                className={`flex items-center gap-2.5 ${isCurrent ? 'font-semibold bg-muted/50' : ''}`}
+                                className={`flex items-center gap-2.5 ${
+                                    isCurrent
+                                        ? 'bg-gradient-to-r from-sidebar to-[#1f4f52] font-semibold text-white focus:text-white'
+                                        : ''
+                                }`}
                             >
-                                <div className={cn("h-2 w-2 rounded-full", rm.dotColor)} />
                                 <span className="text-sm">{rm.label}</span>
-                                {isCurrent && <Check className="ml-auto h-3.5 w-3.5 text-muted-foreground" />}
+                                {isCurrent && (
+                                    <Check className="ml-auto h-3.5 w-3.5 text-white" />
+                                )}
                             </DropdownMenuItem>
                         );
                     })}
@@ -174,6 +180,10 @@ export default function UsersIndex({
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
     const [activeRole, setActiveRole] = useState<'all' | 'admin' | 'tutor' | 'intern'>('all');
     const [currentPage, setCurrentPage] = useState(1);
+    const [pendingRoleChange, setPendingRoleChange] = useState<{
+        user: UserRow;
+        newRole: string;
+    } | null>(null);
 
     const { data: inviteData, setData: setInviteData, post: postInvite, processing: inviteProcessing, errors: inviteErrors, reset: resetInvite } = useForm({ email: '', role: '' });
 
@@ -247,13 +257,19 @@ export default function UsersIndex({
     const handleRoleChange = (user: UserRow, newRole: string) => {
         const currentRole = getRoleName(user);
         if (newRole === currentRole) return;
-        const newMeta = ROLE_META[newRole];
-        const confirmed = confirm(`¿Cambiar el rol de ${user.name} a ${newMeta?.label ?? newRole}?`);
-        if (!confirmed) return;
+        setPendingRoleChange({ user, newRole });
+    };
+
+    const confirmRoleChange = () => {
+        if (!pendingRoleChange) return;
+        const { user, newRole } = pendingRoleChange;
         setSavingId(user.id);
         router.patch(`/usuarios/${user.id}/role`, { role: newRole }, {
             preserveScroll: true,
-            onFinish: () => setSavingId(null),
+            onFinish: () => {
+                setSavingId(null);
+                setPendingRoleChange(null);
+            },
         });
     };
 
@@ -263,22 +279,24 @@ export default function UsersIndex({
 
             <div className="space-y-5">
                 {/* HEADER CON GRADIENTE CORPORATIVO */}
-                <section className="relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-5 shadow-2xl md:px-8 md:py-6 rounded-[2rem]">
+                <section className="app-panel relative overflow-hidden rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-3 shadow-xl md:px-5 md:py-3">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative flex flex-wrap items-center justify-between gap-4">
                         <div className="flex-1 space-y-1.5">
-                            <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/90 backdrop-blur-md border border-white/20">
+                            <p className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-white/80 backdrop-blur-md">
                                 Panel de administración
                             </p>
-                            <h1 className="text-xl font-black tracking-tight text-white flex items-center gap-3 leading-none">
-                                <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
-                                    <Users className="h-5 w-5" />
+                            <div className="space-y-0.5">
+                            <h1 className="flex items-center gap-3 text-lg font-black leading-none tracking-tight text-white md:text-xl">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white shadow-xl backdrop-blur-md">
+                                    <Users className="h-4 w-4" />
                                 </span>
                                 Gestión de Usuarios
                             </h1>
-                            <p className="max-w-3xl text-xs font-medium text-white/70 leading-relaxed italic line-clamp-1">
+                            <p className="ml-[44px] max-w-3xl text-[10px] font-medium italic leading-tight text-white/60 line-clamp-1">
                                 Administra roles y permisos de los {counts.all} usuarios registrados.
                             </p>
+                            </div>
                         </div>
                         <HeaderActionButton 
                             label="Invitar Usuario"
@@ -287,19 +305,19 @@ export default function UsersIndex({
                         />
                     </div>
 
-                    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                         {[
                             { key: 'all', label: 'Total', dot: 'bg-white/40' },
                             { key: 'admin', label: 'Admins', dot: 'bg-rose-500' },
                             { key: 'tutor', label: 'Tutores', dot: 'bg-violet-400' },
                             { key: 'intern', label: 'Becarios', dot: 'bg-emerald-400' },
                         ].map(({ key, label, dot }) => (
-                            <div key={key} className="relative overflow-hidden rounded-2xl bg-white/10 p-3 shadow-lg backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
+                            <div key={key} className="relative overflow-hidden rounded-lg border border-white/20 bg-white/10 p-2 shadow-lg backdrop-blur-md transition-all hover:bg-white/15">
                                 <div className="flex items-center justify-between gap-2">
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-white/50">{label}</p>
+                                    <p className="text-[8px] font-black uppercase tracking-widest text-white/50">{label}</p>
                                     <div className={cn("h-1.5 w-1.5 rounded-full", dot)} />
                                 </div>
-                                <p className="mt-1 text-xl font-black tracking-tight text-white">{counts[key] ?? 0}</p>
+                                <p className="mt-0.5 text-sm md:text-base font-black tracking-tight text-white">{counts[key] ?? 0}</p>
                             </div>
                         ))}
                     </div>
@@ -324,32 +342,48 @@ export default function UsersIndex({
                     )}
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                    {[
-                        { key: 'all', label: 'Todos' },
-                        { key: 'admin', label: 'Administradores' },
-                        { key: 'tutor', label: 'Tutores' },
-                        { key: 'intern', label: 'Becarios' },
-                    ].map((item) => (
-                        <Button
-                            key={item.key}
-                            type="button"
-                            variant={activeRole === item.key ? 'default' : 'outline'}
-                            onClick={() => setActiveRole(item.key as 'all' | 'admin' | 'tutor' | 'intern')}
-                            className={`rounded-full transition-all ${
-                                activeRole === item.key
-                                    ? 'border-sidebar bg-sidebar text-white shadow-md hover:bg-sidebar/90'
-                                    : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground'
-                            }`}
-                        >
-                            {item.label} ({counts[item.key] ?? 0})
-                        </Button>
-
-                    ))}
+                <div className="w-full">
+                    <ToggleGroup
+                        type="single"
+                        value={activeRole}
+                        onValueChange={(value) => {
+                            if (value) {
+                                setActiveRole(
+                                    value as
+                                        | 'all'
+                                        | 'admin'
+                                        | 'tutor'
+                                        | 'intern',
+                                );
+                            }
+                        }}
+                        className="grid w-full grid-cols-1 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 md:grid-cols-2 xl:grid-cols-4"
+                    >
+                        {[
+                            { key: 'all', label: 'Todos' },
+                            { key: 'admin', label: 'Administradores' },
+                            { key: 'tutor', label: 'Tutores' },
+                            { key: 'intern', label: 'Becarios' },
+                        ].map((item) => (
+                            <ToggleGroupItem
+                                key={item.key}
+                                value={item.key}
+                                className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=on]:border-transparent data-[state=on]:bg-gradient-to-r data-[state=on]:from-sidebar data-[state=on]:to-[#1f4f52] data-[state=on]:text-white data-[state=on]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                aria-label={item.label}
+                            >
+                                <span className="text-[10px] font-black uppercase tracking-widest">
+                                    {item.label}
+                                </span>
+                                <span className="ml-2 rounded-full bg-black/5 px-2 py-0.5 text-[10px] font-black tabular-nums text-current">
+                                    {counts[item.key] ?? 0}
+                                </span>
+                            </ToggleGroupItem>
+                        ))}
+                    </ToggleGroup>
                 </div>
 
-                <div className="overflow-hidden rounded-[2rem] border border-sidebar/10 bg-white dark:bg-slate-900/60 shadow-xl">
-                    <p className="border-b border-border px-4 py-2 text-xs font-semibold text-muted-foreground">
+                <div className="overflow-hidden rounded-[2.25rem] border border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/60">
+                    <p className="border-b border-sidebar/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-5 py-3 text-xs font-semibold text-white/85">
                         {filteredUsers.length} usuario{filteredUsers.length !== 1 ? 's' : ''}
                         {filteredUsers.length > 0 && (
                             <span>
@@ -386,7 +420,7 @@ export default function UsersIndex({
                         </div>
                     )}
                     {filteredUsers.length > USERS_PER_PAGE && (
-                        <div className="flex items-center justify-between border-t border-border px-4 py-3">
+                        <div className="flex items-center justify-between border-t border-sidebar/10 px-4 py-3">
                             <p className="text-xs text-muted-foreground">
                                 Página {currentPage} de {totalPages}
                             </p>
@@ -394,8 +428,8 @@ export default function UsersIndex({
                             <div className="flex gap-2">
                                 <Button
                                     type="button"
-                                    variant="outline"
                                     size="sm"
+                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-sm hover:opacity-95 disabled:opacity-50"
                                     onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
                                     disabled={currentPage === 1}
                                 >
@@ -404,8 +438,8 @@ export default function UsersIndex({
 
                                 <Button
                                     type="button"
-                                    variant="outline"
                                     size="sm"
+                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-sm hover:opacity-95 disabled:opacity-50"
                                     onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
                                     disabled={currentPage === totalPages}
                                 >
@@ -461,6 +495,61 @@ export default function UsersIndex({
                                 </Button>
                             </DialogFooter>
                         </form>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={!!pendingRoleChange}
+                    onOpenChange={(open) => {
+                        if (!open) setPendingRoleChange(null);
+                    }}
+                >
+                    <DialogContent className="overflow-hidden border-sidebar/20 p-0 shadow-2xl sm:max-w-md">
+                        <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                            <DialogHeader>
+                                <DialogTitle className="text-left text-xl font-black tracking-tight text-white">
+                                    Confirmar cambio de rol
+                                </DialogTitle>
+                                <DialogDescription className="pt-2 text-left text-white/75">
+                                    Revisa el cambio antes de actualizar el acceso de este usuario.
+                                </DialogDescription>
+                            </DialogHeader>
+                        </div>
+
+                        <div className="space-y-5 px-6 py-5">
+                            <div className="rounded-2xl border border-sidebar/10 bg-slate-50/80 p-4 dark:bg-slate-900/60">
+                                <p className="text-sm font-medium leading-relaxed text-slate-600 dark:text-slate-300">
+                                    ¿Quieres cambiar el rol de{' '}
+                                    <span className="font-black text-slate-900 dark:text-white">
+                                        {pendingRoleChange?.user.name}
+                                    </span>{' '}
+                                    a{' '}
+                                    <span className="inline-flex rounded-full bg-gradient-to-r from-sidebar to-[#1f4f52] px-2.5 py-0.5 text-[11px] font-black uppercase tracking-widest text-white shadow-sm">
+                                        {ROLE_META[pendingRoleChange?.newRole ?? 'none']?.label ??
+                                            pendingRoleChange?.newRole}
+                                    </span>
+                                    ?
+                                </p>
+                            </div>
+
+                            <DialogFooter className="gap-2 sm:justify-end">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="rounded-xl border-sidebar/15"
+                                    onClick={() => setPendingRoleChange(null)}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="button"
+                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-sm hover:opacity-95"
+                                    onClick={confirmRoleChange}
+                                >
+                                    Confirmar cambio
+                                </Button>
+                            </DialogFooter>
+                        </div>
                     </DialogContent>
                 </Dialog>
             </div>

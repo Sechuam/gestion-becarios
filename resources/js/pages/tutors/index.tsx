@@ -264,29 +264,26 @@ export default function Index({
                     metrics={headerMetrics}
                 />
 
-                <div className="rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60 overflow-hidden">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/50 p-2 rounded-lg border border-sidebar/10 dark:bg-slate-800/50">
-                        <div className="relative min-w-[240px] flex-1">
-                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-sidebar/40" />
+                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="relative w-full flex-1">
+                            <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar tutor..."
-                                className="h-8 border-sidebar/20 bg-white pl-10 text-xs text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus-visible:ring-sidebar transition-all"
+                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
                                 defaultValue={filters.search}
-                                onChange={(e) => handleFilter('search', e.target.value)}
+                                onChange={(e) =>
+                                    handleFilter('search', e.target.value)
+                                }
                             />
                         </div>
 
-                        <div className="flex items-center gap-2">
-                             <p className="text-[9px] font-black text-sidebar uppercase tracking-widest bg-sidebar/5 px-3 py-1.5 rounded-lg border border-sidebar/10">
-                                {tutors.total} Tutores
-                            </p>
+                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
+                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                            <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                                {tutors.data.length} / {tutors.total}
+                            </span>
                         </div>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap items-center gap-3 text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">
-                        <span className="flex items-center gap-1.5"><div className="h-1 w-1 rounded-full bg-sidebar" /> Nombre</span>
-                        <span className="flex items-center gap-1.5"><div className="h-1 w-1 rounded-full bg-sidebar" /> Email</span>
-                        <span className="flex items-center gap-1.5 ml-auto text-sidebar/60 italic font-medium lowercase">Mostrando {tutors.data.length} resultados</span>
                     </div>
                 </div>
 
