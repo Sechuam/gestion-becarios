@@ -99,14 +99,14 @@ export default function Create({
             <div className="page-surface">
                 <div className="mb-8 flex flex-col gap-1">
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                        Nuevo <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Becario</span>
+                        Nuevo <span className="bg-linear-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Becario</span>
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
                         Formulario de alta de nuevo expediente
                     </p>
                 </div>
 
-                <div className="app-panel rounded-[2rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-1 md:p-8">
+                <div className="app-panel rounded-4xl border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-1 md:p-8">
                     <form onSubmit={submit} className="space-y-8" noValidate>
                         <Tabs defaultValue="personal" className="w-full">
                             <TabsList className="flex h-auto w-full justify-start gap-8 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-8 px-2">
