@@ -95,34 +95,35 @@ export default function Edit({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Editar Becario - ${intern.user.name}`} />
 
-            <div className="page-surface">
-                {/* CABECERA */}
-                <div className="mb-3 flex items-center gap-3">
-                    <div className="relative">
-                        <Avatar className="h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-xl border border-sidebar/20 bg-white shadow-sm dark:bg-slate-900">
-                            <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
-                            <AvatarFallback className="text-base font-black text-sidebar/40 bg-transparent">
-                                {intern.user?.name
-                                    ? intern.user.name.substring(0, 2).toUpperCase()
-                                    : 'BE'}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border border-white dark:border-slate-950 shadow-sm" title="Usuario Activo" />
-                    </div>
-                    <div className="flex flex-col gap-0">
-                        <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-                            Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Expediente</span>
-                        </h1>
-                        <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[8px] uppercase tracking-[0.2em]">
-                            Actualizando a {intern.user.name} · {intern.dni}
-                        </p>
+            <div className="page-surface p-0 overflow-hidden border-sidebar/20 shadow-xl">
+                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <Avatar className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border-2 border-white/20 bg-white/10 shadow-lg backdrop-blur-sm">
+                                <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
+                                <AvatarFallback className="text-lg font-black text-white/40 bg-transparent">
+                                    {intern.user?.name
+                                        ? intern.user.name.substring(0, 2).toUpperCase()
+                                        : 'BE'}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#1f4f52] shadow-sm" title="Usuario Activo" />
+                        </div>
+                        <div className="flex flex-col gap-0">
+                            <h1 className="text-xl font-black tracking-tight">
+                                Editar <span className="text-white/80">Expediente</span>
+                            </h1>
+                            <p className="text-white/50 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
+                                {intern.user.name} · {intern.dni}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="app-panel rounded-xl border-sidebar/20 bg-white shadow-lg dark:bg-slate-900/40 p-3 md:p-4">
+                <div className="bg-slate-50/50 p-4 md:p-6 dark:bg-slate-900/40">
                     <form onSubmit={requestConfirmation} className="space-y-4" noValidate>
                         <Tabs defaultValue="personal" className="w-full">
-                            <TabsList className="flex h-auto w-full justify-start gap-3 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-4 px-1 overflow-x-auto scrollbar-none">
+                            <TabsList className="grid h-auto w-full grid-cols-2 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 mb-6 lg:grid-cols-4">
                                 {[
                                     { value: 'personal', label: 'Datos Personales' },
                                     { value: 'academic', label: 'Académicos' },
@@ -132,9 +133,9 @@ export default function Edit({
                                     <TabsTrigger
                                         key={tab.value}
                                         value={tab.value}
-                                        className="relative h-9 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-2 pt-1 text-[13px] font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                        className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                     >
-                                        {tab.label}
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
                                     </TabsTrigger>
                                 ))}
                             </TabsList>
@@ -153,7 +154,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="name"
-                                        className="border-border bg-card text-foreground placeholder:text-muted-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground placeholder:text-muted-foreground"
                                         value={data.name}
                                         onChange={(e) =>
                                             setData('name', e.target.value)
@@ -175,7 +176,7 @@ export default function Edit({
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="border-border bg-card text-foreground placeholder:text-muted-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground placeholder:text-muted-foreground"
                                         value={data.email}
                                         onChange={(e) =>
                                             setData('email', e.target.value)
@@ -196,7 +197,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="dni"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.dni}
                                         onChange={(e) =>
                                             setData('dni', e.target.value)
@@ -216,6 +217,7 @@ export default function Edit({
                                         Fecha Nacimiento
                                     </Label>
                                     <DatePicker
+                                        className="bg-white border-sidebar/10 shadow-sm rounded-xl"
                                         id="birth"
                                         value={data.birth_date}
                                         onChange={(value) =>
@@ -237,7 +239,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="phone"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.phone}
                                         onChange={(e) =>
                                             setData('phone', e.target.value)
@@ -258,7 +260,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="city"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.city}
                                         onChange={(e) =>
                                             setData('city', e.target.value)
@@ -279,7 +281,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="address"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.address}
                                         onChange={(e) =>
                                             setData('address', e.target.value)
@@ -309,7 +311,7 @@ export default function Edit({
                                             setData('education_center_id', val)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-card text-foreground">
+                                        <SelectTrigger className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground">
                                             <SelectValue placeholder="Centro" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -338,7 +340,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="degree"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.academic_degree}
                                         onChange={(e) =>
                                             setData(
@@ -362,7 +364,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="year"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.academic_year}
                                         onChange={(e) =>
                                             setData(
@@ -391,7 +393,7 @@ export default function Edit({
 
                                 <div className="flex flex-col gap-3 rounded-xl border border-border bg-muted/40 p-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="flex items-center gap-4">
-                                        <div className="rounded-lg border border-border bg-card p-2 text-muted-foreground">
+                                        <div className="rounded-lg border border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 p-2 text-muted-foreground">
                                             <FileText className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -421,7 +423,7 @@ export default function Edit({
 
                                 <div className="flex flex-col gap-3 rounded-xl border border-border bg-muted/40 p-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="flex items-center gap-4">
-                                        <div className="rounded-lg border border-border bg-card p-2 text-muted-foreground">
+                                        <div className="rounded-lg border border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 p-2 text-muted-foreground">
                                             <FileText className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -451,7 +453,7 @@ export default function Edit({
 
                                 <div className="flex flex-col gap-3 rounded-xl border border-border bg-muted/40 p-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="flex items-center gap-4">
-                                        <div className="rounded-lg border border-border bg-card p-2 text-muted-foreground">
+                                        <div className="rounded-lg border border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 p-2 text-muted-foreground">
                                             <FileText className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -503,6 +505,7 @@ export default function Edit({
                                         Fecha Inicio
                                     </Label>
                                     <DatePicker
+                                        className="bg-white border-sidebar/10 shadow-sm rounded-xl"
                                         id="start"
                                         value={data.start_date}
                                         onChange={(value) =>
@@ -523,6 +526,7 @@ export default function Edit({
                                         Fecha Fin
                                     </Label>
                                     <DatePicker
+                                        className="bg-white border-sidebar/10 shadow-sm rounded-xl"
                                         id="end"
                                         value={data.end_date}
                                         onChange={(value) =>
@@ -545,7 +549,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="center_tutor_name"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.center_tutor_name}
                                         onChange={(e) =>
                                             setData(
@@ -565,7 +569,7 @@ export default function Edit({
                                     <Input
                                         id="center_tutor_email"
                                         type="email"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.center_tutor_email}
                                         onChange={(e) =>
                                             setData(
@@ -584,7 +588,7 @@ export default function Edit({
                                     </Label>
                                     <Input
                                         id="center_tutor_phone"
-                                        className="border-border bg-card text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.center_tutor_phone}
                                         onChange={(e) =>
                                             setData(
@@ -608,7 +612,7 @@ export default function Edit({
                                             )
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-card text-foreground">
+                                        <SelectTrigger className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground">
                                             <SelectValue placeholder="Selecciona un tutor de empresa" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -635,7 +639,7 @@ export default function Edit({
                                         <Input
                                             id="total_hours"
                                             type="number"
-                                            className="border-border bg-card pr-8 text-foreground"
+                                            className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 pr-8 text-foreground"
                                             value={data.total_hours}
                                             onChange={(e) =>
                                                 setData(
@@ -664,7 +668,7 @@ export default function Edit({
                                             setData('status', val)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-card text-foreground">
+                                        <SelectTrigger className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground">
                                             <SelectValue placeholder="Selecciona un estado" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -695,7 +699,7 @@ export default function Edit({
                                         </Label>
                                         <Input
                                             id="abandon_reason"
-                                            className="border-border bg-card text-foreground"
+                                            className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                             value={data.abandon_reason}
                                             onChange={(e) =>
                                                 setData(

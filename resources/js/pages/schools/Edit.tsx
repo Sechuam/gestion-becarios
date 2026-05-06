@@ -14,6 +14,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/components/ui/tabs';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -52,9 +58,13 @@ export default function Edit({
     const submit = (e?: React.FormEvent | React.MouseEvent) => {
         e?.preventDefault();
         if (processing || submitLock.current) return;
+        
         submitLock.current = true;
+        setConfirmOpen(false);
+        
         post(`/centros/${educationCenter.id}`, {
             forceFormData: true,
+            preserveScroll: true,
             onFinish: () => {
                 submitLock.current = false;
             },
@@ -71,19 +81,45 @@ export default function Edit({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editar Centro Educativo" />
 
-            <div className="mb-6 flex flex-col gap-1">
-                <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-                    Editar <span className="bg-gradient-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Centro Educativo</span>
-                </h1>
-                <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
-                    Actualizando a {educationCenter.name} · {educationCenter.code}
-                </p>
-            </div>
+            <div className="page-surface p-0 overflow-hidden border-sidebar/20 shadow-xl">
+                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                    <div className="flex flex-col gap-0">
+                        <h1 className="text-xl font-black tracking-tight">
+                            Editar <span className="text-white/80">Centro Educativo</span>
+                        </h1>
+                        <p className="text-white/50 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
+                            Actualizando: {educationCenter.name} · {educationCenter.code}
+                        </p>
+                    </div>
+                </div>
 
-            <div className="app-panel rounded-[1.5rem] border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-4 md:p-6">
-                <form onSubmit={requestConfirmation} className="space-y-6" noValidate>
-                    {/* SECCIÓN: DATOS DEL CENTRO */}
-                    <div className="space-y-6">
+                <div className="bg-slate-50/50 p-4 md:p-6 dark:bg-slate-900/40">
+                    <form onSubmit={requestConfirmation} className="space-y-6" noValidate>
+                        <Tabs defaultValue="institution" className="w-full">
+                            <TabsList className="grid h-auto w-full grid-cols-3 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 mb-6">
+                                <TabsTrigger
+                                    value="institution"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                >
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Institución</span>
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="contact"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                >
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Contacto</span>
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="agreement"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                >
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Convenio</span>
+                                </TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="institution" className="mt-0 space-y-4 outline-none animate-in fade-in duration-500">
+                                {/* SECCIÓN: DATOS DEL CENTRO */}
+                                <div className="space-y-6">
                         <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
                             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">01</span>
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Información Institucional</h3>
@@ -95,7 +131,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="name"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.name}
                                     onChange={(e) =>
                                         setData('name', e.target.value)
@@ -113,7 +149,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="code"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.code}
                                     onChange={(e) =>
                                         setData('code', e.target.value)
@@ -134,7 +170,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="address"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.address}
                                     onChange={(e) =>
                                         setData('address', e.target.value)
@@ -152,7 +188,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="city"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.city}
                                     onChange={(e) =>
                                         setData('city', e.target.value)
@@ -166,13 +202,15 @@ export default function Edit({
                             </div>
                         </div>
                     </div>
+                </TabsContent>
 
-                    {/* SECCIÓN: CONTACTO */}
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">02</span>
-                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Coordinación y Contacto</h3>
-                        </div>
+                            <TabsContent value="contact" className="mt-0 space-y-4 outline-none animate-in fade-in duration-500">
+                                {/* SECCIÓN: CONTACTO */}
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
+                                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">02</span>
+                                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Coordinación y Contacto</h3>
+                                    </div>
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
                                 <Label
@@ -183,7 +221,7 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="contact_person"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.contact_person}
                                     onChange={(e) =>
                                         setData('contact_person', e.target.value)
@@ -205,7 +243,7 @@ export default function Edit({
                                 <Input
                                     id="contact_email"
                                     type="email"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.contact_email}
                                     onChange={(e) =>
                                         setData('contact_email', e.target.value)
@@ -226,85 +264,63 @@ export default function Edit({
                                 </Label>
                                 <Input
                                     id="contact_position"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.contact_position}
                                     onChange={(e) =>
                                         setData('contact_position', e.target.value)
                                     }
                                 />
                             </div>
-                        </div>
                     </div>
 
-                    {/* SECCIÓN: CONTACTO INSTITUCIONAL */}
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">03</span>
-                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Canales Oficiales</h3>
+                    <div className="space-y-6 pt-4 border-t border-sidebar/5">
+                        <div className="flex items-center gap-2 pb-2">
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Canales Oficiales</h3>
                         </div>
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-foreground">
-                                    Email Institucional
-                                </Label>
+                                <Label htmlFor="email">Email Institucional</Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.email}
-                                    onChange={(e) =>
-                                        setData('email', e.target.value)
-                                    }
+                                    onChange={(e) => setData('email', e.target.value)}
                                 />
-                                {errors.email && (
-                                    <p className="text-xs text-red-500">
-                                        {errors.email}
-                                    </p>
-                                )}
+                                {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="phone" className="text-foreground">
-                                    Teléfono
-                                </Label>
+                                <Label htmlFor="phone">Teléfono</Label>
                                 <Input
                                     id="phone"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.phone}
-                                    onChange={(e) =>
-                                        setData('phone', e.target.value)
-                                    }
+                                    onChange={(e) => setData('phone', e.target.value)}
                                 />
-                                {errors.phone && (
-                                    <p className="text-xs text-red-500">
-                                        {errors.phone}
-                                    </p>
-                                )}
+                                {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="web">Sitio Web</Label>
+                                <Input
+                                    id="web"
+                                    type="url"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
+                                    value={data.web}
+                                    onChange={(e) => setData('web', e.target.value)}
+                                />
                             </div>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="web" className="text-foreground">
-                                Sitio Web (Opcional)
-                            </Label>
-                            <Input
-                                id="web"
-                                type="url"
-                                className="border-border bg-background text-foreground"
-                                value={data.web}
-                                onChange={(e) => setData('web', e.target.value)}
-                            />
-                            {errors.web && (
-                                <p className="text-xs text-red-500">{errors.web}</p>
-                            )}
-                        </div>
                     </div>
+                </div>
+            </TabsContent>
 
-                    {/* SECCIÓN: CONVENIO */}
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">04</span>
-                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Detalles del Convenio</h3>
-                        </div>
+                    <TabsContent value="agreement" className="mt-0 space-y-4 outline-none animate-in fade-in duration-500">
+                        {/* SECCIÓN: CONVENIO */}
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-2 border-b border-sidebar/5 pb-4">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sidebar/10 text-[10px] font-bold text-sidebar">03</span>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Detalles del Convenio</h3>
+                            </div>
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-2">
                                 <Label
@@ -314,6 +330,7 @@ export default function Edit({
                                     Fecha de firma
                                 </Label>
                                 <DatePicker
+                                     className="bg-white border-sidebar/10 shadow-sm rounded-xl"
                                     id="agreement_signed_at"
                                     value={data.agreement_signed_at}
                                     onChange={(value) =>
@@ -335,6 +352,7 @@ export default function Edit({
                                     Fecha de vencimiento
                                 </Label>
                                 <DatePicker
+                                     className="bg-white border-sidebar/10 shadow-sm rounded-xl"
                                     id="agreement_expires_at"
                                     value={data.agreement_expires_at}
                                     onChange={(value) =>
@@ -359,7 +377,7 @@ export default function Edit({
                                     id="agreement_slots"
                                     type="number"
                                     min={1}
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     value={data.agreement_slots}
                                     onChange={(e) =>
                                         setData('agreement_slots', e.target.value)
@@ -402,7 +420,7 @@ export default function Edit({
                                     id="agreement_file"
                                     type="file"
                                     accept="application/pdf"
-                                    className="border-border bg-card text-foreground"
+                                    className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20"
                                     onChange={(e) =>
                                         setData(
                                             'agreement_file',
@@ -418,8 +436,10 @@ export default function Edit({
                             </div>
                         </div>
                     </div>
+                </TabsContent>
+            </Tabs>
 
-                    <div className="flex justify-end gap-3 border-t border-sidebar/10 pt-8 mt-4">
+                        <div className="flex justify-end gap-3 border-t border-sidebar/10 pt-6">
                         <Button
                             type="button"
                             variant="outline"
@@ -439,6 +459,7 @@ export default function Edit({
                     </div>
                 </form>
             </div>
+        </div>
 
             <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <DialogContent className="max-w-md rounded-3xl border-sidebar/10 shadow-2xl">
@@ -451,11 +472,9 @@ export default function Edit({
                             <Button variant="ghost" className="rounded-xl px-6">Cancelar</Button>
                         </DialogClose>
                         <Button
+                            type="button"
                             className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all font-bold"
-                            onClick={() => {
-                                setConfirmOpen(false);
-                                submit();
-                            }}
+                            onClick={submit}
                             disabled={processing}
                         >
                             Actualizar centro

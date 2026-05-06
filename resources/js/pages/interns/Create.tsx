@@ -96,37 +96,39 @@ export default function Create({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nuevo Becario" />
 
-            <div className="page-surface">
-                <div className="mb-8 flex flex-col gap-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                        Nuevo <span className="bg-linear-to-r from-sidebar to-[#1f4f52] bg-clip-text text-transparent">Becario</span>
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium font-mono text-[10px] uppercase tracking-[0.2em]">
-                        Formulario de alta de nuevo expediente
-                    </p>
+            <div className="page-surface p-0 overflow-hidden border-sidebar/20 shadow-xl">
+                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-6 text-white">
+                    <div className="flex flex-col gap-0">
+                        <h1 className="text-xl font-black tracking-tight">
+                            Nuevo <span className="text-white/80">Becario</span>
+                        </h1>
+                        <p className="text-white/50 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
+                            Formulario de alta de nuevo expediente
+                        </p>
+                    </div>
                 </div>
 
-                <div className="app-panel rounded-4xl border-sidebar/20 bg-white shadow-xl dark:bg-slate-900/40 p-1 md:p-8">
-                    <form onSubmit={submit} className="space-y-8" noValidate>
+                <div className="bg-slate-50/50 p-4 md:p-6 dark:bg-slate-900/40">
+                    <form onSubmit={submit} className="space-y-6" noValidate>
                         <Tabs defaultValue="personal" className="w-full">
-                            <TabsList className="flex h-auto w-full justify-start gap-8 bg-transparent p-0 border-b border-sidebar/10 rounded-none mb-8 px-2">
+                            <TabsList className="grid h-auto w-full grid-cols-3 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 mb-6">
                                 <TabsTrigger
                                     value="personal"
-                                    className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
-                                    Datos Personales
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Datos Personales</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="academic"
-                                    className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
-                                    Académicos
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Académicos</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="internship"
-                                    className="relative h-12 rounded-none border-b-2 border-transparent bg-transparent px-2 pb-4 pt-2 text-sm font-bold text-slate-400 transition-all data-[state=active]:border-sidebar data-[state=active]:bg-transparent data-[state=active]:text-sidebar dark:data-[state=active]:text-white shadow-none"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
-                                    Prácticas
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Prácticas</span>
                                 </TabsTrigger>
                             </TabsList>
 
@@ -144,7 +146,7 @@ export default function Create({
                                     </Label>
                                     <Input
                                         id="name"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.name}
                                         onChange={(e) =>
                                             setData('name', e.target.value)
@@ -166,7 +168,7 @@ export default function Create({
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.email}
                                         onChange={(e) =>
                                             setData('email', e.target.value)
@@ -187,7 +189,7 @@ export default function Create({
                                     </Label>
                                     <Input
                                         id="dni"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.dni}
                                         onChange={(e) =>
                                             setData('dni', e.target.value)
@@ -228,7 +230,7 @@ export default function Create({
                                     </Label>
                                     <Input
                                         id="phone"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.phone}
                                         onChange={(e) =>
                                             setData('phone', e.target.value)
@@ -249,7 +251,7 @@ export default function Create({
                                     </Label>
                                     <Input
                                         id="address"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.address}
                                         onChange={(e) =>
                                             setData('address', e.target.value)
@@ -270,7 +272,7 @@ export default function Create({
                                     </Label>
                                     <Input
                                         id="city"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.city}
                                         onChange={(e) =>
                                             setData('city', e.target.value)
@@ -299,7 +301,7 @@ export default function Create({
                                             setData('education_center_id', val)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground">
                                             <SelectValue placeholder="Selecciona un centro" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -329,7 +331,7 @@ export default function Create({
                                         </Label>
                                         <Input
                                             id="degree"
-                                            className="border-border bg-background text-foreground"
+                                            className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                             value={data.academic_degree}
                                             onChange={(e) =>
                                                 setData(
@@ -353,7 +355,7 @@ export default function Create({
                                         </Label>
                                         <Input
                                             id="year"
-                                            className="border-border bg-background text-foreground"
+                                            className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                             value={data.academic_year}
                                             onChange={(e) =>
                                                 setData(
@@ -427,7 +429,7 @@ export default function Create({
                                     </Label>
                                     <Input
                                         id="center_tutor_name"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.center_tutor_name}
                                         onChange={(e) =>
                                             setData(
@@ -447,7 +449,7 @@ export default function Create({
                                     <Input
                                         id="center_tutor_email"
                                         type="email"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.center_tutor_email}
                                         onChange={(e) =>
                                             setData(
@@ -466,7 +468,7 @@ export default function Create({
                                     </Label>
                                     <Input
                                         id="center_tutor_phone"
-                                        className="border-border bg-background text-foreground"
+                                        className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                         value={data.center_tutor_phone}
                                         onChange={(e) =>
                                             setData(
@@ -490,7 +492,7 @@ export default function Create({
                                             )
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground">
                                             <SelectValue placeholder="Selecciona un tutor de empresa" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -517,7 +519,7 @@ export default function Create({
                                         <Input
                                             id="total_hours"
                                             type="number"
-                                            className="border-border bg-background pr-8 text-foreground"
+                                            className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 pr-8 text-foreground"
                                             value={data.total_hours}
                                             onChange={(e) =>
                                                 setData(
@@ -620,7 +622,7 @@ export default function Create({
                                             setData('status', val)
                                         }
                                     >
-                                        <SelectTrigger className="border-border bg-background text-foreground">
+                                        <SelectTrigger className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground">
                                             <SelectValue placeholder="Selecciona un estado" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -651,7 +653,7 @@ export default function Create({
                                         </Label>
                                         <Input
                                             id="abandon_reason"
-                                            className="border-border bg-background text-foreground"
+                                            className="border-sidebar/10 bg-white shadow-sm focus-visible:ring-sidebar/20 text-foreground"
                                             value={data.abandon_reason}
                                             onChange={(e) =>
                                                 setData(

@@ -447,19 +447,38 @@ export default function Index({
                 />
 
                 {/* FILTROS */}
-                <div className="rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60 transition-all">
-                    {/* Fila 1: Búsqueda y Exportar */}
-                    <div className="flex flex-wrap items-center gap-3 mb-4">
-                        <div className="relative max-w-sm min-w-[240px] flex-1">
-                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="relative w-full flex-none sm:w-64">
+                            <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar centro..."
-                                className="h-8 border-sidebar/20 bg-slate-50/50 pl-10 text-xs text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus:ring-sidebar/20"
-                                defaultValue={filters.search}
-                                onChange={(e) =>
-                                    handleFilter('search', e.target.value)
-                                }
+                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
+                                value={filters.search || ''}
+                                onChange={(e) => handleFilter('search', e.target.value)}
                             />
+                        </div>
+
+                        <div className="min-w-[120px] flex-1">
+                            <Select
+                                value={filters.trashed || 'none'}
+                                onValueChange={(v) => handleFilter('trashed', v)}
+                            >
+                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                                    <SelectValue>
+                                        {{
+                                            none: 'Solo Activos',
+                                            only: 'Archivados',
+                                            with: 'Ver Todos',
+                                        }[filters.trashed as string] || 'Vista'}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent className="rounded-lg border-sidebar/20">
+                                    <SelectItem value="none">Solo Activos</SelectItem>
+                                    <SelectItem value="only">Archivados</SelectItem>
+                                    <SelectItem value="with">Ver Todos</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         {canManage && (
@@ -549,45 +568,11 @@ export default function Index({
                             </Dialog>
                         )}
 
-                        <div className="ml-auto text-[9px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-3 py-1 rounded-full dark:bg-slate-800 flex items-center gap-1.5 border border-sidebar/5 shadow-inner">
-                            <span className="flex h-1.5 w-1.5 rounded-full bg-sidebar animate-pulse" />
-                            {schools.data.length} / {schools.total}{' '}
-                            centros
-                        </div>
-                    </div>
-
-                    {/* Fila 2: Filtros */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap items-end gap-2">
-                        <div className="space-y-1 lg:min-w-[150px]">
-                            <label className="text-[9px] font-black tracking-widest text-[#1f4f52]/70 uppercase ml-0.5">
-                                Vista
-                            </label>
-                            <Select
-                                value={filters.trashed || 'none'}
-                                onValueChange={(v) =>
-                                    handleFilter('trashed', v)
-                                }
-                            >
-                                <SelectTrigger className="h-8 border-sidebar/20 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
-                                    <SelectValue>
-                                        {{
-                                            none: 'Solo Activos',
-                                            only: 'Archivados',
-                                            with: 'Ver Todos',
-                                        }[filters.trashed as string] ||
-                                            'Solo Activos'}
-                                    </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent className="rounded-lg border-sidebar/20">
-                                    <SelectItem value="none">
-                                        Solo Activos
-                                    </SelectItem>
-                                    <SelectItem value="only">
-                                        Archivados
-                                    </SelectItem>
-                                    <SelectItem value="with">Ver Todos</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800 ml-auto">
+                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                            <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                                {schools.data.length} / {schools.total} centros
+                            </span>
                         </div>
                     </div>
                 </div>

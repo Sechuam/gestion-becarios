@@ -43,39 +43,51 @@ function ExportReportModal({ intern, isOpen, onClose }: ExportReportModalProps) 
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                        <Download className="h-5 w-5 text-indigo-500" />
-                        Exportar Reporte de Asistencia
-                    </DialogTitle>
-                </DialogHeader>
+            <DialogContent className="overflow-hidden border-sidebar/20 p-0 shadow-2xl sm:max-w-md bg-slate-50 dark:bg-slate-900">
+                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-white">
+                            <Download className="h-5 w-5 text-white/80" />
+                            Exportar Reporte de Asistencia
+                        </DialogTitle>
+                    </DialogHeader>
+                </div>
 
-                <div className="space-y-6 py-4">
-                    <div className="flex flex-wrap gap-2 text-slate-900 dark:text-white">
-                        <Button variant="outline" size="sm" onClick={() => setPeriod('month')}>Este Mes</Button>
-                        <Button variant="outline" size="sm" onClick={() => setPeriod('year')}>Este Año</Button>
-                        <Button variant="outline" size="sm" onClick={() => setPeriod('full')}>Todo el Periodo</Button>
+                <div className="space-y-6 px-6 py-4">
+                    <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm" onClick={() => setPeriod('month')} className="bg-white border-sidebar/10 text-xs font-bold text-sidebar hover:bg-sidebar/5 transition-all shadow-sm rounded-xl">Este Mes</Button>
+                        <Button variant="outline" size="sm" onClick={() => setPeriod('year')} className="bg-white border-sidebar/10 text-xs font-bold text-sidebar hover:bg-sidebar/5 transition-all shadow-sm rounded-xl">Este Año</Button>
+                        <Button variant="outline" size="sm" onClick={() => setPeriod('full')} className="bg-white border-sidebar/10 text-xs font-bold text-sidebar hover:bg-sidebar/5 transition-all shadow-sm rounded-xl">Todo el Periodo</Button>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label className="text-slate-700 dark:text-slate-300">Fecha Inicio</Label>
-                            <DatePicker value={startDate} onChange={setStartDate} />
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#1f4f52]/70 ml-1">Fecha Inicio</Label>
+                            <DatePicker 
+                                value={startDate} 
+                                onChange={setStartDate} 
+                                className="bg-white border-sidebar/10 shadow-sm rounded-xl"
+                            />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-700 dark:text-slate-300">Fecha Fin</Label>
-                            <DatePicker value={endDate} onChange={setEndDate} />
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#1f4f52]/70 ml-1">Fecha Fin</Label>
+                            <DatePicker 
+                                value={endDate} 
+                                onChange={setEndDate} 
+                                className="bg-white border-sidebar/10 shadow-sm rounded-xl"
+                            />
                         </div>
                     </div>
                 </div>
 
-                <DialogFooter className="gap-2 sm:gap-0">
-                    <Button variant="ghost" onClick={onClose} className="dark:text-slate-400">Cancelar</Button>
+                <DialogFooter className="px-6 py-4 border-t border-sidebar/10 gap-3 sm:justify-end">
+                    <Button variant="ghost" onClick={onClose} className="rounded-xl px-6 font-bold text-slate-500 hover:bg-slate-100">
+                        Cancelar
+                    </Button>
                     <Button
                         onClick={handleDownload}
                         disabled={!startDate || !endDate}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        className="h-10 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
                     >
                         Descargar PDF
                     </Button>
