@@ -15,9 +15,14 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 
-import { CalendarClock, AlertTriangle, Clock3, ShieldAlert, TimerReset, FilePlus, ExternalLink, FileText, Download } from 'lucide-react';
+import { CalendarClock, AlertTriangle, Clock3, ShieldAlert, TimerReset, FilePlus, ExternalLink, FileText, Download, ChevronsUpDown } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { cn } from '@/lib/utils';
@@ -116,6 +121,7 @@ export default function Index({
     });
 
     const [now, setNow] = useState(() => new Date());
+    const [todayLogsOpen, setTodayLogsOpen] = useState(() => today_logs.length <= 2);
 
     // ── Búsqueda de becarios ──────────────────────────────────────────────────
     const [internSearch, setInternSearch] = useState('');
@@ -266,76 +272,139 @@ export default function Index({
                             Registro de Jornada
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-3 space-y-3">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/50 p-2 rounded-xl border border-sidebar/10 dark:bg-slate-800/50">
-                            <div className="space-y-0 px-2">
-                                <p className="text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-widest leading-none">Monitor de Actividad</p>
-                                <p className="text-[10px] font-medium text-slate-500 italic leading-none mt-1">Sigue tu jornada en tiempo real desde la cabecera superior.</p>
-                            </div>
-                        </div>
-
-                        {(today_logs.length > 0 || current_log) && (
-                            <div className="grid gap-8">
-                                <div className="grid gap-2 md:grid-cols-3">
-                                    <div className="flex flex-col gap-0 rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
+                    <CardContent className="space-y-3 p-3">
+                        <div className="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.9fr)]">
+                            <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/8 to-[#1f4f52]/8 p-3 dark:from-sidebar/15 dark:to-[#1f4f52]/15">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-800 dark:text-white">
+                                            Monitor de actividad
+                                        </p>
+                                        <p className="text-[11px] font-medium italic text-slate-500 dark:text-slate-400">
+                                            Accede al fichaje rápido arriba y deja aquí solo el resumen de hoy.
+                                        </p>
+                                    </div>
+                                    <Badge
+                                        variant="outline"
+                                        className="h-8 rounded-full border-sidebar/20 bg-white/85 px-3 text-[10px] font-black uppercase tracking-widest text-sidebar shadow-sm backdrop-blur-sm dark:bg-slate-900/85"
+                                    >
+                                        {current_log ? 'Jornada en curso' : 'Sin fichaje activo'}
+                                    </Badge>
+                                </div>
+                                <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                                    <div className="rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
                                         <p className="text-[8px] font-black uppercase tracking-widest text-sidebar leading-none">Entrada</p>
-                                        <p className="text-lg font-black text-slate-800 dark:text-white mt-0.5">{current_log?.clock_in ?? '--:--'}</p>
+                                        <p className="mt-0.5 text-lg font-black text-slate-800 dark:text-white">
+                                            {current_log?.clock_in ?? '--:--'}
+                                        </p>
                                     </div>
-                                    <div className="flex flex-col gap-0 rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
+                                    <div className="rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
                                         <p className="text-[8px] font-black uppercase tracking-widest text-sidebar leading-none">Salida</p>
-                                        <p className="text-lg font-black text-slate-800 dark:text-white mt-0.5">{current_log?.clock_out ?? '--:--'}</p>
+                                        <p className="mt-0.5 text-lg font-black text-slate-800 dark:text-white">
+                                            {current_log?.clock_out ?? '--:--'}
+                                        </p>
                                     </div>
-                                    <div className="flex flex-col gap-0 rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
-                                        <p className="text-[8px] font-black uppercase tracking-widest text-sidebar leading-none">Total Hoy</p>
-                                        <p className="text-lg font-black text-slate-800 dark:text-white mt-0.5">
+                                    <div className="rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
+                                        <p className="text-[8px] font-black uppercase tracking-widest text-sidebar leading-none">Total hoy</p>
+                                        <p className="mt-0.5 text-lg font-black text-slate-800 dark:text-white">
                                             {today_total_hours > 0 ? formatHoursDecimal(today_total_hours) : '0m'}
                                         </p>
                                     </div>
                                 </div>
+                            </div>
 
-                                {liveElapsed && (
-                                    <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar/5 to-[#1f4f52]/5 p-3 border border-sidebar/10 backdrop-blur-sm">
-                                        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar text-white shadow shadow-sidebar/20">
-                                                    <TimerReset className="h-4 w-4 animate-pulse" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-sidebar leading-none">En Curso</p>
-                                                    <p className="text-2xl font-black tracking-tight text-sidebar leading-none mt-1">
-                                                        {liveElapsed}
-                                                    </p>
-                                                </div>
+                            <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/10 to-[#1f4f52]/10 p-3 shadow-sm dark:from-sidebar/15 dark:to-[#1f4f52]/15 dark:bg-slate-800/80">
+                                {liveElapsed ? (
+                                    <div className="relative overflow-hidden rounded-xl border border-sidebar/10 bg-gradient-to-r from-sidebar/5 to-[#1f4f52]/5 p-3 backdrop-blur-sm">
+                                        <div className="relative flex items-center gap-3">
+                                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar text-white shadow shadow-sidebar/20">
+                                                <TimerReset className="h-4 w-4 animate-pulse" />
                                             </div>
-                                            <p className="text-sm font-medium text-sidebar/70 italic max-w-[200px]">
-                                                Contabilizando el tramo actual en tiempo real.
+                                            <div className="min-w-0">
+                                                <p className="text-[8px] font-black uppercase tracking-[0.2em] text-sidebar leading-none">
+                                                    En curso
+                                                </p>
+                                                <p className="mt-1 text-2xl font-black leading-none tracking-tight text-sidebar">
+                                                    {liveElapsed}
+                                                </p>
+                                                <p className="mt-1 text-[11px] font-medium italic text-sidebar/70">
+                                                    Contabilizando el tramo actual en tiempo real.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex h-full min-h-28 items-center rounded-xl border border-dashed border-sidebar/15 bg-slate-50/60 px-4 py-3 dark:bg-slate-900/30">
+                                        <div className="space-y-1">
+                                            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-sidebar leading-none">
+                                                Estado actual
+                                            </p>
+                                            <p className="text-sm font-bold text-slate-800 dark:text-white">
+                                                No hay un tramo abierto ahora mismo.
+                                            </p>
+                                            <p className="text-[11px] font-medium italic text-slate-500 dark:text-slate-400">
+                                                Cuando fiches entrada, el contador en vivo aparecerá aquí.
                                             </p>
                                         </div>
                                     </div>
                                 )}
+                            </div>
+                        </div>
 
+                        {(today_logs.length > 0 || current_log) && (
+                            <div className="grid gap-3">
                                 {today_logs.length > 0 && (
-                                    <div className="space-y-4">
-                                        <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest ml-1">Tramos de hoy</h3>
-                                        <div className="grid gap-3">
-                                            {today_logs.map((log) => (
-                                                <div
-                                                    key={log.id}
-                                                    className="flex items-center justify-between gap-2 rounded-lg border border-sidebar/10 bg-white px-3 py-2 shadow-sm hover:border-sidebar/30 transition-all dark:bg-slate-800"
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <Clock3 className="h-4 w-4 text-sidebar/50" />
-                                                        <span className="font-bold text-slate-700 dark:text-slate-200">
-                                                            {log.clock_in ?? '--:--'} <span className="mx-2 text-slate-300">→</span> {log.clock_out ?? 'En curso'}
-                                                        </span>
-                                                    </div>
-                                                    <Badge variant="outline" className="h-8 rounded-full border-sidebar/20 bg-slate-50 px-4 text-[10px] font-black uppercase tracking-widest text-sidebar">
-                                                        {log.total_hours !== null ? formatHoursDecimal(log.total_hours) : 'Procesando...'}
-                                                    </Badge>
+                                    <Collapsible
+                                        open={todayLogsOpen}
+                                        onOpenChange={setTodayLogsOpen}
+                                    >
+                                        <div className="rounded-xl border border-sidebar/10 bg-slate-50/60 p-2.5 dark:bg-slate-800/50">
+                                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                                <div className="px-1">
+                                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-800 dark:text-white">
+                                                        Tramos de hoy
+                                                    </h3>
+                                                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                                                        {today_logs.length} registros en la jornada actual.
+                                                    </p>
                                                 </div>
-                                            ))}
+                                                <CollapsibleTrigger asChild>
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-8 rounded-full border-sidebar/20 bg-white px-3 text-[10px] font-black uppercase tracking-widest text-sidebar hover:bg-slate-50 dark:bg-slate-900"
+                                                    >
+                                                        {todayLogsOpen ? 'Ocultar detalle' : 'Ver detalle'}
+                                                        <ChevronsUpDown className="ml-1.5 h-3.5 w-3.5" />
+                                                    </Button>
+                                                </CollapsibleTrigger>
+                                            </div>
+                                            <CollapsibleContent className="pt-3">
+                                                <div className="grid max-h-64 gap-3 overflow-y-auto pr-1">
+                                                    {today_logs.map((log) => (
+                                                        <div
+                                                            key={log.id}
+                                                            className="flex items-center justify-between gap-2 rounded-lg border border-sidebar/10 bg-white px-3 py-2 shadow-sm transition-all hover:border-sidebar/30 dark:bg-slate-800"
+                                                        >
+                                                            <div className="flex min-w-0 items-center gap-3">
+                                                                <Clock3 className="h-4 w-4 shrink-0 text-sidebar/50" />
+                                                                <span className="truncate font-bold text-slate-700 dark:text-slate-200">
+                                                                    {log.clock_in ?? '--:--'} <span className="mx-2 text-slate-300">→</span> {log.clock_out ?? 'En curso'}
+                                                                </span>
+                                                            </div>
+                                                            <Badge
+                                                                variant="outline"
+                                                                className="h-8 shrink-0 rounded-full border-sidebar/20 bg-slate-50 px-4 text-[10px] font-black uppercase tracking-widest text-sidebar"
+                                                            >
+                                                                {log.total_hours !== null ? formatHoursDecimal(log.total_hours) : 'Procesando...'}
+                                                            </Badge>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </CollapsibleContent>
                                         </div>
-                                    </div>
+                                    </Collapsible>
                                 )}
                             </div>
                         )}
@@ -346,7 +415,12 @@ export default function Index({
                     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
                         <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900">
                             <CardHeader className="border-b border-sidebar/5 p-3 pb-2">
-                                <CardTitle className="text-base font-black tracking-tight text-slate-800 dark:text-white">Registro Manual</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
+                                    <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow shadow-sidebar/20">
+                                        <FileText className="h-4 w-4" />
+                                    </div>
+                                    Registro Manual
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="p-3">
                                 <form onSubmit={submitManualLog} className="space-y-3">
@@ -474,7 +548,7 @@ export default function Index({
                                     <Button
                                         type="submit"
                                         disabled={manualForm.processing || !manualForm.data.intern_id}
-                                        className="h-8 bg-sidebar text-white hover:bg-sidebar/90 rounded-lg px-6 text-[10px] font-black shadow shadow-sidebar/20 transition-all active:scale-95"
+                                        className="h-8 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-[10px] font-black text-white shadow shadow-sidebar/20 transition-all active:scale-95 hover:opacity-95"
                                     >
                                         Guardar Registro
                                     </Button>
@@ -482,16 +556,16 @@ export default function Index({
                             </CardContent>
                         </Card>
 
-                        <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900">
+                        <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900 xl:max-h-[34rem]">
                             <CardHeader className="border-b border-sidebar/5 p-3 pb-2 bg-slate-50/30 dark:bg-slate-800/30">
                                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
-                                    <div className="flex h-6 w-6 items-center justify-center rounded bg-sidebar/10 text-sidebar shadow-inner">
+                                    <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow shadow-sidebar/20">
                                         <ShieldAlert className="h-4 w-4" />
                                     </div>
                                     Incumplimientos
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-3 space-y-2">
+                            <CardContent className="space-y-2 overflow-y-auto p-3 xl:max-h-[29rem]">
                                 {non_compliant_interns.length > 0 ? (
                                     non_compliant_interns.map((intern) => (
                                         <div
@@ -510,8 +584,10 @@ export default function Index({
                                                     <p className="text-sm font-medium text-slate-500 leading-snug dark:text-slate-400">
                                                         Deuda de horas: <span className="font-black text-sidebar dark:text-sidebar-foreground">{intern.debt}h</span> acumuladas.
                                                     </p>
-                                                    <div className="flex items-center gap-3 mt-2 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
-                                                        <span>Progreso: {intern.total_done}h / {intern.expected_hours}h</span>
+                                                    <div className="mt-2 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                                                        <span className="rounded-full border border-sidebar/15 bg-gradient-to-r from-sidebar/10 to-[#1f4f52]/10 px-3 py-1 text-sidebar dark:text-white">
+                                                            Progreso: {intern.total_done}h / {intern.expected_hours}h
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -638,6 +714,31 @@ export default function Index({
                                 }}
                             />
                         </div>
+                        <style>{`
+                            .attendance-calendar .fc .fc-button {
+                                background: linear-gradient(90deg, var(--sidebar) 0%, #1f4f52 100%);
+                                border-color: transparent;
+                                color: white;
+                                box-shadow: 0 8px 24px rgba(31, 79, 82, 0.18);
+                            }
+
+                            .attendance-calendar .fc .fc-button:hover,
+                            .attendance-calendar .fc .fc-button:focus {
+                                opacity: 0.95;
+                                box-shadow: 0 10px 28px rgba(31, 79, 82, 0.24);
+                            }
+
+                            .attendance-calendar .fc .fc-button:disabled {
+                                opacity: 0.55;
+                                box-shadow: none;
+                            }
+
+                            .attendance-calendar .fc .fc-button-primary:not(:disabled).fc-button-active,
+                            .attendance-calendar .fc .fc-button-primary:not(:disabled):active {
+                                background: linear-gradient(90deg, #163c42 0%, #1f4f52 100%);
+                                border-color: transparent;
+                            }
+                        `}</style>
                     </CardContent>
                 </Card>
             </div>
