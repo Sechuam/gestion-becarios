@@ -380,4 +380,25 @@ class InternController extends Controller
             'internal_notes_updated_at' => $latestNote?->created_at,
         ]);
     }
+
+    public function completeProfile() {
+        $user = Auth::user();
+        $intern = $user->intern;
+
+        return Inertia::render('interns/CompleteProfile', [
+            'intern' => $intern,
+            'education_centers' => EducationCenter::all(['id', 'name']),
+            'tutors' => User::role('tutor')->get(['id', 'name', 'email']),
+        ]);
+    }
+
+    public function storeCompleteProfile(UpdateInternRequest $request) {
+        $user = Auth::user();
+        $intern = $user->intern;
+
+        $intern->update($request->validated());
+        $this->syncInternMedia($intern, $request);
+
+        return redirect()->route('dashboard')->with('success', 'Perfil completado correctamente');
+    }
 }

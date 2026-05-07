@@ -48,7 +48,7 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="space-y-4">
                 {/* HERO SECTION CON GRADIENTE CORPORATIVO */}
-                <section className="relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl md:p-6 rounded-2xl">
+                <section className="relative overflow-hidden bg-linear-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl md:p-6 rounded-2xl">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="absolute inset-y-0 right-0 hidden w-2/5 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_70%)] lg:block" />
                     
@@ -69,12 +69,12 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="grid min-w-[240px] grid-cols-2 gap-2">
+                        <div className="grid min-w-60 grid-cols-2 gap-2">
                             <div className="relative overflow-hidden rounded-xl bg-white/10 p-3 shadow-xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
                                 <p className="text-[9px] font-black uppercase tracking-widest text-white/60">
                                     Cumplimiento
                                 </p>
-                                <p className="mt-1 text-2xl font-black tracking-tight text-white text-emerald-300">92%</p>
+                                <p className="mt-1 text-2xl font-black tracking-tight text-emerald-300">92%</p>
                                 <p className="mt-1 text-[9px] font-bold text-white/50 uppercase tracking-widest">Activo</p>
                             </div>
                             <div className="relative overflow-hidden rounded-xl bg-white/10 p-3 shadow-xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
@@ -124,7 +124,7 @@ export default function Dashboard() {
                             </Badge>
                         </CardHeader>
                         <CardContent className="p-8">
-                            <div className="relative min-h-[22rem] overflow-hidden rounded-[2rem] border border-sidebar/10 bg-slate-50/50 dark:bg-slate-800/50">
+                            <div className="relative min-h-88 overflow-hidden rounded-4xl border border-sidebar/10 bg-slate-50/50 dark:bg-slate-800/50">
                                 <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/5 dark:stroke-neutral-100/5" />
                                 <div className="relative grid gap-4 p-6 md:grid-cols-3">
                                     <div className="rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
@@ -159,7 +159,7 @@ export default function Dashboard() {
                                     ['3 tareas con entrega sensible', 'Conviene priorizar seguimiento del tutor'],
                                     ['1 convenio vence este mes', 'Validar renovación del centro'],
                                 ].map(([title, description]) => (
-                                    <div key={title} className="group rounded-[1.5rem] border border-sidebar/10 bg-white p-5 shadow-sm transition-all hover:bg-rose-50/30 hover:border-rose-200 dark:bg-slate-800">
+                                    <div key={title} className="group rounded-3xl border border-sidebar/10 bg-white p-5 shadow-sm transition-all hover:bg-rose-50/30 hover:border-rose-200 dark:bg-slate-800">
                                         <div className="flex items-start gap-4">
                                             <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600 shadow-inner">
                                                 <AlertTriangle className="h-5 w-5" />

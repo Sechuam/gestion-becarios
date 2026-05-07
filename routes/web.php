@@ -76,6 +76,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/absences/{absence}/status', [AbsenceController::class, 'updateStatus'])->name('absences.updateStatus');
     Route::post('/absences/{absence}/justification', [AbsenceController::class, 'uploadJustification'])->name('absences.uploadJustification');
     Route::get('/interns/{intern}/report', [AttendanceReportController::class, 'download'])->name('interns.report');
+    Route::get('interns/complete-profile', [InternController::class, 'completeProfile'])
+    ->name('interns.complete-profile');
+    Route::patch('interns/complete-profile', [InternController::class, 'storeCompleteProfile'])
+    ->name('interns.complete-profile.store');
 
 
 

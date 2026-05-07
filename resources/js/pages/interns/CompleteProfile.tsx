@@ -17,8 +17,7 @@ import type { BreadcrumbItem } from '@/types/navigation';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Becarios', href: '/becarios' },
-    { title: 'Nuevo Becario', href: '/interns/create' },
+    { title: 'Completar Perfil', href: '/interns/complete-profile' },
 ];
 
 type FormData = {
@@ -46,36 +45,38 @@ type FormData = {
     company_tutor_user_id: string;
 };
 
-export default function Create({
+export default function CompleteProfile({
+    intern,
     education_centers,
     tutors,
 }: {
+    intern: any;
     education_centers: any[];
     tutors: any[];
 }) {
-    const { data, setData, post, processing, errors } = useForm<FormData>({
+    const { data, setData, patch, processing, errors } = useForm<FormData>({
         name: '',
         email: '',
-        education_center_id: '',
-        dni: '',
-        birth_date: '',
-        phone: '',
-        address: '',
-        city: '',
-        academic_degree: '',
-        academic_year: '2025-2026',
-        start_date: '',
-        end_date: '',
-        total_hours: '',
-        status: 'active',
-        abandon_reason: '',
+        education_center_id: intern?.education_center_id?.toString() || '',
+        dni: intern?.dni || '',
+        birth_date: intern?.birth_date || '',
+        phone: intern?.phone || '',
+        address: intern?.address || '',
+        city: intern?.city || '',
+        academic_degree: intern?.academic_degree || '',
+        academic_year: intern?.academic_year || '2025-2026',
+        start_date: intern?.start_date || '',
+        end_date: intern?.end_date || '',
+        total_hours: intern?.total_hours?.toString() || '',
+        status: intern?.status || 'active',
+        abandon_reason: intern?.abandon_reason || '',
         dni_file: null,
         agreement_file: null,
         insurance_file: null,
-        center_tutor_name: '',
-        center_tutor_email: '',
-        center_tutor_phone: '',
-        company_tutor_user_id: '',
+        center_tutor_name: intern?.center_tutor_name || '',
+        center_tutor_email: intern?.center_tutor_email || '',
+        center_tutor_phone: intern?.center_tutor_phone || '',
+        company_tutor_user_id: intern?.company_tutor_user_id?.toString() || '',
     });
 
     const submitLock = useRef(false);
@@ -84,7 +85,7 @@ export default function Create({
         e?.preventDefault();
         if (processing || submitLock.current) return;
         submitLock.current = true;
-        post('/interns', {
+        patch('/interns/complete-profile', {
             forceFormData: true,
             onFinish: () => {
                 submitLock.current = false;
@@ -94,16 +95,16 @@ export default function Create({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Nuevo Becario" />
+            <Head title="Completar Perfil de Becario" />
 
             <div className="page-surface p-0 overflow-hidden border-sidebar/20 shadow-xl">
-                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-6 text-white">
+                <div className="bg-linear-to-r from-sidebar to-[#1f4f52] px-6 py-6 text-white">
                     <div className="flex flex-col gap-0">
                         <h1 className="text-xl font-black tracking-tight">
-                            Nuevo <span className="text-white/80">Becario</span>
+                            Completar <span className="text-white/80">Perfil</span>
                         </h1>
                         <p className="text-white/50 font-medium font-mono text-[9px] uppercase tracking-[0.2em]">
-                            Formulario de alta de nuevo expediente
+                            Finaliza tu registro completando los datos de tu expediente
                         </p>
                     </div>
                 </div>
@@ -111,22 +112,22 @@ export default function Create({
                 <div className="bg-slate-50/50 p-4 md:p-6 dark:bg-slate-900/40">
                     <form onSubmit={submit} className="space-y-6" noValidate>
                         <Tabs defaultValue="personal" className="w-full">
-                            <TabsList className="!grid h-auto w-full grid-cols-3 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 mb-6">
+                            <TabsList className="grid! h-auto w-full grid-cols-3 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 mb-6">
                                 <TabsTrigger
                                     value="personal"
-                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-linear-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
                                     <span className="text-[10px] font-black uppercase tracking-widest">Datos Personales</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="academic"
-                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-linear-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
                                     <span className="text-[10px] font-black uppercase tracking-widest">Académicos</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="internship"
-                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-linear-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
                                     <span className="text-[10px] font-black uppercase tracking-widest">Prácticas</span>
                                 </TabsTrigger>
@@ -687,7 +688,7 @@ export default function Create({
                             disabled={processing}
                             onClick={submit}
                         >
-                            Guardar Becario
+                            Completar Perfil
                         </Button>
                         </div>
                     </form>

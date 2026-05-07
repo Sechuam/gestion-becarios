@@ -82,6 +82,6 @@ class InvitationController extends Controller
 
         auth()->login($user);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('interns.complete-profile');
     }
 }
