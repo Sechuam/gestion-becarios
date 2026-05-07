@@ -58,6 +58,12 @@ class UsersController extends Controller
 
         $user->syncRoles([$role]);
 
+        // Si el rol asignado es "intern", aseguramos que exista la ficha en `interns`.
+        // La vista "becarios" depende de la tabla/modelo `Intern`, no solo del rol.
+        if (strtolower((string) $role) === 'intern' && ! $user->intern()->exists()) {
+            $user->intern()->create();
+        }
+
         return back()->with('success', 'Rol actualizado correctamente.');
     }
 }

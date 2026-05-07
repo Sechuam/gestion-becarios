@@ -69,11 +69,17 @@ class InvitationController extends Controller
             'password' => Hash::make($request->password),
         ]);
         $user->markEmailAsVerified();
-        $user->assignRole($invitation->role);
+        $role = strtolower((string) $invitation->role);
+        // Compatibilidad con invitaciones creadas antes de normalizar nombres de roles.
+        if ($role === 'becario') {
+            $role = 'intern';
+        }
+
+        $user->assignRole($role);
 
         // Si el usuario es un becario, debemos crearle una ficha vacía ("Esqueleto")
         // para que le salga inmediatamente al administrador en la lista general de becarios.
-        if ($invitation->role === 'intern') {
+        if ($role === 'intern' && ! $user->intern()->exists()) {
             $user->intern()->create();
         }
         $invitation->update([

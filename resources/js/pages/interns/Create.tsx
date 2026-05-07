@@ -97,7 +97,7 @@ export default function Create({
             <Head title="Nuevo Becario" />
 
             <div className="page-surface p-0 overflow-hidden border-sidebar/20 shadow-xl">
-                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-6 text-white">
+                <div className="bg-linear-to-r from-sidebar to-[#1f4f52] px-6 py-6 text-white">
                     <div className="flex flex-col gap-0">
                         <h1 className="text-xl font-black tracking-tight">
                             Nuevo <span className="text-white/80">Becario</span>
@@ -111,22 +111,22 @@ export default function Create({
                 <div className="bg-slate-50/50 p-4 md:p-6 dark:bg-slate-900/40">
                     <form onSubmit={submit} className="space-y-6" noValidate>
                         <Tabs defaultValue="personal" className="w-full">
-                            <TabsList className="!grid h-auto w-full grid-cols-3 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 mb-6">
+                            <TabsList className="grid! h-auto w-full grid-cols-3 gap-2 rounded-2xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50 mb-6">
                                 <TabsTrigger
                                     value="personal"
-                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-linear-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
                                     <span className="text-[10px] font-black uppercase tracking-widest">Datos Personales</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="academic"
-                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-linear-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
                                     <span className="text-[10px] font-black uppercase tracking-widest">Académicos</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="internship"
-                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
+                                    className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-transparent data-[state=active]:bg-linear-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white data-[state=active]:shadow-lg dark:border-white/10 dark:bg-slate-800 dark:text-slate-300"
                                 >
                                     <span className="text-[10px] font-black uppercase tracking-widest">Prácticas</span>
                                 </TabsTrigger>
