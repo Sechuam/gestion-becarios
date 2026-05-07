@@ -11,37 +11,73 @@ import type { BreadcrumbItem } from '@/types';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: dashboard().url,
     },
 ];
+interface DashboardProps {
+    role: 'admin' | 'tutor' | 'intern';
+    stats: {
+        active_interns: number;
+        active_centers: number;
+        active_tasks: number;
+        alerts: number;
+    };
+}
 
-export default function Dashboard() {
+export default function Dashboard({ role, stats }: DashboardProps) {
     const metrics = [
         {
             label: 'Becarios activos',
-            value: '24',
+            value: stats.active_interns,
             hint: 'Seguimiento en tiempo real',
             icon: Users,
         },
         {
             label: 'Centros vinculados',
-            value: '8',
+            value: stats.active_centers,
             hint: 'Convenios y plazas',
             icon: Building2,
         },
         {
             label: 'Tareas en revisión',
-            value: '13',
+            value: stats.active_tasks,
             hint: 'Pendientes de validación',
             icon: KanbanSquare,
         },
         {
             label: 'Alertas horarias',
-            value: '3',
+            value: stats.alerts,
             hint: 'Requieren seguimiento hoy',
             icon: AlertTriangle,
         },
     ];
+
+    if (role === 'admin') {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Dashboard Admin" />
+                <div className="p-6 text-white">
+                    <h1 className="text-2xl font-bold">Dashboard Admin</h1>
+    
+                    <p>Becarios: {stats.active_interns}</p>
+                    <p>Centros: {stats.active_centers}</p>
+                    <p>Tareas: {stats.active_tasks}</p>
+                </div>
+            </AppLayout>
+        );
+    }
+    
+    if (role === 'tutor') {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Dashboard Tutor" />
+                <div className="p-6 text-white">
+                    <h1 className="text-2xl font-bold">Dashboard Tutor</h1>
+                    <p>Aquí pondremos becarios asignados</p>
+                </div>
+            </AppLayout>
+        );
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

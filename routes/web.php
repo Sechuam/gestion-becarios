@@ -17,6 +17,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\DashboardController;
 
 
 
@@ -109,7 +110,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('admin');
 
     // Dashboard principal
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
     // Módulo de Usuarios
     // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
