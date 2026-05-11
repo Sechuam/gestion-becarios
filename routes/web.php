@@ -1,25 +1,24 @@
 <?php
 
+use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EducationCenterController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\EvaluationCriterionController;
 use App\Http\Controllers\EvaluationReportController;
 use App\Http\Controllers\InternController;
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\PracticeTypeController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TimeLogController;
 use App\Http\Controllers\TutorController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
-use App\Http\Controllers\TimeLogController;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\AbsenceController;
-use App\Http\Controllers\AttendanceReportController;
-use App\Http\Controllers\InvitationController;
-use App\Http\Controllers\DashboardController;
-
-
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
@@ -29,10 +28,10 @@ Route::inertia('/', 'welcome', [
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el área personal del becario (Redirigidas a Ajustes)
-    Route::get('mi-perfil', fn() => redirect()->route('profile.edit'))
+    Route::get('mi-perfil', fn () => redirect()->route('profile.edit'))
         ->name('interns.my-profile')
         ->middleware('role:intern|becario');
-    Route::post('mi-perfil/avatar', fn() => redirect()->route('profile.avatar', [], 307))
+    Route::post('mi-perfil/avatar', fn () => redirect()->route('profile.avatar', [], 307))
         ->name('interns.update-avatar')
         ->middleware('role:intern|becario');
 
@@ -78,13 +77,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/absences/{absence}/justification', [AbsenceController::class, 'uploadJustification'])->name('absences.uploadJustification');
     Route::get('/interns/{intern}/report', [AttendanceReportController::class, 'download'])->name('interns.report');
     Route::get('interns/complete-profile', [InternController::class, 'completeProfile'])
-    ->name('interns.complete-profile');
+        ->name('interns.complete-profile');
     Route::patch('interns/complete-profile', [InternController::class, 'storeCompleteProfile'])
-    ->name('interns.complete-profile.store');
-
-
-
-
+        ->name('interns.complete-profile.store');
 
     // Catálogo de tipos de práctica (solo admin)
     Route::get('tipos-practica', [PracticeTypeController::class, 'index'])
@@ -111,8 +106,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard principal
     Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+        ->middleware(['auth', 'verified'])
+        ->name('dashboard');
 
     // Módulo de Usuarios
     // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
@@ -223,7 +218,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->whereNumber('evaluation')
         ->name('evaluations.pdf');
     // Ruta para reportes
-    Route::inertia('/reportes', 'reports/index')->name('reports.index');
+    Route::get('/reportes', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reportes/plantillas', [ReportController::class, 'storeTemplate'])->name('reports.templates.store');
+    Route::get('/reportes/export', [ReportController::class, 'export'])->name('reports.export');
     // Roles y permisos (admin)
     Route::get('/roles', [RolesController::class, 'index'])
         ->name('roles.index')
@@ -250,4 +247,4 @@ Route::middleware('guest')->group(function () {
 });
 
 // rutas públicas o especiales
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

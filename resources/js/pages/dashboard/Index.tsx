@@ -1,222 +1,257 @@
-import { Head } from '@inertiajs/react';
-import { Activity, AlertTriangle, Building2, CheckCircle2, Clock3, KanbanSquare, Users } from 'lucide-react';
-import { EmptyState } from '@/components/common/EmptyState';
+import { Head, Link } from '@inertiajs/react';
+import { AlertTriangle, BarChart3, Building2, CheckCircle2, Clock3, FileDown, KanbanSquare, TrendingUp, Users } from 'lucide-react';
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Cell,
+    Line,
+    LineChart,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from 'recharts';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Progress } from '@/components/ui/progress';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard().url,
-    },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: dashboard().url }];
+
+type Role = 'admin' | 'tutor' | 'intern' | string;
+
+type ChartPoint = {
+    name?: string;
+    month?: string;
+    becarios?: number;
+    horas?: number;
+    value?: number;
+};
+
+type TaskProgress = {
+    id: number;
+    name: string;
+    center: string;
+    completed: number;
+    total: number;
+    progress: number;
+    hours: number;
+};
+
 interface DashboardProps {
-    role: 'admin' | 'tutor' | 'intern';
+    role: Role;
     stats: {
         active_interns: number;
         active_centers: number;
         active_tasks: number;
         alerts: number;
+        attendance_compliance: number;
+        completed_tasks: number;
+        total_tasks: number;
     };
+    interns_by_center: ChartPoint[];
+    attendance_chart: ChartPoint[];
+    task_status_chart: ChartPoint[];
+    task_progress: TaskProgress[];
+    alerts: { label: string; value: number; tone: string }[];
 }
 
-export default function Dashboard({ role, stats }: DashboardProps) {
+const pieColors = ['#0f766e', '#2563eb', '#f59e0b', '#e11d48', '#7c3aed', '#16a34a'];
+
+export default function Dashboard({
+    role,
+    stats,
+    interns_by_center,
+    attendance_chart,
+    task_status_chart,
+    task_progress,
+    alerts,
+}: DashboardProps) {
+    const roleLabel = role === 'admin' ? 'Administración' : role === 'tutor' ? 'Tutoría' : 'Becario';
+    const taskCompletion = stats.total_tasks > 0 ? Math.round((stats.completed_tasks / stats.total_tasks) * 100) : 0;
+
     const metrics = [
         {
-            label: 'Becarios activos',
+            label: role === 'intern' ? 'Mi práctica' : 'Becarios activos',
             value: stats.active_interns,
-            hint: 'Seguimiento en tiempo real',
+            hint: role === 'admin' ? 'En todos los centros' : 'Dentro de tu alcance',
             icon: Users,
         },
         {
             label: 'Centros vinculados',
             value: stats.active_centers,
-            hint: 'Convenios y plazas',
+            hint: 'Con actividad registrada',
             icon: Building2,
         },
         {
-            label: 'Tareas en revisión',
+            label: 'Tareas abiertas',
             value: stats.active_tasks,
-            hint: 'Pendientes de validación',
+            hint: 'Pendientes, activas o en revisión',
             icon: KanbanSquare,
         },
         {
-            label: 'Alertas horarias',
-            value: stats.alerts,
-            hint: 'Requieren seguimiento hoy',
-            icon: AlertTriangle,
+            label: 'Cumplimiento horario',
+            value: `${stats.attendance_compliance}%`,
+            hint: 'Horas registradas sobre objetivo',
+            icon: Clock3,
         },
     ];
-
-    if (role === 'admin') {
-        return (
-            <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Dashboard Admin" />
-                <div className="p-6 text-white">
-                    <h1 className="text-2xl font-bold">Dashboard Admin</h1>
-    
-                    <p>Becarios: {stats.active_interns}</p>
-                    <p>Centros: {stats.active_centers}</p>
-                    <p>Tareas: {stats.active_tasks}</p>
-                </div>
-            </AppLayout>
-        );
-    }
-    
-    if (role === 'tutor') {
-        return (
-            <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Dashboard Tutor" />
-                <div className="p-6 text-white">
-                    <h1 className="text-2xl font-bold">Dashboard Tutor</h1>
-                    <p>Aquí pondremos becarios asignados</p>
-                </div>
-            </AppLayout>
-        );
-    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="space-y-4">
-                {/* HERO SECTION CON GRADIENTE CORPORATIVO */}
-                <section className="relative overflow-hidden bg-linear-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl md:p-6 rounded-2xl">
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
-                    <div className="absolute inset-y-0 right-0 hidden w-2/5 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_70%)] lg:block" />
-                    
-                    <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex-1 space-y-3">
-                            <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/90 backdrop-blur-md border border-white/20">
-                                Centro de control
-                            </p>
-                            <h1 className="text-xl font-black tracking-tight text-white md:text-2xl leading-none">
-                                Visión general <br/> del programa
-                            </h1>
-                            <p className="max-w-xl text-sm font-medium text-white/70 leading-relaxed italic">
-                                Supervisa la actividad diaria, detecta incidencias y accede rápido a los módulos del sistema.
-                            </p>
-                            <div className="flex flex-wrap gap-2 pt-1">
-                                <Badge className="bg-white/10 hover:bg-white/20 text-white border-white/20 rounded-full px-3 h-6 text-[9px] font-black uppercase tracking-widest">Ritmo semanal estable</Badge>
-                                <Badge className="bg-white/10 hover:bg-white/20 text-white border-white/20 rounded-full px-3 h-6 text-[9px] font-black uppercase tracking-widest">3 revisiones pendientes</Badge>
-                            </div>
-                        </div>
+            <div className="space-y-5">
+                <ModuleHeader
+                    title={`Dashboard ${roleLabel}`}
+                    description="Centro de control operativo con KPIs, actividad horaria, tareas y reportes exportables."
+                    icon={<BarChart3 className="h-6 w-6" />}
+                    actions={
+                        <Button asChild className="h-9 rounded-lg bg-white text-sidebar hover:bg-white/90">
+                            <Link href="/reportes">
+                                <FileDown className="mr-2 h-4 w-4" />
+                                Reportes
+                            </Link>
+                        </Button>
+                    }
+                    metrics={[
+                        { label: 'Alertas', value: stats.alerts, hint: 'Necesitan revisión' },
+                        { label: 'Tareas completadas', value: stats.completed_tasks, hint: `${taskCompletion}% del total` },
+                        { label: 'Widgets', value: 4, hint: 'Datos con caché' },
+                    ]}
+                />
 
-                        <div className="grid min-w-60 grid-cols-2 gap-2">
-                            <div className="relative overflow-hidden rounded-xl bg-white/10 p-3 shadow-xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-white/60">
-                                    Cumplimiento
-                                </p>
-                                <p className="mt-1 text-2xl font-black tracking-tight text-emerald-300">92%</p>
-                                <p className="mt-1 text-[9px] font-bold text-white/50 uppercase tracking-widest">Activo</p>
-                            </div>
-                            <div className="relative overflow-hidden rounded-xl bg-white/10 p-3 shadow-xl backdrop-blur-md border border-white/20 transition-all hover:bg-white/15">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-white/60">
-                                    Completadas
-                                </p>
-                                <p className="mt-1 text-2xl font-black tracking-tight text-white">41</p>
-                                <p className="mt-1 text-[9px] font-bold text-white/50 uppercase tracking-widest">Ciclo actual</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* METRICS GRID */}
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                     {metrics.map((metric) => (
-                        <Card key={metric.label} className="rounded-xl border-sidebar/10 bg-white p-1 shadow-lg dark:bg-slate-900 transition-all hover:scale-[1.02] hover:shadow-xl">
+                        <Card key={metric.label} className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
                             <CardContent className="flex items-start justify-between gap-3 p-4">
-                                <div className="space-y-3">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        {metric.label}
-                                    </p>
-                                    <p className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">
-                                        {metric.value}
-                                    </p>
-                                    <p className="text-xs font-medium text-slate-500 italic">{metric.hint}</p>
+                                <div className="min-w-0 space-y-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{metric.label}</p>
+                                    <p className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{metric.value}</p>
+                                    <p className="text-xs font-medium text-slate-500">{metric.hint}</p>
                                 </div>
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sidebar text-white shadow-lg shadow-sidebar/20 pt-1">
-                                    <metric.icon className="h-6 w-6" />
-                                </div>
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sidebar text-white">
+                                    <metric.icon className="h-5 w-5" />
+                                </span>
                             </CardContent>
                         </Card>
                     ))}
                 </div>
 
-                {/* MAIN CONTENT GRID */}
-                <div className="grid gap-6 xl:grid-cols-[1.45fr_0.95fr]">
-                    <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl overflow-hidden dark:bg-slate-900">
-                        <CardHeader className="flex flex-row items-center justify-between gap-6 border-b border-sidebar/5 p-8 pb-6">
+                <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+                        <CardHeader className="flex flex-row items-center justify-between gap-4">
                             <div>
-                                <p className="inline-flex items-center rounded-full bg-sidebar/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-sidebar">Actividad</p>
-                                <CardTitle className="mt-4 text-2xl font-black tracking-tight text-slate-800 dark:text-white">Mapa operativo del día</CardTitle>
+                                <CardTitle className="text-lg font-black">Becarios por centro educativo</CardTitle>
+                                <p className="text-sm text-slate-500">Distribución activa para priorizar carga y seguimiento.</p>
                             </div>
-                            <Badge variant="outline" className="border-sidebar/20 bg-slate-50 px-4 h-8 rounded-full text-[10px] font-bold uppercase tracking-widest text-sidebar shadow-inner">
-                                <Activity className="mr-2 h-4 w-4" />
-                                Actualizado hace 2 min
-                            </Badge>
+                            <Badge variant="outline" className="rounded-lg">Recharts</Badge>
                         </CardHeader>
-                        <CardContent className="p-8">
-                            <div className="relative min-h-88 overflow-hidden rounded-4xl border border-sidebar/10 bg-slate-50/50 dark:bg-slate-800/50">
-                                <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/5 dark:stroke-neutral-100/5" />
-                                <div className="relative grid gap-4 p-6 md:grid-cols-3">
-                                    <div className="rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Control horario</p>
-                                        <p className="mt-2 text-xl font-black text-slate-800 dark:text-white">3 incidencias</p>
-                                        <p className="mt-1 text-xs font-medium text-slate-500">Pendientes hoy</p>
-                                    </div>
-                                    <div className="rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Tareas</p>
-                                        <p className="mt-2 text-xl font-black text-slate-800 dark:text-white">13 revisiones</p>
-                                        <p className="mt-1 text-xs font-medium text-slate-500">Por validar</p>
-                                    </div>
-                                    <div className="rounded-2xl border border-sidebar/10 bg-white p-6 shadow-sm dark:bg-slate-800">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-sidebar">Ausencias</p>
-                                        <p className="mt-2 text-xl font-black text-slate-800 dark:text-white">2 solicitudes</p>
-                                        <p className="mt-1 text-xs font-medium text-slate-500">Por aprobar</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <CardContent className="h-80">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={interns_by_center} margin={{ left: 0, right: 8, top: 8, bottom: 8 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} height={60} angle={-15} textAnchor="end" />
+                                    <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                                    <Tooltip />
+                                    <Bar dataKey="becarios" radius={[6, 6, 0, 0]} fill="#0f766e" />
+                                </BarChart>
+                            </ResponsiveContainer>
                         </CardContent>
                     </Card>
 
-                    <div className="flex flex-col gap-6">
-                        <Card className="rounded-[2.5rem] border-sidebar/10 bg-white shadow-2xl dark:bg-slate-900 overflow-hidden">
-                            <CardHeader className="border-b border-sidebar/5 p-8 pb-6 bg-slate-50/30 dark:bg-slate-800/30">
-                                <p className="inline-flex items-center rounded-full bg-rose-100 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-rose-600">Atención necesaria</p>
-                                <CardTitle className="mt-4 text-2xl font-black tracking-tight text-slate-800 dark:text-white">Bloqueos y alertas</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4 p-8 pt-6">
-                                {[
-                                    ['Becario con deuda de horas', 'Revisar seguimiento en control horario'],
-                                    ['3 tareas con entrega sensible', 'Conviene priorizar seguimiento del tutor'],
-                                    ['1 convenio vence este mes', 'Validar renovación del centro'],
-                                ].map(([title, description]) => (
-                                    <div key={title} className="group rounded-3xl border border-sidebar/10 bg-white p-5 shadow-sm transition-all hover:bg-rose-50/30 hover:border-rose-200 dark:bg-slate-800">
-                                        <div className="flex items-start gap-4">
-                                            <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600 shadow-inner">
-                                                <AlertTriangle className="h-5 w-5" />
+                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-black">Progreso de tareas</CardTitle>
+                            <p className="text-sm text-slate-500">Estado global del trabajo asignado.</p>
+                        </CardHeader>
+                        <CardContent className="h-80">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie data={task_status_chart} dataKey="value" nameKey="name" innerRadius={58} outerRadius={102} paddingAngle={3}>
+                                        {task_status_chart.map((entry, index) => (
+                                            <Cell key={`${entry.name}-${index}`} fill={pieColors[index % pieColors.length]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-black">Cumplimiento horario</CardTitle>
+                            <p className="text-sm text-slate-500">Horas registradas durante los últimos seis meses.</p>
+                        </CardHeader>
+                        <CardContent className="h-72">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={attendance_chart} margin={{ left: 0, right: 12, top: 8, bottom: 8 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                                    <YAxis tick={{ fontSize: 11 }} />
+                                    <Tooltip />
+                                    <Line type="monotone" dataKey="horas" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+                        <CardHeader className="flex flex-row items-center justify-between gap-4">
+                            <div>
+                                <CardTitle className="text-lg font-black">Panel de progreso por becario</CardTitle>
+                                <p className="text-sm text-slate-500">Tareas completadas, carga total y horas fichadas.</p>
+                            </div>
+                            <TrendingUp className="h-5 w-5 text-sidebar" />
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            {task_progress.length === 0 ? (
+                                <div className="rounded-lg border border-dashed border-sidebar/20 p-6 text-sm text-slate-500">Todavía no hay tareas vinculadas para mostrar progreso.</div>
+                            ) : (
+                                task_progress.map((intern) => (
+                                    <div key={intern.id} className="rounded-lg border border-sidebar/10 p-3">
+                                        <div className="flex items-center justify-between gap-3">
+                                            <div className="min-w-0">
+                                                <p className="truncate text-sm font-black text-slate-900 dark:text-white">{intern.name}</p>
+                                                <p className="truncate text-xs text-slate-500">{intern.center}</p>
                                             </div>
-                                            <div className="space-y-1">
-                                                <p className="font-black text-slate-800 dark:text-white group-hover:text-rose-700 transition-colors">{title}</p>
-                                                <p className="text-sm font-medium text-slate-500 leading-snug">{description}</p>
-                                            </div>
+                                            <Badge variant="outline" className="rounded-lg">{intern.hours} h</Badge>
                                         </div>
+                                        <div className="mt-3 flex items-center gap-3">
+                                            <Progress value={intern.progress} className="h-2" />
+                                            <span className="w-10 text-right text-xs font-black text-slate-500">{intern.progress}%</span>
+                                        </div>
+                                        <p className="mt-2 text-xs text-slate-500">{intern.completed} de {intern.total} tareas completadas</p>
                                     </div>
-                                ))}
+                                ))
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                    {alerts.map((alert) => (
+                        <Card key={alert.label} className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+                            <CardContent className="flex items-center gap-3 p-4">
+                                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                                    {alert.value > 0 ? <AlertTriangle className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
+                                </span>
+                                <div>
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white">{alert.value}</p>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{alert.label}</p>
+                                </div>
                             </CardContent>
                         </Card>
-
-                        <EmptyState
-                            title="Tus accesos rápidos"
-                            description="Conecta métricas reales y widgets para personalizar tu experiencia diaria."
-                            icon={<CheckCircle2 className="h-6 w-6 text-sidebar" />}
-                            className="rounded-[2.5rem] border-sidebar/10 shadow-xl bg-slate-50/50 dark:bg-slate-800/50"
-                        />
-                    </div>
+                    ))}
                 </div>
             </div>
         </AppLayout>

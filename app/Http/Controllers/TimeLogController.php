@@ -28,7 +28,7 @@ class TimeLogController extends Controller
         $manageableInterns = collect();
 
         $canManage = $user->can('manage interns');
-        $canEdit   = $user->can('edit time logs') || $user->can('validate time logs');
+        $canEdit = $user->can('edit time logs') || $user->can('validate time logs');
 
         if ($canManage) {
             $manageableInterns = Intern::query()
@@ -45,7 +45,7 @@ class TimeLogController extends Controller
         }
 
         return Inertia::render('attendance/index', [
-            'today_logs' => $todayLogs->map(fn(TimeLog $log) => [
+            'today_logs' => $todayLogs->map(fn (TimeLog $log) => [
                 'id' => $log->id,
                 'date' => $log->date->format('Y-m-d'),
                 'clock_in' => $log->clock_in,
@@ -63,7 +63,7 @@ class TimeLogController extends Controller
             ] : null,
             'today_total_hours' => round($todayTotalHours, 2),
             'can_manage_attendance' => $user->can('manage interns') || $user->isTutor() || $user->can('edit time logs') || $user->can('validate time logs'),
-            'manageable_interns' => $manageableInterns->map(fn(Intern $intern) => [
+            'manageable_interns' => $manageableInterns->map(fn (Intern $intern) => [
                 'id' => $intern->id,
                 'user_id' => $intern->user_id,
                 'name' => $intern->user->name,
@@ -71,7 +71,7 @@ class TimeLogController extends Controller
                 'education_center' => $intern->educationCenter?->name,
             ])->values(),
             'non_compliant_interns' => $service->getNonCompliantInternsForUser($user),
-            'absences' => $user->absences()->latest('date')->get()->map(fn($absence) => [
+            'absences' => $user->absences()->latest('date')->get()->map(fn ($absence) => [
                 'id' => $absence->id,
                 'date' => $absence->date->format('Y-m-d'),
                 'reason' => $absence->reason,
@@ -113,12 +113,12 @@ class TimeLogController extends Controller
             ->latest('id')
             ->first();
 
-        if (!$log) {
+        if (! $log) {
             return back()->with('error', 'No has registrado la entrada hoy.');
         }
 
         $now = Carbon::now();
-        $clockInTime = Carbon::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' ' . $log->clock_in);
+        $clockInTime = Carbon::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' '.$log->clock_in);
         $totalHours = $clockInTime->diffInMinutes($now) / 60;
 
         $log->update([
@@ -139,7 +139,7 @@ class TimeLogController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        if (!$validated['clock_in'] && !$validated['clock_out']) {
+        if (! $validated['clock_in'] && ! $validated['clock_out']) {
             return back()->with('error', 'Debes indicar al menos una hora de entrada o de salida.');
         }
 
@@ -189,17 +189,17 @@ class TimeLogController extends Controller
         foreach ($logs as $log) {
             if ($log->clock_in) {
                 $events[] = [
-                    'id' => 'in_' . $log->id,
+                    'id' => 'in_'.$log->id,
                     'title' => 'Entrada',
-                    'start' => $log->date->format('Y-m-d') . 'T' . $log->clock_in,
+                    'start' => $log->date->format('Y-m-d').'T'.$log->clock_in,
                     'color' => '#10b981',
                 ];
             }
             if ($log->clock_out) {
                 $events[] = [
-                    'id' => 'out_' . $log->id,
+                    'id' => 'out_'.$log->id,
                     'title' => 'Salida',
-                    'start' => $log->date->format('Y-m-d') . 'T' . $log->clock_out,
+                    'start' => $log->date->format('Y-m-d').'T'.$log->clock_out,
                     'color' => '#f43f5e',
                 ];
             }
@@ -212,13 +212,13 @@ class TimeLogController extends Controller
             if ($abs->status === 'approved') {
                 $color = '#10b981';
                 $title = "Ausencia ({$abs->reason}) - Aprobada";
-            } else if ($abs->status === 'rejected') {
+            } elseif ($abs->status === 'rejected') {
                 $color = '#ef4444';
                 $title = "Ausencia ({$abs->reason}) - Denegada";
             }
 
             $events[] = [
-                'id' => 'abs_' . $abs->id,
+                'id' => 'abs_'.$abs->id,
                 'title' => $title,
                 'start' => $abs->date->format('Y-m-d'),
                 'allDay' => true,
@@ -238,8 +238,8 @@ class TimeLogController extends Controller
             return;
         }
 
-        // Tutor con permiso: solo sus becarios asignados
-        if ($user->isTutor() && $hasPermission && $intern->company_tutor_user_id === $user->id) {
+        // Tutor asignado: solo sus becarios vinculados
+        if ($user->isTutor() && $intern->company_tutor_user_id === $user->id) {
             return;
         }
 
@@ -250,5 +250,4 @@ class TimeLogController extends Controller
 
         abort(403);
     }
-
 }
