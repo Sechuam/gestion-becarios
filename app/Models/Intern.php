@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\DashboardCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,6 +36,10 @@ class Intern extends Model implements HasMedia
                 $intern->status = 'active';
             }
         });
+
+        static::saved(fn () => DashboardCache::refresh());
+        static::deleted(fn () => DashboardCache::refresh());
+        static::restored(fn () => DashboardCache::refresh());
     }
 
     protected $fillable = [

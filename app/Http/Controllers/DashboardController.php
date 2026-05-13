@@ -9,6 +9,7 @@ use App\Models\Schedule;
 use App\Models\Task;
 use App\Models\TimeLog;
 use App\Models\User;
+use App\Support\DashboardCache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -25,7 +26,7 @@ class DashboardController extends Controller
         $user = Auth::user();
         $role = $user->roles->first()?->name ?? 'intern';
 
-        $data = Cache::remember("dashboard:v2:{$user->id}:{$role}", now()->addMinute(), function () use ($user, $role) {
+        $data = Cache::remember(DashboardCache::key($user, $role), now()->addMinutes(5), function () use ($user, $role) {
             $internQuery = $this->scopedInternQuery($user, $role);
             $internIds = (clone $internQuery)->pluck('interns.id');
             $userIds = (clone $internQuery)->pluck('interns.user_id');

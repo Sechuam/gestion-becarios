@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Support\DashboardCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -16,6 +17,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class EducationCenter extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, LogsActivity, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => DashboardCache::refresh());
+        static::deleted(fn () => DashboardCache::refresh());
+        static::restored(fn () => DashboardCache::refresh());
+    }
 
     public function interns(): HasMany
     {

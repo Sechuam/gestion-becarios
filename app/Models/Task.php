@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\DashboardCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -10,6 +11,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Task extends Model implements HasMedia
 {
     use InteractsWithMedia, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => DashboardCache::refresh());
+        static::deleted(fn () => DashboardCache::refresh());
+        static::restored(fn () => DashboardCache::refresh());
+    }
 
     protected $fillable = [
         'title',

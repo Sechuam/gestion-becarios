@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskStatusLog;
 use App\Models\User;
+use App\Support\DashboardCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -268,6 +269,7 @@ class TaskController extends Controller
 
         if (! empty($internIds)) {
             $task->interns()->sync($internIds);
+            DashboardCache::refresh();
         }
 
         TaskStatusLog::create([
@@ -337,6 +339,7 @@ class TaskController extends Controller
 
         if ($request->has('intern_ids')) {
             $task->interns()->sync($validated['intern_ids'] ?? []);
+            DashboardCache::refresh();
         }
 
         if ($request->filled('status') && $fromStatus !== $task->status) {

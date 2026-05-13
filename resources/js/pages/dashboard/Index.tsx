@@ -108,7 +108,7 @@ export default function Dashboard({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="space-y-3">
+            <div className="space-y-2.5">
                 <DashboardHeader
                     roleLabel={roleLabel}
                     alerts={stats.alerts}
@@ -118,13 +118,13 @@ export default function Dashboard({
 
                 <DashboardMetricCards metrics={metrics} />
 
-                <div className="grid gap-3 xl:grid-cols-[1.2fr_0.8fr]">
+                <div className="grid gap-2.5 xl:grid-cols-[1.2fr_0.8fr]">
                     <InternsByCenterChart data={interns_by_center} />
                     <TaskStatusChart data={task_status_chart} />
                 </div>
 
-                <div className="grid gap-3 xl:grid-cols-[0.9fr_1.1fr]">
-                    <div className="space-y-3">
+                <div className="grid gap-2.5 xl:grid-cols-[0.9fr_1.1fr]">
+                    <div className="space-y-2.5">
                         <AttendanceChart data={attendance_chart} />
                         <AttendanceStatsCard
                             completeAttendanceRate={

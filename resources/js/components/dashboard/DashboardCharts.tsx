@@ -18,11 +18,11 @@ import type { DashboardChartPoint } from './types';
 
 const pieColors = [
     '#0f766e',
-    '#2563eb',
-    '#f59e0b',
-    '#e11d48',
-    '#7c3aed',
-    '#16a34a',
+    '#1f4f52',
+    '#2c6f72',
+    '#3b8588',
+    '#63a8aa',
+    '#9ccfd0',
 ];
 
 type ChartProps = {
@@ -31,10 +31,11 @@ type ChartProps = {
 
 export function InternsByCenterChart({ data }: ChartProps) {
     return (
-        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-            <CardHeader className="flex flex-row items-center justify-between gap-3 p-3 pb-1.5">
+        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
                 <div>
-                    <CardTitle className="text-sm font-black">
+                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
                         Becarios por centro educativo
                     </CardTitle>
                     <p className="text-[11px] leading-4 text-slate-500">
@@ -43,12 +44,12 @@ export function InternsByCenterChart({ data }: ChartProps) {
                 </div>
                 <Badge
                     variant="outline"
-                    className="rounded-md px-2 py-0 text-[10px]"
+                    className="rounded-md border-sidebar/20 bg-white/70 px-2 py-0 text-[10px] text-sidebar dark:bg-slate-950/40 dark:text-teal-100"
                 >
                     Recharts
                 </Badge>
             </CardHeader>
-            <CardContent className="h-52 px-3 pb-3">
+            <CardContent className="h-44 px-2.5 pb-2">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}
@@ -68,7 +69,7 @@ export function InternsByCenterChart({ data }: ChartProps) {
                         <Bar
                             dataKey="becarios"
                             radius={[6, 6, 0, 0]}
-                            fill="#0f766e"
+                            fill="#1f4f52"
                         />
                     </BarChart>
                 </ResponsiveContainer>
@@ -79,16 +80,17 @@ export function InternsByCenterChart({ data }: ChartProps) {
 
 export function TaskStatusChart({ data }: ChartProps) {
     return (
-        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-            <CardHeader className="p-3 pb-1.5">
-                <CardTitle className="text-sm font-black">
+        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+                <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
                     Progreso de tareas
                 </CardTitle>
                 <p className="text-[11px] leading-4 text-slate-500">
                     Estado global del trabajo asignado.
                 </p>
             </CardHeader>
-            <CardContent className="h-52 px-3 pb-3">
+            <CardContent className="h-44 px-2.5 pb-2">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
@@ -116,16 +118,17 @@ export function TaskStatusChart({ data }: ChartProps) {
 
 export function AttendanceChart({ data }: ChartProps) {
     return (
-        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-            <CardHeader className="p-3 pb-1.5">
-                <CardTitle className="text-sm font-black">
+        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+                <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
                     Cumplimiento horario
                 </CardTitle>
                 <p className="text-[11px] leading-4 text-slate-500">
                     Horas registradas durante los últimos seis meses.
                 </p>
             </CardHeader>
-            <CardContent className="h-44 px-3 pb-3">
+            <CardContent className="h-36 px-2.5 pb-2">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                         data={data}
@@ -138,9 +141,9 @@ export function AttendanceChart({ data }: ChartProps) {
                         <Line
                             type="monotone"
                             dataKey="horas"
-                            stroke="#2563eb"
+                            stroke="#0f766e"
                             strokeWidth={2.5}
-                            dot={{ r: 3 }}
+                            dot={{ r: 3, fill: '#1f4f52', stroke: '#ffffff' }}
                         />
                     </LineChart>
                 </ResponsiveContainer>
@@ -182,25 +185,26 @@ export function AttendanceStatsCard({
     ];
 
     return (
-        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-            <CardHeader className="p-3 pb-1.5">
-                <CardTitle className="text-sm font-black">
+        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+                <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
                     Estadísticas de cumplimiento horario
                 </CardTitle>
                 <p className="text-[11px] leading-4 text-slate-500">
                     Lectura resumida de asistencia reciente y ausencias.
                 </p>
             </CardHeader>
-            <CardContent className="grid gap-2 px-3 pb-3 sm:grid-cols-3">
+            <CardContent className="grid gap-1.5 px-2.5 pb-2 sm:grid-cols-3">
                 {stats.map((stat) => (
                     <div
                         key={stat.label}
-                        className="rounded-md border border-sidebar/10 p-2.5"
+                        className="rounded-md border border-sidebar/15 bg-sidebar/5 px-2 py-1.5 dark:bg-sidebar/10"
                     >
                         <p className="text-[9px] leading-3 font-black tracking-widest text-slate-400 uppercase">
                             {stat.label}
                         </p>
-                        <p className="mt-0.5 text-lg leading-6 font-black text-slate-900 dark:text-white">
+                        <p className="mt-0.5 text-lg leading-6 font-black text-sidebar dark:text-teal-100">
                             {stat.value}
                         </p>
                         <p className="mt-0.5 line-clamp-2 text-[10px] leading-3.5 font-medium text-slate-500">
