@@ -61,7 +61,7 @@ class DashboardController extends Controller
                 'stats' => [
                     'active_interns' => $activeInterns,
                     'active_centers' => $this->activeCentersCount($internQuery, $user),
-                    'active_tasks' => (clone $taskQuery)->whereIn('status', ['pending', 'active', 'in_progress', 'review'])->count(),
+                    'active_tasks' => (clone $taskQuery)->whereIn('status', ['pending', 'in_progress', 'in_review'])->count(),
                     'alerts' => $pendingAbsences + $openTimeLogs,
                     'attendance_compliance' => $attendanceCompliance,
                     'completed_tasks' => $completedTasks,
@@ -146,11 +146,10 @@ class DashboardController extends Controller
     {
         $labels = [
             'pending' => 'Pendientes',
-            'active' => 'Activas',
             'in_progress' => 'En curso',
-            'review' => 'Revisión',
             'completed' => 'Completadas',
             'rejected' => 'Rechazadas',
+            'in_review' => 'En revisión',
         ];
 
         return (clone $taskQuery)
