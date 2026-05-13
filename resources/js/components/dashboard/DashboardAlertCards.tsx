@@ -12,10 +12,10 @@ export function DashboardAlertCards({ alerts }: Props) {
             {alerts.map((alert) => (
                 <Card
                     key={alert.label}
-                    className="border-sidebar/15 bg-white shadow-sm dark:bg-slate-900"
+                    className="border-sidebar bg-sidebar shadow-sm"
                 >
                     <CardContent className="flex items-center gap-2 px-2.5 py-1.5">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar/10 text-sidebar dark:bg-sidebar/20 dark:text-teal-100">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/15 text-white ring-1 ring-white/20">
                             {alert.value > 0 ? (
                                 <AlertTriangle className="h-3.5 w-3.5" />
                             ) : (
@@ -23,10 +23,10 @@ export function DashboardAlertCards({ alerts }: Props) {
                             )}
                         </span>
                         <div>
-                            <p className="text-lg leading-5 font-black text-sidebar dark:text-teal-100">
+                            <p className="text-lg leading-5 font-black text-white">
                                 {alert.value}
                             </p>
-                            <p className="text-[10px] leading-3 font-bold tracking-widest text-slate-500 uppercase">
+                            <p className="text-[10px] leading-3 font-bold tracking-widest text-white/70 uppercase">
                                 {alert.label}
                             </p>
                         </div>

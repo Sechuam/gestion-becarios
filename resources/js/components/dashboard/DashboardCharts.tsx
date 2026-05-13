@@ -199,15 +199,15 @@ export function AttendanceStatsCard({
                 {stats.map((stat) => (
                     <div
                         key={stat.label}
-                        className="rounded-md border border-sidebar/15 bg-sidebar/5 px-2 py-1.5 dark:bg-sidebar/10"
+                        className="rounded-md border border-sidebar bg-sidebar px-2 py-1.5 shadow-sm"
                     >
-                        <p className="text-[9px] leading-3 font-black tracking-widest text-slate-400 uppercase">
+                        <p className="text-[9px] leading-3 font-black tracking-widest text-white/70 uppercase">
                             {stat.label}
                         </p>
-                        <p className="mt-0.5 text-lg leading-6 font-black text-sidebar dark:text-teal-100">
+                        <p className="mt-0.5 text-lg leading-6 font-black text-white">
                             {stat.value}
                         </p>
-                        <p className="mt-0.5 line-clamp-2 text-[10px] leading-3.5 font-medium text-slate-500">
+                        <p className="mt-0.5 line-clamp-2 text-[10px] leading-3.5 font-medium text-white/70">
                             {stat.hint}
                         </p>
                     </div>

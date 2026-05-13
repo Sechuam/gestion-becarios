@@ -146,7 +146,7 @@ export function InternTaskProgressPanel({
                                     type="button"
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7 border-sidebar/20 text-sidebar hover:bg-sidebar hover:text-white"
+                                    className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                     onClick={() =>
                                         setPage((current) =>
                                             Math.max(1, current - 1),
@@ -163,7 +163,7 @@ export function InternTaskProgressPanel({
                                     type="button"
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7 border-sidebar/20 text-sidebar hover:bg-sidebar hover:text-white"
+                                    className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                     onClick={() =>
                                         setPage((current) =>
                                             Math.min(totalPages, current + 1),
