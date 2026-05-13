@@ -183,8 +183,8 @@ export function AttendanceStatsCard({
                 averageDelayMinutes === null
                     ? 'No configurado'
                     : averageDelayMinutes === 0
-                      ? 'Sin retraso'
-                      : `${averageDelayMinutes} min`,
+                        ? 'Sin retraso'
+                        : `${averageDelayMinutes} min`,
             hint:
                 averageDelayMinutes === null
                     ? 'Requiere hora prevista de entrada'

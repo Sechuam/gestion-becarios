@@ -344,7 +344,7 @@ class DashboardController extends Controller
         return $interns->map(function (Intern $intern) use ($schedules, $timeLogs, $start, $end) {
             $totalTasks = (int) $intern->tasks_count;
             $completedTasks = (int) $intern->completed_tasks_count;
-            
+
             // Calcular retraso medio para este becario específico
             $userDelays = [];
             $userSchedules = $schedules[$intern->user_id] ?? collect();
@@ -355,11 +355,12 @@ class DashboardController extends Controller
                     return $s->start_date->lte($date) && (!$s->end_date || $s->end_date->gte($date));
                 });
 
-                if (!$schedule) continue;
+                if (!$schedule)
+                    continue;
 
                 $dayName = strtolower($date->format('l'));
                 $entryTime = $schedule->{"{$dayName}_entry_time"};
-                
+
                 if ($entryTime) {
                     $log = ($userLogs[$date->format('Y-m-d')] ?? collect())->sortBy('clock_in')->first();
                     if ($log && $log->clock_in) {

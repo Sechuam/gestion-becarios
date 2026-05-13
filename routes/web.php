@@ -28,10 +28,10 @@ Route::inertia('/', 'welcome', [
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el área personal del becario (Redirigidas a Ajustes)
-    Route::get('mi-perfil', fn () => redirect()->route('profile.edit'))
+    Route::get('mi-perfil', fn() => redirect()->route('profile.edit'))
         ->name('interns.my-profile')
         ->middleware('role:intern|becario');
-    Route::post('mi-perfil/avatar', fn () => redirect()->route('profile.avatar', [], 307))
+    Route::post('mi-perfil/avatar', fn() => redirect()->route('profile.avatar', [], 307))
         ->name('interns.update-avatar')
         ->middleware('role:intern|becario');
 
@@ -252,4 +252,4 @@ Route::middleware('guest')->group(function () {
 });
 
 // rutas públicas o especiales
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';

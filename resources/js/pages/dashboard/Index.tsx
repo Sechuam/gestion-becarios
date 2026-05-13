@@ -56,8 +56,8 @@ export default function Dashboard({
         role === 'admin'
             ? 'Administración'
             : role === 'tutor'
-              ? 'Tutoría'
-              : 'Becario';
+                ? 'Tutoría'
+                : 'Becario';
     const taskCompletion =
         stats.total_tasks > 0
             ? Math.round((stats.completed_tasks / stats.total_tasks) * 100)
