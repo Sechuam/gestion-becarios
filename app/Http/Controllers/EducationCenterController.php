@@ -269,6 +269,69 @@ class EducationCenterController extends Controller
         return back()->with('success', 'Notas actualizadas correctamente');
     }
 
+    public function storeInternalNote(Request $request, EducationCenter $school)
+    {
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $school->internalNotes()->create([
+            'content' => $request->input('content'),
+            'user_id' => Auth::id(),
+        ]);
+
+        $this->syncInternalNoteSummary($school);
+
+        return back()->with('success', 'Nota añadida correctamente');
+    }
+
+    public function updateInternalNote(Request $request, EducationCenter $school, \App\Models\InternalNote $note)
+    {
+        abort_unless(
+            $note->notable_type === EducationCenter::class && (int) $note->notable_id === (int) $school->id,
+            404,
+        );
+
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $note->update([
+            'content' => $request->input('content'),
+            'edited_at' => now(),
+        ]);
+
+        $this->syncInternalNoteSummary($school);
+
+        return back()->with('success', 'Nota actualizada correctamente');
+    }
+
+    public function destroyInternalNote(EducationCenter $school, \App\Models\InternalNote $note)
+    {
+        abort_unless(
+            $note->notable_type === EducationCenter::class && (int) $note->notable_id === (int) $school->id,
+            404,
+        );
+
+        $note->delete();
+
+        $this->syncInternalNoteSummary($school);
+
+        return back()->with('success', 'Nota eliminada correctamente');
+    }
+
+    protected function syncInternalNoteSummary(EducationCenter $school): void
+    {
+        /** @var \App\Models\InternalNote|null $latestNote */
+        $latestNote = $school->internalNotes()->with('user')->latest('created_at')->first();
+
+        $school->update([
+            'internal_notes' => $latestNote?->content,
+            'internal_notes_updated_by' => $latestNote?->user_id,
+            'internal_notes_updated_at' => $latestNote?->created_at,
+        ]);
+    }
+
     public function myCenter()
     {
         $user = Auth::user();

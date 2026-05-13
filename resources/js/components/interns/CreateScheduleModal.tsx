@@ -19,6 +19,21 @@ type ScheduleItem = {
     friday_hours: number | string;
     saturday_hours: number | string;
     sunday_hours: number | string;
+    monday_entry_time: string | null;
+    monday_exit_time: string | null;
+    tuesday_entry_time: string | null;
+    tuesday_exit_time: string | null;
+    wednesday_entry_time: string | null;
+    wednesday_exit_time: string | null;
+    thursday_entry_time: string | null;
+    thursday_exit_time: string | null;
+    friday_entry_time: string | null;
+    friday_exit_time: string | null;
+    saturday_entry_time: string | null;
+    saturday_exit_time: string | null;
+    sunday_entry_time: string | null;
+    sunday_exit_time: string | null;
+
 };
 
 type CreateScheduleModalProps = {
@@ -39,6 +54,20 @@ const defaultScheduleData = (userId: number) => ({
     friday_hours: '0',
     saturday_hours: '0',
     sunday_hours: '0',
+    monday_entry_time: '',
+    monday_exit_time: '',
+    tuesday_entry_time: '',
+    tuesday_exit_time: '',
+    wednesday_entry_time: '',
+    wednesday_exit_time: '',
+    thursday_entry_time: '',
+    thursday_exit_time: '',
+    friday_entry_time: '',
+    friday_exit_time: '',
+    saturday_entry_time: '',
+    saturday_exit_time: '',
+    sunday_entry_time: '',
+    sunday_exit_time: '',
 });
 
 const buildScheduleData = (userId: number, schedule?: ScheduleItem) => {
@@ -58,6 +87,20 @@ const buildScheduleData = (userId: number, schedule?: ScheduleItem) => {
         friday_hours: String(schedule.friday_hours ?? '0'),
         saturday_hours: String(schedule.saturday_hours ?? '0'),
         sunday_hours: String(schedule.sunday_hours ?? '0'),
+        monday_entry_time: schedule.monday_entry_time ?? '',
+        monday_exit_time: schedule.monday_exit_time ?? '',
+        tuesday_entry_time: schedule.tuesday_entry_time ?? '',
+        tuesday_exit_time: schedule.tuesday_exit_time ?? '',
+        wednesday_entry_time: schedule.wednesday_entry_time ?? '',
+        wednesday_exit_time: schedule.wednesday_exit_time ?? '',
+        thursday_entry_time: schedule.thursday_entry_time ?? '',
+        thursday_exit_time: schedule.thursday_exit_time ?? '',
+        friday_entry_time: schedule.friday_entry_time ?? '',
+        friday_exit_time: schedule.friday_exit_time ?? '',
+        saturday_entry_time: schedule.saturday_entry_time ?? '',
+        saturday_exit_time: schedule.saturday_exit_time ?? '',
+        sunday_entry_time: schedule.sunday_entry_time ?? '',
+        sunday_exit_time: schedule.sunday_exit_time ?? '',
     };
 };
 
@@ -66,47 +109,48 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
     const isEditing = Boolean(schedule);
 
     const applyPreset = (preset: 'winter' | 'summer' | 'intensive') => {
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        let baseData = { ...data };
+
         if (preset === 'winter') {
-            setData({
-                ...data,
+            baseData = {
+                ...baseData,
                 name: 'Horario de Invierno',
-                monday_hours: '8',
-                tuesday_hours: '8',
-                wednesday_hours: '8',
-                thursday_hours: '8',
-                friday_hours: '6',
-                saturday_hours: '0',
-                sunday_hours: '0',
+                monday_hours: '8', tuesday_hours: '8', wednesday_hours: '8', thursday_hours: '8', friday_hours: '6',
+                saturday_hours: '0', sunday_hours: '0',
+            };
+            days.forEach(day => {
+                const isWorkDay = !['saturday', 'sunday'].includes(day);
+                baseData[`${day}_entry_time` as keyof typeof data] = isWorkDay ? '09:00' : '';
+                baseData[`${day}_exit_time` as keyof typeof data] = isWorkDay ? (day === 'friday' ? '15:00' : '18:00') : '';
             });
-            return;
-        }
-
-        if (preset === 'summer') {
-            setData({
-                ...data,
+        } else if (preset === 'summer') {
+            baseData = {
+                ...baseData,
                 name: 'Horario de Verano',
-                monday_hours: '7',
-                tuesday_hours: '7',
-                wednesday_hours: '7',
-                thursday_hours: '7',
-                friday_hours: '6',
-                saturday_hours: '0',
-                sunday_hours: '0',
+                monday_hours: '7', tuesday_hours: '7', wednesday_hours: '7', thursday_hours: '7', friday_hours: '7',
+                saturday_hours: '0', sunday_hours: '0',
+            };
+            days.forEach(day => {
+                const isWorkDay = !['saturday', 'sunday'].includes(day);
+                baseData[`${day}_entry_time` as keyof typeof data] = isWorkDay ? '08:00' : '';
+                baseData[`${day}_exit_time` as keyof typeof data] = isWorkDay ? '15:00' : '';
             });
-            return;
+        } else {
+            baseData = {
+                ...baseData,
+                name: 'Jornada Intensiva',
+                monday_hours: '6', tuesday_hours: '6', wednesday_hours: '6', thursday_hours: '6', friday_hours: '6',
+                saturday_hours: '0', sunday_hours: '0',
+            };
+            days.forEach(day => {
+                const isWorkDay = !['saturday', 'sunday'].includes(day);
+                baseData[`${day}_entry_time` as keyof typeof data] = isWorkDay ? '08:00' : '';
+                baseData[`${day}_exit_time` as keyof typeof data] = isWorkDay ? '14:00' : '';
+            });
         }
 
-        setData({
-            ...data,
-            name: 'Jornada Intensiva',
-            monday_hours: '6',
-            tuesday_hours: '6',
-            wednesday_hours: '6',
-            thursday_hours: '6',
-            friday_hours: '6',
-            saturday_hours: '0',
-            sunday_hours: '0',
-        });
+        setData(baseData);
     };
 
     const { data, setData, post, patch, processing, errors } = useForm(
@@ -129,16 +173,16 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
 
         const action = isEditing
             ? patch(`/schedules/${schedule?.id}`, {
-                  onSuccess: () => {
-                      setOpen(false);
-                  },
-              })
+                onSuccess: () => {
+                    setOpen(false);
+                },
+            })
             : post('/schedules', {
-                  onSuccess: () => {
-                      setData(defaultScheduleData(userId));
-                      setOpen(false);
-                  },
-              });
+                onSuccess: () => {
+                    setData(defaultScheduleData(userId));
+                    setOpen(false);
+                },
+            });
 
         return action;
     };
@@ -169,7 +213,7 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[650px]">
                 <DialogHeader>
                     <DialogTitle>{isEditing ? 'Editar horario' : 'Anadir nuevo horario'}</DialogTitle>
                 </DialogHeader>
@@ -221,22 +265,65 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
                         </div>
                     </div>
 
-                    <div className="space-y-3 pt-2 border-t">
-                        <Label>Horas diarias</Label>
-                        <div className="flex justify-between gap-2">
+                    <div className="space-y-3 pt-4 border-t">
+                        <div className="flex items-center justify-between">
+                            <Label className="text-base font-bold text-slate-900 dark:text-slate-100">Horas y Turnos</Label>
+                            <div className="hidden sm:flex gap-8 text-[10px] uppercase font-bold text-slate-400 px-4">
+                                <span className="w-20 text-center">Horas</span>
+                                <span className="w-20 text-center">Entrada</span>
+                                <span className="w-20 text-center">Salida</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
                             {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day, idx) => {
-                                const labels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+                                const dayLabels = {
+                                    monday: 'Lunes', tuesday: 'Martes', wednesday: 'Miércoles',
+                                    thursday: 'Jueves', friday: 'Viernes', saturday: 'Sábado', sunday: 'Domingo'
+                                };
                                 const field = `${day}_hours` as keyof typeof data;
+
                                 return (
-                                    <div key={day} className="flex flex-col items-center gap-1">
-                                        <span className="text-xs text-slate-500 font-bold">{labels[idx]}</span>
-                                        <Input
-                                            type="number"
-                                            min="0" max="24" step="0.5"
-                                            className="w-14 text-center px-1"
-                                            value={data[field]}
-                                            onChange={(e) => setData(field, e.target.value)}
-                                        />
+                                    <div key={day} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 transition-colors hover:border-sidebar/30">
+                                        <span className="w-full sm:w-24 text-sm font-bold text-slate-700 dark:text-slate-200 mb-2 sm:mb-0">
+                                            {dayLabels[day as keyof typeof dayLabels]}
+                                        </span>
+
+                                        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                                            {/* Horas */}
+                                            <div className="flex flex-col items-center gap-1 sm:block">
+                                                <span className="sm:hidden text-[9px] uppercase font-bold text-slate-400">Hrs</span>
+                                                <Input
+                                                    type="number"
+                                                    min="0" max="24" step="0.5"
+                                                    className="w-20 text-center h-9 bg-white dark:bg-slate-950 rounded-lg border-slate-200 dark:border-slate-800 focus:ring-sidebar/20"
+                                                    value={data[field]}
+                                                    onChange={(e) => setData(field, e.target.value)}
+                                                />
+                                            </div>
+
+                                            {/* Entrada */}
+                                            <div className="flex flex-col items-center gap-1 sm:block">
+                                                <span className="sm:hidden text-[9px] uppercase font-bold text-slate-400">Ent</span>
+                                                <Input
+                                                    type="time"
+                                                    className="w-24 text-xs h-9 bg-white dark:bg-slate-950 rounded-lg border-slate-200 dark:border-slate-800 focus:ring-sidebar/20"
+                                                    value={data[`${day}_entry_time` as keyof typeof data] || ''}
+                                                    onChange={(e) => setData(`${day}_entry_time` as any, e.target.value)}
+                                                />
+                                            </div>
+
+                                            {/* Salida */}
+                                            <div className="flex flex-col items-center gap-1 sm:block">
+                                                <span className="sm:hidden text-[9px] uppercase font-bold text-slate-400">Sal</span>
+                                                <Input
+                                                    type="time"
+                                                    className="w-24 text-xs h-9 bg-white dark:bg-slate-950 rounded-lg border-slate-200 dark:border-slate-800 focus:ring-sidebar/20"
+                                                    value={data[`${day}_exit_time` as keyof typeof data] || ''}
+                                                    onChange={(e) => setData(`${day}_exit_time` as any, e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -261,6 +348,6 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
                     </div>
                 </form>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 }

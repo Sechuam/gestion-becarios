@@ -158,11 +158,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('interns', InternController::class)->except(['index', 'show']);
         Route::post('interns/{intern}/restore', [InternController::class, 'restore'])->name('interns.restore');
         Route::delete('interns/{intern}/force', [InternController::class, 'forceDelete'])->name('interns.forceDelete');
-        Route::patch('interns/{intern}/notes', [InternController::class, 'updateNotes'])->name('interns.notes');
-        Route::post('interns/{intern}/notes/thread', [InternController::class, 'storeInternalNote'])->name('interns.notes.store');
-        Route::patch('interns/{intern}/notes/{note}', [InternController::class, 'updateInternalNote'])->name('interns.notes.update');
-        Route::delete('interns/{intern}/notes/{note}', [InternController::class, 'destroyInternalNote'])->name('interns.notes.destroy');
     });
+
+    // Notas de Becarios (Accesibles para personal de staff: Admins y Tutores)
+    Route::patch('interns/{intern}/notes', [InternController::class, 'updateNotes'])->name('interns.notes');
+    Route::post('interns/{intern}/notes/thread', [InternController::class, 'storeInternalNote'])->name('interns.notes.store');
+    Route::patch('interns/{intern}/notes/{note}', [InternController::class, 'updateInternalNote'])->name('interns.notes.update');
+    Route::delete('interns/{intern}/notes/{note}', [InternController::class, 'destroyInternalNote'])->name('interns.notes.destroy');
+
+    // Notas de Centros (Accesibles para personal de staff: Admins y Tutores)
+    Route::patch('centros/{school}/notes', [EducationCenterController::class, 'updateNotes'])->name('schools.notes');
+    Route::post('centros/{school}/notes/thread', [EducationCenterController::class, 'storeInternalNote'])->name('schools.notes.store');
+    Route::patch('centros/{school}/notes/{note}', [EducationCenterController::class, 'updateInternalNote'])->name('schools.notes.update');
+    Route::delete('centros/{school}/notes/{note}', [EducationCenterController::class, 'destroyInternalNote'])->name('schools.notes.destroy');
+
     Route::get('interns/{intern}', [InternController::class, 'show'])
         ->name('interns.show')
         ->middleware('staff');
@@ -174,10 +183,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->except(['index', 'show']);
         Route::post('centros/{school}/restore', [EducationCenterController::class, 'restore'])->name('schools.restore');
         Route::delete('centros/{school}/force', [EducationCenterController::class, 'forceDelete'])->name('schools.forceDelete');
-        Route::patch('centros/{school}/notes', [EducationCenterController::class, 'updateNotes'])->name('schools.notes');
-        Route::post('centros/{school}/notes/thread', [EducationCenterController::class, 'storeInternalNote'])->name('schools.notes.store');
-        Route::patch('centros/{school}/notes/{note}', [EducationCenterController::class, 'updateInternalNote'])->name('schools.notes.update');
-        Route::delete('centros/{school}/notes/{note}', [EducationCenterController::class, 'destroyInternalNote'])->name('schools.notes.destroy');
     });
 
     // Ruta para evaluaciones

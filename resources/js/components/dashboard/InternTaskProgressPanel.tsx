@@ -110,12 +110,22 @@ export function InternTaskProgressPanel({
                                                 {intern.center}
                                             </p>
                                         </div>
-                                        <Badge
-                                            variant="outline"
-                                            className="rounded-md border-sidebar/20 bg-white/70 px-2 py-0 text-[10px] text-sidebar dark:bg-slate-950/40 dark:text-teal-100"
-                                        >
-                                            {intern.hours} h
-                                        </Badge>
+                                        <div className="flex flex-col items-end gap-1">
+                                            <Badge
+                                                variant="outline"
+                                                className="rounded-md border-sidebar/20 bg-white/70 px-2 py-0 text-[10px] text-sidebar dark:bg-slate-950/40 dark:text-teal-100"
+                                            >
+                                                {intern.hours} h
+                                            </Badge>
+                                            {intern.average_delay !== undefined && intern.average_delay > 0 && (
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="rounded-md bg-amber-500/10 text-amber-600 border-amber-500/20 px-1.5 py-0 text-[9px] font-bold"
+                                                >
+                                                    +{intern.average_delay} min retraso
+                                                </Badge>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="mt-1.5 flex items-center gap-2">
                                         <Progress

@@ -32,15 +32,15 @@ class DashboardController extends Controller
             $userIds = (clone $internQuery)->pluck('interns.user_id');
 
             $taskQuery = Task::query()
-                ->when(! $user->isAdmin(), function (Builder $query) use ($internIds, $user) {
+                ->when(!$user->isAdmin(), function (Builder $query) use ($internIds, $user) {
                     if ($user->isTutor()) {
                         $query->where('created_by', $user->id)
-                            ->orWhereHas('interns', fn (Builder $interns) => $interns->whereIn('interns.id', $internIds));
+                            ->orWhereHas('interns', fn(Builder $interns) => $interns->whereIn('interns.id', $internIds));
 
                         return;
                     }
 
-                    $query->whereHas('interns', fn (Builder $interns) => $interns->whereIn('interns.id', $internIds));
+                    $query->whereHas('interns', fn(Builder $interns) => $interns->whereIn('interns.id', $internIds));
                 });
 
             $activeInterns = (clone $internQuery)->where('status', 'active')->count();
@@ -98,8 +98,8 @@ class DashboardController extends Controller
     {
         return Intern::query()
             ->with(['user', 'educationCenter'])
-            ->when($role === 'tutor' || $user->isTutor(), fn (Builder $query) => $query->where('company_tutor_user_id', $user->id))
-            ->when($role === 'intern' || $user->isIntern(), fn (Builder $query) => $query->where('user_id', $user->id));
+            ->when($role === 'tutor' || $user->isTutor(), fn(Builder $query) => $query->where('company_tutor_user_id', $user->id))
+            ->when($role === 'intern' || $user->isIntern(), fn(Builder $query) => $query->where('user_id', $user->id));
     }
 
     protected function activeCentersCount(Builder $internQuery, User $user): int
@@ -120,7 +120,7 @@ class DashboardController extends Controller
             ->orderByDesc('total')
             ->limit(8)
             ->get()
-            ->map(fn ($row) => ['name' => $row->center, 'becarios' => (int) $row->total])
+            ->map(fn($row) => ['name' => $row->center, 'becarios' => (int) $row->total])
             ->values()
             ->all();
     }
@@ -171,40 +171,60 @@ class DashboardController extends Controller
         $schedules = Schedule::query()
             ->whereIn('user_id', $userIds)
             ->whereDate('start_date', '<=', $end)
-            ->where(fn (Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', $start))
+            ->where(fn(Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', $start))
             ->orderByDesc('start_date')
             ->get()
             ->groupBy('user_id');
 
-        $workedHours = TimeLog::query()
+        $timeLogsByDay = TimeLog::query()
             ->whereIn('user_id', $userIds)
             ->whereBetween('date', [$start, $end])
-            ->get(['user_id', 'date', 'total_hours'])
-            ->groupBy(fn (TimeLog $log) => $log->user_id.'|'.$log->date->format('Y-m-d'))
-            ->map(fn (Collection $logs) => (float) $logs->sum('total_hours'));
+            ->get(['user_id', 'date', 'total_hours', 'clock_in'])
+            ->groupBy(fn(TimeLog $log) => $log->user_id . '|' . $log->date->format('Y-m-d'));
+        $workedHours = $timeLogsByDay->map(fn(Collection $logs) => (float) $logs->sum('total_hours'));
 
         $expectedDays = 0;
         $completeDays = 0;
+        $delays = [];
 
         foreach ($userIds as $userId) {
             for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                 $schedule = ($schedules[$userId] ?? collect())->first(function (Schedule $schedule) use ($date) {
                     return $schedule->start_date->lte($date)
-                        && (! $schedule->end_date || $schedule->end_date->gte($date));
+                        && (!$schedule->end_date || $schedule->end_date->gte($date));
                 });
 
-                if (! $schedule) {
+                if (!$schedule) {
                     continue;
                 }
 
-                $expectedHours = (float) ($schedule->{$weekdayColumns[strtolower($date->format('l'))]} ?? 0);
+                $dayName = strtolower($date->format('l'));
+                $entryField = "{$dayName}_entry_time";
+                $expectedEntryTime = $schedule->$entryField;
 
+                if ($expectedEntryTime) {
+                    $logsToday = $timeLogsByDay[$userId . '|' . $date->format('Y-m-d')] ?? collect();
+                    $firstClockIn = $logsToday->whereNotNull('clock_in')->sortBy('clock_in')->first()?->clock_in;
+
+                    if ($firstClockIn) {
+                        $actual = Carbon::parse($date->format('Y-m-d') . ' ' . $firstClockIn);
+                        $scheduled = Carbon::parse($date->format('Y-m-d') . ' ' . $expectedEntryTime);
+
+                        if ($actual->gt($scheduled)) {
+                            $delays[] = $actual->diffInMinutes($scheduled);
+                        } else {
+                            $delays[] = 0;
+                        }
+                    }
+                }
+
+                $expectedHours = (float) ($schedule->{$weekdayColumns[$dayName]} ?? 0);
                 if ($expectedHours <= 0) {
                     continue;
                 }
 
                 $expectedDays++;
-                $worked = $workedHours[$userId.'|'.$date->format('Y-m-d')] ?? 0;
+                $worked = $workedHours[$userId . '|' . $date->format('Y-m-d')] ?? 0;
 
                 if ($worked >= $expectedHours) {
                     $completeDays++;
@@ -220,7 +240,7 @@ class DashboardController extends Controller
 
         return [
             'complete_attendance_rate' => $expectedDays > 0 ? (int) round(($completeDays / $expectedDays) * 100) : 0,
-            'average_delay_minutes' => null,
+            'average_delay_minutes' => count($delays) > 0 ? (int) round(array_sum($delays) / count($delays)) : 0,
             'absence_rate' => $expectedDays > 0 ? (int) round(($approvedAbsences / $expectedDays) * 100) : 0,
         ];
     }
@@ -239,7 +259,7 @@ class DashboardController extends Controller
             ->select('status', DB::raw('COUNT(*) as total'))
             ->groupBy('status')
             ->get()
-            ->map(fn ($row) => [
+            ->map(fn($row) => [
                 'name' => $labels[$row->status] ?? ucfirst((string) $row->status),
                 'value' => (int) $row->total,
             ])
@@ -254,7 +274,7 @@ class DashboardController extends Controller
         return (clone $internQuery)
             ->where('status', 'active')
             ->whereDoesntHave('evaluations', function (Builder $query) use ($monthStart) {
-                $query->where(fn (Builder $dateQuery) => $dateQuery
+                $query->where(fn(Builder $dateQuery) => $dateQuery
                     ->whereDate('evaluated_at', '>=', $monthStart)
                     ->orWhereDate('created_at', '>=', $monthStart));
             })
@@ -275,7 +295,7 @@ class DashboardController extends Controller
             ->where('status', 'completed')
             ->whereNotNull('completed_at')
             ->get(['created_at', 'completed_at'])
-            ->map(fn (Task $task) => $task->created_at->floatDiffInDays($task->completed_at));
+            ->map(fn(Task $task) => $task->created_at->floatDiffInDays($task->completed_at));
 
         if ($durations->isEmpty()) {
             return null;
@@ -286,7 +306,7 @@ class DashboardController extends Controller
 
     protected function taskProgress(Builder $internQuery): array
     {
-        return (clone $internQuery)
+        $interns = (clone $internQuery)
             ->select('interns.*')
             ->addSelect([
                 'worked_hours' => TimeLog::query()
@@ -296,26 +316,70 @@ class DashboardController extends Controller
             ->withCount([
                 'evaluations',
                 'tasks',
-                'tasks as completed_tasks' => fn (Builder $query) => $query->where('status', 'completed'),
+                'tasks as completed_tasks' => fn(Builder $query) => $query->where('status', 'completed'),
             ])
+            ->with(['user', 'educationCenter'])
             ->orderByDesc('updated_at')
             ->limit(8)
-            ->get()
-            ->map(function (Intern $intern) {
-                $totalTasks = (int) $intern->tasks_count;
-                $completedTasks = (int) $intern->completed_tasks_count;
+            ->get();
 
-                return [
-                    'id' => $intern->id,
-                    'name' => $intern->user?->name ?? 'Sin usuario',
-                    'center' => $intern->educationCenter?->name ?? 'Sin centro',
-                    'completed' => $completedTasks,
-                    'total' => $totalTasks,
-                    'progress' => $totalTasks > 0 ? (int) round(($completedTasks / $totalTasks) * 100) : 0,
-                    'hours' => round((float) $intern->worked_hours, 1),
-                ];
-            })
-            ->values()
-            ->all();
+        $userIds = $interns->pluck('user_id');
+        $start = Carbon::today()->subDays(29);
+        $end = Carbon::today();
+
+        $schedules = Schedule::query()
+            ->whereIn('user_id', $userIds)
+            ->whereDate('start_date', '<=', $end)
+            ->where(fn(Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', $start))
+            ->get()
+            ->groupBy('user_id');
+
+        $timeLogs = TimeLog::query()
+            ->whereIn('user_id', $userIds)
+            ->whereBetween('date', [$start, $end])
+            ->whereNotNull('clock_in')
+            ->get(['user_id', 'date', 'clock_in'])
+            ->groupBy('user_id');
+
+        return $interns->map(function (Intern $intern) use ($schedules, $timeLogs, $start, $end) {
+            $totalTasks = (int) $intern->tasks_count;
+            $completedTasks = (int) $intern->completed_tasks_count;
+            
+            // Calcular retraso medio para este becario específico
+            $userDelays = [];
+            $userSchedules = $schedules[$intern->user_id] ?? collect();
+            $userLogs = ($timeLogs[$intern->user_id] ?? collect())->groupBy(fn($log) => $log->date->format('Y-m-d'));
+
+            for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+                $schedule = $userSchedules->first(function (Schedule $s) use ($date) {
+                    return $s->start_date->lte($date) && (!$s->end_date || $s->end_date->gte($date));
+                });
+
+                if (!$schedule) continue;
+
+                $dayName = strtolower($date->format('l'));
+                $entryTime = $schedule->{"{$dayName}_entry_time"};
+                
+                if ($entryTime) {
+                    $log = ($userLogs[$date->format('Y-m-d')] ?? collect())->sortBy('clock_in')->first();
+                    if ($log && $log->clock_in) {
+                        $actual = Carbon::parse($date->format('Y-m-d') . ' ' . $log->clock_in);
+                        $scheduled = Carbon::parse($date->format('Y-m-d') . ' ' . $entryTime);
+                        $userDelays[] = $actual->gt($scheduled) ? $actual->diffInMinutes($scheduled) : 0;
+                    }
+                }
+            }
+
+            return [
+                'id' => $intern->id,
+                'name' => $intern->user?->name ?? 'Sin usuario',
+                'center' => $intern->educationCenter?->name ?? 'Sin centro',
+                'completed' => $completedTasks,
+                'total' => $totalTasks,
+                'progress' => $totalTasks > 0 ? (int) round(($completedTasks / $totalTasks) * 100) : 0,
+                'hours' => round((float) $intern->worked_hours, 1),
+                'average_delay' => count($userDelays) > 0 ? (int) round(array_sum($userDelays) / count($userDelays)) : 0,
+            ];
+        })->values()->all();
     }
 }

@@ -18,6 +18,7 @@ export type DashboardTaskProgress = {
     total: number;
     progress: number;
     hours: number;
+    average_delay?: number;
 };
 
 export type DashboardAlert = {
