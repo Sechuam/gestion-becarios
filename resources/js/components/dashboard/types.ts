@@ -30,10 +30,16 @@ export type DashboardStats = {
     active_interns: number;
     active_centers: number;
     active_tasks: number;
+    pending_evaluations: number;
+    upcoming_endings: number;
     alerts: number;
     attendance_compliance: number;
+    complete_attendance_rate: number;
+    average_delay_minutes: number | null;
+    absence_rate: number;
     completed_tasks: number;
     total_tasks: number;
+    average_task_resolution_days: number | null;
 };
 
 export type DashboardMetric = {

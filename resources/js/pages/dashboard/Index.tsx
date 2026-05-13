@@ -1,6 +1,14 @@
 import { Head } from '@inertiajs/react';
-import { Building2, Clock3, KanbanSquare, Users } from 'lucide-react';
 import {
+    AlertTriangle,
+    CalendarClock,
+    ClipboardCheck,
+    Clock3,
+    KanbanSquare,
+    Users,
+} from 'lucide-react';
+import {
+    AttendanceStatsCard,
     AttendanceChart,
     InternsByCenterChart,
     TaskStatusChart,
@@ -66,16 +74,16 @@ export default function Dashboard({
             icon: Users,
         },
         {
-            label: 'Centros vinculados',
-            value: stats.active_centers,
-            hint: 'Con actividad registrada',
-            icon: Building2,
-        },
-        {
             label: 'Tareas abiertas',
             value: stats.active_tasks,
             hint: 'Pendientes, activas o en revisión',
             icon: KanbanSquare,
+        },
+        {
+            label: 'Evaluaciones pendientes',
+            value: stats.pending_evaluations,
+            hint: 'Sin evaluación registrada este mes',
+            icon: ClipboardCheck,
         },
         {
             label: 'Cumplimiento horario',
@@ -83,12 +91,24 @@ export default function Dashboard({
             hint: 'Horas registradas sobre objetivo',
             icon: Clock3,
         },
+        {
+            label: 'Próximas finalizaciones',
+            value: stats.upcoming_endings,
+            hint: 'Prácticas que terminan en 30 días',
+            icon: CalendarClock,
+        },
+        {
+            label: 'Alertas activas',
+            value: stats.alerts,
+            hint: 'Ausencias y jornadas por revisar',
+            icon: AlertTriangle,
+        },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="space-y-5">
+            <div className="space-y-3">
                 <DashboardHeader
                     roleLabel={roleLabel}
                     alerts={stats.alerts}
@@ -98,14 +118,28 @@ export default function Dashboard({
 
                 <DashboardMetricCards metrics={metrics} />
 
-                <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+                <div className="grid gap-3 xl:grid-cols-[1.2fr_0.8fr]">
                     <InternsByCenterChart data={interns_by_center} />
                     <TaskStatusChart data={task_status_chart} />
                 </div>
 
-                <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-                    <AttendanceChart data={attendance_chart} />
-                    <InternTaskProgressPanel taskProgress={task_progress} />
+                <div className="grid gap-3 xl:grid-cols-[0.9fr_1.1fr]">
+                    <div className="space-y-3">
+                        <AttendanceChart data={attendance_chart} />
+                        <AttendanceStatsCard
+                            completeAttendanceRate={
+                                stats.complete_attendance_rate
+                            }
+                            averageDelayMinutes={stats.average_delay_minutes}
+                            absenceRate={stats.absence_rate}
+                        />
+                    </div>
+                    <InternTaskProgressPanel
+                        taskProgress={task_progress}
+                        averageResolutionDays={
+                            stats.average_task_resolution_days
+                        }
+                    />
                 </div>
 
                 <DashboardAlertCards alerts={alerts} />

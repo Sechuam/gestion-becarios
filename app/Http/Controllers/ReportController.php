@@ -10,6 +10,7 @@ use App\Models\Task;
 use App\Models\TimeLog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -64,11 +65,20 @@ class ReportController extends Controller
             'status' => 'nullable|string|max:40',
             'from' => 'nullable|date',
             'to' => 'nullable|date|after_or_equal:from',
+            'group_by' => 'nullable|string|max:80',
         ]);
 
         $availableColumns = $this->datasets()[$validated['dataset']]['columns'];
         $columns = $this->resolveColumns($validated['columns'] ?? null, $availableColumns);
+        $groupBy = $this->resolveGroupBy($validated['group_by'] ?? null, $availableColumns);
         $rows = $this->reportRows($request, $validated['dataset']);
+
+        if ($groupBy) {
+            $availableColumns = ['group' => ['heading' => 'Grupo']] + $availableColumns;
+            $columns = array_values(array_unique(['group', ...$columns]));
+            $rows = $this->groupRows($rows, $groupBy);
+        }
+
         $filename = 'reporte-'.$validated['dataset'].'-'.now()->format('Y-m-d');
 
         if ($validated['format'] === 'pdf') {
@@ -176,6 +186,27 @@ class ReportController extends Controller
         $columns = array_values(array_intersect($available, $rawColumns));
 
         return count($columns) > 0 ? $columns : $available;
+    }
+
+    protected function resolveGroupBy(?string $groupBy, array $availableColumns): ?string
+    {
+        if (! $groupBy || ! array_key_exists($groupBy, $availableColumns)) {
+            return null;
+        }
+
+        return $groupBy;
+    }
+
+    protected function groupRows(Collection $rows, string $groupBy): Collection
+    {
+        return $rows
+            ->map(function ($row) use ($groupBy) {
+                $group = data_get($row, $groupBy) ?: 'Sin valor';
+
+                return ['group' => $group] + $row;
+            })
+            ->sortBy('group')
+            ->values();
     }
 
     protected function scopedInternQuery($user): Builder

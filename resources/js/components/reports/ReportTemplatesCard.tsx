@@ -51,6 +51,14 @@ export function ReportTemplatesCard({
                             </div>
                             <p className="mt-1 text-xs text-slate-500">
                                 {template.columns.length} columnas configuradas
+                                {template.filters?.group_by
+                                    ? ` · Agrupado por ${
+                                          datasets[template.dataset]?.columns[
+                                              template.filters.group_by
+                                          ]?.heading ??
+                                          template.filters.group_by
+                                      }`
+                                    : ''}
                             </p>
                         </button>
                     ))

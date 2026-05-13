@@ -31,6 +31,7 @@ export default function Index({ datasets, templates, summary }: Props) {
     const [status, setStatus] = useState('');
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
+    const [groupBy, setGroupBy] = useState('');
     const [selectedColumns, setSelectedColumns] = useState<string[]>(
         Object.keys(datasets[dataset]?.columns ?? {}),
     );
@@ -46,6 +47,7 @@ export default function Index({ datasets, templates, summary }: Props) {
         const nextColumns = Object.keys(datasets[value]?.columns ?? {});
         setDataset(value);
         setSelectedColumns(nextColumns);
+        setGroupBy('');
     }
 
     function toggleColumn(column: string) {
@@ -65,7 +67,7 @@ export default function Index({ datasets, templates, summary }: Props) {
                 name: templateName,
                 dataset,
                 columns: selectedColumns,
-                filters: { status, from, to },
+                filters: { status, from, to, group_by: groupBy },
             },
             {
                 preserveScroll: true,
@@ -85,6 +87,7 @@ export default function Index({ datasets, templates, summary }: Props) {
         if (status) params.set('status', status);
         if (from) params.set('from', from);
         if (to) params.set('to', to);
+        if (groupBy) params.set('group_by', groupBy);
 
         window.location.href = `/reportes/export?${params.toString()}`;
     }
@@ -95,6 +98,7 @@ export default function Index({ datasets, templates, summary }: Props) {
         setStatus(template.filters?.status ?? '');
         setFrom(template.filters?.from ?? '');
         setTo(template.filters?.to ?? '');
+        setGroupBy(template.filters?.group_by ?? '');
         setTemplateName(template.name);
     }
 
@@ -113,6 +117,7 @@ export default function Index({ datasets, templates, summary }: Props) {
                         status={status}
                         from={from}
                         to={to}
+                        groupBy={groupBy}
                         selectedColumns={selectedColumns}
                         columns={columns}
                         onDatasetChange={changeDataset}
@@ -120,6 +125,7 @@ export default function Index({ datasets, templates, summary }: Props) {
                         onStatusChange={setStatus}
                         onFromChange={setFrom}
                         onToChange={setTo}
+                        onGroupByChange={setGroupBy}
                         onColumnToggle={toggleColumn}
                         onExport={exportReport}
                     />

@@ -15,6 +15,7 @@ type Props = {
     status: string;
     from: string;
     to: string;
+    groupBy: string;
     selectedColumns: string[];
     columns: Record<string, { heading: string }>;
     onDatasetChange: (value: string) => void;
@@ -22,6 +23,7 @@ type Props = {
     onStatusChange: (value: string) => void;
     onFromChange: (value: string) => void;
     onToChange: (value: string) => void;
+    onGroupByChange: (value: string) => void;
     onColumnToggle: (column: string) => void;
     onExport: () => void;
 };
@@ -34,6 +36,7 @@ export function ReportBuilderCard({
     status,
     from,
     to,
+    groupBy,
     selectedColumns,
     columns,
     onDatasetChange,
@@ -41,6 +44,7 @@ export function ReportBuilderCard({
     onStatusChange,
     onFromChange,
     onToChange,
+    onGroupByChange,
     onColumnToggle,
     onExport,
 }: Props) {
@@ -100,7 +104,7 @@ export function ReportBuilderCard({
                     </div>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-4">
                     <div className="space-y-2">
                         <Label>Estado</Label>
                         <Input
@@ -128,6 +132,23 @@ export function ReportBuilderCard({
                             value={to}
                             onChange={(event) => onToChange(event.target.value)}
                         />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Agrupar por</Label>
+                        <select
+                            value={groupBy}
+                            onChange={(event) =>
+                                onGroupByChange(event.target.value)
+                            }
+                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-background px-3 text-sm"
+                        >
+                            <option value="">Sin agrupación</option>
+                            {Object.entries(columns).map(([key, column]) => (
+                                <option key={key} value={key}>
+                                    {column.heading}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
