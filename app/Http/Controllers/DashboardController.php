@@ -7,8 +7,10 @@ use App\Models\EducationCenter;
 use App\Models\Intern;
 use App\Models\Task;
 use App\Models\TimeLog;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +20,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        /** @var User $user */
         $user = Auth::user();
         $role = $user->roles->first()?->name ?? 'intern';
 
@@ -82,7 +85,7 @@ class DashboardController extends Controller
         return Inertia::render('dashboard/Index', $data);
     }
 
-    protected function scopedInternQuery($user, string $role): Builder
+    protected function scopedInternQuery(User $user, string $role): Builder
     {
         return Intern::query()
             ->with(['user', 'educationCenter'])
@@ -90,7 +93,7 @@ class DashboardController extends Controller
             ->when($role === 'intern' || $user->isIntern(), fn (Builder $query) => $query->where('user_id', $user->id));
     }
 
-    protected function activeCentersCount(Builder $internQuery, $user): int
+    protected function activeCentersCount(Builder $internQuery, User $user): int
     {
         if ($user->isAdmin()) {
             return EducationCenter::count();
@@ -113,7 +116,7 @@ class DashboardController extends Controller
             ->all();
     }
 
-    protected function attendanceChart($userIds): array
+    protected function attendanceChart(Collection $userIds): array
     {
         $start = Carbon::now()->subMonths(5)->startOfMonth();
         $monthExpression = match (DB::getDriverName()) {

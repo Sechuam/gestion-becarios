@@ -10,6 +10,8 @@ use App\Models\PracticeType;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskStatusLog;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -24,15 +26,16 @@ class TaskController extends Controller
             ->with(['practiceType', 'creator', 'interns.user'])
             ->withCount('comments');
 
+        /** @var User|null $user */
         $user = Auth::user();
         if ($user?->isIntern()) {
-            $query->whereHas('interns', function ($q) use ($user) {
+            $query->whereHas('interns', function (Builder $q) use ($user) {
                 $q->where('user_id', $user->id);
             });
         } elseif ($user?->isTutor()) {
-            $query->where(function ($query) use ($user) {
+            $query->where(function (Builder $query) use ($user) {
                 $query->where('created_by', $user->id)
-                    ->orWhereHas('interns', function ($q) use ($user) {
+                    ->orWhereHas('interns', function (Builder $q) use ($user) {
                         $q->where('company_tutor_user_id', $user->id);
                     });
             });
@@ -225,6 +228,7 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
+        /** @var User|null $user */
         $user = Auth::user();
 
         if (! $user || ! $user->can('manage tasks')) {
@@ -279,6 +283,7 @@ class TaskController extends Controller
 
     public function create()
     {
+        /** @var User|null $user */
         $user = Auth::user();
 
         if (! $user || ! $user->can('manage tasks')) {
@@ -294,6 +299,7 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
@@ -310,6 +316,7 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
 
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
@@ -347,6 +354,7 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
@@ -361,6 +369,7 @@ class TaskController extends Controller
 
     public function updateStatus(Request $request, Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
@@ -400,6 +409,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
         $isIntern = $user?->isIntern() ?? false;
@@ -471,6 +481,7 @@ class TaskController extends Controller
     public function complete(Task $task)
     {
 
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -536,6 +547,7 @@ class TaskController extends Controller
 
     public function storeComment(Request $request, Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -566,6 +578,7 @@ class TaskController extends Controller
 
     public function updateComment(Request $request, Task $task, TaskComment $comment)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -589,6 +602,7 @@ class TaskController extends Controller
 
     public function destroyComment(Task $task, TaskComment $comment)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -630,7 +644,10 @@ class TaskController extends Controller
 
             $allowedCount = Task::query()
                 ->whereIn('id', $taskIds)
-                ->whereHas('interns', fn ($q) => $q->where('company_tutor_user_id', $user->id))
+                ->where(function (Builder $query) use ($user) {
+                    $query->where('created_by', $user->id)
+                        ->orWhereHas('interns', fn (Builder $q) => $q->where('company_tutor_user_id', $user->id));
+                })
                 ->count();
 
             abort_unless($allowedCount === $taskIds->count(), 403);
@@ -698,7 +715,7 @@ class TaskController extends Controller
         ];
     }
 
-    protected function canAccessTask(?\App\Models\User $user, Task $task): bool
+    protected function canAccessTask(?User $user, Task $task): bool
     {
         if (! $user) {
             return false;
@@ -713,15 +730,16 @@ class TaskController extends Controller
         }
 
         if ($user->isTutor()) {
-            return $task->interns()
-                ->where('company_tutor_user_id', $user->id)
-                ->exists();
+            return (int) $task->created_by === (int) $user->id
+                || $task->interns()
+                    ->where('company_tutor_user_id', $user->id)
+                    ->exists();
         }
 
         return false;
     }
 
-    protected function canManageTask(?\App\Models\User $user, Task $task): bool
+    protected function canManageTask(?User $user, Task $task): bool
     {
         if (! $user || ! $user->can('manage tasks')) {
             return false;
@@ -732,9 +750,10 @@ class TaskController extends Controller
         }
 
         if ($user->isTutor()) {
-            return $task->interns()
-                ->where('company_tutor_user_id', $user->id)
-                ->exists();
+            return (int) $task->created_by === (int) $user->id
+                || $task->interns()
+                    ->where('company_tutor_user_id', $user->id)
+                    ->exists();
         }
 
         return false;
