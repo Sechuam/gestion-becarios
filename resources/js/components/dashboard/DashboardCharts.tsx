@@ -214,7 +214,7 @@ export function AttendanceStatsCard({
                 {stats.map((stat) => (
                     <div
                         key={stat.label}
-                        className="flex h-full flex-col rounded-md border border-sidebar bg-sidebar p-2 shadow-sm"
+                        className="flex h-full flex-col rounded-md border border-sidebar bg-linear-to-br from-sidebar to-[#1f4f52] p-2 shadow-sm"
                     >
                         {/* Top row: icon left, line right */}
                         <div className="flex items-start justify-between">
