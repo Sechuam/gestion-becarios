@@ -24,7 +24,7 @@ export function ModuleHeader({
     metrics = [],
 }: Props) {
     return (
-        <section className="app-panel relative overflow-hidden bg-gradient-to-r from-sidebar to-[#1f4f52] p-3 shadow-xl md:px-5 md:py-3 rounded-2xl">
+        <section className="app-panel relative overflow-hidden bg-linear-to-r from-sidebar to-[#1f4f52] p-3 shadow-xl md:px-5 md:py-3 rounded-2xl">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
             
             <div className="relative flex flex-wrap items-center justify-between gap-4">
@@ -48,7 +48,7 @@ export function ModuleHeader({
                                 {title}
                             </h1>
                         </div>
-                        <p className="text-[10px] font-medium text-white/60 leading-tight italic ml-[44px] line-clamp-1">
+                        <p className="text-[10px] font-medium text-white/60 leading-tight italic ml-11 line-clamp-1">
                             {description}
                         </p>
                     </div>
