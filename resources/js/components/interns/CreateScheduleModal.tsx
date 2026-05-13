@@ -121,8 +121,8 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
             };
             days.forEach(day => {
                 const isWorkDay = !['saturday', 'sunday'].includes(day);
-                baseData[`${day}_entry_time` as keyof typeof data] = isWorkDay ? '09:00' : '';
-                baseData[`${day}_exit_time` as keyof typeof data] = isWorkDay ? (day === 'friday' ? '15:00' : '18:00') : '';
+                (baseData as Record<string, string>)[`${day}_entry_time`] = isWorkDay ? '09:00' : '';
+                (baseData as Record<string, string>)[`${day}_exit_time`] = isWorkDay ? (day === 'friday' ? '15:00' : '18:00') : '';
             });
         } else if (preset === 'summer') {
             baseData = {
@@ -133,8 +133,8 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
             };
             days.forEach(day => {
                 const isWorkDay = !['saturday', 'sunday'].includes(day);
-                baseData[`${day}_entry_time` as keyof typeof data] = isWorkDay ? '08:00' : '';
-                baseData[`${day}_exit_time` as keyof typeof data] = isWorkDay ? '15:00' : '';
+                (baseData as Record<string, string>)[`${day}_entry_time`] = isWorkDay ? '08:00' : '';
+                (baseData as Record<string, string>)[`${day}_exit_time`] = isWorkDay ? '15:00' : '';
             });
         } else {
             baseData = {
@@ -145,8 +145,8 @@ export function CreateScheduleModal({ userId, schedule, createButtonClassName }:
             };
             days.forEach(day => {
                 const isWorkDay = !['saturday', 'sunday'].includes(day);
-                baseData[`${day}_entry_time` as keyof typeof data] = isWorkDay ? '08:00' : '';
-                baseData[`${day}_exit_time` as keyof typeof data] = isWorkDay ? '14:00' : '';
+                (baseData as Record<string, string>)[`${day}_entry_time`] = isWorkDay ? '08:00' : '';
+                (baseData as Record<string, string>)[`${day}_exit_time`] = isWorkDay ? '14:00' : '';
             });
         }
 
