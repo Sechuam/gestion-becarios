@@ -29,9 +29,9 @@ export function Pagination({ links, className }: Props) {
                         className={cn(
                             "relative rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all overflow-hidden",
                             link.active
-                                ? 'scale-105 transform border-none bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-md shadow-sidebar/20'
+                                ? 'scale-105 transform border-none bg-linear-to-r from-sidebar to-[#1f4f52] text-white shadow-md shadow-sidebar/20'
                                 : (isPrevious || isNext)
-                                    ? 'border-sidebar/20 bg-sidebar/[0.03] text-sidebar hover:bg-sidebar/10 hover:border-sidebar/40'
+                                    ? 'border-sidebar/20 bg-sidebar/3 text-sidebar hover:bg-sidebar/10 hover:border-sidebar/40'
                                     : 'border-sidebar/10 bg-white text-slate-600 hover:border-sidebar/40 hover:bg-slate-50',
                             !link.url && 'pointer-events-none opacity-45'
                         )}
