@@ -12,6 +12,11 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import {
+    ClipboardCheck,
+    Clock,
+    UserX,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { DashboardChartPoint } from './types';
@@ -116,9 +121,9 @@ export function TaskStatusChart({ data }: ChartProps) {
     );
 }
 
-export function AttendanceChart({ data }: ChartProps) {
+export function AttendanceChart({ data, className }: ChartProps & { className?: string }) {
     return (
-        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+        <Card className={`flex flex-col overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900 ${className}`}>
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
             <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
                 <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
@@ -128,7 +133,7 @@ export function AttendanceChart({ data }: ChartProps) {
                     Horas registradas durante los últimos seis meses.
                 </p>
             </CardHeader>
-            <CardContent className="h-36 px-2.5 pb-2">
+            <CardContent className="flex-1 px-2.5 pb-2">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                         data={data}
@@ -156,36 +161,46 @@ type AttendanceStatsProps = {
     completeAttendanceRate: number;
     averageDelayMinutes: number | null;
     absenceRate: number;
+    className?: string;
 };
 
 export function AttendanceStatsCard({
     completeAttendanceRate,
     averageDelayMinutes,
     absenceRate,
+    className,
 }: AttendanceStatsProps) {
     const stats = [
         {
             label: 'Días completos',
             value: `${completeAttendanceRate}%`,
             hint: 'Últimos 30 días con horas cubiertas',
+            icon: ClipboardCheck,
         },
         {
             label: 'Retraso medio',
             value:
                 averageDelayMinutes === null
                     ? 'No configurado'
-                    : `${averageDelayMinutes} min`,
-            hint: 'Requiere hora prevista de entrada',
+                    : averageDelayMinutes === 0
+                      ? 'Sin retraso'
+                      : `${averageDelayMinutes} min`,
+            hint:
+                averageDelayMinutes === null
+                    ? 'Requiere hora prevista de entrada'
+                    : 'Basado en el horario previsto',
+            icon: Clock,
         },
         {
             label: 'Tasa de ausencias',
             value: `${absenceRate}%`,
             hint: 'Ausencias aprobadas sobre días previstos',
+            icon: UserX,
         },
     ];
 
     return (
-        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+        <Card className={`flex flex-col overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900 ${className}`}>
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
             <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
                 <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
@@ -195,21 +210,31 @@ export function AttendanceStatsCard({
                     Lectura resumida de asistencia reciente y ausencias.
                 </p>
             </CardHeader>
-            <CardContent className="grid gap-1.5 px-2.5 pb-2 sm:grid-cols-3">
+            <CardContent className="grid flex-1 items-stretch gap-1.5 px-2.5 pb-2 sm:grid-cols-3">
                 {stats.map((stat) => (
                     <div
                         key={stat.label}
-                        className="rounded-md border border-sidebar bg-sidebar px-2 py-1.5 shadow-sm"
+                        className="flex h-full flex-col rounded-md border border-sidebar bg-sidebar p-2 shadow-sm"
                     >
-                        <p className="text-[9px] leading-3 font-black tracking-widest text-white/70 uppercase">
-                            {stat.label}
-                        </p>
-                        <p className="mt-0.5 text-lg leading-6 font-black text-white">
-                            {stat.value}
-                        </p>
-                        <p className="mt-0.5 line-clamp-2 text-[10px] leading-3.5 font-medium text-white/70">
-                            {stat.hint}
-                        </p>
+                        {/* Top row: icon left, line right */}
+                        <div className="flex items-start justify-between">
+                            <stat.icon className="h-6 w-6 text-white/40" />
+                            <div className="h-1 w-6 rounded-full bg-white/10" />
+                        </div>
+                        {/* Spacer */}
+                        <div className="flex-1" />
+                        {/* Bottom: fixed height so all cards align perfectly */}
+                        <div className="min-h-[72px]">
+                            <p className="text-[9px] leading-3 font-black tracking-widest text-white/70 uppercase">
+                                {stat.label}
+                            </p>
+                            <p className="mt-0.5 text-lg leading-6 font-black text-white">
+                                {stat.value}
+                            </p>
+                            <p className="mt-0.5 line-clamp-2 text-[10px] leading-3.5 font-medium text-white/70">
+                                {stat.hint}
+                            </p>
+                        </div>
                     </div>
                 ))}
             </CardContent>

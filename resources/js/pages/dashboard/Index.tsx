@@ -124,9 +124,13 @@ export default function Dashboard({
                 </div>
 
                 <div className="grid gap-2.5 xl:grid-cols-[0.9fr_1.1fr]">
-                    <div className="space-y-2.5">
-                        <AttendanceChart data={attendance_chart} />
+                    <div className="flex h-full flex-col gap-2.5">
+                        <AttendanceChart
+                            className="flex-1"
+                            data={attendance_chart}
+                        />
                         <AttendanceStatsCard
+                            className="flex-1"
                             completeAttendanceRate={
                                 stats.complete_attendance_rate
                             }
@@ -135,6 +139,7 @@ export default function Dashboard({
                         />
                     </div>
                     <InternTaskProgressPanel
+                        className="h-full"
                         taskProgress={task_progress}
                         averageResolutionDays={
                             stats.average_task_resolution_days
