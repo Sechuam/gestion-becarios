@@ -235,6 +235,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reportes/plantillas', [ReportController::class, 'storeTemplate'])->name('reports.templates.store');
     Route::patch('/reportes/plantillas/{template}', [ReportController::class, 'updateTemplate'])->name('reports.templates.update');
     Route::delete('/reportes/plantillas/{template}', [ReportController::class, 'destroyTemplate'])->name('reports.templates.destroy');
+    Route::get('/reportes/preview', [ReportController::class, 'preview'])->name('reports.preview');
     Route::get('/reportes/export', [ReportController::class, 'export'])->name('reports.export');
     // Roles y permisos (admin)
     Route::get('/roles', [RolesController::class, 'index'])

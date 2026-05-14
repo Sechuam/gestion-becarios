@@ -10,6 +10,7 @@ type Props = {
     selectedColumnsCount: number;
     onTemplateNameChange: (value: string) => void;
     onSubmit: (event: FormEvent) => void;
+    framed?: boolean;
 };
 
 export function SaveReportTemplateCard({
@@ -18,7 +19,29 @@ export function SaveReportTemplateCard({
     selectedColumnsCount,
     onTemplateNameChange,
     onSubmit,
+    framed = true,
 }: Props) {
+    const content = (
+        <form onSubmit={onSubmit} className="space-y-3">
+            <Input
+                value={templateName}
+                onChange={(event) => onTemplateNameChange(event.target.value)}
+                placeholder="Informe mensual de seguimiento"
+            />
+            <Button
+                type="submit"
+                disabled={saving || selectedColumnsCount === 0}
+            >
+                <Save className="mr-2 h-4 w-4" />
+                Guardar plantilla
+            </Button>
+        </form>
+    );
+
+    if (!framed) {
+        return content;
+    }
+
     return (
         <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
             <CardHeader>
@@ -30,24 +53,7 @@ export function SaveReportTemplateCard({
                     frecuentes.
                 </p>
             </CardHeader>
-            <CardContent>
-                <form onSubmit={onSubmit} className="space-y-3">
-                    <Input
-                        value={templateName}
-                        onChange={(event) =>
-                            onTemplateNameChange(event.target.value)
-                        }
-                        placeholder="Informe mensual de seguimiento"
-                    />
-                    <Button
-                        type="submit"
-                        disabled={saving || selectedColumnsCount === 0}
-                    >
-                        <Save className="mr-2 h-4 w-4" />
-                        Guardar plantilla
-                    </Button>
-                </form>
-            </CardContent>
+            <CardContent>{content}</CardContent>
         </Card>
     );
 }

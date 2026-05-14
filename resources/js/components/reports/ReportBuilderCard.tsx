@@ -1,11 +1,19 @@
-import { Download, FileBarChart2, FileSpreadsheet } from 'lucide-react';
+import {
+    Download,
+    Eye,
+    FileBarChart2,
+    FileSpreadsheet,
+    LayoutTemplate,
+    Loader2,
+    Save,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { ReportDatasetConfig, ReportFormat } from './types';
+import type { ReportDatasetConfig, ReportFormat, ReportPreview } from './types';
 
 type Props = {
     datasets: Record<string, ReportDatasetConfig>;
@@ -18,6 +26,8 @@ type Props = {
     groupBy: string;
     selectedColumns: string[];
     columns: Record<string, { heading: string }>;
+    preview: ReportPreview | null;
+    previewing: boolean;
     onDatasetChange: (value: string) => void;
     onFormatChange: (format: ReportFormat) => void;
     onStatusChange: (value: string) => void;
@@ -25,7 +35,10 @@ type Props = {
     onToChange: (value: string) => void;
     onGroupByChange: (value: string) => void;
     onColumnToggle: (column: string) => void;
+    onPreview: () => void;
     onExport: () => void;
+    onOpenSaveTemplate: () => void;
+    onOpenTemplates: () => void;
 };
 
 export function ReportBuilderCard({
@@ -39,6 +52,8 @@ export function ReportBuilderCard({
     groupBy,
     selectedColumns,
     columns,
+    preview,
+    previewing,
     onDatasetChange,
     onFormatChange,
     onStatusChange,
@@ -46,20 +61,47 @@ export function ReportBuilderCard({
     onToChange,
     onGroupByChange,
     onColumnToggle,
+    onPreview,
     onExport,
+    onOpenSaveTemplate,
+    onOpenTemplates,
 }: Props) {
+    const hasColumns = selectedColumns.length > 0;
+
     return (
-        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-            <CardHeader>
-                <CardTitle className="text-lg font-black">
-                    Constructor de informes
-                </CardTitle>
-                <p className="text-sm text-slate-500">
-                    Elige origen, campos y filtros antes de exportar o guardar
-                    la plantilla.
-                </p>
+        <Card className="min-w-0 overflow-hidden border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+            <CardHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-1.5">
+                    <CardTitle className="text-lg font-black">
+                        Constructor de informes
+                    </CardTitle>
+                    <p className="text-sm text-slate-500">
+                        Elige origen, campos y filtros antes de exportar o
+                        guardar la plantilla.
+                    </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={onOpenSaveTemplate}
+                    >
+                        <Save className="mr-2 h-4 w-4" />
+                        Guardar plantilla
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={onOpenTemplates}
+                    >
+                        <LayoutTemplate className="mr-2 h-4 w-4" />
+                        Plantillas guardadas
+                    </Button>
+                </div>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="min-w-0 space-y-5">
                 <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                         <Label>Origen de datos</Label>
@@ -173,8 +215,21 @@ export function ReportBuilderCard({
                 <div className="flex flex-wrap items-center gap-2">
                     <Button
                         type="button"
+                        variant="outline"
+                        onClick={onPreview}
+                        disabled={!hasColumns || previewing}
+                    >
+                        {previewing ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Eye className="mr-2 h-4 w-4" />
+                        )}
+                        Vista previa
+                    </Button>
+                    <Button
+                        type="button"
                         onClick={onExport}
-                        disabled={selectedColumns.length === 0}
+                        disabled={!hasColumns}
                     >
                         <Download className="mr-2 h-4 w-4" />
                         Exportar informe
@@ -183,6 +238,70 @@ export function ReportBuilderCard({
                         {selectedColumns.length} columnas seleccionadas
                     </Badge>
                 </div>
+
+                {preview && (
+                    <div className="max-w-full min-w-0 rounded-xl border border-sidebar/10 bg-sidebar/5 p-3">
+                        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                                    Vista previa
+                                </h3>
+                                <p className="text-xs text-slate-500">
+                                    Mostrando {preview.rows.length} de{' '}
+                                    {preview.total} registros encontrados.
+                                </p>
+                            </div>
+                            <Badge className="bg-sidebar text-sidebar-foreground">
+                                Datos reales
+                            </Badge>
+                        </div>
+
+                        {preview.rows.length > 0 ? (
+                            <div className="max-w-full overflow-x-auto rounded-lg border border-sidebar/10 bg-white dark:bg-slate-950">
+                                <table className="min-w-full divide-y divide-sidebar/10 text-sm">
+                                    <thead className="bg-sidebar/5">
+                                        <tr>
+                                            {preview.columns.map((column) => (
+                                                <th
+                                                    key={column}
+                                                    className="px-3 py-2 text-left text-xs font-bold whitespace-nowrap text-slate-500 uppercase"
+                                                >
+                                                    {preview.availableColumns[
+                                                        column
+                                                    ]?.heading ?? column}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-sidebar/10">
+                                        {preview.rows.map((row, rowIndex) => (
+                                            <tr key={rowIndex}>
+                                                {preview.columns.map(
+                                                    (column) => (
+                                                        <td
+                                                            key={column}
+                                                            className="max-w-56 truncate px-3 py-2 text-slate-700 dark:text-slate-200"
+                                                            title={String(
+                                                                row[column] ??
+                                                                    '',
+                                                            )}
+                                                        >
+                                                            {row[column] ?? '-'}
+                                                        </td>
+                                                    ),
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="rounded-lg border border-dashed border-sidebar/20 bg-white px-4 py-6 text-center text-sm text-slate-500 dark:bg-slate-950">
+                                No hay registros para los filtros actuales.
+                            </div>
+                        )}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

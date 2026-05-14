@@ -118,6 +118,36 @@ class ReportController extends Controller
         return Excel::download(new CustomReportExport($rows, $columns, $availableColumns), "{$filename}.xlsx");
     }
 
+    public function preview(Request $request)
+    {
+        $validated = $request->validate([
+            'dataset' => 'required|string|in:interns,tasks,attendance,evaluations',
+            'columns' => 'nullable',
+            'status' => 'nullable|string|max:40',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after_or_equal:from',
+            'group_by' => 'nullable|string|max:80',
+        ]);
+
+        $availableColumns = $this->datasets()[$validated['dataset']]['columns'];
+        $columns = $this->resolveColumns($validated['columns'] ?? null, $availableColumns);
+        $groupBy = $this->resolveGroupBy($validated['group_by'] ?? null, $availableColumns);
+        $rows = $this->reportRows($request, $validated['dataset']);
+
+        if ($groupBy) {
+            $availableColumns = ['group' => ['heading' => 'Grupo']] + $availableColumns;
+            $columns = array_values(array_unique(['group', ...$columns]));
+            $rows = $this->groupRows($rows, $groupBy);
+        }
+
+        return response()->json([
+            'rows' => $rows->take(10)->values(),
+            'columns' => $columns,
+            'availableColumns' => $availableColumns,
+            'total' => $rows->count(),
+        ]);
+    }
+
     protected function reportRows(Request $request, string $dataset)
     {
         $user = $request->user();

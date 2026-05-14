@@ -20,3 +20,10 @@ export type ReportsSummary = {
 };
 
 export type ReportFormat = 'xlsx' | 'pdf';
+
+export type ReportPreview = {
+    rows: Record<string, string | number | null>[];
+    columns: string[];
+    availableColumns: Record<string, { heading: string }>;
+    total: number;
+};
