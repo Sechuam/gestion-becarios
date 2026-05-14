@@ -24,7 +24,9 @@ const renderCalendarEvent = (eventInfo: EventContentArg) => (
                 <div className="attendance-calendar-event-content">
                     <span
                         className="attendance-calendar-event-dot"
-                        style={{ backgroundColor: eventInfo.event.backgroundColor }}
+                        style={{
+                            backgroundColor: eventInfo.event.backgroundColor,
+                        }}
                     />
                     <span className="attendance-calendar-event-label">
                         {eventInfo.timeText ? `${eventInfo.timeText} ` : ''}
@@ -32,21 +34,30 @@ const renderCalendarEvent = (eventInfo: EventContentArg) => (
                     </span>
                 </div>
             </TooltipTrigger>
-            <TooltipContent side="top" className="flex flex-col gap-1 p-2 max-w-[200px]">
+            <TooltipContent
+                side="top"
+                className="flex max-w-[200px] flex-col gap-1 p-2"
+            >
                 <p className="font-semibold">{eventInfo.event.title}</p>
                 {eventInfo.timeText && (
                     <p className="text-xs opacity-90">{eventInfo.timeText}</p>
                 )}
                 {eventInfo.event.extendedProps.description && (
-                    <p className="text-[10px] italic border-t border-white/20 pt-1 mt-1">
+                    <p className="mt-1 border-t border-white/20 pt-1 text-[10px] italic">
                         {eventInfo.event.extendedProps.description}
                     </p>
                 )}
                 {eventInfo.event.extendedProps.creator && (
-                    <p className="text-[9px] font-bold uppercase tracking-wider opacity-70 border-t border-white/10 pt-1 mt-1">
+                    <p className="mt-1 border-t border-white/10 pt-1 text-[9px] font-bold tracking-wider uppercase opacity-70">
                         De: {eventInfo.event.extendedProps.creator}
                     </p>
                 )}
+                {eventInfo.event.extendedProps.isPersonal &&
+                    !eventInfo.event.extendedProps.canEdit && (
+                        <p className="mt-1 border-t border-white/10 pt-1 text-[9px] font-bold tracking-wider uppercase opacity-70">
+                            Solo lectura
+                        </p>
+                    )}
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>
@@ -62,12 +73,12 @@ export function AttendanceCalendarCard({
     const [showJornadas, setShowJornadas] = useState(true);
     const [showAbsences, setShowAbsences] = useState(true);
     const [showPersonalEvents, setShowPersonalEvents] = useState(true);
-    
+
     const [isDayClickModalOpen, setIsDayClickModalOpen] = useState(false);
     const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
-    
+
     const calendarRef = useRef<FullCalendar>(null);
 
     const handleOptionSelect = (option: 'event' | 'absence') => {
@@ -93,29 +104,31 @@ export function AttendanceCalendarCard({
             <CardContent className="p-0">
                 <div className="mb-4 flex items-center justify-end gap-4 px-2 pt-2">
                     <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                        <input 
-                            type="checkbox" 
-                            checked={showJornadas} 
-                            onChange={e => setShowJornadas(e.target.checked)} 
-                            className="rounded border-slate-300 text-primary focus:ring-primary" 
+                        <input
+                            type="checkbox"
+                            checked={showJornadas}
+                            onChange={(e) => setShowJornadas(e.target.checked)}
+                            className="rounded border-slate-300 text-primary focus:ring-primary"
                         />
                         Mostrar Jornadas
                     </label>
                     <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                        <input 
-                            type="checkbox" 
-                            checked={showAbsences} 
-                            onChange={e => setShowAbsences(e.target.checked)} 
-                            className="rounded border-slate-300 text-amber-500 focus:ring-amber-500" 
+                        <input
+                            type="checkbox"
+                            checked={showAbsences}
+                            onChange={(e) => setShowAbsences(e.target.checked)}
+                            className="rounded border-slate-300 text-amber-500 focus:ring-amber-500"
                         />
                         Mostrar Ausencias
                     </label>
                     <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                        <input 
-                            type="checkbox" 
-                            checked={showPersonalEvents} 
-                            onChange={e => setShowPersonalEvents(e.target.checked)} 
-                            className="rounded border-slate-300 text-indigo-500 focus:ring-indigo-500" 
+                        <input
+                            type="checkbox"
+                            checked={showPersonalEvents}
+                            onChange={(e) =>
+                                setShowPersonalEvents(e.target.checked)
+                            }
+                            className="rounded border-slate-300 text-indigo-500 focus:ring-indigo-500"
                         />
                         Mis Eventos
                     </label>
@@ -186,7 +199,10 @@ export function AttendanceCalendarCard({
                             setIsDayClickModalOpen(true);
                         }}
                         eventClick={(info) => {
-                            if (info.event.extendedProps.isPersonal) {
+                            if (
+                                info.event.extendedProps.isPersonal &&
+                                info.event.extendedProps.canEdit
+                            ) {
                                 setSelectedEvent(info.event);
                                 setIsCreateEventModalOpen(true);
                             }
@@ -196,10 +212,25 @@ export function AttendanceCalendarCard({
                                 'attendance-calendar-event',
                                 ...(arg.event.classNames || []),
                             ];
-                            if (!showJornadas && classes.includes('is-jornada')) classes.push('hidden-event');
-                            if (!showAbsences && classes.includes('is-absence')) classes.push('hidden-event');
-                            if (!showJornadas && classes.includes('daily-summary-event')) classes.push('hidden-event');
-                            if (!showPersonalEvents && classes.includes('is-personal-event')) classes.push('hidden-event');
+                            if (!showJornadas && classes.includes('is-jornada'))
+                                classes.push('hidden-event');
+                            if (!showAbsences && classes.includes('is-absence'))
+                                classes.push('hidden-event');
+                            if (
+                                !showJornadas &&
+                                classes.includes('daily-summary-event')
+                            )
+                                classes.push('hidden-event');
+                            if (
+                                !showPersonalEvents &&
+                                classes.includes('is-personal-event')
+                            )
+                                classes.push('hidden-event');
+                            if (
+                                arg.event.extendedProps.isPersonal &&
+                                !arg.event.extendedProps.canEdit
+                            )
+                                classes.push('is-readonly-event');
                             return classes;
                         }}
                         eventContent={renderCalendarEvent}
@@ -409,6 +440,11 @@ export function AttendanceCalendarCard({
                                 display: none !important;
                             }
 
+                            .attendance-calendar .fc .is-readonly-event {
+                                cursor: default !important;
+                                opacity: 0.82;
+                            }
+
                             .attendance-calendar .fc .daily-summary-event {
                                 background: transparent !important;
                                 border: none !important;
@@ -437,7 +473,7 @@ export function AttendanceCalendarCard({
                             }
                         `}</style>
 
-                <DayClickModal 
+                <DayClickModal
                     open={isDayClickModalOpen}
                     onOpenChange={setIsDayClickModalOpen}
                     onSelectOption={handleOptionSelect}
