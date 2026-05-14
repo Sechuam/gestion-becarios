@@ -59,6 +59,7 @@ export default function Index({ datasets, templates, summary }: Props) {
         const nextColumns = Object.keys(datasets[value]?.columns ?? {});
         setDataset(value);
         setSelectedColumns(nextColumns);
+        setStatus('');
         setGroupBy('');
         setPreview(null);
     }

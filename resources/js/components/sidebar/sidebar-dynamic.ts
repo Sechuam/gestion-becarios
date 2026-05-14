@@ -22,7 +22,10 @@ interface BuildSidebarOptions {
     permissions: string[];
 }
 
-export function buildDynamicSidebar({ roles, permissions }: BuildSidebarOptions): SidebarSection[] {
+export function buildDynamicSidebar({
+    roles,
+    permissions,
+}: BuildSidebarOptions): SidebarSection[] {
     const has = (perm: string) => permissions.includes(perm);
     const isAdmin = roles.includes('admin');
     const isTutor = roles.includes('tutor');
@@ -182,7 +185,10 @@ export function buildDynamicSidebar({ roles, permissions }: BuildSidebarOptions)
     const configSubItems: any[] = [];
 
     if (isAdmin || has('manage users')) {
-        configSubItems.push({ title: 'Gestión de usuarios', href: '/usuarios' });
+        configSubItems.push({
+            title: 'Gestión de usuarios',
+            href: '/usuarios',
+        });
     }
 
     if (isAdmin || has('manage users')) {
@@ -205,7 +211,7 @@ export function buildDynamicSidebar({ roles, permissions }: BuildSidebarOptions)
     }
 
     // ─── SECCIÓN ANÁLISIS ──────────────────────────────────────────────────────
-    if (isAdmin || has('view reports')) {
+    if (isAdmin || isTutor || isIntern || has('view reports')) {
         sections.push({
             label: 'Análisis',
             items: [

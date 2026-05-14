@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -99,7 +99,6 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->hasMany(Evaluation::class, 'evaluator_user_id');
     }
 
-
     public function assignedInterns(): HasMany
     {
         return $this->hasMany(Intern::class, 'company_tutor_user_id');
@@ -127,7 +126,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function isIntern(): bool
     {
         return $this->normalizedRoleNames()
-            ->intersect(['intern'])
+            ->intersect(['intern', 'becario'])
             ->isNotEmpty();
     }
 
@@ -138,7 +137,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     protected function normalizedRoleNames(): Collection
     {
-        return $this->getRoleNames()->map(fn(string $role) => strtolower($role));
+        return $this->getRoleNames()->map(fn (string $role) => strtolower($role));
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { getEvaluationTypeLabel } from '@/lib/evaluation-type-labels';
 import type { ReportDatasetConfig, ReportFormat, ReportPreview } from './types';
 
 type Props = {
@@ -67,6 +68,55 @@ export function ReportBuilderCard({
     onOpenTemplates,
 }: Props) {
     const hasColumns = selectedColumns.length > 0;
+    const statusLabels: Record<string, string> = {
+        active: 'Activo',
+        completed: 'Finalizado',
+        abandoned: 'Abandonado',
+        pending: 'Pendiente',
+        in_progress: 'En progreso',
+        in_review: 'En revisión',
+        review: 'En revisión',
+        rejected: 'Rechazado',
+    };
+    const priorityLabels: Record<string, string> = {
+        low: 'Baja',
+        medium: 'Media',
+        high: 'Alta',
+        urgent: 'Urgente',
+    };
+
+    function previewValue(column: string, value: string | number | null) {
+        if (column === 'status' && typeof value === 'string') {
+            return statusLabels[value] ?? value;
+        }
+
+        if (column === 'priority' && typeof value === 'string') {
+            return priorityLabels[value] ?? value;
+        }
+
+        if (column === 'type' && typeof value === 'string') {
+            return getEvaluationTypeLabel(value);
+        }
+
+        return value ?? '-';
+    }
+
+    const statusOptions =
+        dataset === 'interns'
+            ? [
+                  { value: 'active', label: 'Activo' },
+                  { value: 'completed', label: 'Finalizado' },
+                  { value: 'abandoned', label: 'Abandonado' },
+              ]
+            : dataset === 'tasks'
+              ? [
+                    { value: 'pending', label: 'Pendiente' },
+                    { value: 'in_progress', label: 'En progreso' },
+                    { value: 'in_review', label: 'En revisión' },
+                    { value: 'completed', label: 'Finalizada' },
+                    { value: 'rejected', label: 'Rechazada' },
+                ]
+              : [];
 
     return (
         <Card className="min-w-0 overflow-hidden border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
@@ -83,8 +133,8 @@ export function ReportBuilderCard({
                 <div className="flex flex-wrap gap-2">
                     <Button
                         type="button"
-                        variant="outline"
                         size="sm"
+                        className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                         onClick={onOpenSaveTemplate}
                     >
                         <Save className="mr-2 h-4 w-4" />
@@ -92,8 +142,8 @@ export function ReportBuilderCard({
                     </Button>
                     <Button
                         type="button"
-                        variant="outline"
                         size="sm"
+                        className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                         onClick={onOpenTemplates}
                     >
                         <LayoutTemplate className="mr-2 h-4 w-4" />
@@ -110,7 +160,7 @@ export function ReportBuilderCard({
                             onChange={(event) =>
                                 onDatasetChange(event.target.value)
                             }
-                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-background px-3 text-sm"
+                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm dark:bg-slate-950"
                         >
                             {datasetKeys.map((key) => (
                                 <option key={key} value={key}>
@@ -149,13 +199,25 @@ export function ReportBuilderCard({
                 <div className="grid gap-4 md:grid-cols-4">
                     <div className="space-y-2">
                         <Label>Estado</Label>
-                        <Input
+                        <select
                             value={status}
                             onChange={(event) =>
                                 onStatusChange(event.target.value)
                             }
-                            placeholder="active, completed..."
-                        />
+                            disabled={statusOptions.length === 0}
+                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 dark:bg-slate-950 dark:disabled:bg-slate-900"
+                        >
+                            <option value="">
+                                {statusOptions.length > 0
+                                    ? 'Todos los estados'
+                                    : 'Sin filtro de estado'}
+                            </option>
+                            {statusOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <div className="space-y-2">
                         <Label>Desde</Label>
@@ -182,7 +244,7 @@ export function ReportBuilderCard({
                             onChange={(event) =>
                                 onGroupByChange(event.target.value)
                             }
-                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-background px-3 text-sm"
+                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm dark:bg-slate-950"
                         >
                             <option value="">Sin agrupación</option>
                             {Object.entries(columns).map(([key, column]) => (
@@ -259,12 +321,12 @@ export function ReportBuilderCard({
                         {preview.rows.length > 0 ? (
                             <div className="max-w-full overflow-x-auto rounded-lg border border-sidebar/10 bg-white dark:bg-slate-950">
                                 <table className="min-w-full divide-y divide-sidebar/10 text-sm">
-                                    <thead className="bg-sidebar/5">
+                                    <thead className="bg-sidebar text-sidebar-foreground">
                                         <tr>
                                             {preview.columns.map((column) => (
                                                 <th
                                                     key={column}
-                                                    className="px-3 py-2 text-left text-xs font-bold whitespace-nowrap text-slate-500 uppercase"
+                                                    className="px-3 py-2 text-left text-xs font-bold whitespace-nowrap text-white uppercase"
                                                 >
                                                     {preview.availableColumns[
                                                         column
@@ -282,11 +344,16 @@ export function ReportBuilderCard({
                                                             key={column}
                                                             className="max-w-56 truncate px-3 py-2 text-slate-700 dark:text-slate-200"
                                                             title={String(
-                                                                row[column] ??
-                                                                    '',
+                                                                previewValue(
+                                                                    column,
+                                                                    row[column],
+                                                                ),
                                                             )}
                                                         >
-                                                            {row[column] ?? '-'}
+                                                            {previewValue(
+                                                                column,
+                                                                row[column],
+                                                            )}
                                                         </td>
                                                     ),
                                                 )}
