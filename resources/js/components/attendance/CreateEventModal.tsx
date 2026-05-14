@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '../ui/textarea';
 import { useForm } from '@inertiajs/react';
 import { Check, Loader2, Trash2 } from 'lucide-react';
 import { FormEvent, useEffect } from 'react';
@@ -118,7 +118,7 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                             required
                             placeholder="Ej: Preparar presentación, Tutoría..."
                             value={data.title}
-                            onChange={(e) => setData('title', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('title', e.target.value)}
                             className="h-11 rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50"
                         />
                         {errors.title && <p className="text-xs font-bold text-red-500">{errors.title}</p>}
@@ -129,7 +129,7 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                         <Textarea
                             placeholder="Detalles opcionales..."
                             value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData('description', e.target.value)}
                             className="rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50 min-h-[80px]"
                         />
                     </div>
@@ -139,7 +139,7 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                             <input
                                 type="checkbox"
                                 checked={data.all_day}
-                                onChange={(e) => setData('all_day', e.target.checked)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('all_day', e.target.checked)}
                                 className="rounded border-sidebar/20 text-sidebar focus:ring-sidebar"
                             />
                             Todo el día
@@ -153,7 +153,7 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                                 <Input
                                     type="time"
                                     value={data.start_time}
-                                    onChange={(e) => setData('start_time', e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('start_time', e.target.value)}
                                     className="h-11 rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50"
                                 />
                             </div>
@@ -162,7 +162,7 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                                 <Input
                                     type="time"
                                     value={data.end_time}
-                                    onChange={(e) => setData('end_time', e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('end_time', e.target.value)}
                                     className="h-11 rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50"
                                 />
                             </div>
