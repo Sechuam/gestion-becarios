@@ -49,3 +49,15 @@ export type DashboardMetric = {
     hint: string;
     icon: LucideIcon;
 };
+
+export type DashboardAgendaItem = {
+    type: 'event' | 'absence';
+    title: string;
+    time: string;
+    color: string;
+};
+
+export type DashboardCurrentLog = {
+    clock_in: string;
+    elapsed_seconds: number;
+};

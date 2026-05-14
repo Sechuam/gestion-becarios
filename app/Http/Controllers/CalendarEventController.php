@@ -18,12 +18,25 @@ class CalendarEventController extends Controller
             'end_time'    => 'nullable|date_format:H:i',
             'all_day'     => 'boolean',
             'color'       => 'nullable|string|max:20',
+            'attendee_ids' => 'nullable|array',
+            'attendee_ids.*' => 'exists:users,id',
         ]);
 
         $event = CalendarEvent::create([
-            ...$validated,
-            'user_id' => $request->user()->id,
+            'user_id'     => $request->user()->id,
+            'title'       => $validated['title'],
+            'description' => $validated['description'],
+            'start_date'  => $validated['start_date'],
+            'end_date'    => $validated['end_date'],
+            'start_time'  => $validated['start_time'],
+            'end_time'    => $validated['end_time'],
+            'all_day'     => $validated['all_day'] ?? false,
+            'color'       => $validated['color'],
         ]);
+
+        if (!empty($validated['attendee_ids'])) {
+            $event->attendees()->sync($validated['attendee_ids']);
+        }
 
         return back();
     }
@@ -41,9 +54,22 @@ class CalendarEventController extends Controller
             'end_time'    => 'nullable|date_format:H:i',
             'all_day'     => 'boolean',
             'color'       => 'nullable|string|max:20',
+            'attendee_ids' => 'nullable|array',
+            'attendee_ids.*' => 'exists:users,id',
         ]);
 
-        $calendarEvent->update($validated);
+        $calendarEvent->update([
+            'title'       => $validated['title'],
+            'description' => $validated['description'],
+            'start_date'  => $validated['start_date'],
+            'end_date'    => $validated['end_date'],
+            'start_time'  => $validated['start_time'],
+            'end_time'    => $validated['end_time'],
+            'all_day'     => $validated['all_day'] ?? false,
+            'color'       => $validated['color'],
+        ]);
+
+        $calendarEvent->attendees()->sync($validated['attendee_ids'] ?? []);
 
         return back();
     }

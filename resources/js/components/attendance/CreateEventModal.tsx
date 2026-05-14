@@ -1,107 +1,126 @@
+import React, { useEffect } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { useForm } from '@inertiajs/react';
-import { Check, Loader2, Trash2 } from 'lucide-react';
-import { FormEvent, useEffect } from 'react';
+import { Textarea } from '../ui/textarea';
+import { Check, Loader2, Trash2, X, Users } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { PageProps } from '@/types';
 
 interface CreateEventModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     date: string;
     event?: any;
-    onSuccess?: () => void;
+    onCreated?: () => void;
+    manageableInterns?: any[];
 }
 
 const COLORS = [
-    { name: 'Blue', value: '#3b82f6' },
-    { name: 'Green', value: '#10b981' },
-    { name: 'Red', value: '#ef4444' },
-    { name: 'Amber', value: '#f59e0b' },
-    { name: 'Purple', value: '#8b5cf6' },
-    { name: 'Pink', value: '#ec4899' },
-    { name: 'Slate', value: '#475569' },
+    { name: 'Azul', value: '#3b82f6' },
+    { name: 'Esmeralda', value: '#10b981' },
+    { name: 'Rojo', value: '#ef4444' },
+    { name: 'Ámbar', value: '#f59e0b' },
+    { name: 'Violeta', value: '#8b5cf6' },
+    { name: 'Rosa', value: '#ec4899' },
+    { name: 'Pizarra', value: '#475569' },
 ];
 
-export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }: CreateEventModalProps) {
-    const { data, setData, post, patch, delete: destroy, processing, reset, errors } = useForm({
+export function CreateEventModal({ open, onOpenChange, date, event, onCreated, manageableInterns = [] }: CreateEventModalProps) {
+    const { auth } = usePage<PageProps>().props;
+    const isTutorOrAdmin = auth.user.roles?.some(role => ['admin', 'tutor'].includes(role));
+
+    const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm({
         title: '',
         description: '',
-        start_date: date,
-        end_date: date,
+        start_date: '',
+        end_date: '',
         start_time: '09:00',
         end_time: '10:00',
-        all_day: true,
-        color: '#3b82f6',
+        all_day: false,
+        color: COLORS[0].value,
+        attendee_ids: [] as number[],
     });
 
     useEffect(() => {
-        if (open) {
-            if (event) {
-                const start = event.start ? new Date(event.start) : new Date();
-                const end = event.end ? new Date(event.end) : start;
-                
-                setData({
-                    title: event.title || '',
-                    description: event.extendedProps?.description || '',
-                    start_date: start.toISOString().split('T')[0],
-                    end_date: end.toISOString().split('T')[0],
-                    start_time: start.toTimeString().slice(0, 5),
-                    end_time: end.toTimeString().slice(0, 5),
-                    all_day: event.allDay ?? true,
-                    color: event.backgroundColor || '#3b82f6',
-                });
-            } else {
-                reset();
-                setData('start_date', date);
-                setData('end_date', date);
-                setData('all_day', true);
-            }
-        }
-    }, [open, event, date]);
-
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        const options = {
-            onSuccess: () => {
-                reset();
-                onOpenChange(false);
-                if (onSuccess) onSuccess();
-            },
-        };
-
         if (event) {
-            patch(`/calendar-events/${event.id.replace('evt_', '')}`, options);
+            setData({
+                title: event.title || '',
+                description: event.extendedProps?.description || '',
+                start_date: event.startStr.split('T')[0],
+                end_date: (event.endStr || event.startStr).split('T')[0],
+                start_time: event.startStr.includes('T') ? event.startStr.split('T')[1].substring(0, 5) : '09:00',
+                end_time: event.endStr?.includes('T') ? event.endStr.split('T')[1].substring(0, 5) : '10:00',
+                all_day: event.allDay,
+                color: event.backgroundColor || COLORS[0].value,
+                attendee_ids: event.extendedProps?.attendee_ids || [],
+            });
         } else {
-            post('/calendar-events', options);
+            reset();
+            setData('start_date', date);
+            setData('end_date', date);
         }
-    };
+    }, [event, date, open]);
 
-    const handleDelete = () => {
-        if (!event) return;
-        if (confirm('¿Estás seguro de eliminar este evento?')) {
-            destroy(`/calendar-events/${event.id.replace('evt_', '')}`, {
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (event) {
+            put(route('calendar-events.update', event.id), {
                 onSuccess: () => {
                     onOpenChange(false);
-                    if (onSuccess) onSuccess();
+                    if (onCreated) onCreated();
+                },
+            });
+        } else {
+            post(route('calendar-events.store'), {
+                onSuccess: () => {
+                    onOpenChange(false);
+                    if (onCreated) onCreated();
                 },
             });
         }
     };
 
+    const handleDelete = () => {
+        if (!event) return;
+        destroy(route('calendar-events.destroy', event.id), {
+            onSuccess: () => {
+                onOpenChange(false);
+                if (onCreated) onCreated();
+            },
+        });
+    };
+
+    const toggleAttendee = (userId: number) => {
+        const current = [...data.attendee_ids];
+        const index = current.indexOf(userId);
+        if (index > -1) {
+            current.splice(index, 1);
+        } else {
+            current.push(userId);
+        }
+        setData('attendee_ids', current);
+    };
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[460px] overflow-hidden rounded-[2.5rem] p-0 border-none bg-background dark:bg-slate-900 shadow-2xl">
+            <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto rounded-[2.5rem] p-0 border-none bg-background dark:bg-slate-900 shadow-2xl custom-scrollbar">
                 <style>{`
                     .input-white-bg {
                         background-color: #ffffff !important;
                         color: #1e293b !important;
                     }
                 `}</style>
+                
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                    <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                         {event ? 'Editar Evento' : 'Nuevo Evento'}
                     </DialogTitle>
                 </DialogHeader>
@@ -180,7 +199,8 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                                         type="time"
                                         value={data.start_time}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('start_time', e.target.value)}
-                                        className="h-11 rounded-xl border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+                                        style={{ backgroundColor: 'white' }}
+                                        className="h-11 rounded-xl border-slate-300 text-slate-900 shadow-sm input-white-bg"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
@@ -189,12 +209,55 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                                         type="time"
                                         value={data.end_time}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('end_time', e.target.value)}
-                                        className="h-11 rounded-xl border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+                                        style={{ backgroundColor: 'white' }}
+                                        className="h-11 rounded-xl border-slate-300 text-slate-900 shadow-sm input-white-bg"
                                     />
                                 </div>
                             </div>
                         )}
                     </div>
+
+                    {/* Sección Invitados (Solo Tutores/Admin) */}
+                    {isTutorOrAdmin && manageableInterns.length > 0 && (
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between ml-1">
+                                <Label className="text-[10px] font-black tracking-widest text-slate-900 uppercase flex items-center gap-2">
+                                    <Users className="h-3 w-3" />
+                                    Invitar Becarios
+                                </Label>
+                                <span className="text-[10px] font-bold text-slate-400">
+                                    {data.attendee_ids.length} seleccionados
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto p-1 custom-scrollbar">
+                                {manageableInterns.map((intern) => (
+                                    <button
+                                        key={intern.id}
+                                        type="button"
+                                        onClick={() => toggleAttendee(intern.user_id)}
+                                        className={cn(
+                                            "flex items-center justify-between rounded-xl border p-3 transition-all",
+                                            data.attendee_ids.includes(intern.user_id)
+                                                ? "border-sidebar bg-sidebar/5 ring-1 ring-sidebar"
+                                                : "border-slate-100 bg-white hover:border-slate-200 shadow-sm"
+                                        )}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-[10px] font-black text-slate-600">
+                                                {intern.name.charAt(0)}
+                                            </div>
+                                            <span className="text-xs font-bold text-slate-800">{intern.name}</span>
+                                        </div>
+                                        {data.attendee_ids.includes(intern.user_id) && (
+                                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-sidebar text-white">
+                                                <Check className="h-3 w-3" />
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Sección Categoría */}
                     <div className="space-y-3">
@@ -205,9 +268,10 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                                     key={color.value}
                                     type="button"
                                     onClick={() => setData('color', color.value)}
-                                    className={`group relative flex h-7 w-7 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 ${
-                                        data.color === color.value ? 'ring-2 ring-offset-2 ring-[#1f4f52] dark:ring-offset-slate-900' : 'ring-1 ring-slate-200 dark:ring-slate-700'
-                                    }`}
+                                    className={cn(
+                                        "group relative flex h-7 w-7 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95",
+                                        data.color === color.value ? "ring-2 ring-offset-2 ring-sidebar" : "ring-1 ring-slate-200 shadow-sm"
+                                    )}
                                     style={{ backgroundColor: color.value }}
                                 >
                                     {data.color === color.value && (
@@ -218,15 +282,13 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                         </div>
                     </div>
 
-                    {/* Acciones */}
                     <div className="flex items-center gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
                         {event && (
                             <Button
                                 type="button"
                                 variant="outline"
-                                size="icon"
                                 onClick={handleDelete}
-                                className="h-12 w-12 rounded-2xl border-red-100 bg-red-50/50 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:border-red-900/30 dark:bg-red-900/10 transition-all"
+                                className="flex h-12 w-12 items-center justify-center rounded-2xl border-red-100 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
                             >
                                 <Trash2 className="h-5 w-5" />
                             </Button>
@@ -235,7 +297,7 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
                             type="button"
                             variant="outline"
                             onClick={() => onOpenChange(false)}
-                            className="flex-1 h-12 rounded-2xl border-slate-200 text-[10px] font-black tracking-[0.2em] uppercase text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all"
+                            className="flex-1 h-12 rounded-2xl border-slate-200 text-[10px] font-black tracking-[0.2em] uppercase text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all shadow-sm"
                         >
                             Cancelar
                         </Button>
@@ -251,4 +313,11 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
             </DialogContent>
         </Dialog>
     );
+}
+
+function route(name: string, id?: number) {
+    if (name === 'calendar-events.store') return '/calendar-events';
+    if (name === 'calendar-events.update') return `/calendar-events/${id}`;
+    if (name === 'calendar-events.destroy') return `/calendar-events/${id}`;
+    return '';
 }

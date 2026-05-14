@@ -29,4 +29,9 @@ class CalendarEvent extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function attendees()
+    {
+        return $this->belongsToMany(User::class, 'calendar_event_user');
+    }
 }

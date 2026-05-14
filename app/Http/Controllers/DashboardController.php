@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Absence;
+use App\Models\CalendarEvent;
 use App\Models\EducationCenter;
 use App\Models\Intern;
 use App\Models\Schedule;
@@ -90,6 +91,50 @@ class DashboardController extends Controller
                 ],
             ];
         });
+
+        // Datos en tiempo real para la agenda de hoy
+        $today = Carbon::today();
+        
+        // 1. Jornada activa hoy
+        $currentLog = TimeLog::where('user_id', $user->id)
+            ->whereDate('date', $today)
+            ->whereNotNull('clock_in')
+            ->whereNull('clock_out')
+            ->first();
+
+        // 2. Eventos y Ausencias para hoy (Propios e Invitaciones)
+        $todayEvents = CalendarEvent::with(['user', 'attendees'])
+            ->where(function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhereHas('attendees', fn($q) => $q->where('users.id', $user->id));
+            })
+            ->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today)
+            ->get()
+            ->map(fn($e) => [
+                'type' => 'event',
+                'title' => $e->title,
+                'creator' => $e->user_id !== $user->id ? $e->user->name : null,
+                'time' => $e->all_day ? 'Todo el día' : ($e->start_time . ($e->end_time ? ' - ' . $e->end_time : '')),
+                'color' => $e->color ?? '#3b82f6'
+            ]);
+
+        $todayAbsences = Absence::where('user_id', $user->id)
+            ->whereDate('date', $today)
+            ->where('status', 'approved')
+            ->get()
+            ->map(fn($a) => [
+                'type' => 'absence',
+                'title' => 'Ausencia: ' . $a->reason,
+                'time' => 'Todo el día',
+                'color' => '#f59e0b'
+            ]);
+
+        $data['today_agenda'] = $todayEvents->concat($todayAbsences);
+        $data['current_log'] = $currentLog ? [
+            'clock_in' => $currentLog->clock_in,
+            'elapsed_seconds' => Carbon::parse($currentLog->clock_in)->diffInSeconds(now())
+        ] : null;
 
         return Inertia::render('dashboard/Index', $data);
     }

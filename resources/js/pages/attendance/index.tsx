@@ -530,7 +530,10 @@ export default function Index({
                     </TabsContent>
 
                     <TabsContent value="calendario" className="mt-0">
-                        <AttendanceCalendarCard canManageAttendance={can_manage_attendance} />
+                        <AttendanceCalendarCard 
+                            canManageAttendance={can_manage_attendance} 
+                            manageableInterns={manageable_interns}
+                        />
                     </TabsContent>
                 </Tabs>
             </div>

@@ -17,9 +17,12 @@ import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
 import { InternTaskProgressPanel } from '@/components/dashboard/InternTaskProgressPanel';
+import { TodayAgendaPanel } from '@/components/dashboard/TodayAgendaPanel';
 import type {
+    DashboardAgendaItem,
     DashboardAlert,
     DashboardChartPoint,
+    DashboardCurrentLog,
     DashboardMetric,
     DashboardRole,
     DashboardStats,
@@ -41,6 +44,8 @@ interface DashboardProps {
     task_status_chart: DashboardChartPoint[];
     task_progress: DashboardTaskProgress[];
     alerts: DashboardAlert[];
+    today_agenda: DashboardAgendaItem[];
+    current_log: DashboardCurrentLog | null;
 }
 
 export default function Dashboard({
@@ -51,6 +56,8 @@ export default function Dashboard({
     task_status_chart,
     task_progress,
     alerts,
+    today_agenda,
+    current_log,
 }: DashboardProps) {
     const roleLabel =
         role === 'admin'
@@ -123,7 +130,7 @@ export default function Dashboard({
                     <TaskStatusChart data={task_status_chart} />
                 </div>
 
-                <div className="grid gap-2.5 xl:grid-cols-[0.9fr_1.1fr]">
+                <div className="grid gap-2.5 xl:grid-cols-[0.7fr_0.6fr_0.7fr]">
                     <div className="flex h-full flex-col gap-2.5">
                         <AttendanceChart
                             className="flex-1"
@@ -138,6 +145,12 @@ export default function Dashboard({
                             absenceRate={stats.absence_rate}
                         />
                     </div>
+                    
+                    <TodayAgendaPanel 
+                        todayAgenda={today_agenda}
+                        currentLog={current_log}
+                    />
+
                     <InternTaskProgressPanel
                         className="h-full"
                         taskProgress={task_progress}

@@ -87,13 +87,15 @@ export function TaskStatusChart({ data }: ChartProps) {
     return (
         <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
-                <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
-                    Progreso de tareas
-                </CardTitle>
-                <p className="text-[11px] leading-4 text-slate-500">
-                    Estado global del trabajo asignado.
-                </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+                <div>
+                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                        Progreso de tareas
+                    </CardTitle>
+                    <p className="text-[11px] leading-4 text-slate-500">
+                        Estado global del trabajo asignado.
+                    </p>
+                </div>
             </CardHeader>
             <CardContent className="h-44 px-2.5 pb-2">
                 <ResponsiveContainer width="100%" height="100%">
@@ -125,13 +127,15 @@ export function AttendanceChart({ data, className }: ChartProps & { className?: 
     return (
         <Card className={`flex flex-col overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900 ${className}`}>
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
-                <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
-                    Cumplimiento horario
-                </CardTitle>
-                <p className="text-[11px] leading-4 text-slate-500">
-                    Horas registradas durante los últimos seis meses.
-                </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+                <div>
+                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                        Cumplimiento horario
+                    </CardTitle>
+                    <p className="text-[11px] leading-4 text-slate-500">
+                        Horas registradas durante los últimos seis meses.
+                    </p>
+                </div>
             </CardHeader>
             <CardContent className="flex-1 px-2.5 pb-2">
                 <ResponsiveContainer width="100%" height="100%">
@@ -202,13 +206,15 @@ export function AttendanceStatsCard({
     return (
         <Card className={`flex flex-col overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900 ${className}`}>
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
-                <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
-                    Estadísticas de cumplimiento horario
-                </CardTitle>
-                <p className="text-[11px] leading-4 text-slate-500">
-                    Lectura resumida de asistencia reciente y ausencias.
-                </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+                <div>
+                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                        Estadísticas de cumplimiento horario
+                    </CardTitle>
+                    <p className="text-[11px] leading-4 text-slate-500">
+                        Lectura resumida de asistencia reciente y ausencias.
+                    </p>
+                </div>
             </CardHeader>
             <CardContent className="grid flex-1 items-stretch gap-1.5 px-2.5 pb-2 sm:grid-cols-3">
                 {stats.map((stat) => (

@@ -42,6 +42,11 @@ const renderCalendarEvent = (eventInfo: EventContentArg) => (
                         {eventInfo.event.extendedProps.description}
                     </p>
                 )}
+                {eventInfo.event.extendedProps.creator && (
+                    <p className="text-[9px] font-bold uppercase tracking-wider opacity-70 border-t border-white/10 pt-1 mt-1">
+                        De: {eventInfo.event.extendedProps.creator}
+                    </p>
+                )}
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>
@@ -49,8 +54,10 @@ const renderCalendarEvent = (eventInfo: EventContentArg) => (
 
 export function AttendanceCalendarCard({
     canManageAttendance = false,
+    manageableInterns = [],
 }: {
     canManageAttendance?: boolean;
+    manageableInterns?: any[];
 }) {
     const [showJornadas, setShowJornadas] = useState(true);
     const [showAbsences, setShowAbsences] = useState(true);
@@ -439,13 +446,11 @@ export function AttendanceCalendarCard({
 
                 <CreateEventModal
                     open={isCreateEventModalOpen}
-                    onOpenChange={(open) => {
-                        setIsCreateEventModalOpen(open);
-                        if (!open) setSelectedEvent(null);
-                    }}
+                    onOpenChange={setIsCreateEventModalOpen}
                     date={selectedDate}
                     event={selectedEvent}
-                    onSuccess={handleEventCreated}
+                    onCreated={handleEventCreated}
+                    manageableInterns={manageableInterns}
                 />
             </CardContent>
         </Card>

@@ -258,8 +258,11 @@ class TimeLogController extends Controller
             }
         }
 
-        // 3. Procesar Eventos Personales
-        $personalEvents = CalendarEvent::where('user_id', $user->id)->get();
+        // 3. Procesar Eventos Personales (Propios e Invitaciones)
+        $personalEvents = CalendarEvent::with(['user', 'attendees'])
+            ->where('user_id', $user->id)
+            ->orWhereHas('attendees', fn($q) => $q->where('users.id', $user->id))
+            ->get();
         foreach ($personalEvents as $event) {
             $start = $event->start_date->format('Y-m-d');
             if (!$event->all_day && $event->start_time) {
@@ -285,7 +288,9 @@ class TimeLogController extends Controller
                 'className' => 'is-personal-event',
                 'extendedProps' => [
                     'description' => $event->description,
+                    'creator' => $event->user_id !== $user->id ? $event->user->name : null,
                     'isPersonal' => true,
+                    'attendee_ids' => $event->attendees->pluck('id')->toArray(),
                 ],
             ];
         }
