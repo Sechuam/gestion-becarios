@@ -1,13 +1,17 @@
 import { Link } from '@inertiajs/react';
-import { BarChart3, FileDown } from 'lucide-react';
+import { BarChart3, FileDown, LayoutDashboard, Save, Settings2 } from 'lucide-react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 type Props = {
     roleLabel: string;
     alerts: number;
     completedTasks: number;
     taskCompletion: number;
+    isEditing: boolean;
+    setIsEditing: (value: boolean) => void;
+    onManageWidgets: () => void;
 };
 
 export function DashboardHeader({
@@ -15,6 +19,9 @@ export function DashboardHeader({
     alerts,
     completedTasks,
     taskCompletion,
+    isEditing,
+    setIsEditing,
+    onManageWidgets,
 }: Props) {
     return (
         <ModuleHeader
@@ -22,15 +29,49 @@ export function DashboardHeader({
             description="Centro de control operativo con KPIs, actividad horaria, tareas y reportes exportables."
             icon={<BarChart3 className="h-6 w-6" />}
             actions={
-                <Button
-                    asChild
-                    className="h-9 rounded-lg bg-white text-sidebar hover:bg-white/90"
-                >
-                    <Link href="/reportes">
-                        <FileDown className="mr-2 h-4 w-4" />
-                        Reportes
-                    </Link>
-                </Button>
+                <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                        <Button
+                            asChild
+                            className="h-9 flex-1 rounded-lg bg-white text-sidebar hover:bg-white/90 shadow-sm border border-slate-100"
+                        >
+                            <Link href="/reportes">
+                                <FileDown className="mr-2 h-4 w-4" />
+                                Reportes
+                            </Link>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={onManageWidgets}
+                            className="h-9 w-9 p-0 rounded-lg bg-white text-slate-600 hover:bg-slate-50 border-slate-200 shadow-sm"
+                            title="Gestionar Widgets"
+                        >
+                            <Settings2 className="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <Button
+                        variant={isEditing ? "default" : "outline"}
+                        onClick={() => setIsEditing(!isEditing)}
+                        className={cn(
+                            "h-9 rounded-lg px-4 font-bold uppercase tracking-wider text-[9px] transition-all active:scale-95 shadow-sm",
+                            isEditing 
+                                ? "bg-sidebar text-white hover:bg-sidebar/90 border-none" 
+                                : "bg-white text-slate-600 hover:bg-slate-50 border-slate-200"
+                        )}
+                    >
+                        {isEditing ? (
+                            <>
+                                <Save className="mr-2 h-3.5 w-3.5 animate-pulse" />
+                                Guardar Diseño
+                            </>
+                        ) : (
+                            <>
+                                <LayoutDashboard className="mr-2 h-3.5 w-3.5" />
+                                Editar Diseño
+                            </>
+                        )}
+                    </Button>
+                </div>
             }
             metrics={[
                 {
@@ -43,7 +84,7 @@ export function DashboardHeader({
                     value: completedTasks,
                     hint: `${taskCompletion}% del total`,
                 },
-                { label: 'Widgets', value: 4, hint: 'Datos con caché' },
+                { label: 'Widgets', value: 7, hint: 'Datos con caché' },
             ]}
         />
     );
