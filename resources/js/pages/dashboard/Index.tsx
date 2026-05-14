@@ -89,14 +89,14 @@ function SortableRow({ id, children, isEditing }: { id: string; children: React.
     const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 40 : 'auto' };
 
     return (
-        <div ref={setNodeRef} style={style} className={cn("relative", isDragging && "opacity-30")}>
+        <div ref={setNodeRef} style={style} className={cn("relative transition-all duration-300", isDragging && "opacity-30", isEditing && "pl-10")}>
             {isEditing && (
                 <div 
                     {...attributes} {...listeners}
-                    className="absolute -left-8 top-1/2 -translate-y-1/2 flex h-6 w-6 cursor-grab items-center justify-center rounded-md bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-all opacity-0 group-hover:opacity-100"
-                    style={{ opacity: isEditing ? 1 : 0 }}
+                    className="absolute left-0 top-0 bottom-0 w-8 flex cursor-grab items-center justify-center rounded-xl bg-slate-50/50 border border-dashed border-slate-200 text-slate-400 hover:bg-slate-100 hover:text-sidebar transition-all group"
+                    title="Arrastrar fila"
                 >
-                    <GripHorizontal className="h-4 w-4 rotate-90" />
+                    <GripHorizontal className="h-4 w-4 rotate-90 opacity-40 group-hover:opacity-100" />
                 </div>
             )}
             {children}
