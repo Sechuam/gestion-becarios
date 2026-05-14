@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useState, useEffect, type FormEvent } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
+import type { PageProps } from '@/types';
 import {
     Dialog,
     DialogContent,
@@ -15,12 +16,25 @@ import { CalendarClock } from 'lucide-react';
 
 export function RequestAbsenceModal() {
     const [open, setOpen] = useState(false);
+    const { auth } = usePage<PageProps>().props;
+    
+    const isIntern = auth.user.roles?.includes('intern');
+    const buttonText = isIntern ? 'Enviar Petición' : 'Registrar Ausencia';
 
     const { data, setData, post, processing, errors, reset } = useForm({
         date: '',
         reason: 'Examen',
         justification_file: null as File | null,
     });
+
+    useEffect(() => {
+        const handleOpenModal = (e: CustomEvent<{ date: string }>) => {
+            setData('date', e.detail.date);
+            setOpen(true);
+        };
+        window.addEventListener('open-absence-modal', handleOpenModal as EventListener);
+        return () => window.removeEventListener('open-absence-modal', handleOpenModal as EventListener);
+    }, [setData]);
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -125,7 +139,7 @@ export function RequestAbsenceModal() {
                             disabled={processing}
                             className="bg-amber-500 hover:bg-amber-600"
                         >
-                            Enviar Petición
+                            {buttonText}
                         </Button>
                     </div>
                 </form>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EducationCenterController;
 use App\Http\Controllers\EvaluationController;
@@ -67,7 +68,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/time-logs/clock-in', [TimeLogController::class, 'clockIn'])->name('time-logs.clock-in');
     Route::post('/time-logs/clock-out', [TimeLogController::class, 'clockOut'])->name('time-logs.clock-out');
     Route::post('/time-logs/manual', [TimeLogController::class, 'storeManual'])->name('time-logs.manual');
+    Route::patch('/time-logs/{timeLog}', [TimeLogController::class, 'updateEvent'])->name('time-logs.updateEvent');
     Route::get('/time-logs/events', [TimeLogController::class, 'getEvents'])->name('time-logs.events');
+    
+    // Rutas de Eventos de Calendario
+    Route::post('/calendar-events', [CalendarEventController::class, 'store'])->name('calendar-events.store');
+    Route::patch('/calendar-events/{calendarEvent}', [CalendarEventController::class, 'update'])->name('calendar-events.update');
+    Route::delete('/calendar-events/{calendarEvent}', [CalendarEventController::class, 'destroy'])->name('calendar-events.destroy');
+
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::patch('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');

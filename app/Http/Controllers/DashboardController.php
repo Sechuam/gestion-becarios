@@ -295,7 +295,7 @@ class DashboardController extends Controller
             ->where('status', 'completed')
             ->whereNotNull('completed_at')
             ->get(['created_at', 'completed_at'])
-            ->map(fn(Task $task) => $task->created_at->floatDiffInDays($task->completed_at));
+            ->map(fn(Task $task) => $task->created_at->diffInDays($task->completed_at));
 
         if ($durations->isEmpty()) {
             return null;
@@ -343,7 +343,7 @@ class DashboardController extends Controller
 
         return $interns->map(function (Intern $intern) use ($schedules, $timeLogs, $start, $end) {
             $totalTasks = (int) $intern->tasks_count;
-            $completedTasks = (int) $intern->completed_tasks_count;
+            $completedTasks = (int) $intern->completed_tasks;
 
             // Calcular retraso medio para este becario específico
             $userDelays = [];
