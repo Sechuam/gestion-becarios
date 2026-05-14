@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '../ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
 import { Check, Loader2, Trash2 } from 'lucide-react';
 import { FormEvent, useEffect } from 'react';
@@ -93,116 +93,148 @@ export function CreateEventModal({ open, onOpenChange, date, event, onSuccess }:
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[450px] overflow-hidden rounded-3xl p-0 border-none bg-white dark:bg-slate-900 shadow-2xl">
-                <DialogHeader className="p-6 pb-2 flex flex-row items-center justify-between">
-                    <DialogTitle className="text-xl font-black tracking-tight text-slate-800 dark:text-white">
-                        {event ? 'Editar Evento' : 'Nuevo Evento / Tarea'}
+            <DialogContent className="sm:max-w-[460px] overflow-hidden rounded-[2.5rem] p-0 border-none bg-white dark:bg-slate-900 shadow-2xl">
+                <DialogHeader className="p-8 pb-4">
+                    <DialogTitle className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                        {event ? 'Editar Evento' : 'Nuevo Evento'}
                     </DialogTitle>
-                    {event && (
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={handleDelete}
-                            className="h-9 w-9 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-                        >
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
-                    )}
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit} className="p-6 pt-2 space-y-4">
-                    <div className="space-y-2">
-                        <Label className="ml-1 text-[10px] font-black tracking-widest text-sidebar uppercase">Título</Label>
-                        <Input
-                            required
-                            placeholder="Ej: Preparar presentación, Tutoría..."
-                            value={data.title}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('title', e.target.value)}
-                            className="h-11 rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50"
-                        />
-                        {errors.title && <p className="text-xs font-bold text-red-500">{errors.title}</p>}
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label className="ml-1 text-[10px] font-black tracking-widest text-sidebar uppercase">Descripción</Label>
-                        <Textarea
-                            placeholder="Detalles opcionales..."
-                            value={data.description}
-                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData('description', e.target.value)}
-                            className="rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50 min-h-[80px]"
-                        />
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <label className="flex cursor-pointer items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400">
-                            <input
-                                type="checkbox"
-                                checked={data.all_day}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('all_day', e.target.checked)}
-                                className="rounded border-sidebar/20 text-sidebar focus:ring-sidebar"
+                <form onSubmit={handleSubmit} className="px-8 pb-10 space-y-6">
+                    {/* Sección Identificación */}
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">Título del Evento</Label>
+                            <Input
+                                required
+                                placeholder="Ej: Reunión de equipo..."
+                                value={data.title}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('title', e.target.value)}
+                                className="h-12 rounded-2xl border-slate-200 bg-slate-50/50 px-4 focus:bg-white focus:ring-4 focus:ring-slate-100 dark:border-slate-800 dark:bg-slate-800/50 dark:focus:ring-slate-800/30 transition-all"
                             />
-                            Todo el día
-                        </label>
+                            {errors.title && <p className="text-xs font-bold text-red-500 ml-1">{errors.title}</p>}
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">Descripción / Notas</Label>
+                            <Textarea
+                                placeholder="Escribe aquí los detalles..."
+                                value={data.description}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData('description', e.target.value)}
+                                className="rounded-2xl border-slate-200 bg-slate-50/50 px-4 py-3 focus:bg-white focus:ring-4 focus:ring-slate-100 dark:border-slate-800 dark:bg-slate-800/50 dark:focus:ring-slate-800/30 min-h-[100px] resize-none transition-all"
+                            />
+                        </div>
                     </div>
 
-                    {!data.all_day && (
+                    {/* Sección Temporalidad */}
+                    <div className="space-y-4 p-5 rounded-[1.5rem] bg-slate-50/80 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800">
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label className="ml-1 text-[10px] font-black tracking-widest text-sidebar uppercase">Inicio</Label>
+                            <div className="space-y-1.5">
+                                <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase text-xs">Empieza</Label>
                                 <Input
-                                    type="time"
-                                    value={data.start_time}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('start_time', e.target.value)}
-                                    className="h-11 rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50"
+                                    type="date"
+                                    value={data.start_date}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('start_date', e.target.value)}
+                                    className="h-11 rounded-xl border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="ml-1 text-[10px] font-black tracking-widest text-sidebar uppercase">Fin</Label>
+                            <div className="space-y-1.5">
+                                <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase text-xs">Termina</Label>
                                 <Input
-                                    type="time"
-                                    value={data.end_time}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('end_time', e.target.value)}
-                                    className="h-11 rounded-2xl border-sidebar/20 bg-slate-50 dark:bg-slate-800/50"
+                                    type="date"
+                                    value={data.end_date}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('end_date', e.target.value)}
+                                    className="h-11 rounded-xl border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
                                 />
                             </div>
                         </div>
-                    )}
 
-                    <div className="space-y-2">
-                        <Label className="ml-1 text-[10px] font-black tracking-widest text-sidebar uppercase">Color</Label>
-                        <div className="flex flex-wrap gap-2 pt-1">
+                        <div className="flex items-center gap-2 pt-1">
+                            <input
+                                id="all_day_toggle"
+                                type="checkbox"
+                                checked={data.all_day}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('all_day', e.target.checked)}
+                                className="h-4 w-4 rounded border-slate-300 text-[#1f4f52] focus:ring-[#1f4f52]"
+                            />
+                            <label htmlFor="all_day_toggle" className="text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                Todo el día
+                            </label>
+                        </div>
+
+                        {!data.all_day && (
+                            <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div className="space-y-1.5">
+                                    <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">Hora Inicio</Label>
+                                    <Input
+                                        type="time"
+                                        value={data.start_time}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('start_time', e.target.value)}
+                                        className="h-11 rounded-xl border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">Hora Fin</Label>
+                                    <Input
+                                        type="time"
+                                        value={data.end_time}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('end_time', e.target.value)}
+                                        className="h-11 rounded-xl border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sección Categoría */}
+                    <div className="space-y-3">
+                        <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">Color de Etiqueta</Label>
+                        <div className="flex flex-wrap gap-3 ml-1">
                             {COLORS.map((color) => (
                                 <button
                                     key={color.value}
                                     type="button"
                                     onClick={() => setData('color', color.value)}
-                                    className="relative flex h-8 w-8 items-center justify-center rounded-full transition-transform active:scale-90"
+                                    className={`group relative flex h-7 w-7 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 ${
+                                        data.color === color.value ? 'ring-2 ring-offset-2 ring-[#1f4f52] dark:ring-offset-slate-900' : 'ring-1 ring-slate-200 dark:ring-slate-700'
+                                    }`}
                                     style={{ backgroundColor: color.value }}
                                 >
                                     {data.color === color.value && (
-                                        <Check className="h-4 w-4 text-white" />
+                                        <Check className="h-3.5 w-3.5 text-white" />
                                     )}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className="flex gap-3 pt-4">
+                    {/* Acciones */}
+                    <div className="flex items-center gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                        {event && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={handleDelete}
+                                className="h-12 w-12 rounded-2xl border-red-100 bg-red-50/50 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:border-red-900/30 dark:bg-red-900/10 transition-all"
+                            >
+                                <Trash2 className="h-5 w-5" />
+                            </Button>
+                        )}
                         <Button
                             type="button"
                             variant="ghost"
                             onClick={() => onOpenChange(false)}
-                            className="flex-1 h-11 rounded-2xl text-xs font-black tracking-widest uppercase"
+                            className="flex-1 h-12 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase text-slate-400 hover:text-slate-600"
                         >
                             Cancelar
                         </Button>
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="flex-1 h-11 rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-xs font-black tracking-widest uppercase text-white shadow-lg"
+                            className="flex-[2.5] h-12 rounded-2xl bg-[#1f4f52] text-[10px] font-black tracking-[0.2em] uppercase text-white shadow-xl shadow-[#1f4f52]/20 hover:shadow-[#1f4f52]/30 active:scale-[0.98] transition-all"
                         >
-                            {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : (event ? 'Actualizar' : 'Guardar Evento')}
+                            {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : (event ? 'Guardar Cambios' : 'Crear Evento')}
                         </Button>
                     </div>
                 </form>
