@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Calendar, Umbrella, X } from 'lucide-react';
 
 interface DayClickModalProps {
@@ -18,48 +19,50 @@ export function DayClickModal({ open, onOpenChange, onSelectOption, date }: DayC
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px] overflow-hidden rounded-3xl p-0 border-none bg-white dark:bg-slate-900 shadow-2xl">
-                <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="text-xl font-black tracking-tight text-slate-800 dark:text-white">
+            <DialogContent className="sm:max-w-[420px] overflow-hidden rounded-[2.5rem] p-0 border-none bg-background dark:bg-slate-900 shadow-2xl">
+                <DialogHeader className="p-8 pb-4">
+                    <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                         ¿Qué quieres hacer?
                     </DialogTitle>
-                    <p className="text-sm font-medium text-slate-500 capitalize">{formattedDate}</p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">{formattedDate}</p>
                 </DialogHeader>
 
-                <div className="grid gap-3 p-6 pt-2">
+                <div className="grid gap-4 p-8 pt-2">
                     <button
                         onClick={() => onSelectOption('event')}
-                        className="group flex items-center gap-4 rounded-2xl border border-sidebar/10 bg-slate-50 p-4 text-left transition-all hover:bg-sidebar hover:border-sidebar dark:bg-slate-800/50 dark:hover:bg-sidebar"
+                        className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left transition-all hover:ring-4 hover:ring-slate-100 hover:border-sidebar dark:bg-slate-800/50 dark:hover:bg-sidebar shadow-sm"
                     >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar group-hover:bg-white/20 group-hover:text-white transition-colors">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar group-hover:bg-sidebar group-hover:text-white transition-all">
                             <Calendar className="h-6 w-6" />
                         </div>
-                        <div>
-                            <p className="font-bold text-slate-800 group-hover:text-white dark:text-white transition-colors">Crear Evento / Tarea</p>
-                            <p className="text-xs font-medium text-slate-500 group-hover:text-white/70 transition-colors">Añade un recordatorio o tarea personal</p>
+                        <div className="flex-1">
+                            <p className="font-black text-slate-900 transition-colors">Nuevo Evento</p>
+                            <p className="text-[11px] font-medium text-slate-500 leading-tight mt-0.5">Añade un recordatorio o tarea personal a tu agenda.</p>
                         </div>
                     </button>
 
                     <button
                         onClick={() => onSelectOption('absence')}
-                        className="group flex items-center gap-4 rounded-2xl border border-amber-100 bg-amber-50/30 p-4 text-left transition-all hover:bg-amber-500 hover:border-amber-500 dark:bg-amber-900/10 dark:hover:bg-amber-500"
+                        className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-left transition-all hover:ring-4 hover:ring-slate-100 hover:border-sidebar dark:bg-slate-800/50 dark:hover:bg-sidebar shadow-sm"
                     >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-600 group-hover:bg-white/20 group-hover:text-white transition-colors">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar group-hover:bg-sidebar group-hover:text-white transition-all">
                             <Umbrella className="h-6 w-6" />
                         </div>
-                        <div>
-                            <p className="font-bold text-amber-900 group-hover:text-white dark:text-amber-100 transition-colors">Registrar Ausencia</p>
-                            <p className="text-xs font-medium text-amber-700/60 group-hover:text-white/70 transition-colors">Solicitar o registrar falta al trabajo</p>
+                        <div className="flex-1">
+                            <p className="font-black text-slate-900 transition-colors">Registrar Ausencia</p>
+                            <p className="text-[11px] font-medium text-slate-500 leading-tight mt-0.5">Informa de una falta al trabajo o solicita un permiso.</p>
                         </div>
                     </button>
 
-                    <button
+                    <Button
+                        type="button"
+                        variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="mt-2 flex w-full items-center justify-center gap-2 py-2 text-xs font-black tracking-widest text-slate-400 uppercase transition-colors hover:text-slate-600 dark:hover:text-slate-200"
+                        className="mt-4 flex w-full h-12 items-center justify-center gap-2 rounded-2xl border-slate-200 text-[10px] font-black tracking-[0.2em] uppercase text-slate-500 hover:bg-white hover:text-slate-700 transition-all shadow-sm"
                     >
                         <X className="h-3 w-3" />
                         Cancelar
-                    </button>
+                    </Button>
                 </div>
             </DialogContent>
         </Dialog>
