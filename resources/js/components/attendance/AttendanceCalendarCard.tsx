@@ -1,74 +1,41 @@
-import { useState, useRef } from 'react';
-import axios from 'axios';
-import type { EventContentArg, EventMountArg } from '@fullcalendar/core';
+import type { EventContentArg } from '@fullcalendar/core';
 import esLocale from '@fullcalendar/core/locales/es';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import listPlugin from '@fullcalendar/list';
+import axios from 'axios';
+import { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { DayClickModal } from './DayClickModal';
+import { CalendarEventContent } from './CalendarEventContent';
+import { CalendarVisibilityFilters } from './CalendarVisibilityFilters';
 import { CreateEventModal } from './CreateEventModal';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { DayClickModal } from './DayClickModal';
+import type { ManageableIntern } from './types';
 
 const renderCalendarEvent = (eventInfo: EventContentArg) => (
-    <TooltipProvider delayDuration={200}>
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <div className="attendance-calendar-event-content">
-                    <span
-                        className="attendance-calendar-event-dot"
-                        style={{
-                            backgroundColor: eventInfo.event.backgroundColor,
-                        }}
-                    />
-                    <span className="attendance-calendar-event-label">
-                        {eventInfo.timeText ? `${eventInfo.timeText} ` : ''}
-                        {eventInfo.event.title}
-                    </span>
-                </div>
-            </TooltipTrigger>
-            <TooltipContent
-                side="top"
-                className="flex max-w-[200px] flex-col gap-1 p-2"
-            >
-                <p className="font-semibold">{eventInfo.event.title}</p>
-                {eventInfo.timeText && (
-                    <p className="text-xs opacity-90">{eventInfo.timeText}</p>
-                )}
-                {eventInfo.event.extendedProps.description && (
-                    <p className="mt-1 border-t border-white/20 pt-1 text-[10px] italic">
-                        {eventInfo.event.extendedProps.description}
-                    </p>
-                )}
-                {eventInfo.event.extendedProps.creator && (
-                    <p className="mt-1 border-t border-white/10 pt-1 text-[9px] font-bold tracking-wider uppercase opacity-70">
-                        De: {eventInfo.event.extendedProps.creator}
-                    </p>
-                )}
-                {eventInfo.event.extendedProps.isPersonal &&
-                    !eventInfo.event.extendedProps.canEdit && (
-                        <p className="mt-1 border-t border-white/10 pt-1 text-[9px] font-bold tracking-wider uppercase opacity-70">
-                            Solo lectura
-                        </p>
-                    )}
-            </TooltipContent>
-        </Tooltip>
-    </TooltipProvider>
+    <CalendarEventContent eventInfo={eventInfo} />
 );
+
+const normalizeEventClasses = (classNames: string[] | string | undefined) => {
+    if (!classNames) {
+        return [];
+    }
+
+    if (Array.isArray(classNames)) {
+        return classNames;
+    }
+
+    return classNames.split(/\s+/).filter(Boolean);
+};
 
 export function AttendanceCalendarCard({
     canManageAttendance = false,
     manageableInterns = [],
 }: {
     canManageAttendance?: boolean;
-    manageableInterns?: any[];
+    manageableInterns?: ManageableIntern[];
 }) {
     const [showJornadas, setShowJornadas] = useState(true);
     const [showAbsences, setShowAbsences] = useState(true);
@@ -102,37 +69,14 @@ export function AttendanceCalendarCard({
     return (
         <Card className="overflow-hidden rounded-xl border-sidebar/10 bg-white p-2 shadow-lg dark:bg-slate-900">
             <CardContent className="p-0">
-                <div className="mb-4 flex items-center justify-end gap-4 px-2 pt-2">
-                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                        <input
-                            type="checkbox"
-                            checked={showJornadas}
-                            onChange={(e) => setShowJornadas(e.target.checked)}
-                            className="rounded border-slate-300 text-primary focus:ring-primary"
-                        />
-                        Mostrar Jornadas
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                        <input
-                            type="checkbox"
-                            checked={showAbsences}
-                            onChange={(e) => setShowAbsences(e.target.checked)}
-                            className="rounded border-slate-300 text-amber-500 focus:ring-amber-500"
-                        />
-                        Mostrar Ausencias
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                        <input
-                            type="checkbox"
-                            checked={showPersonalEvents}
-                            onChange={(e) =>
-                                setShowPersonalEvents(e.target.checked)
-                            }
-                            className="rounded border-slate-300 text-indigo-500 focus:ring-indigo-500"
-                        />
-                        Mis Eventos
-                    </label>
-                </div>
+                <CalendarVisibilityFilters
+                    showJornadas={showJornadas}
+                    showAbsences={showAbsences}
+                    showPersonalEvents={showPersonalEvents}
+                    onShowJornadasChange={setShowJornadas}
+                    onShowAbsencesChange={setShowAbsences}
+                    onShowPersonalEventsChange={setShowPersonalEvents}
+                />
                 <div className="attendance-calendar rounded-lg border border-sidebar/10 bg-slate-50/50 p-2 shadow-inner transition-all dark:bg-slate-800/50">
                     <FullCalendar
                         ref={calendarRef}
@@ -152,9 +96,10 @@ export function AttendanceCalendarCard({
                         locales={[esLocale]}
                         locale="es"
                         firstDay={1}
-                        contentHeight={500}
+                        height="auto"
+                        contentHeight="auto"
                         fixedWeekCount
-                        expandRows
+                        expandRows={false}
                         dayMaxEventRows={3}
                         displayEventEnd={true}
                         nowIndicator={true}
@@ -175,7 +120,7 @@ export function AttendanceCalendarCard({
                                     start: info.event.start?.toISOString(),
                                     end: info.event.end?.toISOString(),
                                 });
-                            } catch (e) {
+                            } catch {
                                 info.revert();
                             }
                         }}
@@ -190,7 +135,7 @@ export function AttendanceCalendarCard({
                                     start: info.event.start?.toISOString(),
                                     end: info.event.end?.toISOString(),
                                 });
-                            } catch (e) {
+                            } catch {
                                 info.revert();
                             }
                         }}
@@ -208,9 +153,9 @@ export function AttendanceCalendarCard({
                             }
                         }}
                         eventClassNames={(arg) => {
-                            let classes = [
+                            const classes = [
                                 'attendance-calendar-event',
-                                ...(arg.event.classNames || []),
+                                ...normalizeEventClasses(arg.event.classNames),
                             ];
                             if (!showJornadas && classes.includes('is-jornada'))
                                 classes.push('hidden-event');
@@ -245,6 +190,8 @@ export function AttendanceCalendarCard({
                 </div>
                 <style>{`
                             .attendance-calendar .fc .fc-button {
+                                position: relative;
+                                z-index: 2;
                                 background: var(--sidebar) !important;
                                 border-color: transparent !important;
                                 color: white !important;
@@ -269,6 +216,20 @@ export function AttendanceCalendarCard({
                                 background: #163c42 !important; /* Un poco más oscuro para el estado activo */
                                 opacity: 1 !important;
                                 box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+                            }
+
+                            .attendance-calendar .fc .fc-header-toolbar {
+                                margin-bottom: 12px !important;
+                                border: 1px solid #94a3b8;
+                                border-radius: 12px;
+                                background: #e2e8f0;
+                                padding: 10px 12px;
+                                box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+                            }
+
+                            .dark .attendance-calendar .fc .fc-header-toolbar {
+                                border-color: #475569;
+                                background: #334155;
                             }
 
                             /* Separación entre grupos de botones y botones individuales */
@@ -299,20 +260,22 @@ export function AttendanceCalendarCard({
                             }
                             
                             .attendance-calendar .fc .fc-toolbar-title {
+                                position: relative;
+                                z-index: 1;
+                                pointer-events: none;
                                 font-size: 1.1rem !important;
                                 font-weight: 800 !important;
-                                color: var(--sidebar);
+                                color: #1e293b;
                                 text-transform: capitalize;
-                                background: white;
-                                padding: 6px 20px;
-                                border-radius: 99px;
-                                border: 1px solid rgba(0,0,0,0.05);
-                                box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+                                background: transparent;
+                                padding: 0;
+                                border: none;
+                                box-shadow: none;
                             }
                             .dark .attendance-calendar .fc .fc-toolbar-title {
-                                background: var(--sidebar);
+                                background: transparent;
                                 color: white;
-                                border: 1px solid rgba(255,255,255,0.05);
+                                border: none;
                             }
 
                             .attendance-calendar .fc .fc-popover {
@@ -322,6 +285,16 @@ export function AttendanceCalendarCard({
                             }
                             .attendance-calendar .fc-theme-standard .fc-popover {
                                 background: var(--card) !important;
+                            }
+
+                            .attendance-calendar .fc .fc-daygrid-day-frame {
+                                min-height: 84px;
+                            }
+
+                            @media (max-width: 640px) {
+                                .attendance-calendar .fc .fc-daygrid-day-frame {
+                                    min-height: 68px;
+                                }
                             }
 
                             .attendance-calendar .fc .fc-timegrid-event.is-jornada,

@@ -53,9 +53,9 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
 
     return (
         <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900">
-            <CardHeader className="border-b border-sidebar/5 p-3 pb-2">
+            <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
-                    <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow shadow-sidebar/20">
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
                         <FileText className="h-4 w-4" />
                     </div>
                     Registro Manual

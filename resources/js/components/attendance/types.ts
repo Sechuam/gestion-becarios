@@ -13,6 +13,7 @@ export type ManageableIntern = {
     name: string;
     avatar?: string;
     education_center: string | null;
+    module_name?: string | null;
 };
 
 export type NonCompliantIntern = {

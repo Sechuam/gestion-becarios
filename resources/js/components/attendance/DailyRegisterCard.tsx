@@ -1,18 +1,9 @@
-import {
-    CalendarClock,
-    ChevronsUpDown,
-    Clock3,
-    TimerReset,
-} from 'lucide-react';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { CalendarClock, TimerReset } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatHoursDecimal } from './time-format';
+import { SummaryTile } from './SummaryTile';
+import { TodayLogsSection } from './TodayLogsSection';
 import type { TodayLog } from './types';
 
 type Props = {
@@ -34,9 +25,9 @@ export function DailyRegisterCard({
 }: Props) {
     return (
         <Card className="overflow-hidden rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900">
-            <CardHeader className="border-b border-sidebar/5 p-3 pb-2">
+            <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
-                    <div className="flex h-6 w-6 items-center justify-center rounded bg-sidebar text-white shadow shadow-sidebar/20">
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
                         <CalendarClock className="h-4 w-4" />
                     </div>
                     Registro de Jornada
@@ -124,87 +115,12 @@ export function DailyRegisterCard({
                     </div>
                 </div>
 
-                {(todayLogs.length > 0 || currentLog) &&
-                    todayLogs.length > 0 && (
-                        <Collapsible
-                            open={todayLogsOpen}
-                            onOpenChange={onTodayLogsOpenChange}
-                        >
-                            <div className="rounded-xl border border-sidebar/10 bg-slate-50/60 p-2.5 dark:bg-slate-800/50">
-                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                                    <div className="px-1">
-                                        <h3 className="text-sm font-black tracking-widest text-slate-800 uppercase dark:text-white">
-                                            Tramos de hoy
-                                        </h3>
-                                        <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                                            {todayLogs.length} registros en la
-                                            jornada actual.
-                                        </p>
-                                    </div>
-                                    <CollapsibleTrigger asChild>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            className="h-8 rounded-full border-sidebar/20 bg-white px-3 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-50 dark:bg-slate-900"
-                                        >
-                                            {todayLogsOpen
-                                                ? 'Ocultar detalle'
-                                                : 'Ver detalle'}
-                                            <ChevronsUpDown className="ml-1.5 h-3.5 w-3.5" />
-                                        </Button>
-                                    </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="pt-3">
-                                    <div className="grid max-h-64 gap-3 overflow-y-auto pr-1">
-                                        {todayLogs.map((log) => (
-                                            <div
-                                                key={log.id}
-                                                className="flex items-center justify-between gap-2 rounded-lg border border-sidebar/10 bg-white px-3 py-2 shadow-sm transition-all hover:border-sidebar/30 dark:bg-slate-800"
-                                            >
-                                                <div className="flex min-w-0 items-center gap-3">
-                                                    <Clock3 className="h-4 w-4 shrink-0 text-sidebar/50" />
-                                                    <span className="truncate font-bold text-slate-700 dark:text-slate-200">
-                                                        {log.clock_in ??
-                                                            '--:--'}{' '}
-                                                        <span className="mx-2 text-slate-300">
-                                                            →
-                                                        </span>{' '}
-                                                        {log.clock_out ??
-                                                            'En curso'}
-                                                    </span>
-                                                </div>
-                                                <Badge
-                                                    variant="outline"
-                                                    className="h-8 shrink-0 rounded-full border-sidebar/20 bg-slate-50 px-4 text-[10px] font-black tracking-widest text-sidebar uppercase"
-                                                >
-                                                    {log.total_hours !== null
-                                                        ? formatHoursDecimal(
-                                                              log.total_hours,
-                                                          )
-                                                        : 'Procesando...'}
-                                                </Badge>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </CollapsibleContent>
-                            </div>
-                        </Collapsible>
-                    )}
+                <TodayLogsSection
+                    todayLogs={todayLogs}
+                    todayLogsOpen={todayLogsOpen}
+                    onTodayLogsOpenChange={onTodayLogsOpenChange}
+                />
             </CardContent>
         </Card>
-    );
-}
-
-function SummaryTile({ label, value }: { label: string; value: string }) {
-    return (
-        <div className="rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
-            <p className="text-[8px] leading-none font-black tracking-widest text-sidebar uppercase">
-                {label}
-            </p>
-            <p className="mt-0.5 text-lg font-black text-slate-800 dark:text-white">
-                {value}
-            </p>
-        </div>
     );
 }

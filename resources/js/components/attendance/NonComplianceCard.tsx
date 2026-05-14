@@ -10,9 +10,9 @@ type Props = {
 export function NonComplianceCard({ interns }: Props) {
     return (
         <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg xl:max-h-[34rem] dark:bg-slate-900">
-            <CardHeader className="border-b border-sidebar/5 bg-slate-50/30 p-3 pb-2 dark:bg-slate-800/30">
+            <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
-                    <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow shadow-sidebar/20">
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
                         <ShieldAlert className="h-4 w-4" />
                     </div>
                     Incumplimientos
@@ -23,7 +23,7 @@ export function NonComplianceCard({ interns }: Props) {
                     interns.map((intern) => (
                         <div
                             key={intern.id}
-                            className="group rounded-xl border border-sidebar/5 bg-slate-50/50 p-4 shadow-sm transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-800/40"
+                            className="group rounded-xl border border-slate-300 bg-slate-100 p-4 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-200/70 hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
                         >
                             <div className="flex items-start gap-4">
                                 <Avatar className="h-10 w-10 shrink-0 border-2 border-white shadow-md dark:border-slate-700">
@@ -31,7 +31,7 @@ export function NonComplianceCard({ interns }: Props) {
                                         src={intern.avatar}
                                         alt={intern.name}
                                     />
-                                    <AvatarFallback className="bg-sidebar/10 text-xs font-black text-sidebar">
+                                    <AvatarFallback className="bg-white text-xs font-black text-sidebar dark:bg-slate-900">
                                         {intern.name?.charAt(0)}
                                     </AvatarFallback>
                                 </Avatar>
@@ -41,13 +41,13 @@ export function NonComplianceCard({ interns }: Props) {
                                     </p>
                                     <p className="text-sm leading-snug font-medium text-slate-500 dark:text-slate-400">
                                         Deuda de horas:{' '}
-                                        <span className="font-black text-sidebar dark:text-sidebar-foreground">
+                                        <span className="font-black text-sidebar dark:text-white">
                                             {intern.debt}h
                                         </span>{' '}
                                         acumuladas.
                                     </p>
-                                    <div className="mt-2 flex items-center gap-3 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:text-slate-500">
-                                        <span className="rounded-full border border-sidebar/15 bg-gradient-to-r from-sidebar/10 to-[#1f4f52]/10 px-3 py-1 text-sidebar dark:text-white">
+                                    <div className="mt-2 flex items-center gap-3 text-[10px] font-black tracking-widest text-slate-500 uppercase dark:text-slate-400">
+                                        <span className="rounded-full border border-slate-300 bg-white px-3 py-1 text-sidebar shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-white">
                                             Progreso: {intern.total_done}h /{' '}
                                             {intern.expected_hours}h
                                         </span>
