@@ -56,6 +56,28 @@ class ReportController extends Controller
         return back()->with('success', 'Plantilla de informe guardada correctamente.');
     }
 
+    public function updateTemplate(Request $request, ReportTemplate $template)
+    {
+        abort_unless($template->user_id === $request->user()->id, 403);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:120',
+        ]);
+
+        $template->update($validated);
+
+        return back()->with('success', 'Plantilla de informe actualizada correctamente.');
+    }
+
+    public function destroyTemplate(Request $request, ReportTemplate $template)
+    {
+        abort_unless($template->user_id === $request->user()->id, 403);
+
+        $template->delete();
+
+        return back()->with('success', 'Plantilla de informe eliminada correctamente.');
+    }
+
     public function export(Request $request)
     {
         $validated = $request->validate([

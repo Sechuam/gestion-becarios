@@ -29,10 +29,10 @@ Route::inertia('/', 'welcome', [
 // Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el área personal del becario (Redirigidas a Ajustes)
-    Route::get('mi-perfil', fn() => redirect()->route('profile.edit'))
+    Route::get('mi-perfil', fn () => redirect()->route('profile.edit'))
         ->name('interns.my-profile')
         ->middleware('role:intern|becario');
-    Route::post('mi-perfil/avatar', fn() => redirect()->route('profile.avatar', [], 307))
+    Route::post('mi-perfil/avatar', fn () => redirect()->route('profile.avatar', [], 307))
         ->name('interns.update-avatar')
         ->middleware('role:intern|becario');
 
@@ -70,7 +70,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/time-logs/manual', [TimeLogController::class, 'storeManual'])->name('time-logs.manual');
     Route::patch('/time-logs/{timeLog}', [TimeLogController::class, 'updateEvent'])->name('time-logs.updateEvent');
     Route::get('/time-logs/events', [TimeLogController::class, 'getEvents'])->name('time-logs.events');
-    
+
     // Rutas de Eventos de Calendario
     Route::post('/calendar-events', [CalendarEventController::class, 'store'])->name('calendar-events.store');
     Route::patch('/calendar-events/{calendarEvent}', [CalendarEventController::class, 'update'])->name('calendar-events.update');
@@ -233,6 +233,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ruta para reportes
     Route::get('/reportes', [ReportController::class, 'index'])->name('reports.index');
     Route::post('/reportes/plantillas', [ReportController::class, 'storeTemplate'])->name('reports.templates.store');
+    Route::patch('/reportes/plantillas/{template}', [ReportController::class, 'updateTemplate'])->name('reports.templates.update');
+    Route::delete('/reportes/plantillas/{template}', [ReportController::class, 'destroyTemplate'])->name('reports.templates.destroy');
     Route::get('/reportes/export', [ReportController::class, 'export'])->name('reports.export');
     // Roles y permisos (admin)
     Route::get('/roles', [RolesController::class, 'index'])
@@ -260,4 +262,4 @@ Route::middleware('guest')->group(function () {
 });
 
 // rutas públicas o especiales
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';
