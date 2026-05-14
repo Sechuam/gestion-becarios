@@ -50,24 +50,23 @@ export function DashboardHeader({
                         </Button>
                     </div>
                     <Button
-                        variant={isEditing ? "default" : "outline"}
                         onClick={() => setIsEditing(!isEditing)}
                         className={cn(
-                            "h-9 rounded-lg px-4 font-bold uppercase tracking-wider text-[9px] transition-all active:scale-95 shadow-sm",
+                            "h-9 rounded-lg px-4 font-bold transition-all active:scale-95 shadow-sm border",
                             isEditing 
-                                ? "bg-sidebar text-white hover:bg-sidebar/90 border-none" 
-                                : "bg-white text-slate-600 hover:bg-slate-50 border-slate-200"
+                                ? "bg-sidebar text-white hover:bg-sidebar/90 border-transparent" 
+                                : "bg-white text-sidebar hover:bg-white/90 border-slate-100"
                         )}
                     >
                         {isEditing ? (
                             <>
-                                <Save className="mr-2 h-3.5 w-3.5 animate-pulse" />
-                                Guardar Diseño
+                                <Save className="mr-2 h-4 w-4 animate-pulse" />
+                                Guardar diseño
                             </>
                         ) : (
                             <>
-                                <LayoutDashboard className="mr-2 h-3.5 w-3.5" />
-                                Editar Diseño
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                Editar diseño
                             </>
                         )}
                     </Button>
