@@ -12,23 +12,21 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import {
-    ClipboardCheck,
-    Clock,
-    UserX,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { ClipboardCheck, Clock, UserX } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { DashboardChartPoint } from './types';
 
-const pieColors = [
-    '#0f766e',
-    '#1f4f52',
-    '#2c6f72',
-    '#3b8588',
-    '#63a8aa',
-    '#9ccfd0',
-];
+const taskStatusColors: Record<string, string> = {
+    Pendientes: '#94a3b8',
+    'En curso': '#3b82f6',
+    'En revisión': '#8b5cf6',
+    Completadas: '#10b981',
+    Rechazadas: '#ef4444',
+};
+
+function getTaskStatusColor(name: string) {
+    return taskStatusColors[name] ?? '#64748b';
+}
 
 type ChartProps = {
     data: DashboardChartPoint[];
@@ -36,23 +34,17 @@ type ChartProps = {
 
 export function InternsByCenterChart({ data }: ChartProps) {
     return (
-        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+        <Card className="overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div>
-                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
                         Becarios por centro educativo
                     </CardTitle>
                     <p className="text-[11px] leading-4 text-slate-500">
                         Distribución activa para priorizar carga y seguimiento.
                     </p>
                 </div>
-                <Badge
-                    variant="outline"
-                    className="rounded-md border-sidebar/20 bg-white/70 px-2 py-0 text-[10px] text-sidebar dark:bg-slate-950/40 dark:text-teal-100"
-                >
-                    Recharts
-                </Badge>
             </CardHeader>
             <CardContent className="h-44 px-2.5 pb-2">
                 <ResponsiveContainer width="100%" height="100%">
@@ -74,7 +66,7 @@ export function InternsByCenterChart({ data }: ChartProps) {
                         <Bar
                             dataKey="becarios"
                             radius={[6, 6, 0, 0]}
-                            fill="#1f4f52"
+                            fill="#64748b"
                         />
                     </BarChart>
                 </ResponsiveContainer>
@@ -85,11 +77,11 @@ export function InternsByCenterChart({ data }: ChartProps) {
 
 export function TaskStatusChart({ data }: ChartProps) {
     return (
-        <Card className="overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900">
+        <Card className="overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div>
-                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
                         Progreso de tareas
                     </CardTitle>
                     <p className="text-[11px] leading-4 text-slate-500">
@@ -97,39 +89,66 @@ export function TaskStatusChart({ data }: ChartProps) {
                     </p>
                 </div>
             </CardHeader>
-            <CardContent className="h-44 px-2.5 pb-2">
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie
-                            data={data}
-                            dataKey="value"
-                            nameKey="name"
-                            innerRadius={36}
-                            outerRadius={66}
-                            paddingAngle={3}
+            <CardContent className="grid h-44 grid-cols-[minmax(0,1fr)_112px] items-center gap-2 px-2.5 pb-2">
+                <div className="min-h-0 min-w-0 self-stretch">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie
+                                data={data}
+                                dataKey="value"
+                                nameKey="name"
+                                innerRadius={34}
+                                outerRadius={60}
+                                paddingAngle={3}
+                            >
+                                {data.map((entry, index) => (
+                                    <Cell
+                                        key={`${entry.name}-${index}`}
+                                        fill={getTaskStatusColor(entry.name)}
+                                    />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+                <div className="space-y-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                    {data.map((entry) => (
+                        <div
+                            key={entry.name}
+                            className="flex min-w-0 items-center gap-1.5"
                         >
-                            {data.map((entry, index) => (
-                                <Cell
-                                    key={`${entry.name}-${index}`}
-                                    fill={pieColors[index % pieColors.length]}
-                                />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                    </PieChart>
-                </ResponsiveContainer>
+                            <span
+                                className="h-2 w-2 shrink-0 rounded-full"
+                                style={{
+                                    backgroundColor: getTaskStatusColor(
+                                        entry.name,
+                                    ),
+                                }}
+                            />
+                            <span className="truncate">
+                                {entry.name}: {entry.value}
+                            </span>
+                        </div>
+                    ))}
+                </div>
             </CardContent>
         </Card>
     );
 }
 
-export function AttendanceChart({ data, className }: ChartProps & { className?: string }) {
+export function AttendanceChart({
+    data,
+    className,
+}: ChartProps & { className?: string }) {
     return (
-        <Card className={`flex flex-col overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900 ${className}`}>
+        <Card
+            className={`flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 ${className}`}
+        >
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div>
-                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
                         Cumplimiento horario
                     </CardTitle>
                     <p className="text-[11px] leading-4 text-slate-500">
@@ -187,8 +206,8 @@ export function AttendanceStatsCard({
                 averageDelayMinutes === null
                     ? 'No configurado'
                     : averageDelayMinutes === 0
-                        ? 'Sin retraso'
-                        : `${averageDelayMinutes} min`,
+                      ? 'Sin retraso'
+                      : `${averageDelayMinutes} min`,
             hint:
                 averageDelayMinutes === null
                     ? 'Requiere hora prevista de entrada'
@@ -204,11 +223,13 @@ export function AttendanceStatsCard({
     ];
 
     return (
-        <Card className={`flex flex-col overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900 ${className}`}>
+        <Card
+            className={`flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 ${className}`}
+        >
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div>
-                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
                         Estadísticas de cumplimiento horario
                     </CardTitle>
                     <p className="text-[11px] leading-4 text-slate-500">
@@ -216,28 +237,30 @@ export function AttendanceStatsCard({
                     </p>
                 </div>
             </CardHeader>
-            <CardContent className="grid flex-1 items-stretch gap-1.5 px-2.5 pb-2 sm:grid-cols-3">
+            <CardContent className="grid flex-1 items-stretch gap-1.5 bg-slate-50/60 px-2.5 pt-2 pb-2 sm:grid-cols-3 dark:bg-slate-950/20">
                 {stats.map((stat) => (
                     <div
                         key={stat.label}
-                        className="flex h-full flex-col rounded-md border border-sidebar bg-linear-to-br from-sidebar to-[#1f4f52] p-2 shadow-sm"
+                        className="flex h-full flex-col rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white p-2 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
                     >
                         {/* Top row: icon left, line right */}
                         <div className="flex items-start justify-between">
-                            <stat.icon className="h-6 w-6 text-white/40" />
-                            <div className="h-1 w-6 rounded-full bg-white/10" />
+                            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar text-white shadow-sm">
+                                <stat.icon className="h-3.5 w-3.5" />
+                            </span>
+                            <div className="h-1 w-6 rounded-full bg-sidebar" />
                         </div>
                         {/* Spacer */}
                         <div className="flex-1" />
                         {/* Bottom: fixed height so all cards align perfectly */}
                         <div className="min-h-[72px]">
-                            <p className="text-[9px] leading-3 font-black tracking-widest text-white/70 uppercase">
+                            <p className="text-[9px] leading-3 font-black tracking-widest text-slate-500 uppercase">
                                 {stat.label}
                             </p>
-                            <p className="mt-0.5 text-lg leading-6 font-black text-white">
+                            <p className="mt-0.5 text-lg leading-6 font-black text-slate-900 dark:text-white">
                                 {stat.value}
                             </p>
-                            <p className="mt-0.5 line-clamp-2 text-[10px] leading-3.5 font-medium text-white/70">
+                            <p className="mt-0.5 line-clamp-2 text-[10px] leading-3.5 font-medium text-slate-500">
                                 {stat.hint}
                             </p>
                         </div>

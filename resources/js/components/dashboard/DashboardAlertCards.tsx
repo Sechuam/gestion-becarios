@@ -16,24 +16,25 @@ export function DashboardAlertCards({ alerts }: Props) {
     return (
         <div className="grid gap-2 md:grid-cols-3">
             {alerts.map((alert) => {
-                const Icon = alert.value === 0
-                    ? CheckCircle2
-                    : (ALERT_ICONS[alert.label] ?? CalendarOff);
+                const Icon =
+                    alert.value === 0
+                        ? CheckCircle2
+                        : (ALERT_ICONS[alert.label] ?? CalendarOff);
 
                 return (
                     <Card
                         key={alert.label}
-                        className="border-sidebar bg-linear-to-br from-sidebar to-[#1f4f52] shadow-sm"
+                        className="border-l-2 border-slate-300 border-l-sidebar bg-white shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
                     >
                         <CardContent className="flex items-center gap-2 px-2.5 py-1.5">
-                            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/15 text-white ring-1 ring-white/20">
+                            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar text-white shadow-sm">
                                 <Icon className="h-3.5 w-3.5" />
                             </span>
                             <div>
-                                <p className="text-lg leading-5 font-black text-white">
+                                <p className="text-lg leading-5 font-black text-sidebar dark:text-teal-100">
                                     {alert.value}
                                 </p>
-                                <p className="text-[10px] leading-3 font-bold tracking-widest text-white/70 uppercase">
+                                <p className="text-[10px] leading-3 font-bold tracking-widest text-sidebar uppercase dark:text-teal-100">
                                     {alert.label}
                                 </p>
                             </div>

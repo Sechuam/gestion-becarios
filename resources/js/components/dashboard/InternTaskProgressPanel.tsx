@@ -51,11 +51,13 @@ export function InternTaskProgressPanel({
     }
 
     return (
-        <Card className={`flex flex-col overflow-hidden border-sidebar/15 bg-white shadow-sm dark:bg-slate-900 ${className}`}>
+        <Card
+            className={`flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 ${className}`}
+        >
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 bg-sidebar/5 px-2.5 py-1.5 dark:bg-sidebar/10">
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div>
-                    <CardTitle className="text-sm font-black text-sidebar dark:text-teal-100">
+                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
                         Panel de progreso por becario
                     </CardTitle>
                     <p className="text-[11px] leading-4 text-slate-500">
@@ -65,23 +67,25 @@ export function InternTaskProgressPanel({
                 <div className="flex items-center gap-2">
                     <Badge
                         variant="outline"
-                        className="rounded-md border-sidebar/20 bg-white/70 px-2 py-0 text-[10px] text-sidebar dark:bg-slate-950/40 dark:text-teal-100"
+                        className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
                     >
                         {averageResolutionDays === null
                             ? 'Sin resolución media'
                             : `${averageResolutionDays} días de media`}
                     </Badge>
-                    <TrendingUp className="h-3.5 w-3.5 text-sidebar dark:text-teal-100" />
+                    <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar text-white shadow-sm">
+                        <TrendingUp className="h-3.5 w-3.5" />
+                    </span>
                 </div>
             </CardHeader>
-            <CardContent className="flex flex-1 flex-col justify-between gap-1.5 px-2.5 pb-2">
+            <CardContent className="flex flex-1 flex-col justify-between gap-1.5 bg-slate-50/60 px-2.5 pt-2 pb-2 dark:bg-slate-950/20">
                 {taskProgress.length === 0 ? (
-                    <div className="rounded-md border border-dashed border-sidebar/20 px-2.5 py-2 text-xs text-slate-500">
+                    <div className="rounded-md border border-dashed border-slate-200 px-2.5 py-2 text-xs text-slate-500 dark:border-slate-700">
                         Todavía no hay tareas vinculadas para mostrar progreso.
                     </div>
                 ) : (
                     <div className="flex flex-1 flex-col justify-between">
-                        <div className="flex-1 space-y-1.5 min-h-[380px]">
+                        <div className="min-h-[380px] flex-1 space-y-1.5">
                             <div className="relative">
                                 <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-sidebar/70" />
                                 <Input
@@ -90,19 +94,20 @@ export function InternTaskProgressPanel({
                                         handleSearch(event.target.value)
                                     }
                                     placeholder="Buscar becario o centro"
-                                    className="h-8 rounded-md border-sidebar/15 bg-sidebar/5 pl-8 text-xs focus-visible:ring-sidebar/20 dark:bg-sidebar/10"
+                                    className="h-8 rounded-md border-slate-300 bg-white pl-8 text-xs shadow-sm focus-visible:ring-sidebar/20 dark:border-slate-700 dark:bg-slate-900"
                                 />
                             </div>
 
                             {visibleProgress.length === 0 ? (
-                                <div className="rounded-md border border-dashed border-sidebar/20 px-2.5 py-2 text-xs text-slate-500">
-                                    No hay becarios que coincidan con la búsqueda.
+                                <div className="rounded-md border border-dashed border-slate-200 px-2.5 py-2 text-xs text-slate-500 dark:border-slate-700">
+                                    No hay becarios que coincidan con la
+                                    búsqueda.
                                 </div>
                             ) : (
                                 visibleProgress.map((intern) => (
                                     <div
                                         key={intern.id}
-                                        className="rounded-md border border-sidebar/15 bg-gradient-to-r from-sidebar/5 to-transparent px-2.5 py-1.5 dark:from-sidebar/10"
+                                        className="rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-1.5 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
                                     >
                                         <div className="flex items-center justify-between gap-2">
                                             <div className="min-w-0">
@@ -116,18 +121,25 @@ export function InternTaskProgressPanel({
                                             <div className="flex flex-col items-end gap-1">
                                                 <Badge
                                                     variant="outline"
-                                                    className="rounded-md border-sidebar/20 bg-white/70 px-2 py-0 text-[10px] text-sidebar dark:bg-slate-950/40 dark:text-teal-100"
+                                                    className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
                                                 >
                                                     {intern.hours} h
                                                 </Badge>
-                                                {intern.average_delay !== undefined && intern.average_delay > 0 && (
-                                                    <Badge
-                                                        variant="secondary"
-                                                        className="rounded-md bg-amber-500/10 text-amber-600 border-amber-500/20 px-1.5 py-0 text-[9px] font-bold"
-                                                    >
-                                                        +{intern.average_delay} min retraso
-                                                    </Badge>
-                                                )}
+                                                {intern.average_delay !==
+                                                    undefined &&
+                                                    intern.average_delay >
+                                                        0 && (
+                                                        <Badge
+                                                            variant="secondary"
+                                                            className="rounded-md border-amber-500/20 bg-amber-500/10 px-1.5 py-0 text-[9px] font-bold text-amber-600"
+                                                        >
+                                                            +
+                                                            {
+                                                                intern.average_delay
+                                                            }{' '}
+                                                            min retraso
+                                                        </Badge>
+                                                    )}
                                             </div>
                                         </div>
                                         <div className="mt-1.5 flex items-center gap-2">
