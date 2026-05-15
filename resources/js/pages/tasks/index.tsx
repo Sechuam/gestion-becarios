@@ -381,8 +381,8 @@ export default function Index({
         const resolvedRejectReason =
             newStatus === 'rejected'
                 ? (rejectReason ??
-                  window.prompt('Indica el motivo del rechazo:') ??
-                  '')
+                    window.prompt('Indica el motivo del rechazo:') ??
+                    '')
                 : '';
 
         if (newStatus === 'rejected' && !resolvedRejectReason.trim()) {
@@ -497,7 +497,7 @@ export default function Index({
                             if (taskId)
                                 setActiveDragTask(
                                     boardTasks.find((t) => t.id === taskId) ||
-                                        null,
+                                    null,
                                 );
                         }}
                         onDragOver={(event) => {

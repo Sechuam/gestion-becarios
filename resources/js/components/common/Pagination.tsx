@@ -21,7 +21,7 @@ export function Pagination({ links, className, preserveScroll = true }: Props) {
             {links.map((link, i) => {
                 const isPrevious = link.label.includes('Previous');
                 const isNext = link.label.includes('Next');
-                
+
                 return (
                     <Link
                         key={i}

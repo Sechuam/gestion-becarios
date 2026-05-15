@@ -135,7 +135,7 @@ export default function KanbanTaskCard({
             onClick={() => onOpenDetails?.(task)}
         >
             {task.practice_type?.color && (
-                <div 
+                <div
                     className="absolute left-0 top-4 bottom-4 w-1 rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"
                     style={{ backgroundColor: task.practice_type.color }}
                 />
@@ -170,7 +170,7 @@ export default function KanbanTaskCard({
                     <button
                         type="button"
                         className="absolute right-0 top-0 inline-flex cursor-grab items-center rounded-md border border-border/70 bg-muted/30 p-1.5 text-muted-foreground/70 shadow-sm transition hover:border-primary/30 hover:bg-primary/8 hover:text-foreground active:cursor-grabbing"
-                        
+
                         {...listeners}
                         {...attributes}
                         onClick={(event) => {
@@ -217,7 +217,7 @@ export default function KanbanTaskCard({
                                     const dStatus = dueStatus(task.due_date);
                                     const isCompleted = task.status === 'completed';
                                     const isLate = isCompleted && task.completed_at && task.due_date &&
-                                                   new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
+                                        new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
 
                                     const dotClass = isCompleted
                                         ? (isLate ? 'bg-orange-500' : 'bg-emerald-500')

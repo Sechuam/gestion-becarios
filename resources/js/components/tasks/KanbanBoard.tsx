@@ -170,20 +170,22 @@ export function KanbanBoard({
                         {KANBAN_COLUMNS.map((col, index) => (
                             <div
                                 key={col.key}
-                                className={`flex h-[calc(100vh-17rem)] max-h-[38rem] min-h-[27rem] w-[14rem] min-w-[14rem] flex-col rounded-2xl border-2 p-2 shadow-sm lg:w-auto lg:min-w-0 lg:flex-1 ${
-                                    index % 2 === 0
-                                        ? 'border-white/10 bg-gradient-to-br from-sidebar to-[#1f4f52] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]'
-                                        : 'border-sidebar/20 bg-gradient-to-b from-white to-[#dce9e5]/30'
-                                } ${
-                                    tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
+                                className={`flex h-[calc(100vh-17rem)] max-h-[38rem] min-h-[27rem] w-[14rem] min-w-[14rem] flex-col overflow-hidden rounded-2xl border-2 shadow-sm lg:w-auto lg:min-w-0 lg:flex-1 ${index % 2 === 0
+                                        ? 'border-slate-400 bg-slate-200 dark:border-slate-600 dark:bg-slate-700'
+                                        : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900'
+                                    } ${tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
                                         ? 'ring-2 ring-amber-300/50 border-amber-300/50'
                                         : ''
-                                }`}
+                                    }`}
                             >
-                                <div className="mb-3 flex items-center justify-between gap-3">
+                                {/* Header de la columna */}
+                                <div className={`flex shrink-0 items-center justify-between gap-3 px-3 py-2.5 ${index % 2 === 0
+                                        ? 'bg-slate-200 dark:bg-slate-700'
+                                        : 'bg-white dark:bg-slate-900'
+                                    }`}>
                                     <div className="min-w-0">
-                                        <h3 className={`text-sm font-semibold ${index % 2 === 0 ? 'text-white' : 'text-foreground'}`}>{col.label}</h3>
-                                        <p className={`text-[11px] ${index % 2 === 0 ? 'text-white/70' : 'text-muted-foreground'}`}>
+                                        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{col.label}</h3>
+                                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
                                             {tasksByStatus[col.key].length} tareas
                                         </p>
                                     </div>
@@ -201,42 +203,46 @@ export function KanbanBoard({
                                         </Tooltip>
                                     ) : null}
                                 </div>
-                                <DroppableColumn
-                                    id={getColumnDropId(col.key)}
-                                    label={col.label}
-                                    hovered={hoveredColumn === col.key}
-                                    dark={index % 2 === 0}
-                                    scrollRef={(node) => {
-                                        columnScrollRefs.current[col.key] = node;
-                                    }}
-                                    onScroll={(event) =>
-                                        persistColumnScroll(
-                                            col.key,
-                                            event.currentTarget.scrollTop,
-                                        )
-                                    }
-                                >
-                                    <SortableContext
-                                        items={tasksByStatus[col.key].map((task) => getTaskSortableId(task.id))}
-                                        strategy={verticalListSortingStrategy}
+
+                                {/* Cuerpo: exterior liso, interior con estilo propio en DroppableColumn */}
+                                <div className="flex min-h-0 flex-1 flex-col p-1.5">
+                                    <DroppableColumn
+                                        id={getColumnDropId(col.key)}
+                                        label={col.label}
+                                        hovered={hoveredColumn === col.key}
+                                        scrollRef={(node) => {
+                                            columnScrollRefs.current[col.key] = node;
+                                        }}
+                                        onScroll={(event) =>
+                                            persistColumnScroll(
+                                                col.key,
+                                                event.currentTarget.scrollTop,
+                                            )
+                                        }
                                     >
-                                        {tasksByStatus[col.key].map((task) => (
-                                            <KanbanTaskCard
-                                                key={task.id}
-                                                task={task}
-                                                canDrag={!isIntern}
-                                                canEdit={!isIntern}
-                                                canComplete={isTutor || isIntern}
-                                                completeLabel={isTutor ? 'Completar' : 'Entregar'}
-                                                completeStatuses={isTutor ? ['in_review'] : ['pending', 'in_progress']}
-                                                onComplete={onComplete}
-                                                onOpenDetails={onOpenDetails}
-                                                highlightMove={highlightedTaskId === Number(task.id)}
-                                            />
-                                        ))}
-                                    </SortableContext>
-                                </DroppableColumn>
+                                        <SortableContext
+                                            items={tasksByStatus[col.key].map((task) => getTaskSortableId(task.id))}
+                                            strategy={verticalListSortingStrategy}
+                                        >
+                                            {tasksByStatus[col.key].map((task) => (
+                                                <KanbanTaskCard
+                                                    key={task.id}
+                                                    task={task}
+                                                    canDrag={!isIntern}
+                                                    canEdit={!isIntern}
+                                                    canComplete={isTutor || isIntern}
+                                                    completeLabel={isTutor ? 'Completar' : 'Entregar'}
+                                                    completeStatuses={isTutor ? ['in_review'] : ['pending', 'in_progress']}
+                                                    onComplete={onComplete}
+                                                    onOpenDetails={onOpenDetails}
+                                                    highlightMove={highlightedTaskId === Number(task.id)}
+                                                />
+                                            ))}
+                                        </SortableContext>
+                                    </DroppableColumn>
+                                </div>
                             </div>
+
                         ))}
                     </div>
                 </div>

@@ -45,7 +45,7 @@ export function SimpleTable<T>({
             <div className="w-full overflow-x-auto">
                 <Table className="w-full min-w-[900px] text-left text-sm">
                     <TableHeader>
-                        <TableRow 
+                        <TableRow
                             className="border-b-2 border-white/20 bg-gradient-to-r from-sidebar to-[#1f4f52] text-sidebar-foreground hover:opacity-100"
                         >
                             {columns.map((col) => (
@@ -84,19 +84,17 @@ export function SimpleTable<T>({
                             rows.map((row, index) => (
                                 <TableRow
                                     key={rowKey(row)}
-                                    className={`border-b border-sidebar/10 transition-colors hover:bg-muted/35 ${
-                                        striped && index % 2 !== 0
+                                    className={`border-b border-sidebar/10 transition-colors hover:bg-muted/35 ${striped && index % 2 !== 0
                                             ? 'bg-sidebar/5 dark:bg-sidebar/10'
                                             : ''
-                                    }`}
+                                        }`}
                                 >
                                     {columns.map((col) => (
                                         <TableCell
                                             key={col.label}
-                                            className={`${
-                                                col.cellClassName ??
+                                            className={`${col.cellClassName ??
                                                 'text-muted-foreground'
-                                            }`}
+                                                }`}
                                         >
                                             {col.render
                                                 ? col.render(row)
