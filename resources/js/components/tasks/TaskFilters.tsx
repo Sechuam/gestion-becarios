@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/select';
 import { DatePicker } from '@/components/ui/date-picker';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
-import { getTaskStatusLabel } from '@/lib/task-labels';
 
 interface TaskFiltersProps {
     filters: any;
@@ -22,6 +21,7 @@ interface TaskFiltersProps {
     onClearFilter: (key: string) => void;
     onClearAll: () => void;
     activeFilterChips: any[];
+    rightSlot?: React.ReactNode;
 }
 
 export function TaskFilters({
@@ -34,13 +34,14 @@ export function TaskFilters({
     onClearFilter,
     onClearAll,
     activeFilterChips,
+    rightSlot,
 }: TaskFiltersProps) {
     return (
-        <div className="space-y-2">
-            <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg dark:bg-slate-900/60 transition-all">
-                <div className="flex flex-wrap items-center gap-2">
+        <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-sm transition-all dark:bg-slate-900/60">
+            <div className="flex flex-wrap items-center gap-2">
+                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                     {/* Búsqueda principal */}
-                    <div className="relative w-full sm:w-64 flex-none">
+                    <div className="relative w-full flex-none sm:w-60">
                         <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar por título..."
@@ -51,7 +52,7 @@ export function TaskFilters({
                     </div>
 
                     {/* Filtros de Selección (Distribuidos) */}
-                    <div className="flex-1 min-w-[120px]">
+                    <div className="min-w-[128px] flex-1">
                         <Select
                             value={filters.status || 'all'}
                             onValueChange={(v) => onFilterChange('status', v)}
@@ -70,7 +71,7 @@ export function TaskFilters({
                         </Select>
                     </div>
 
-                    <div className="flex-1 min-w-[120px]">
+                    <div className="min-w-[128px] flex-1">
                         <Select
                             value={filters.delivery_status || 'all'}
                             onValueChange={(v) => onFilterChange('delivery_status', v)}
@@ -88,7 +89,7 @@ export function TaskFilters({
                         </Select>
                     </div>
 
-                    <div className="flex-1 min-w-[150px]">
+                    <div className="min-w-[150px] flex-1">
                         <Select
                             value={filters.practice_type || 'all'}
                             onValueChange={(v) => onFilterChange('practice_type', v)}
@@ -108,7 +109,7 @@ export function TaskFilters({
                     </div>
 
                     {interns.length > 0 && (
-                        <div className="flex-1 min-w-[150px]">
+                        <div className="min-w-[150px] flex-1">
                             <Select
                                 value={filters.intern_id || 'all'}
                                 onValueChange={(v) => onFilterChange('intern_id', v)}
@@ -129,7 +130,7 @@ export function TaskFilters({
                     )}
 
                     {/* Filtros de Fecha (Distribuidos) */}
-                    <div className="flex-1 min-w-[120px]">
+                    <div className="min-w-[116px] flex-1">
                         <DatePicker
                             value={filters.due_from || ''}
                             onChange={(value) => onFilterChange('due_from', value)}
@@ -137,7 +138,7 @@ export function TaskFilters({
                             placeholder="Desde..."
                         />
                     </div>
-                    <div className="flex-1 min-w-[120px]">
+                    <div className="min-w-[116px] flex-1">
                         <DatePicker
                             value={filters.due_to || ''}
                             onChange={(value) => onFilterChange('due_to', value)}
@@ -147,20 +148,28 @@ export function TaskFilters({
                     </div>
 
                     {/* Contador discreto */}
-                    <div className="flex-none flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-lg dark:bg-slate-800 border border-sidebar/5">
+                    <div className="flex flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
                         <span className="flex h-1 w-1 rounded-full bg-sidebar animate-pulse" />
                         <span className="text-[10px] font-bold text-muted-foreground tabular-nums whitespace-nowrap">
                             {tasksCount} / {totalTasks}
                         </span>
                     </div>
                 </div>
+
+                {rightSlot && (
+                    <div className="flex flex-none items-center">{rightSlot}</div>
+                )}
             </div>
 
-            <ActiveFilterChips
-                chips={activeFilterChips}
-                onRemove={onClearFilter}
-                onClearAll={onClearAll}
-            />
+            {activeFilterChips.length > 0 && (
+                <div className="mt-1.5 border-t border-sidebar/5 pt-1.5">
+                    <ActiveFilterChips
+                        chips={activeFilterChips}
+                        onRemove={onClearFilter}
+                        onClearAll={onClearAll}
+                    />
+                </div>
+            )}
         </div>
     );
 }

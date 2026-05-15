@@ -6,16 +6,13 @@ import {
 } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { KanbanSquare, LayoutGrid, List, Sparkles } from 'lucide-react';
+import { KanbanSquare, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
-import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
@@ -30,7 +27,8 @@ import type { BreadcrumbItem } from '@/types/navigation';
 import { TaskFilters } from '@/components/tasks/TaskFilters';
 import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
 import { KanbanBoard } from '@/components/tasks/KanbanBoard';
-import { KANBAN_COLUMNS, KANBAN_WIP_LIMIT, TaskViewMode, BoardQuickFilter } from '@/lib/task-constants';
+import { TasksHeaderActions } from '@/components/tasks/TasksHeaderActions';
+import { KANBAN_COLUMNS, TaskViewMode, BoardQuickFilter } from '@/lib/task-constants';
 import { dueStatus, parseTaskSortableId } from '@/lib/task-utils';
 
 type Props = {
@@ -408,6 +406,7 @@ export default function My({
                     title="Mis tareas"
                     description="Tu tablero personal de ejecución, con foco en entregas cercanas, revisión y cierre rápido."
                     icon={<KanbanSquare className="h-6 w-6" />}
+                    metricsVariant="solid"
                     metrics={[
                         {
                             label: 'Resultados',
@@ -438,39 +437,14 @@ export default function My({
                         },
                     ]}
                     actions={
-                        <div className="flex items-center gap-3">
-                            {isTutor && (
-                                <HeaderActionButton 
-                                    label="Nueva tarea"
-                                    href="/tareas/create"
-                                />
-                            )}
-                            <ToggleGroup
-                                type="single"
-                                value={viewMode}
-                                onValueChange={(value) => {
-                                    if (value) setViewMode(value as TaskViewMode);
-                                }}
-                                className="bg-white/10 p-1 rounded-2xl border border-white/20 backdrop-blur-md"
-                            >
-                                <ToggleGroupItem
-                                    value="kanban"
-                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
-                                    aria-label="Vista kanban"
-                                >
-                                    <LayoutGrid className="h-4 w-4 mr-2" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Tablero</span>
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="table"
-                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
-                                    aria-label="Vista tabla"
-                                >
-                                    <List className="h-4 w-4 mr-2" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Lista</span>
-                                </ToggleGroupItem>
-                            </ToggleGroup>
-                        </div>
+                        <TasksHeaderActions
+                            isTutor={isTutor}
+                            viewMode={viewMode}
+                            onViewModeChange={setViewMode}
+                            boardFilter={boardFilter}
+                            boardQuickFilters={boardQuickFilters}
+                            onBoardFilterChange={setBoardFilter}
+                        />
                     }
                 />
 
@@ -483,9 +457,8 @@ export default function My({
                     onClearFilter={clearFilter}
                     onClearAll={clearAllFilters}
                     activeFilterChips={activeFilterChips}
+                    rightSlot={<DeliveryLegend />}
                 />
-
-                <DeliveryLegend />
 
                 {viewMode === 'kanban' ? (
                     <KanbanBoard
@@ -495,11 +468,8 @@ export default function My({
                         activeDragTask={null} // En My.tsx simplificamos el overlay para acelerar
                         lastMoveMessage={lastMoveMessage}
                         highlightedTaskId={highlightedTaskId}
-                        boardFilter={boardFilter}
-                        boardQuickFilters={boardQuickFilters}
                         isIntern={isIntern}
                         isTutor={false}
-                        onBoardFilterChange={setBoardFilter}
                         onDragStart={() => setHoveredColumn(null)}
                         onDragOver={(event) => {
                             setHoveredColumn(

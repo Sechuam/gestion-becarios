@@ -21,6 +21,13 @@ use Inertia\Inertia;
 
 class TaskController extends Controller
 {
+    private function taskPaginationSize(Request $request): int
+    {
+        $perPage = (int) $request->input('per_page', 30);
+
+        return max(10, min($perPage, 100));
+    }
+
     public function index(Request $request)
     {
         $query = Task::query()
@@ -118,7 +125,7 @@ class TaskController extends Controller
                 ->latest();
         }
 
-        $tasks = $query->paginate(1000)->withQueryString();
+        $tasks = $query->paginate($this->taskPaginationSize($request))->withQueryString();
 
         return Inertia::render('tasks/index', [
             'tasks' => $tasks,
@@ -218,7 +225,7 @@ class TaskController extends Controller
                 ->latest();
         }
 
-        $tasks = $query->paginate(1000)->withQueryString();
+        $tasks = $query->paginate($this->taskPaginationSize($request))->withQueryString();
 
         return Inertia::render('tasks/My', [
             'tasks' => $tasks,

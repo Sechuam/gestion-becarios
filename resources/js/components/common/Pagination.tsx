@@ -10,9 +10,10 @@ interface LinkProp {
 interface Props {
     links: LinkProp[];
     className?: string;
+    preserveScroll?: boolean;
 }
 
-export function Pagination({ links, className }: Props) {
+export function Pagination({ links, className, preserveScroll = true }: Props) {
     if (!links || links.length <= 3) return null; // Don't show if only one page or no pages
 
     return (
@@ -26,6 +27,7 @@ export function Pagination({ links, className }: Props) {
                         key={i}
                         href={link.url ?? '#'}
                         preserveState
+                        preserveScroll={preserveScroll}
                         className={cn(
                             "relative rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all overflow-hidden",
                             link.active

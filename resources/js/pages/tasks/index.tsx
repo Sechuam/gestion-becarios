@@ -456,11 +456,15 @@ export default function Index({
                     description="Sigue el trabajo por estado, detecta entregas sensibles y cambia entre kanban y tabla según el momento."
                     icon={<KanbanSquare className="h-6 w-6" />}
                     metrics={headerMetrics}
+                    metricsVariant="solid"
                     actions={
                         <TasksHeaderActions
                             isTutor={isTutor}
                             viewMode={viewMode}
                             onViewModeChange={setViewMode}
+                            boardFilter={boardFilter}
+                            boardQuickFilters={boardQuickFilters}
+                            onBoardFilterChange={setBoardFilter}
                         />
                     }
                 />
@@ -475,9 +479,8 @@ export default function Index({
                     onClearFilter={clearFilter}
                     onClearAll={clearAllFilters}
                     activeFilterChips={activeFilterChips}
+                    rightSlot={<DeliveryLegend />}
                 />
-
-                <DeliveryLegend />
 
                 {viewMode === 'kanban' ? (
                     <KanbanBoard
@@ -487,11 +490,8 @@ export default function Index({
                         activeDragTask={activeDragTask}
                         lastMoveMessage={lastMoveMessage}
                         highlightedTaskId={highlightedTaskId}
-                        boardFilter={boardFilter}
-                        boardQuickFilters={boardQuickFilters}
                         isIntern={isIntern}
                         isTutor={isTutor}
-                        onBoardFilterChange={setBoardFilter}
                         onDragStart={({ active }) => {
                             const taskId = parseTaskSortableId(active.id);
                             if (taskId)
