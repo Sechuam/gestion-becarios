@@ -729,7 +729,7 @@ export default function Show({
                                             onSubmit={submitAttachments}
                                             className="space-y-4 pt-2"
                                         >
-                                            <div className="group hover:border-[sidebar-accent/50 relative cursor-pointer rounded-xl border-2 border-dashed border-stone-200 bg-white p-4 transition-colors dark:bg-slate-800">
+                                            <div className="group relative cursor-pointer rounded-xl border-2 border-dashed border-stone-200 bg-white p-4 transition-colors hover:border-sidebar/50 dark:bg-slate-800">
                                                 <Input
                                                     id="attachments"
                                                     type="file"
@@ -747,7 +747,7 @@ export default function Show({
                                                     }
                                                 />
                                                 <div className="flex flex-col items-center text-center">
-                                                    <FilePlus className="text-[sidebar-accent/40 mb-2 h-8 w-8 group-hover:text-sidebar" />
+                                                    <FilePlus className="mb-2 h-8 w-8 text-sidebar/40 group-hover:text-sidebar" />
                                                     <p className="text-sm font-bold text-slate-600">
                                                         Seleccionar archivos
                                                     </p>
@@ -767,7 +767,7 @@ export default function Show({
                                             )}
                                             {attachmentForm.data.attachments
                                                 .length > 0 && (
-                                                <div className="rounded-lg bg-emerald-50 p-3 text-xs text-emerald-700">
+                                                <div className="rounded-lg border border-sidebar/10 bg-sidebar/5 p-3 text-xs text-sidebar">
                                                     <p className="font-bold">
                                                         ✓{' '}
                                                         {
@@ -913,7 +913,7 @@ export default function Show({
                                                     >
                                                         <div className="mb-3 flex items-start justify-between">
                                                             <div className="flex items-center gap-2.5">
-                                                                <Avatar className="bg-[sidebar-accent/10 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-sidebar font-bold text-sidebar">
+                                                                <Avatar className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-sidebar bg-sidebar/10 font-bold text-sidebar">
                                                                     <AvatarImage
                                                                         src={
                                                                             comment
@@ -980,7 +980,7 @@ export default function Show({
                                                                                 .value,
                                                                         )
                                                                     }
-                                                                    className="border-[sidebar-accent/20 min-h-[80px] w-full rounded-xl border bg-stone-50 p-3 text-xs text-slate-800 shadow-inner outline-none"
+                                                                    className="min-h-[80px] w-full rounded-xl border border-sidebar/20 bg-stone-50 p-3 text-xs text-slate-800 shadow-inner outline-none"
                                                                 />
                                                                 <div className="flex gap-2">
                                                                     <Button
@@ -1021,7 +1021,7 @@ export default function Show({
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="sm"
-                                                                    className="hover:bg-[sidebar-accent/5 h-7 rounded-lg text-[9px] font-black tracking-widest text-sidebar uppercase"
+                                                                    className="h-7 rounded-lg text-[9px] font-black tracking-widest text-sidebar uppercase hover:bg-sidebar/5"
                                                                     onClick={() =>
                                                                         startReply(
                                                                             comment.id,
@@ -1108,7 +1108,7 @@ export default function Show({
                                                                 onSubmit={
                                                                     submitComment
                                                                 }
-                                                                className="border-[sidebar-accent/10 bg-[sidebar-accent/5 mt-3 animate-in space-y-3 rounded-xl border p-3 duration-300 fade-in"
+                                                                className="mt-3 animate-in space-y-3 rounded-xl border border-sidebar/10 bg-sidebar/5 p-3 duration-300 fade-in"
                                                             >
                                                                 <div className="mb-2 flex items-center gap-2">
                                                                     <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar" />
@@ -1399,7 +1399,7 @@ export default function Show({
                                                                                             log.to_status,
                                                                                         ) ===
                                                                                             'completed'
-                                                                                            ? 'border-emerald-100 bg-emerald-50 text-emerald-600'
+                                                                                            ? 'border-sidebar/10 bg-sidebar/5 text-sidebar'
                                                                                             : String(
                                                                                                     log.to_status,
                                                                                                 ) ===

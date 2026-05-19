@@ -82,7 +82,7 @@ export default function Index({
         }
 
         if (score >= 8) {
-            return 'bg-emerald-100 text-emerald-700';
+            return 'bg-sidebar/10 text-sidebar';
         }
 
         if (score >= 6) {

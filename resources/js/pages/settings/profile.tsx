@@ -119,7 +119,7 @@ export default function Profile({
                     className="flex flex-col items-start gap-5 md:flex-row"
                 >
                     {/* Barra lateral de pestañas */}
-                    <TabsList className="border-[sidebar-accent/10 bg-[sidebar-accent/5 flex h-auto w-full shrink-0 flex-col justify-start space-y-1 rounded-xl border p-3 md:w-56 dark:border-slate-700/50 dark:bg-slate-800/50">
+                    <TabsList className="flex h-auto w-full shrink-0 flex-col justify-start space-y-1 rounded-xl border border-sidebar/10 bg-sidebar/5 p-3 md:w-56 dark:border-slate-700/50 dark:bg-slate-800/50">
                         <TabsTrigger
                             value="cuenta"
                             className="w-full justify-start rounded-xl px-4 py-3 font-medium text-sidebar transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-slate-300 dark:hover:bg-slate-700/50 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
@@ -357,7 +357,7 @@ export default function Profile({
 
                                                         {status ===
                                                             'verification-link-sent' && (
-                                                            <div className="mt-2 text-sm font-medium text-green-600">
+                                                            <div className="mt-2 rounded-lg border border-sidebar/10 bg-sidebar/5 px-3 py-2 text-sm font-medium text-sidebar">
                                                                 Se ha enviado un
                                                                 nuevo enlace de
                                                                 verificación a
@@ -461,14 +461,14 @@ export default function Profile({
                                         <Card className="app-panel overflow-hidden rounded-xl border-sidebar/10 shadow-sm">
                                             <div className="border-b border-sidebar/10 bg-slate-50/50 px-6 py-3 dark:bg-slate-800/30">
                                                 <h3 className="flex items-center gap-2 text-sm font-bold">
-                                                    <Building2 className="h-4 w-4 text-emerald-500" />{' '}
+                                                    <Building2 className="h-4 w-4 text-sidebar" />{' '}
                                                     Centro Educativo
                                                 </h3>
                                             </div>
                                             <CardContent className="p-6">
                                                 {education_center ? (
                                                     <div className="flex items-center gap-4">
-                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 font-bold text-emerald-600 dark:bg-emerald-900/40">
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sidebar/10 font-bold text-sidebar dark:bg-slate-800 dark:text-slate-100">
                                                             <GraduationCap className="h-5 w-5" />
                                                         </div>
                                                         <div>

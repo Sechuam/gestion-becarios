@@ -247,7 +247,7 @@ export default function Show({
 
                                         <div className="flex items-center gap-4 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-xl shadow-sidebar/10">
                                             <div
-                                                className={`flex h-10 w-10 items-center justify-center rounded-full ${time_stats.debt > 0 ? 'bg-white text-rose-600' : 'bg-emerald-500/20 text-emerald-300'}`}
+                                                className={`flex h-10 w-10 items-center justify-center rounded-full ${time_stats.debt > 0 ? 'bg-white text-rose-600' : 'bg-white/15 text-white'}`}
                                             >
                                                 {time_stats.debt > 0 ? (
                                                     <AlertTriangle className="h-5 w-5" />
@@ -667,7 +667,7 @@ export default function Show({
                                                                                 }
                                                                             </h4>
                                                                             {isActive && (
-                                                                                <Badge className="rounded-full bg-emerald-600 text-white hover:bg-emerald-600">
+                                                                                <Badge className="rounded-full bg-white text-sidebar hover:bg-white">
                                                                                     Activo
                                                                                 </Badge>
                                                                             )}
@@ -778,7 +778,7 @@ export default function Show({
                                                                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                                                                     abs.status ===
                                                                     'approved'
-                                                                        ? 'bg-emerald-50 text-emerald-600'
+                                                                        ? 'bg-sidebar/10 text-sidebar'
                                                                         : abs.status ===
                                                                             'rejected'
                                                                           ? 'bg-rose-50 text-rose-600'
@@ -818,7 +818,7 @@ export default function Show({
                                                                 <div className="flex gap-2">
                                                                     <Button
                                                                         size="sm"
-                                                                        className="h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700"
+                                                                        className="h-9 rounded-xl"
                                                                         onClick={() =>
                                                                             router.patch(
                                                                                 `/absences/${abs.id}/status`,
@@ -851,7 +851,7 @@ export default function Show({
                                                                     className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
                                                                         abs.status ===
                                                                         'approved'
-                                                                            ? 'bg-emerald-100 text-emerald-700'
+                                                                            ? 'bg-sidebar/10 text-sidebar'
                                                                             : 'bg-rose-100 text-rose-700'
                                                                     }`}
                                                                 >
@@ -1207,7 +1207,7 @@ export default function Show({
                                                                         ) : activity.event ===
                                                                           'created' ? (
                                                                             <span className="flex items-center gap-1.5">
-                                                                                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                                                                                <CheckCircle2 className="h-3 w-3 text-sidebar" />
                                                                                 Alta
                                                                                 de
                                                                                 nuevo
@@ -1324,7 +1324,7 @@ export default function Show({
                                                                                             <span className="font-bold text-primary/40">
                                                                                                 →
                                                                                             </span>
-                                                                                            <span className="font-bold break-words text-sidebar dark:text-emerald-400">
+                                                                                            <span className="font-bold break-words text-sidebar dark:text-slate-100">
                                                                                                 {
                                                                                                     newValue
                                                                                                 }

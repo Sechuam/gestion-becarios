@@ -140,7 +140,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
         currentWeightedScore === null || Number.isNaN(currentWeightedScore)
             ? 'text-slate-900'
             : currentWeightedScore >= 8
-              ? 'text-emerald-600'
+              ? 'text-sidebar'
               : currentWeightedScore >= 6
                 ? 'text-amber-600'
                 : 'text-rose-600';
@@ -772,7 +772,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                             </p>
                                                             <div className="mt-2 flex items-center justify-center gap-2">
                                                                 {isPositive && (
-                                                                    <TrendingUp className="h-5 w-5 text-emerald-600" />
+                                                                    <TrendingUp className="h-5 w-5 text-sidebar" />
                                                                 )}
                                                                 {isNegative && (
                                                                     <TrendingDown className="h-5 w-5 text-rose-600" />
@@ -793,7 +793,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                                     <span
                                                                         className={`text-sm font-black ${
                                                                             isPositive
-                                                                                ? 'text-emerald-600'
+                                                                                ? 'text-sidebar'
                                                                                 : isNegative
                                                                                   ? 'text-rose-600'
                                                                                   : 'text-slate-500'

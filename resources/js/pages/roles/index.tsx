@@ -374,7 +374,7 @@ export default function RolesIndex({
                                                 </div>
 
                                                 {createForm.recentlySuccessful && (
-                                                    <p className="text-sm text-emerald-600">
+                                                    <p className="text-sm font-medium text-sidebar">
                                                         Rol creado
                                                         correctamente.
                                                     </p>
