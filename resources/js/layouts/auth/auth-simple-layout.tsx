@@ -9,8 +9,8 @@ export default function AuthSimpleLayout({
 }: AuthLayoutProps) {
     return (
         <div className="relative min-h-dvh bg-slate-100">
-            <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-40" />
-            <div className="absolute inset-0 bg-linear-to-br from-slate-950/85 via-slate-800/78 to-slate-600/72" />
+            <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-30" />
+            <div className="absolute inset-0 bg-linear-to-br from-sidebar via-sidebar/92 to-sidebar-accent/86" />
 
             <div className="relative flex min-h-dvh">
                 <div className="relative hidden flex-1 items-center px-12 py-10 md:flex">
@@ -25,6 +25,9 @@ export default function AuthSimpleLayout({
                             ease: 'easeOut',
                         }}
                     >
+                        <div className="mb-6 inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.22em] text-white/75 uppercase">
+                            BecaGest
+                        </div>
                         <h2 className="text-4xl leading-tight font-semibold text-white">
                             Gestiona becarios sin complicaciones
                         </h2>
@@ -72,12 +75,15 @@ export default function AuthSimpleLayout({
                         </div>
                     </motion.div>
                 </div>
-                <aside className="relative ml-auto flex min-h-dvh w-full max-w-md flex-col justify-center bg-white/95 px-8 py-10 shadow-2xl backdrop-blur md:rounded-l-3xl">
-                    <div className="mb-6 space-y-2">
+                <aside className="relative ml-auto flex min-h-dvh w-full max-w-md flex-col justify-center border-l border-white/30 bg-white/96 px-8 py-10 shadow-2xl backdrop-blur md:rounded-l-3xl">
+                    <div className="absolute top-0 right-0 left-0 h-1.5 bg-linear-to-r from-sidebar to-sidebar-accent md:rounded-tl-3xl" />
+                    <div className="mb-6 rounded-lg border border-slate-200 bg-slate-100/80 px-4 py-3">
                         <h1 className="text-2xl font-semibold text-slate-900">
                             {title}
                         </h1>
-                        <p className="text-sm text-slate-600">{description}</p>
+                        <p className="mt-1 text-sm text-slate-600">
+                            {description}
+                        </p>
                     </div>
                     <div>{children}</div>
                 </aside>

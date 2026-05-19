@@ -13,12 +13,15 @@ export default function Welcome({
         <>
             <Head title="BecaGest" />
             <div className="relative min-h-dvh bg-slate-100">
-                <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-[0.12] blur-[1px] saturate-150" />
-                <div className="absolute inset-0 bg-linear-to-br from-slate-950/80 via-slate-800/72 to-slate-600/68" />
+                <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-[0.1] blur-[1px] saturate-125" />
+                <div className="absolute inset-0 bg-linear-to-br from-sidebar via-sidebar/92 to-sidebar-accent/84" />
 
                 <div className="relative flex min-h-dvh flex-col items-center justify-center px-6 py-12 text-white">
                     <div className="welcome-fade flex w-full max-w-5xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
                         <div className="max-w-xl space-y-7 text-center lg:text-left">
+                            <div className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-[0.22em] text-white/75 uppercase">
+                                BecaGest Management System
+                            </div>
                             <h1 className="text-4xl leading-tight font-semibold sm:text-5xl">
                                 Gestiona becarios y talento sin perder el
                                 control
@@ -46,7 +49,7 @@ export default function Welcome({
                                 ) : (
                                     <>
                                         <Link href={login()}>
-                                            <Button className="bg-emerald-500 text-white hover:bg-emerald-400">
+                                            <Button className="border border-white/15 bg-white text-sidebar shadow-lg hover:bg-slate-100">
                                                 Acceder
                                             </Button>
                                         </Link>
