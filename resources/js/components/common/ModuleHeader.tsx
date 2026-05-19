@@ -34,7 +34,7 @@ export function ModuleHeader({
             className={cn(
                 'relative overflow-hidden rounded-xl p-4 shadow-xl transition-all duration-300 md:px-5 md:py-4',
                 variant === 'dark'
-                    ? 'app-panel bg-linear-to-r from-sidebar to-[#1f4f52]'
+                    ? 'app-panel bg-linear-to-r from-sidebar to-sidebar-accent'
                     : variant === 'sidebar'
                       ? 'border border-white/10 bg-linear-to-r from-sidebar to-sidebar-accent'
                       : variant === 'primary'

@@ -18,7 +18,7 @@ export function MetricPills({ metrics, className }: Props) {
     return (
         <div
             className={cn(
-                'grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+                'grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
                 className,
             )}
         >
@@ -45,24 +45,24 @@ export function MetricPills({ metrics, className }: Props) {
                 return (
                     <div
                         key={metric.label}
-                        className="flex min-h-16 items-center gap-3 rounded-xl border border-sidebar/10 bg-white px-4 py-3 shadow-sm dark:bg-slate-900/60"
+                        className="flex min-h-12 items-center gap-2.5 rounded-lg border border-sidebar/10 bg-white px-3 py-2 shadow-sm dark:bg-slate-900/60"
                     >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-sidebar/10 bg-sidebar/5">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-sidebar/10 bg-sidebar/5">
                             <IconComponent
-                                className={cn('h-4 w-4', iconColor)}
+                                className={cn('h-3.5 w-3.5', iconColor)}
                             />
                         </span>
                         <div className="min-w-0 flex-1">
-                            <p className="truncate text-[10px] font-black tracking-widest text-sidebar uppercase dark:text-white/80">
+                            <p className="truncate text-[9px] font-black tracking-widest text-sidebar uppercase dark:text-white/80">
                                 {metric.label}
                             </p>
                             {metric.hint && (
-                                <p className="truncate text-[11px] font-medium text-muted-foreground">
+                                <p className="truncate text-[10px] font-medium text-muted-foreground">
                                     {metric.hint}
                                 </p>
                             )}
                         </div>
-                        <span className="shrink-0 text-lg font-black tracking-tight text-sidebar dark:text-white">
+                        <span className="shrink-0 text-base font-black tracking-tight text-sidebar dark:text-white">
                             {metric.value}
                         </span>
                     </div>

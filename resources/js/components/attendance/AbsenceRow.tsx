@@ -91,7 +91,7 @@ export function AbsenceRow({ absence, onUploadJustification }: Props) {
                         />
                         <Button
                             variant="outline"
-                            className="h-10 gap-2 rounded-xl border-slate-300 bg-white text-xs font-black tracking-widest text-[#1f4f52] uppercase shadow-sm hover:bg-slate-50"
+                            className="h-10 gap-2 rounded-xl border-slate-300 bg-white text-xs font-black tracking-widest text-sidebar uppercase shadow-sm hover:bg-slate-50"
                         >
                             <FilePlus className="h-4 w-4" />
                             Adjuntar PDF

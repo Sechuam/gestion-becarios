@@ -304,7 +304,7 @@ export default function My({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Mis becarios" />
 
-            <div className="space-y-6">
+            <div className="space-y-3">
                 <ModuleHeader
                     title="Mis Becarios"
                     description={`Gestiona el seguimiento diario de tus becarios, detecta bloqueos y mantén a mano las tareas que has creado, ${tutor.name}.`}

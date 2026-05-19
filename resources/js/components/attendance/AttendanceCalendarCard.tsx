@@ -299,7 +299,7 @@ export function AttendanceCalendarCard({
 
                             .attendance-calendar .fc .fc-timegrid-event.is-jornada,
                             .attendance-calendar .fc .fc-daygrid-event.is-jornada {
-                                background: linear-gradient(135deg, var(--sidebar) 0%, #1f4f52 100%) !important;
+                                background: linear-gradient(135deg, var(--sidebar) 0%, var(--sidebar-accent) 100%) !important;
                                 border: none !important;
                                 box-shadow: 0 4px 12px rgba(31, 79, 82, 0.15) !important;
                             }
@@ -329,12 +329,12 @@ export function AttendanceCalendarCard({
                             
                             /* Cabeceras de Día en Agenda */
                             .attendance-calendar .fc .fc-list-day-cushion {
-                                background: linear-gradient(135deg, var(--sidebar) 0%, #1f4f52 100%) !important;
+                                background: linear-gradient(135deg, var(--sidebar) 0%, var(--sidebar-accent) 100%) !important;
                                 padding: 6px 16px !important;
                                 border: none !important;
                             }
                             .dark .attendance-calendar .fc .fc-list-day-cushion {
-                                background: linear-gradient(135deg, var(--sidebar) 0%, #1f4f52 100%) !important;
+                                background: linear-gradient(135deg, var(--sidebar) 0%, var(--sidebar-accent) 100%) !important;
                             }
                             .attendance-calendar .fc .fc-list-day-text {
                                 text-transform: capitalize;
@@ -372,7 +372,7 @@ export function AttendanceCalendarCard({
                             
                             .attendance-calendar .fc .fc-list-event-time {
                                 font-weight: 800;
-                                color: #1f4f52; /* Color corporativo */
+                                color: var(--sidebar-accent); /* Color corporativo */
                                 width: 130px !important;
                             }
                             .dark .attendance-calendar .fc .fc-list-event-time {

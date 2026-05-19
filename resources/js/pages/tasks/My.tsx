@@ -485,7 +485,7 @@ export default function My({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Mis tareas" />
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
                 <ModuleHeader
                     title="Mis tareas"
                     description="Tu tablero personal de ejecución, con foco en entregas cercanas, revisión y cierre rápido."

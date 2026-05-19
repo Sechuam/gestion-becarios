@@ -119,10 +119,10 @@ export default function Profile({
                     className="flex flex-col items-start gap-5 md:flex-row"
                 >
                     {/* Barra lateral de pestañas */}
-                    <TabsList className="flex h-auto w-full shrink-0 flex-col justify-start space-y-1 rounded-xl border border-[#1f4f52]/10 bg-[#1f4f52]/5 p-3 md:w-56 dark:border-slate-700/50 dark:bg-slate-800/50">
+                    <TabsList className="border-[sidebar-accent/10 bg-[sidebar-accent/5 flex h-auto w-full shrink-0 flex-col justify-start space-y-1 rounded-xl border p-3 md:w-56 dark:border-slate-700/50 dark:bg-slate-800/50">
                         <TabsTrigger
                             value="cuenta"
-                            className="w-full justify-start rounded-xl px-4 py-3 font-medium text-[#1f4f52] transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-slate-300 dark:hover:bg-slate-700/50 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                            className="w-full justify-start rounded-xl px-4 py-3 font-medium text-sidebar transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-slate-300 dark:hover:bg-slate-700/50 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                         >
                             Cuenta
                         </TabsTrigger>
@@ -130,7 +130,7 @@ export default function Profile({
                         {intern && (
                             <TabsTrigger
                                 value="datos"
-                                className="w-full justify-start rounded-xl px-4 py-3 font-medium text-[#1f4f52] transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-slate-300 dark:hover:bg-slate-700/50 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                className="w-full justify-start rounded-xl px-4 py-3 font-medium text-sidebar transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-slate-300 dark:hover:bg-slate-700/50 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                             >
                                 Datos Personales
                             </TabsTrigger>

@@ -132,7 +132,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
+                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
                         asChild
                     >
                         <Link href="/evaluaciones">
@@ -192,7 +192,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                 </p>
                                 <Button
                                     type="submit"
-                                    className="h-10 w-full rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-xs font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:opacity-90 active:scale-95"
+                                    className="h-10 w-full rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-xs font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:opacity-90 active:scale-95"
                                     disabled={processing || !hasCriteria}
                                 >
                                     {processing
@@ -216,7 +216,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                             <TabsContent value="general" className="mt-0">
                                 <div className="rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                                     <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-3">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-lg font-black text-white shadow-lg">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-lg font-black text-white shadow-lg">
                                             01
                                         </span>
                                         <div>
@@ -448,7 +448,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                             <TabsContent value="criteria" className="mt-0">
                                 <div className="rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                                     <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-3">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-lg font-black text-white shadow-lg">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-lg font-black text-white shadow-lg">
                                             02
                                         </span>
                                         <div>
@@ -468,7 +468,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                                 (criterion, index) => (
                                                     <div
                                                         key={criterion.id}
-                                                        className="rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg"
+                                                        className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg"
                                                     >
                                                         <div className="mb-3">
                                                             <div className="flex flex-wrap items-center gap-2">
@@ -631,7 +631,7 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                             <TabsContent value="comments" className="mt-0">
                                 <div className="rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                                     <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-3">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-lg font-black text-white shadow-lg">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-lg font-black text-white shadow-lg">
                                             03
                                         </span>
                                         <div>

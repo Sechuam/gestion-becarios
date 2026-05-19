@@ -43,10 +43,10 @@ type ChartProps = {
 export function InternsByCenterChart({ data }: ChartProps) {
     return (
         <Card className="group gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
-            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
             <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <GraduationCap className="h-4 w-4" />
                     </span>
                     <div>
@@ -92,10 +92,10 @@ export function InternsByCenterChart({ data }: ChartProps) {
 export function TaskStatusChart({ data }: ChartProps) {
     return (
         <Card className="group gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
-            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
             <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <ListTodo className="h-4 w-4" />
                     </span>
                     <div>
@@ -164,10 +164,10 @@ export function AttendanceChart({
         <Card
             className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 ${className}`}
         >
-            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
             <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <Clock className="h-4 w-4" />
                     </span>
                     <div>
@@ -195,7 +195,11 @@ export function AttendanceChart({
                             dataKey="horas"
                             stroke="#0f766e"
                             strokeWidth={2.5}
-                            dot={{ r: 3, fill: '#1f4f52', stroke: '#ffffff' }}
+                            dot={{
+                                r: 3,
+                                fill: 'var(--sidebar-accent)',
+                                stroke: '#ffffff',
+                            }}
                         />
                     </LineChart>
                 </ResponsiveContainer>
@@ -250,10 +254,10 @@ export function AttendanceStatsCard({
         <Card
             className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 ${className}`}
         >
-            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
             <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
                 <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <BarChart3 className="h-4 w-4" />
                     </span>
                     <div>

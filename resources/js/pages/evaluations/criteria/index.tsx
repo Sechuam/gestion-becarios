@@ -91,7 +91,7 @@ export default function Index({
                 <span
                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[9px] font-black tracking-widest uppercase shadow-sm ${
                         row.is_active
-                            ? 'bg-gradient-to-r from-sidebar to-[#1f4f52] text-white'
+                            ? 'bg-gradient-to-r from-sidebar to-sidebar-accent text-white'
                             : 'border border-slate-200 bg-slate-100 text-slate-500'
                     }`}
                 >

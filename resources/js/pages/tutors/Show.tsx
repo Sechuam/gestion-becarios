@@ -127,7 +127,7 @@ export default function Show({
                 <div className="flex items-center justify-between px-2">
                     <Button
                         variant="default"
-                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
+                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
                         asChild
                     >
                         <Link href="/tutores">
@@ -138,7 +138,7 @@ export default function Show({
                 </div>
 
                 {/* HERO INTEGRADO CON GRADIENTE */}
-                <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-5 shadow-xl md:p-6">
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-5 shadow-xl md:p-6">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative flex flex-wrap items-center gap-6">
                         <Avatar className="h-20 w-20 shrink-0 rounded-xl border-4 border-white/20 bg-white/10 shadow-xl backdrop-blur-md">
@@ -268,7 +268,7 @@ export default function Show({
                                     </div>
 
                                     <div className="overflow-hidden rounded-xl border border-sidebar/10 bg-slate-50/70 shadow-sm dark:bg-slate-800/40">
-                                        <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+                                        <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                                         <table className="w-full text-sm">
                                             <thead>
                                                 <tr className="border-b border-slate-400 bg-slate-200 dark:border-slate-800 dark:bg-slate-800/70">
@@ -515,7 +515,7 @@ export default function Show({
                                                                 className={
                                                                     page ===
                                                                     tasksPage
-                                                                        ? 'h-8 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-[10px] font-black tracking-widest text-white uppercase hover:opacity-95'
+                                                                        ? 'h-8 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-3 text-[10px] font-black tracking-widest text-white uppercase hover:opacity-95'
                                                                         : 'h-8 rounded-xl border-sidebar/15 bg-white px-3 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-100 dark:bg-slate-900'
                                                                 }
                                                                 onClick={() =>
@@ -613,11 +613,11 @@ export default function Show({
                                                 key={i}
                                                 className="flex items-start gap-4 rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/70"
                                             >
-                                                <div className="rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-2 text-white shadow shadow-sidebar/20">
+                                                <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-2 text-white shadow shadow-sidebar/20">
                                                     <item.icon className="h-5 w-5" />
                                                 </div>
                                                 <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
-                                                    <p className="inline-flex max-w-full rounded-full bg-gradient-to-r from-sidebar to-[#1f4f52] px-2.5 py-0.5 text-[9px] font-black tracking-[0.18em] text-white uppercase shadow-sm">
+                                                    <p className="inline-flex max-w-full rounded-full bg-gradient-to-r from-sidebar to-sidebar-accent px-2.5 py-0.5 text-[9px] font-black tracking-[0.18em] text-white uppercase shadow-sm">
                                                         {item.label}
                                                     </p>
                                                     <p className="text-sm leading-snug font-bold text-slate-800 dark:text-white">

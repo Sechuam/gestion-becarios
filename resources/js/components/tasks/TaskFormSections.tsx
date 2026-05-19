@@ -41,7 +41,7 @@ export function TaskFormShell({
 }: TaskFormShellProps) {
     return (
         <div className="page-surface overflow-visible border-sidebar/20 p-0 shadow-xl">
-            <div className="rounded-t-[1.2rem] bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+            <div className="rounded-t-[1.2rem] bg-gradient-to-r from-sidebar to-sidebar-accent px-6 py-5 text-white">
                 <div className="flex flex-col gap-0">
                     <h1 className="text-xl font-black tracking-tight">
                         {titlePrefix}{' '}

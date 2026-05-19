@@ -8,9 +8,9 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="relative min-h-dvh bg-[#e7f4f7]">
+        <div className="relative min-h-dvh bg-slate-100">
             <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-40" />
-            <div className="absolute inset-0 bg-linear-to-br from-[#08243f]/85 via-[#145d6a]/78 to-[#1f9d8f]/75" />
+            <div className="absolute inset-0 bg-linear-to-br from-slate-950/85 via-slate-800/78 to-slate-600/72" />
 
             <div className="relative flex min-h-dvh">
                 <div className="relative hidden flex-1 items-center px-12 py-10 md:flex">
@@ -19,13 +19,18 @@ export default function AuthSimpleLayout({
                         variants={fadeInHorizontal}
                         initial="initial"
                         animate="animate"
-                        transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+                        transition={{
+                            duration: 0.7,
+                            delay: 0.2,
+                            ease: 'easeOut',
+                        }}
                     >
-                        <h2 className="text-4xl font-semibold leading-tight text-white">
+                        <h2 className="text-4xl leading-tight font-semibold text-white">
                             Gestiona becarios sin complicaciones
                         </h2>
                         <p className="mt-3 text-base text-white/85">
-                            Todo el control en un solo lugar, de forma clara y rápida.
+                            Todo el control en un solo lugar, de forma clara y
+                            rápida.
                         </p>
                         <div className="mt-8 grid gap-4 text-sm">
                             <div className="flex items-start gap-3">
@@ -47,8 +52,8 @@ export default function AuthSimpleLayout({
                                         Seguimiento con historial
                                     </p>
                                     <p className="text-white/70">
-                                        Estados, trazabilidad y comentarios
-                                        en cada tarea.
+                                        Estados, trazabilidad y comentarios en
+                                        cada tarea.
                                     </p>
                                 </div>
                             </div>
@@ -59,7 +64,8 @@ export default function AuthSimpleLayout({
                                         Reportes listos para usar
                                     </p>
                                     <p className="text-white/70">
-                                        Exporta datos y obtén métricas al instante.
+                                        Exporta datos y obtén métricas al
+                                        instante.
                                     </p>
                                 </div>
                             </div>
@@ -71,9 +77,7 @@ export default function AuthSimpleLayout({
                         <h1 className="text-2xl font-semibold text-slate-900">
                             {title}
                         </h1>
-                        <p className="text-sm text-slate-600">
-                            {description}
-                        </p>
+                        <p className="text-sm text-slate-600">{description}</p>
                     </div>
                     <div>{children}</div>
                 </aside>

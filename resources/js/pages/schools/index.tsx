@@ -527,7 +527,7 @@ export default function Index({
                                             return (
                                                 <label
                                                     key={column.key}
-                                                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-sidebar/10 bg-slate-50 px-4 py-3 text-xs font-black tracking-widest text-[#1f4f52]/80 uppercase transition-colors hover:bg-sidebar/5"
+                                                    className="text-[sidebar-accent/80 flex cursor-pointer items-center gap-3 rounded-xl border border-sidebar/10 bg-slate-50 px-4 py-3 text-xs font-black tracking-widest uppercase transition-colors hover:bg-sidebar/5"
                                                 >
                                                     <Checkbox
                                                         checked={isChecked}

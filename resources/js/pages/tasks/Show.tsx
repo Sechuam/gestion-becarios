@@ -249,7 +249,7 @@ export default function Show({
             'flex h-7 items-center gap-1.5 rounded-lg px-3 text-[9px] font-black tracking-widest uppercase shadow-sm transition-all',
             darkTheme
                 ? 'border-none bg-white text-sidebar hover:bg-white/90'
-                : 'border-none bg-gradient-to-r from-sidebar to-[#1f4f52] text-white hover:opacity-90',
+                : 'border-none bg-gradient-to-r from-sidebar to-sidebar-accent text-white hover:opacity-90',
         );
 
         return (
@@ -282,11 +282,11 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Tarea: ${task.title}`} />
 
-            <div className="w-full space-y-6">
+            <div className="w-full space-y-3">
                 <div className="flex items-center justify-between px-2 pb-2">
                     <Button
                         variant="default"
-                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
+                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
                         asChild
                     >
                         <Link href="/tareas">
@@ -482,7 +482,7 @@ export default function Show({
                                                     className={cn(
                                                         'metric-tile p-5 transition-all duration-300 hover:scale-[1.02]',
                                                         item.primary
-                                                            ? 'border-none bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/20'
+                                                            ? 'border-none bg-gradient-to-br from-sidebar to-sidebar-accent shadow-xl shadow-sidebar/20'
                                                             : 'border border-stone-100 bg-white',
                                                     )}
                                                 >
@@ -570,7 +570,7 @@ export default function Show({
                                                         (intern: any) => (
                                                             <div
                                                                 key={intern.id}
-                                                                className="task-surface-soft flex items-center justify-between rounded-xl border p-4 transition-all hover:border-[#1f4f52] hover:shadow-lg"
+                                                                className="task-surface-soft flex items-center justify-between rounded-xl border p-4 transition-all hover:border-sidebar hover:shadow-lg"
                                                             >
                                                                 <div className="flex items-center gap-3">
                                                                     <Avatar className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-sidebar bg-stone-50 font-bold text-stone-600">
@@ -614,7 +614,7 @@ export default function Show({
                                                                     variant="ghost"
                                                                     size="sm"
                                                                     asChild
-                                                                    className="rounded-xl text-[10px] font-black tracking-widest text-[#1f4f52] uppercase hover:bg-stone-100"
+                                                                    className="rounded-xl text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-stone-100"
                                                                 >
                                                                     <Link
                                                                         href={`/interns/${intern.id}`}
@@ -665,7 +665,7 @@ export default function Show({
                                                 attachments.map((file) => (
                                                     <div
                                                         key={file.id}
-                                                        className="group task-surface-soft flex items-center justify-between rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] p-5 shadow-lg shadow-sidebar/10 transition-all hover:scale-[1.01] hover:shadow-xl"
+                                                        className="group task-surface-soft flex items-center justify-between rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent p-5 shadow-lg shadow-sidebar/10 transition-all hover:scale-[1.01] hover:shadow-xl"
                                                     >
                                                         <div className="flex items-center gap-4">
                                                             <div className="flex h-10 w-12 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm">
@@ -716,7 +716,7 @@ export default function Show({
                                     </div>
 
                                     <div className="space-y-4 rounded-xl bg-stone-50/50 p-6 dark:bg-slate-800/30">
-                                        <h3 className="text-sm font-black tracking-widest text-[#1f4f52] uppercase">
+                                        <h3 className="text-sm font-black tracking-widest text-sidebar uppercase">
                                             Gestionar Entregas
                                         </h3>
                                         <p className="text-xs leading-relaxed text-slate-400">
@@ -729,7 +729,7 @@ export default function Show({
                                             onSubmit={submitAttachments}
                                             className="space-y-4 pt-2"
                                         >
-                                            <div className="group relative cursor-pointer rounded-xl border-2 border-dashed border-stone-200 bg-white p-4 transition-colors hover:border-[#1f4f52]/50 dark:bg-slate-800">
+                                            <div className="group hover:border-[sidebar-accent/50 relative cursor-pointer rounded-xl border-2 border-dashed border-stone-200 bg-white p-4 transition-colors dark:bg-slate-800">
                                                 <Input
                                                     id="attachments"
                                                     type="file"
@@ -747,7 +747,7 @@ export default function Show({
                                                     }
                                                 />
                                                 <div className="flex flex-col items-center text-center">
-                                                    <FilePlus className="mb-2 h-8 w-8 text-[#1f4f52]/40 group-hover:text-[#1f4f52]" />
+                                                    <FilePlus className="text-[sidebar-accent/40 mb-2 h-8 w-8 group-hover:text-sidebar" />
                                                     <p className="text-sm font-bold text-slate-600">
                                                         Seleccionar archivos
                                                     </p>
@@ -784,7 +784,7 @@ export default function Show({
                                                 disabled={
                                                     attachmentForm.processing
                                                 }
-                                                className="relative h-11 w-full overflow-hidden rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
+                                                className="relative h-11 w-full overflow-hidden rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
                                             >
                                                 <div className="pointer-events-none absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-white/10 to-transparent" />
                                                 <Download className="mr-2 h-4 w-4" />
@@ -817,13 +817,13 @@ export default function Show({
                                             onOpenChange={setIsCommentModalOpen}
                                         >
                                             <DialogTrigger asChild>
-                                                <Button className="h-9 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-5 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-90">
+                                                <Button className="h-9 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-5 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-90">
                                                     <Plus className="mr-2 h-4 w-4" />
                                                     Añadir Comentario
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent className="overflow-hidden rounded-xl border border-sidebar/20 bg-white p-0 shadow-xl ring-1 shadow-sidebar/10 ring-black/5 sm:max-w-[420px]">
-                                                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 text-white">
+                                                <div className="bg-gradient-to-r from-sidebar to-sidebar-accent p-6 text-white">
                                                     <DialogHeader>
                                                         <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 backdrop-blur-md">
                                                             <MessageSquareReply className="h-5 w-5" />
@@ -892,7 +892,7 @@ export default function Show({
                                                                 disabled={
                                                                     commentForm.processing
                                                                 }
-                                                                className="h-10 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-[9px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-90"
+                                                                className="h-10 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-6 text-[9px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-90"
                                                             >
                                                                 Publicar
                                                             </Button>
@@ -913,7 +913,7 @@ export default function Show({
                                                     >
                                                         <div className="mb-3 flex items-start justify-between">
                                                             <div className="flex items-center gap-2.5">
-                                                                <Avatar className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-sidebar bg-[#1f4f52]/10 font-bold text-[#1f4f52]">
+                                                                <Avatar className="bg-[sidebar-accent/10 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-sidebar font-bold text-sidebar">
                                                                     <AvatarImage
                                                                         src={
                                                                             comment
@@ -980,7 +980,7 @@ export default function Show({
                                                                                 .value,
                                                                         )
                                                                     }
-                                                                    className="min-h-[80px] w-full rounded-xl border border-[#1f4f52]/20 bg-stone-50 p-3 text-xs text-slate-800 shadow-inner outline-none"
+                                                                    className="border-[sidebar-accent/20 min-h-[80px] w-full rounded-xl border bg-stone-50 p-3 text-xs text-slate-800 shadow-inner outline-none"
                                                                 />
                                                                 <div className="flex gap-2">
                                                                     <Button
@@ -1021,7 +1021,7 @@ export default function Show({
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="sm"
-                                                                    className="h-7 rounded-lg text-[9px] font-black tracking-widest text-[#1f4f52] uppercase hover:bg-[#1f4f52]/5"
+                                                                    className="hover:bg-[sidebar-accent/5 h-7 rounded-lg text-[9px] font-black tracking-widest text-sidebar uppercase"
                                                                     onClick={() =>
                                                                         startReply(
                                                                             comment.id,
@@ -1045,7 +1045,7 @@ export default function Show({
                                                                                 key={
                                                                                     reply.id
                                                                                 }
-                                                                                className="group relative rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-3.5 text-white shadow-lg shadow-sidebar/5"
+                                                                                className="group relative rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-3.5 text-white shadow-lg shadow-sidebar/5"
                                                                             >
                                                                                 <div className="mb-2 flex items-center justify-between">
                                                                                     <div className="flex items-center gap-2">
@@ -1108,7 +1108,7 @@ export default function Show({
                                                                 onSubmit={
                                                                     submitComment
                                                                 }
-                                                                className="mt-3 animate-in space-y-3 rounded-xl border border-[#1f4f52]/10 bg-[#1f4f52]/5 p-3 duration-300 fade-in"
+                                                                className="border-[sidebar-accent/10 bg-[sidebar-accent/5 mt-3 animate-in space-y-3 rounded-xl border p-3 duration-300 fade-in"
                                                             >
                                                                 <div className="mb-2 flex items-center gap-2">
                                                                     <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar" />
@@ -1193,7 +1193,7 @@ export default function Show({
                                     <div className="flex min-h-[400px] flex-col justify-between">
                                         <div className="space-y-6">
                                             <div className="task-surface-soft rounded-xl border border-sidebar/10 bg-white/50 p-5">
-                                                <div className="mb-6 flex h-10 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-lg shadow-sidebar/20">
+                                                <div className="mb-6 flex h-10 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-lg shadow-sidebar/20">
                                                     <History className="h-6 w-6" />
                                                 </div>
                                                 <h2 className="text-2xl leading-tight font-black tracking-widest text-slate-800 uppercase">
@@ -1201,7 +1201,7 @@ export default function Show({
                                                     <br />
                                                     Estados
                                                 </h2>
-                                                <div className="mt-4 h-1 w-12 rounded-full bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+                                                <div className="mt-4 h-1 w-12 rounded-full bg-gradient-to-r from-sidebar to-sidebar-accent" />
                                                 <p className="mt-8 text-sm leading-relaxed font-medium text-slate-400 italic">
                                                     "Cada cambio cuenta una
                                                     historia sobre el progreso
@@ -1238,7 +1238,7 @@ export default function Show({
                                                                 className={`h-1.5 rounded-full transition-all ${
                                                                     logPage ===
                                                                     i + 1
-                                                                        ? 'w-12 bg-gradient-to-r from-sidebar to-[#1f4f52] shadow-sm'
+                                                                        ? 'w-12 bg-gradient-to-r from-sidebar to-sidebar-accent shadow-sm'
                                                                         : 'w-2 bg-stone-200'
                                                                 }`}
                                                             />
@@ -1257,7 +1257,7 @@ export default function Show({
                                                                         p - 1,
                                                                 )
                                                             }
-                                                            className="h-10 rounded-xl border-sidebar/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/10 hover:opacity-90 disabled:bg-stone-100 disabled:text-slate-400 disabled:opacity-30"
+                                                            className="h-10 rounded-xl border-sidebar/10 bg-gradient-to-r from-sidebar to-sidebar-accent px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/10 hover:opacity-90 disabled:bg-stone-100 disabled:text-slate-400 disabled:opacity-30"
                                                         >
                                                             <ChevronLeft className="mr-2 h-4 w-4" />
                                                             Anterior
@@ -1275,7 +1275,7 @@ export default function Show({
                                                                         p + 1,
                                                                 )
                                                             }
-                                                            className="h-10 rounded-xl border-sidebar/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/10 hover:opacity-90 disabled:bg-stone-100 disabled:text-slate-400 disabled:opacity-30"
+                                                            className="h-10 rounded-xl border-sidebar/10 bg-gradient-to-r from-sidebar to-sidebar-accent px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/10 hover:opacity-90 disabled:bg-stone-100 disabled:text-slate-400 disabled:opacity-30"
                                                         >
                                                             Siguiente
                                                             <ChevronRight className="ml-2 h-4 w-4" />
@@ -1307,7 +1307,7 @@ export default function Show({
                                                                 className={cn(
                                                                     'task-surface-soft group relative flex flex-col gap-4 rounded-xl border p-6 shadow-sm transition-all',
                                                                     isPrimaryLog
-                                                                        ? 'border-none bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-lg shadow-sidebar/20'
+                                                                        ? 'border-none bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-lg shadow-sidebar/20'
                                                                         : 'border-sidebar/5 bg-white/40 hover:border-sidebar/20 hover:shadow-xl hover:shadow-sidebar/5',
                                                                 )}
                                                             >

@@ -98,7 +98,7 @@ export default function CompleteProfile({
             <Head title="Completar Perfil de Becario" />
 
             <div className="page-surface overflow-hidden border-sidebar/20 p-0 shadow-xl">
-                <div className="bg-linear-to-r from-sidebar to-[#1f4f52] px-6 py-6 text-white">
+                <div className="bg-linear-to-r from-sidebar to-sidebar-accent px-6 py-6 text-white">
                     <div className="flex flex-col gap-0">
                         <h1 className="text-xl font-black tracking-tight">
                             Completar{' '}

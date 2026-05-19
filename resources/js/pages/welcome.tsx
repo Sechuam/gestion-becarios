@@ -12,14 +12,14 @@ export default function Welcome({
     return (
         <>
             <Head title="BecaGest" />
-            <div className="relative min-h-dvh bg-[#e7f4f7]">
+            <div className="relative min-h-dvh bg-slate-100">
                 <div className="absolute inset-0 bg-[url('/images/becagest-logo.png')] bg-cover bg-center opacity-[0.12] blur-[1px] saturate-150" />
-                <div className="absolute inset-0 bg-linear-to-br from-[#0c2f4d]/75 via-[#1b6d7a]/65 to-[#29b3a1]/65" />
+                <div className="absolute inset-0 bg-linear-to-br from-slate-950/80 via-slate-800/72 to-slate-600/68" />
 
                 <div className="relative flex min-h-dvh flex-col items-center justify-center px-6 py-12 text-white">
                     <div className="welcome-fade flex w-full max-w-5xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
                         <div className="max-w-xl space-y-7 text-center lg:text-left">
-                            <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
+                            <h1 className="text-4xl leading-tight font-semibold sm:text-5xl">
                                 Gestiona becarios y talento sin perder el
                                 control
                             </h1>
@@ -29,8 +29,12 @@ export default function Welcome({
                             </p>
                             <ul className="space-y-3 text-sm text-white/85 sm:text-base">
                                 <li>Kanban para tareas y seguimiento.</li>
-                                <li>Gestión de prácticas desde un panel único.</li>
-                                <li>Reportes con métricas listas para decisión.</li>
+                                <li>
+                                    Gestión de prácticas desde un panel único.
+                                </li>
+                                <li>
+                                    Reportes con métricas listas para decisión.
+                                </li>
                             </ul>
                             <div className="flex flex-wrap items-center justify-center gap-4 pt-2 lg:justify-start">
                                 {auth.user ? (

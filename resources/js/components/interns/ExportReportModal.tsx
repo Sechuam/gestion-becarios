@@ -57,7 +57,7 @@ function ExportReportModal({
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="overflow-hidden border-sidebar/20 bg-slate-50 p-0 shadow-xl sm:max-w-md dark:bg-slate-900">
-                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                <div className="bg-gradient-to-r from-sidebar to-sidebar-accent px-6 py-5 text-white">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-white">
                             <Download className="h-5 w-5 text-white/80" />
@@ -96,7 +96,7 @@ function ExportReportModal({
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label className="ml-1 text-[10px] font-black tracking-widest text-[#1f4f52]/70 uppercase">
+                            <Label className="text-[sidebar-accent/70 ml-1 text-[10px] font-black tracking-widest uppercase">
                                 Fecha Inicio
                             </Label>
                             <DatePicker
@@ -106,7 +106,7 @@ function ExportReportModal({
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="ml-1 text-[10px] font-black tracking-widest text-[#1f4f52]/70 uppercase">
+                            <Label className="text-[sidebar-accent/70 ml-1 text-[10px] font-black tracking-widest uppercase">
                                 Fecha Fin
                             </Label>
                             <DatePicker
@@ -129,7 +129,7 @@ function ExportReportModal({
                     <Button
                         onClick={handleDownload}
                         disabled={!startDate || !endDate}
-                        className="h-10 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
+                        className="h-10 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-6 font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
                     >
                         Descargar PDF
                     </Button>

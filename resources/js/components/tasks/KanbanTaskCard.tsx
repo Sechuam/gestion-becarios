@@ -347,7 +347,7 @@ export default function KanbanTaskCard({
                     completeStatuses.includes(String(task.status)) && (
                         <Button
                             size="sm"
-                            className="h-8 w-full gap-1.5 border-0 bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] px-3 text-white shadow-sm hover:opacity-95"
+                            className="h-8 w-full gap-1.5 border-0 bg-[linear-gradient(90deg,var(--sidebar)_0%,var(--sidebar-accent)_100%)] px-3 text-white shadow-sm hover:opacity-95"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();

@@ -209,7 +209,7 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Centro: ${educationCenter.name}`} />
 
-            <div className="space-y-6">
+            <div className="space-y-3">
                 <ModuleHeader
                     title={educationCenter.name}
                     description={`Ficha oficial del centro de formación. Localidad: ${educationCenter.city || 'No especificada'} · Código de centro: ${educationCenter.code || 'Sin código'}`}
@@ -437,7 +437,7 @@ export default function Show({
                                     </div>
 
                                     <div className="md:col-span-4">
-                                        <div className="space-y-3.5 rounded-xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-4 shadow-xl shadow-sidebar/10">
+                                        <div className="space-y-3.5 rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-4 shadow-xl shadow-sidebar/10">
                                             <h4 className="mb-2.5 flex items-center gap-1.5 text-[10px] font-black tracking-wider text-white/75 uppercase">
                                                 <FileText className="h-3.5 w-3.5" />{' '}
                                                 Convenio de Prácticas
@@ -619,7 +619,7 @@ export default function Show({
                                                 onOpenChange={setExportOpen}
                                             >
                                                 <DialogTrigger asChild>
-                                                    <Button className="h-8 flex-1 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-[9px] font-black tracking-widest text-white uppercase shadow-xs sm:flex-none">
+                                                    <Button className="h-8 flex-1 rounded-lg bg-gradient-to-r from-sidebar to-sidebar-accent px-3 text-[9px] font-black tracking-widest text-white uppercase shadow-xs sm:flex-none">
                                                         <FileDown className="mr-1.5 h-3.5 w-3.5" />
                                                         Exportar Excel
                                                     </Button>
@@ -721,8 +721,8 @@ export default function Show({
                                 </div>
 
                                 {/* LISTADO DE BECARIOS (TABLA INTEGRADA) */}
-                                <div className="w-full overflow-hidden rounded-xl border border-sidebar/30 bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10">
-                                    <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+                                <div className="w-full overflow-hidden rounded-xl border border-sidebar/30 bg-gradient-to-br from-sidebar to-sidebar-accent shadow-xl shadow-sidebar/10">
+                                    <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                                     <div className="w-full overflow-x-auto">
                                         <table className="w-full border-collapse text-left text-sm">
                                             <thead>
@@ -929,7 +929,7 @@ export default function Show({
                                                         </Button>
                                                         <Button
                                                             size="sm"
-                                                            className="h-8 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-xs font-bold text-white hover:opacity-95"
+                                                            className="h-8 rounded-lg bg-gradient-to-r from-sidebar to-sidebar-accent px-4 text-xs font-bold text-white hover:opacity-95"
                                                             onClick={() =>
                                                                 router.patch(
                                                                     `/centros/${educationCenter.id}/notes`,
@@ -1164,7 +1164,7 @@ export default function Show({
                                                             (p) => p - 1,
                                                         )
                                                     }
-                                                    className="h-8 rounded-lg border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-xs text-white shadow-xs hover:opacity-95 disabled:opacity-50"
+                                                    className="h-8 rounded-lg border-none bg-gradient-to-r from-sidebar to-sidebar-accent px-3 text-xs text-white shadow-xs hover:opacity-95 disabled:opacity-50"
                                                 >
                                                     <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
                                                     Anterior
@@ -1187,7 +1187,7 @@ export default function Show({
                                                             (p) => p + 1,
                                                         )
                                                     }
-                                                    className="h-8 rounded-lg border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-xs text-white shadow-xs hover:opacity-95 disabled:opacity-50"
+                                                    className="h-8 rounded-lg border-none bg-gradient-to-r from-sidebar to-sidebar-accent px-3 text-xs text-white shadow-xs hover:opacity-95 disabled:opacity-50"
                                                 >
                                                     Siguiente
                                                     <ArrowLeft className="ml-1.5 h-3.5 w-3.5 rotate-180" />

@@ -238,7 +238,7 @@ export default function RolesIndex({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Roles y permisos" />
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
                 <ModuleHeader
                     title="Roles y permisos"
                     description="Gestiona los roles del sistema y su matriz de permisos para controlar el acceso a los diferentes módulos."
@@ -272,7 +272,7 @@ export default function RolesIndex({
 
                     <TabsContent value="roles" className="mt-4">
                         <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-                            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+                            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                             <div className="border-b border-slate-400 bg-slate-200 px-6 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
                                 <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">
                                     Lista de roles
@@ -296,7 +296,7 @@ export default function RolesIndex({
                                         onOpenChange={setCreateOpen}
                                     >
                                         <DialogContent className="overflow-hidden border-sidebar/20 p-0 shadow-xl sm:max-w-md">
-                                            <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                                            <div className="bg-gradient-to-r from-sidebar to-sidebar-accent px-6 py-5 text-white">
                                                 <DialogHeader>
                                                     <DialogTitle className="text-left text-xl font-black text-white">
                                                         Crear rol
@@ -395,7 +395,7 @@ export default function RolesIndex({
                                                     </Button>
 
                                                     <Button
-                                                        className="gap-2 rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-sm hover:opacity-95"
+                                                        className="gap-2 rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-sm hover:opacity-95"
                                                         onClick={
                                                             handleCreateRole
                                                         }
@@ -435,7 +435,7 @@ export default function RolesIndex({
                                             return (
                                                 <div
                                                     key={role.id}
-                                                    className="min-w-0 overflow-hidden rounded-lg border border-sidebar/20 bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 text-white shadow-lg"
+                                                    className="min-w-0 overflow-hidden rounded-lg border border-sidebar/20 bg-gradient-to-r from-sidebar to-sidebar-accent p-4 text-white shadow-lg"
                                                 >
                                                     <div className="flex items-start justify-between gap-3">
                                                         <div className="min-w-0">
@@ -687,7 +687,7 @@ export default function RolesIndex({
 
                     <TabsContent value="matrix" className="mt-4">
                         <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-                            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+                            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                             <div className="border-b border-slate-400 bg-slate-200 px-6 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
                                 <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">
                                     Matriz de permisos
@@ -724,7 +724,7 @@ export default function RolesIndex({
                                             <>
                                                 <tr
                                                     key={group.name}
-                                                    className="bg-gradient-to-r from-sidebar to-[#1f4f52]"
+                                                    className="bg-gradient-to-r from-sidebar to-sidebar-accent"
                                                 >
                                                     <td
                                                         colSpan={
@@ -828,7 +828,7 @@ export default function RolesIndex({
                     }}
                 >
                     <DialogContent className="max-h-[85vh] overflow-hidden border-sidebar/20 p-0 shadow-xl sm:max-w-3xl">
-                        <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                        <div className="bg-gradient-to-r from-sidebar to-sidebar-accent px-6 py-5 text-white">
                             <DialogHeader>
                                 <DialogTitle className="text-left text-xl font-black text-white">
                                     Gestionar permisos

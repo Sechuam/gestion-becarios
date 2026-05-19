@@ -106,7 +106,7 @@ export function EventDetailsFields({ data, errors, colors, setData }: Props) {
                         onChange={(event: FormEvent<HTMLInputElement>) =>
                             setData('all_day', event.currentTarget.checked)
                         }
-                        className="h-3.5 w-3.5 rounded border-slate-300 text-[#1f4f52] focus:ring-[#1f4f52]"
+                        className="h-3.5 w-3.5 rounded border-slate-300 text-sidebar focus:ring-sidebar"
                     />
                     <label
                         htmlFor="all_day_toggle"

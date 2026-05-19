@@ -119,7 +119,7 @@ export default function TaskQuickViewSheet({
             >
                 {task ? (
                     <>
-                        <SheetHeader className="relative space-y-3 bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 pt-8 pb-6 text-white shadow-xl">
+                        <SheetHeader className="relative space-y-3 bg-gradient-to-r from-sidebar to-sidebar-accent px-6 pt-8 pb-6 text-white shadow-xl">
                             <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                             <div className="relative flex flex-wrap items-center gap-x-5 gap-y-2 pr-8">
                                 {/* Estado */}
@@ -260,7 +260,7 @@ export default function TaskQuickViewSheet({
                                         Señales rápidas
                                     </p>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 py-2 shadow-inner">
+                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-sidebar-accent px-3 py-2 shadow-inner">
                                             <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
                                             <div className="relative">
                                                 <p className="text-[11px] text-white/70">
@@ -275,7 +275,7 @@ export default function TaskQuickViewSheet({
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 py-2 shadow-inner">
+                                        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-sidebar-accent px-3 py-2 shadow-inner">
                                             <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
                                             <div className="relative">
                                                 <p className="text-[11px] text-white/70">
@@ -294,7 +294,7 @@ export default function TaskQuickViewSheet({
                                 </div>
                             </section>
 
-                            <section className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl">
+                            <section className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-xl">
                                 <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                                 <div className="relative mb-3 flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
@@ -370,7 +370,7 @@ export default function TaskQuickViewSheet({
                                 )}
                         </div>
 
-                        <SheetFooter className="relative mt-auto overflow-hidden border-t border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.15)]">
+                        <SheetFooter className="relative mt-auto overflow-hidden border-t border-white/10 bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.15)]">
                             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(0deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
                             <div className="relative flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
                                 <Button

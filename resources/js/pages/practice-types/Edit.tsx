@@ -43,7 +43,7 @@ export default function Edit({ practiceType }: Props) {
             <Head title="Editar tipo de práctica" />
             <div className="min-h-screen w-full space-y-4 p-4 dark:bg-slate-900/20">
                 {/* CABECERA ESTILIZADA */}
-                <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-lg">
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-6 shadow-lg">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative">
                         <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function Edit({ practiceType }: Props) {
                             <div className="space-y-1.5">
                                 <Label
                                     htmlFor="name"
-                                    className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-[10px] font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Nombre del Tipo
                                 </Label>
@@ -105,7 +105,7 @@ export default function Edit({ practiceType }: Props) {
                             <div className="space-y-1.5">
                                 <Label
                                     htmlFor="priority"
-                                    className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-[10px] font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Prioridad Sugerida
                                 </Label>
@@ -141,7 +141,7 @@ export default function Edit({ practiceType }: Props) {
                         <div className="mt-6 space-y-1.5">
                             <Label
                                 htmlFor="description"
-                                className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                                className="text-[10px] font-black tracking-widest text-sidebar uppercase"
                             >
                                 Descripción
                             </Label>
@@ -179,7 +179,7 @@ export default function Edit({ practiceType }: Props) {
                             <div className="space-y-1.5">
                                 <Label
                                     htmlFor="color"
-                                    className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-[10px] font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Color Corporativo (HEX)
                                 </Label>
@@ -245,7 +245,7 @@ export default function Edit({ practiceType }: Props) {
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="relative h-10 overflow-hidden rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-8 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
+                            className="relative h-10 overflow-hidden rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent px-8 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
                         >
                             <div className="pointer-events-none absolute inset-x-0 top-0 h-3 bg-gradient-to-b from-white/10 to-transparent" />
                             {processing ? 'Guardando...' : 'Actualizar Cambios'}

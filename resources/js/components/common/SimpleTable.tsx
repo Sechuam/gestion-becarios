@@ -42,7 +42,7 @@ export function SimpleTable<T>({
 }: SimpleTableProps<T>) {
     return (
         <div className="app-panel w-full overflow-hidden rounded-xl border border-sidebar/15 shadow-xl">
-            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
             <div className="w-full overflow-x-auto">
                 <Table className="w-full min-w-[920px] text-left text-sm">
                     <TableHeader>

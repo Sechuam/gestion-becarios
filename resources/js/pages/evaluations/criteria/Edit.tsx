@@ -38,7 +38,7 @@ export default function Edit({ criterion }: Props) {
             <Head title="Editar criterio de evaluacion" />
 
             <div className="space-y-5">
-                <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-5 shadow-lg md:p-6">
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-5 shadow-lg md:p-6">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative">
                         <h1 className="text-base font-black tracking-tight text-white">
@@ -75,7 +75,7 @@ export default function Edit({ criterion }: Props) {
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="name"
-                                    className="text-xs font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-xs font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Nombre
                                 </Label>
@@ -97,7 +97,7 @@ export default function Edit({ criterion }: Props) {
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="category"
-                                    className="text-xs font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-xs font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Categoria
                                 </Label>
@@ -120,7 +120,7 @@ export default function Edit({ criterion }: Props) {
                         <div className="mt-5 space-y-2">
                             <Label
                                 htmlFor="description"
-                                className="text-xs font-black tracking-widest text-[#1f4f52] uppercase"
+                                className="text-xs font-black tracking-widest text-sidebar uppercase"
                             >
                                 Descripcion
                             </Label>
@@ -130,7 +130,7 @@ export default function Edit({ criterion }: Props) {
                                 onChange={(e) =>
                                     setData('description', e.target.value)
                                 }
-                                className="min-h-[92px] w-full rounded-xl border border-sidebar/20 bg-card p-3 text-sm text-slate-700 shadow-sm transition-all outline-none focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
+                                className="min-h-[92px] w-full rounded-xl border border-sidebar/20 bg-card p-3 text-sm text-slate-700 shadow-sm transition-all outline-none focus:border-sidebar focus:ring-4 focus:ring-sidebar/5"
                             />
                             {errors.description && (
                                 <p className="text-xs font-bold text-red-500">
@@ -142,7 +142,7 @@ export default function Edit({ criterion }: Props) {
                         <div className="mt-5 space-y-2">
                             <Label
                                 htmlFor="rubric"
-                                className="text-xs font-black tracking-widest text-[#1f4f52] uppercase"
+                                className="text-xs font-black tracking-widest text-sidebar uppercase"
                             >
                                 Rubrica
                             </Label>
@@ -152,7 +152,7 @@ export default function Edit({ criterion }: Props) {
                                 onChange={(e) =>
                                     setData('rubric', e.target.value)
                                 }
-                                className="min-h-[112px] w-full rounded-xl border border-sidebar/20 bg-card p-3 text-sm text-slate-700 shadow-sm transition-all outline-none focus:border-[#1f4f52] focus:ring-4 focus:ring-sidebar/5"
+                                className="min-h-[112px] w-full rounded-xl border border-sidebar/20 bg-card p-3 text-sm text-slate-700 shadow-sm transition-all outline-none focus:border-sidebar focus:ring-4 focus:ring-sidebar/5"
                             />
                             {errors.rubric && (
                                 <p className="text-xs font-bold text-red-500">
@@ -182,7 +182,7 @@ export default function Edit({ criterion }: Props) {
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="weight"
-                                    className="text-xs font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-xs font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Peso (%)
                                 </Label>
@@ -207,7 +207,7 @@ export default function Edit({ criterion }: Props) {
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="max_score"
-                                    className="text-xs font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-xs font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Nota maxima
                                 </Label>
@@ -232,7 +232,7 @@ export default function Edit({ criterion }: Props) {
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="sort_order"
-                                    className="text-xs font-black tracking-widest text-[#1f4f52] uppercase"
+                                    className="text-xs font-black tracking-widest text-sidebar uppercase"
                                 >
                                     Orden
                                 </Label>

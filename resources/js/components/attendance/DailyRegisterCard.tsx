@@ -25,7 +25,7 @@ export function DailyRegisterCard({
 }: Props) {
     return (
         <Card className="gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
             <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
                     <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
@@ -36,7 +36,7 @@ export function DailyRegisterCard({
             </CardHeader>
             <CardContent className="space-y-3 p-3">
                 <div className="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.9fr)]">
-                    <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/8 to-[#1f4f52]/8 p-3 dark:from-sidebar/15 dark:to-[#1f4f52]/15">
+                    <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/8 to-sidebar-accent/10 p-3 dark:from-sidebar/15 dark:to-sidebar-accent/15">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black tracking-widest text-slate-800 uppercase dark:text-white">
@@ -76,9 +76,9 @@ export function DailyRegisterCard({
                         </div>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/10 to-[#1f4f52]/10 p-3 shadow-sm dark:bg-slate-800/80 dark:from-sidebar/15 dark:to-[#1f4f52]/15">
+                    <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/10 to-sidebar-accent/10 p-3 shadow-sm dark:bg-slate-800/80 dark:from-sidebar/15 dark:to-sidebar-accent/15">
                         {liveElapsed ? (
-                            <div className="relative overflow-hidden rounded-xl border border-sidebar/10 bg-gradient-to-r from-sidebar/5 to-[#1f4f52]/5 p-3 backdrop-blur-sm">
+                            <div className="relative overflow-hidden rounded-xl border border-sidebar/10 bg-gradient-to-r from-sidebar/5 to-sidebar-accent/5 p-3 backdrop-blur-sm">
                                 <div className="relative flex items-center gap-3">
                                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar text-white shadow shadow-sidebar/20">
                                         <TimerReset className="h-4 w-4 animate-pulse" />

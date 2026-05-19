@@ -98,7 +98,7 @@ export default function Edit({
             <Head title={`Editar Becario - ${intern.user.name}`} />
 
             <div className="page-surface overflow-hidden border-sidebar/20 p-0 shadow-xl">
-                <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                <div className="bg-gradient-to-r from-sidebar to-sidebar-accent px-6 py-5 text-white">
                     <div className="flex items-center gap-4">
                         <div className="relative">
                             <Avatar className="h-10 w-12 shrink-0 overflow-hidden rounded-xl border-2 border-white/20 bg-white/10 shadow-lg backdrop-blur-sm">
@@ -115,7 +115,7 @@ export default function Edit({
                                 </AvatarFallback>
                             </Avatar>
                             <div
-                                className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-[#1f4f52] bg-emerald-500 shadow-sm"
+                                className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-sidebar bg-emerald-500 shadow-sm"
                                 title="Usuario Activo"
                             />
                         </div>

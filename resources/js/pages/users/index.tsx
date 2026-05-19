@@ -137,7 +137,7 @@ function UserRowItem({
             {/* Role indicator */}
             {showBadge && (
                 <div className="hidden sm:flex">
-                    <span className="inline-flex h-8 min-w-[112px] items-center justify-center rounded-lg border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] px-2.5 py-1 text-xs font-medium text-white shadow-sm">
+                    <span className="inline-flex h-8 min-w-[112px] items-center justify-center rounded-lg border-0 bg-gradient-to-r from-sidebar to-sidebar-accent px-2.5 py-1 text-xs font-medium text-white shadow-sm">
                         {meta.label}
                     </span>
                 </div>
@@ -147,7 +147,7 @@ function UserRowItem({
                 <DropdownMenuTrigger asChild>
                     <button
                         disabled={isSaving}
-                        className="flex h-8 shrink-0 items-center gap-1 rounded-lg border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] px-2.5 py-1 text-xs font-medium text-white shadow-sm transition hover:opacity-95 disabled:opacity-50"
+                        className="flex h-8 shrink-0 items-center gap-1 rounded-lg border-0 bg-gradient-to-r from-sidebar to-sidebar-accent px-2.5 py-1 text-xs font-medium text-white shadow-sm transition hover:opacity-95 disabled:opacity-50"
                     >
                         {isSaving ? (
                             <Loader2 className="h-3 w-3 animate-spin" />
@@ -323,7 +323,7 @@ export default function UsersIndex({
         >
             <Head title="Gestión de Usuarios" />
 
-            <div className="space-y-5">
+            <div className="space-y-3">
                 <ModuleHeader
                     title="Gestión de Usuarios"
                     description={`Administra roles y permisos de los ${counts.all} usuarios registrados desde una vista unificada.`}
@@ -422,7 +422,7 @@ export default function UsersIndex({
                 </div>
 
                 <div className="app-panel overflow-hidden rounded-xl border border-sidebar/15 bg-white shadow-xl dark:bg-slate-900/60">
-                    <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
+                    <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                     <p className="border-b border-slate-400 bg-slate-200 px-5 py-3 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-800/70 dark:text-slate-100">
                         {filteredUsers.length} usuario
                         {filteredUsers.length !== 1 ? 's' : ''}
@@ -477,7 +477,7 @@ export default function UsersIndex({
                                 <Button
                                     type="button"
                                     size="sm"
-                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-sm hover:opacity-95 disabled:opacity-50"
+                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-sm hover:opacity-95 disabled:opacity-50"
                                     onClick={() =>
                                         setCurrentPage((page) =>
                                             Math.max(1, page - 1),
@@ -491,7 +491,7 @@ export default function UsersIndex({
                                 <Button
                                     type="button"
                                     size="sm"
-                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-sm hover:opacity-95 disabled:opacity-50"
+                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-sm hover:opacity-95 disabled:opacity-50"
                                     onClick={() =>
                                         setCurrentPage((page) =>
                                             Math.min(totalPages, page + 1),
@@ -597,7 +597,7 @@ export default function UsersIndex({
                     }}
                 >
                     <DialogContent className="overflow-hidden border-sidebar/20 p-0 shadow-xl sm:max-w-md">
-                        <div className="bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 py-5 text-white">
+                        <div className="bg-gradient-to-r from-sidebar to-sidebar-accent px-6 py-5 text-white">
                             <DialogHeader>
                                 <DialogTitle className="text-left text-xl font-black tracking-tight text-white">
                                     Confirmar cambio de rol
@@ -617,7 +617,7 @@ export default function UsersIndex({
                                         {pendingRoleChange?.user.name}
                                     </span>{' '}
                                     a{' '}
-                                    <span className="inline-flex rounded-full bg-gradient-to-r from-sidebar to-[#1f4f52] px-2.5 py-0.5 text-[11px] font-black tracking-widest text-white uppercase shadow-sm">
+                                    <span className="inline-flex rounded-full bg-gradient-to-r from-sidebar to-sidebar-accent px-2.5 py-0.5 text-[11px] font-black tracking-widest text-white uppercase shadow-sm">
                                         {ROLE_META[
                                             pendingRoleChange?.newRole ?? 'none'
                                         ]?.label ?? pendingRoleChange?.newRole}
@@ -637,7 +637,7 @@ export default function UsersIndex({
                                 </Button>
                                 <Button
                                     type="button"
-                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-sm hover:opacity-95"
+                                    className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-sm hover:opacity-95"
                                     onClick={confirmRoleChange}
                                 >
                                     Confirmar cambio

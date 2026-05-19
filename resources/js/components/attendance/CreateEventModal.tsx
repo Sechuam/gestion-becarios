@@ -12,6 +12,7 @@ import type { PageProps } from '@/types';
 import { EventAttendeesPanel } from './EventAttendeesPanel';
 import { EventDetailsFields } from './EventDetailsFields';
 import type { ManageableIntern } from './types';
+import { useToast } from '@/hooks/use-toast';
 
 interface CreateEventModalProps {
     open: boolean;
@@ -41,6 +42,7 @@ export function CreateEventModal({
     manageableInterns = [],
 }: CreateEventModalProps) {
     const { auth } = usePage<PageProps>().props;
+    const { toast } = useToast();
     const isTutorOrAdmin = auth.user.roles?.some((role: string) =>
         ['admin', 'tutor'].includes(role),
     );
@@ -49,7 +51,7 @@ export function CreateEventModal({
         data,
         setData,
         post,
-        put,
+        patch,
         delete: destroy,
         processing,
         errors,
@@ -95,9 +97,14 @@ export function CreateEventModal({
         const eventId = event?.extendedProps?.calendarEventId ?? event?.id;
 
         if (event) {
-            put(route('calendar-events.update', eventId), {
+            patch(route('calendar-events.update', eventId), {
                 onSuccess: () => {
                     onOpenChange(false);
+                    toast({
+                        title: 'Evento actualizado',
+                        description:
+                            'Los cambios se han guardado correctamente.',
+                    });
                     if (onCreated) onCreated();
                 },
             });
@@ -105,6 +112,11 @@ export function CreateEventModal({
             post(route('calendar-events.store'), {
                 onSuccess: () => {
                     onOpenChange(false);
+                    toast({
+                        title: 'Evento creado',
+                        description:
+                            'El evento se ha añadido al calendario correctamente.',
+                    });
                     if (onCreated) onCreated();
                 },
             });
@@ -119,6 +131,10 @@ export function CreateEventModal({
         destroy(route('calendar-events.destroy', eventId), {
             onSuccess: () => {
                 onOpenChange(false);
+                toast({
+                    title: 'Evento eliminado',
+                    description: 'El evento se ha eliminado del calendario.',
+                });
                 if (onCreated) onCreated();
             },
         });
@@ -201,7 +217,7 @@ export function CreateEventModal({
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="h-10 flex-[2] rounded-xl bg-[#1f4f52] text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-xl shadow-[#1f4f52]/20 transition-all hover:shadow-[#1f4f52]/30 active:scale-[0.98]"
+                            className="shadow-[sidebar-accent/20 hover:shadow-[sidebar-accent/30 h-10 flex-[2] rounded-xl bg-sidebar text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-xl transition-all active:scale-[0.98]"
                         >
                             {processing ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

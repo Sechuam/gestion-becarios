@@ -175,7 +175,7 @@ export default function Index({ datasets, templates, summary }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Reportes" />
-            <div className="flex min-w-0 flex-col gap-5">
+            <div className="flex min-w-0 flex-col gap-3">
                 <ReportsHeader summary={summary} />
 
                 <ReportBuilderCard

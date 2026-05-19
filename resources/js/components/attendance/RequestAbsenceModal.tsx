@@ -14,10 +14,12 @@ import { Label } from '@/components/ui/label';
 import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { CalendarClock, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export function RequestAbsenceModal() {
     const [open, setOpen] = useState(false);
     const { auth } = usePage<PageProps>().props;
+    const { toast } = useToast();
 
     const isIntern = auth.user.roles?.includes('intern');
     const buttonText = isIntern ? 'Enviar Petición' : 'Registrar Ausencia';
@@ -50,6 +52,14 @@ export function RequestAbsenceModal() {
             forceFormData: true,
             onSuccess: () => {
                 setOpen(false);
+                toast({
+                    title: isIntern
+                        ? 'Solicitud enviada'
+                        : 'Ausencia registrada',
+                    description: isIntern
+                        ? 'Tu petición de ausencia se ha enviado correctamente.'
+                        : 'La ausencia se ha registrado correctamente.',
+                });
                 reset();
             },
         });
@@ -184,7 +194,7 @@ export function RequestAbsenceModal() {
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="h-10 flex-[2.5] rounded-xl bg-[#1f4f52] text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-xl shadow-[#1f4f52]/20 transition-all hover:shadow-[#1f4f52]/30 active:scale-[0.98]"
+                            className="h-10 flex-[2.5] rounded-xl bg-sidebar text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-xl shadow-sidebar/20 transition-all hover:shadow-sidebar/30 active:scale-[0.98]"
                         >
                             {processing ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

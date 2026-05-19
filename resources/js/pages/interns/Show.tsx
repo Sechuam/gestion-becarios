@@ -132,12 +132,12 @@ export default function Show({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Perfil de ${intern.user.name}`} />
 
-            <div className="min-h-screen w-full space-y-6 p-6">
+            <div className="min-h-screen w-full space-y-3 p-6">
                 {/* CABECERA */}
                 <div className="flex items-center justify-between px-2">
                     <Button
                         variant="default"
-                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-[#1f4f52] text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
+                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
                         asChild
                     >
                         <Link href="/becarios">
@@ -227,7 +227,7 @@ export default function Show({
                                 <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
                                     <div className="space-y-6">
                                         <div className="flex items-center gap-3">
-                                            <div className="rounded-xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-2 shadow-md shadow-sidebar/20">
+                                            <div className="rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-2 shadow-md shadow-sidebar/20">
                                                 <Clock className="h-5 w-5 text-white" />
                                             </div>
                                             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
@@ -245,7 +245,7 @@ export default function Show({
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center gap-4 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl shadow-sidebar/10">
+                                        <div className="flex items-center gap-4 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-xl shadow-sidebar/10">
                                             <div
                                                 className={`flex h-10 w-10 items-center justify-center rounded-full ${time_stats.debt > 0 ? 'bg-white text-rose-600' : 'bg-emerald-500/20 text-emerald-300'}`}
                                             >
@@ -271,7 +271,7 @@ export default function Show({
                                         {canViewReports && (
                                             <Button
                                                 variant="default"
-                                                className="w-full rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] py-6 font-bold text-white shadow-xl shadow-sidebar/10 transition-all hover:opacity-95"
+                                                className="w-full rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent py-6 font-bold text-white shadow-xl shadow-sidebar/10 transition-all hover:opacity-95"
                                                 onClick={() =>
                                                     setIsExportModalOpen(true)
                                                 }
@@ -285,7 +285,7 @@ export default function Show({
                                     <div className="space-y-6">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="rounded-xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-2 shadow-md shadow-sidebar/20">
+                                                <div className="rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-2 shadow-md shadow-sidebar/20">
                                                     <GraduationCap className="h-5 w-5 text-white" />
                                                 </div>
                                                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
@@ -313,7 +313,7 @@ export default function Show({
                                         />
 
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div className="rounded-xl border-none bg-gradient-to-br from-sidebar to-[#1f4f52] p-5 shadow-xl shadow-sidebar/10">
+                                            <div className="rounded-xl border-none bg-gradient-to-br from-sidebar to-sidebar-accent p-5 shadow-xl shadow-sidebar/10">
                                                 <p className="mb-1 text-[10px] font-black tracking-widest text-white/60 uppercase">
                                                     Horas Fichadas
                                                 </p>
@@ -321,7 +321,7 @@ export default function Show({
                                                     {time_stats.worked_hours}h
                                                 </p>
                                             </div>
-                                            <div className="rounded-xl border-none bg-gradient-to-br from-sidebar to-[#1f4f52] p-5 shadow-xl shadow-sidebar/10">
+                                            <div className="rounded-xl border-none bg-gradient-to-br from-sidebar to-sidebar-accent p-5 shadow-xl shadow-sidebar/10">
                                                 <p className="mb-1 text-[10px] font-black tracking-widest text-white/60 uppercase">
                                                     Horas Justificadas
                                                 </p>
@@ -332,7 +332,7 @@ export default function Show({
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-xl shadow-sidebar/10">
+                                        <div className="flex items-center justify-between rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-xl shadow-sidebar/10">
                                             <p className="text-xs font-bold text-white/80">
                                                 Faltan por completar:
                                             </p>
@@ -421,7 +421,7 @@ export default function Show({
                                     </div>
 
                                     <div className="space-y-6 md:col-span-4">
-                                        <div className="space-y-4 rounded-xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-6 shadow-xl shadow-sidebar/10">
+                                        <div className="space-y-4 rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-6 shadow-xl shadow-sidebar/10">
                                             <h4 className="mb-4 flex items-center gap-2 text-xs font-black text-white/75 uppercase">
                                                 <HardDrive className="h-3 w-3" />{' '}
                                                 Documentación Digital
@@ -556,7 +556,7 @@ export default function Show({
                                         </div>
 
                                         <div className="space-y-8">
-                                            <div className="flex gap-4 rounded-xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-5 shadow-xl shadow-sidebar/10">
+                                            <div className="flex gap-4 rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-5 shadow-xl shadow-sidebar/10">
                                                 <Avatar className="h-10 w-12 shrink-0 rounded-full">
                                                     <AvatarFallback className="bg-white/20 font-bold text-white">
                                                         {intern.center_tutor_name?.substring(
@@ -580,7 +580,7 @@ export default function Show({
                                                 </div>
                                             </div>
 
-                                            <div className="flex gap-4 rounded-xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-5 shadow-xl shadow-sidebar/10">
+                                            <div className="flex gap-4 rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-5 shadow-xl shadow-sidebar/10">
                                                 <Avatar className="h-10 w-12 shrink-0 rounded-full">
                                                     <AvatarImage
                                                         src={
@@ -635,7 +635,7 @@ export default function Show({
                                             {canManage && (
                                                 <CreateScheduleModal
                                                     userId={intern.user.id}
-                                                    createButtonClassName="border-none bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-lg shadow-sidebar/10 hover:opacity-95"
+                                                    createButtonClassName="border-none bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-lg shadow-sidebar/10 hover:opacity-95"
                                                 />
                                             )}
                                         </div>
@@ -656,7 +656,7 @@ export default function Show({
                                                                 key={
                                                                     schedule.id
                                                                 }
-                                                                className="rounded-xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-6 shadow-xl shadow-sidebar/10"
+                                                                className="rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-6 shadow-xl shadow-sidebar/10"
                                                             >
                                                                 <div className="mb-4 flex items-start justify-between">
                                                                     <div>
@@ -926,7 +926,7 @@ export default function Show({
                                                         </Button>
                                                         <Button
                                                             size="sm"
-                                                            className="rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-white hover:opacity-95"
+                                                            className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-6 text-white hover:opacity-95"
                                                             onClick={() =>
                                                                 router.patch(
                                                                     `/interns/${intern.id}/notes`,
@@ -1361,7 +1361,7 @@ export default function Show({
                                                                 (p) => p - 1,
                                                             )
                                                         }
-                                                        className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
+                                                        className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
                                                     >
                                                         <ChevronLeft className="mr-2 h-4 w-4" />
                                                         Anterior
@@ -1384,7 +1384,7 @@ export default function Show({
                                                                 (p) => p + 1,
                                                             )
                                                         }
-                                                        className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
+                                                        className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
                                                     >
                                                         Siguiente
                                                         <ChevronRight className="ml-2 h-4 w-4" />
