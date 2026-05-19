@@ -39,6 +39,15 @@ export function DashboardWidgetWrapper({ id, children, isEditing, className }: D
                 className
             )}
         >
+            <style dangerouslySetInnerHTML={{__html: `
+                @keyframes gentle-shake {
+                    0%, 100% { transform: rotate(-0.3deg) translateY(0); }
+                    50% { transform: rotate(0.3deg) translateY(-1.5px); }
+                }
+                .animate-gentle-shake {
+                    animation: gentle-shake 3s ease-in-out infinite;
+                }
+            `}} />
             <AnimatePresence>
                 {isEditing && (
                     <motion.div
@@ -57,10 +66,10 @@ export function DashboardWidgetWrapper({ id, children, isEditing, className }: D
                     </motion.div>
                 )}
             </AnimatePresence>
-
+ 
             <div className={cn(
                 "h-full transition-all duration-300",
-                isEditing && "ring-2 ring-sidebar/20 rounded-3xl ring-offset-4"
+                isEditing && "ring-2 ring-sidebar/20 rounded-3xl ring-offset-4 animate-gentle-shake"
             )}>
                 {children}
             </div>

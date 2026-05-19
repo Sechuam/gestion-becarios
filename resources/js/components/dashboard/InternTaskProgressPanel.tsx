@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Search, TrendingUp } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, TrendingUp, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,17 +52,22 @@ export function InternTaskProgressPanel({
 
     return (
         <Card
-            className={`flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 ${className}`}
+            className={`group flex flex-col overflow-hidden border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900 py-0 gap-0 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 ${className}`}
         >
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
-                <div>
-                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
-                        Panel de progreso por becario
-                    </CardTitle>
-                    <p className="text-[11px] leading-4 text-slate-500">
-                        Tareas completadas, carga total y horas fichadas.
-                    </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+                <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs group-hover:scale-105 transition-transform duration-300">
+                        <Users className="h-4 w-4" />
+                    </span>
+                    <div>
+                        <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight">
+                            Panel de progreso por becario
+                        </CardTitle>
+                        <p className="text-[11px] leading-none text-slate-500 mt-0.5">
+                            Tareas completadas, carga total y horas fichadas.
+                        </p>
+                    </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <Badge

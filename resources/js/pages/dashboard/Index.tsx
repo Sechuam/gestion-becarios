@@ -477,7 +477,10 @@ export default function Dashboard({
                         items={sections}
                         strategy={verticalListSortingStrategy}
                     >
-                        <div className="flex flex-col gap-6">
+                        <div className={cn(
+                            "flex flex-col gap-6 transition-all duration-500 rounded-3xl p-4 -m-4",
+                            isEditing && "bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:24px_24px] bg-slate-100/50 dark:bg-slate-950/20 ring-1 ring-slate-200/60 dark:ring-slate-800/60 shadow-inner"
+                        )}>
                             {sections.map((rowId) => renderSection(rowId))}
                         </div>
                     </SortableContext>

@@ -12,7 +12,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import { ClipboardCheck, Clock, UserX } from 'lucide-react';
+import { ClipboardCheck, Clock, UserX, GraduationCap, ListTodo, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { DashboardChartPoint } from './types';
 
@@ -24,7 +24,8 @@ const taskStatusColors: Record<string, string> = {
     Rechazadas: '#ef4444',
 };
 
-function getTaskStatusColor(name: string) {
+function getTaskStatusColor(name?: string) {
+    if (!name) return '#64748b';
     return taskStatusColors[name] ?? '#64748b';
 }
 
@@ -34,16 +35,21 @@ type ChartProps = {
 
 export function InternsByCenterChart({ data }: ChartProps) {
     return (
-        <Card className="overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <Card className="group overflow-hidden border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900 py-0 gap-0 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700">
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
-                <div>
-                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
-                        Becarios por centro educativo
-                    </CardTitle>
-                    <p className="text-[11px] leading-4 text-slate-500">
-                        Distribución activa para priorizar carga y seguimiento.
-                    </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+                <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs group-hover:scale-105 transition-transform duration-300">
+                        <GraduationCap className="h-4 w-4" />
+                    </span>
+                    <div>
+                        <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight">
+                            Becarios por centro educativo
+                        </CardTitle>
+                        <p className="text-[11px] leading-none text-slate-500 mt-0.5">
+                            Distribución activa para priorizar carga y seguimiento.
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="h-44 px-2.5 pb-2">
@@ -77,16 +83,21 @@ export function InternsByCenterChart({ data }: ChartProps) {
 
 export function TaskStatusChart({ data }: ChartProps) {
     return (
-        <Card className="overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <Card className="group overflow-hidden border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900 py-0 gap-0 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700">
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
-                <div>
-                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
-                        Progreso de tareas
-                    </CardTitle>
-                    <p className="text-[11px] leading-4 text-slate-500">
-                        Estado global del trabajo asignado.
-                    </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+                <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs group-hover:scale-105 transition-transform duration-300">
+                        <ListTodo className="h-4 w-4" />
+                    </span>
+                    <div>
+                        <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight">
+                            Progreso de tareas
+                        </CardTitle>
+                        <p className="text-[11px] leading-none text-slate-500 mt-0.5">
+                            Estado global del trabajo asignado.
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="grid h-44 grid-cols-[minmax(0,1fr)_112px] items-center gap-2 px-2.5 pb-2">
@@ -143,17 +154,22 @@ export function AttendanceChart({
 }: ChartProps & { className?: string }) {
     return (
         <Card
-            className={`flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 ${className}`}
+            className={`group flex flex-col overflow-hidden border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900 py-0 gap-0 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 ${className}`}
         >
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
-                <div>
-                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
-                        Cumplimiento horario
-                    </CardTitle>
-                    <p className="text-[11px] leading-4 text-slate-500">
-                        Horas registradas durante los últimos seis meses.
-                    </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+                <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs group-hover:scale-105 transition-transform duration-300">
+                        <Clock className="h-4 w-4" />
+                    </span>
+                    <div>
+                        <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight">
+                            Cumplimiento horario
+                        </CardTitle>
+                        <p className="text-[11px] leading-none text-slate-500 mt-0.5">
+                            Horas registradas durante los últimos seis meses.
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="flex-1 px-2.5 pb-2">
@@ -224,17 +240,22 @@ export function AttendanceStatsCard({
 
     return (
         <Card
-            className={`flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 ${className}`}
+            className={`group flex flex-col overflow-hidden border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900 py-0 gap-0 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 ${className}`}
         >
             <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-2.5 py-1.5 dark:border-slate-800 dark:bg-slate-800/70">
-                <div>
-                    <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100">
-                        Estadísticas de cumplimiento horario
-                    </CardTitle>
-                    <p className="text-[11px] leading-4 text-slate-500">
-                        Lectura resumida de asistencia reciente y ausencias.
-                    </p>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-100 bg-slate-100/80 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+                <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-[#1f4f52]/90 text-white shadow-xs group-hover:scale-105 transition-transform duration-300">
+                        <BarChart3 className="h-4 w-4" />
+                    </span>
+                    <div>
+                        <CardTitle className="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight">
+                            Estadísticas de cumplimiento horario
+                        </CardTitle>
+                        <p className="text-[11px] leading-none text-slate-500 mt-0.5">
+                            Lectura resumida de asistencia reciente y ausencias.
+                        </p>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="grid flex-1 items-stretch gap-1.5 bg-slate-50/60 px-2.5 pt-2 pb-2 sm:grid-cols-3 dark:bg-slate-950/20">

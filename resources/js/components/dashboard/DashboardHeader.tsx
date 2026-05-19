@@ -32,9 +32,10 @@ export function DashboardHeader({
     return (
         <ModuleHeader
             title={`Dashboard ${roleLabel}`}
-            description="Centro de control operativo con KPIs, actividad horaria, tareas y reportes exportables."
+            description="Control de rendimiento, tareas activas y seguimiento del programa de becarios en tiempo real."
             icon={<BarChart3 className="h-6 w-6" />}
             metricsVariant="solid"
+            variant="sidebar"
             actions={
                 <div className="flex flex-col gap-2">
                     <div className="flex gap-2">
@@ -79,19 +80,6 @@ export function DashboardHeader({
                     </Button>
                 </div>
             }
-            metrics={[
-                {
-                    label: 'Alertas',
-                    value: alerts,
-                    hint: 'Necesitan revisión',
-                },
-                {
-                    label: 'Tareas completadas',
-                    value: completedTasks,
-                    hint: `${taskCompletion}% del total`,
-                },
-                { label: 'Widgets', value: 7, hint: 'Datos con caché' },
-            ]}
         />
     );
 }
