@@ -30,7 +30,7 @@ export function AbsencesPagination({
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-8 rounded-lg"
+                    className="h-8 rounded-lg active:border-slate-400 active:bg-slate-200 active:text-slate-800"
                     disabled={absencePage === 1}
                     onClick={() =>
                         onPageChange((page) => Math.max(1, page - 1))
@@ -45,7 +45,7 @@ export function AbsencesPagination({
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-8 rounded-lg"
+                    className="h-8 rounded-lg active:border-slate-400 active:bg-slate-200 active:text-slate-800"
                     disabled={absencePage === totalAbsencePages}
                     onClick={() =>
                         onPageChange((page) =>

@@ -30,7 +30,10 @@ export function TasksHeaderActions({
         <div className="flex min-w-[18rem] flex-col gap-2">
             <div className="flex items-center gap-2">
                 {isTutor && (
-                    <HeaderActionButton label="Nueva tarea" href="/tareas/create" />
+                    <HeaderActionButton
+                        label="Nueva tarea"
+                        href="/tareas/create"
+                    />
                 )}
                 <ToggleGroup
                     type="single"
@@ -42,7 +45,7 @@ export function TasksHeaderActions({
                 >
                     <ToggleGroupItem
                         value="kanban"
-                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-sidebar data-[state=on]:text-white data-[state=on]:shadow-sm"
+                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 data-[state=on]:shadow-sm dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                         aria-label="Vista kanban"
                     >
                         <LayoutGrid className="mr-2 h-4 w-4" />
@@ -52,7 +55,7 @@ export function TasksHeaderActions({
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value="table"
-                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-sidebar data-[state=on]:text-white data-[state=on]:shadow-sm"
+                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 data-[state=on]:shadow-sm dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                         aria-label="Vista tabla"
                     >
                         <List className="mr-2 h-4 w-4" />

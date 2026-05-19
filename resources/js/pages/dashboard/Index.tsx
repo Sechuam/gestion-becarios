@@ -477,10 +477,13 @@ export default function Dashboard({
                         items={sections}
                         strategy={verticalListSortingStrategy}
                     >
-                        <div className={cn(
-                            "flex flex-col gap-6 transition-all duration-500 rounded-3xl p-4 -m-4",
-                            isEditing && "bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:24px_24px] bg-slate-100/50 dark:bg-slate-950/20 ring-1 ring-slate-200/60 dark:ring-slate-800/60 shadow-inner"
-                        )}>
+                        <div
+                            className={cn(
+                                '-m-4 flex flex-col gap-6 rounded-xl p-4 transition-all duration-500',
+                                isEditing &&
+                                    'bg-slate-100/50 bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:24px_24px] shadow-inner ring-1 ring-slate-200/60 dark:bg-slate-950/20 dark:ring-slate-800/60',
+                            )}
+                        >
                             {sections.map((rowId) => renderSection(rowId))}
                         </div>
                     </SortableContext>
@@ -493,9 +496,9 @@ export default function Dashboard({
                         }}
                     >
                         {activeId ? (
-                            <div className="pointer-events-none scale-[1.02] opacity-90 shadow-2xl transition-transform">
+                            <div className="pointer-events-none scale-[1.02] opacity-90 shadow-xl transition-transform">
                                 {sections.includes(activeId) ? (
-                                    <div className="rounded-3xl border-2 border-dashed border-sidebar/20 bg-white/50 p-4 backdrop-blur-sm">
+                                    <div className="rounded-xl border-2 border-dashed border-sidebar/20 bg-white/50 p-4 backdrop-blur-sm">
                                         Moviendo sección completa...
                                     </div>
                                 ) : (

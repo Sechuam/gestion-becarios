@@ -44,7 +44,9 @@ export default function TwoFactor({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Autenticación de doble factor" />
 
-            <h1 className="sr-only">Ajustes de autenticación de doble factor</h1>
+            <h1 className="sr-only">
+                Ajustes de autenticación de doble factor
+            </h1>
 
             <SettingsLayout>
                 <div className="space-y-6">
@@ -53,9 +55,10 @@ export default function TwoFactor({
                             <Badge variant="default">Habilitada</Badge>
                             <p className="text-muted-foreground">
                                 Con la autenticación de doble factores activada,
-                                se te solicitará un PIN seguro y aleatorio durante
-                                el inicio de sesión, que podrás obtener desde
-                                la aplicación compatible con TOTP en tu teléfono.
+                                se te solicitará un PIN seguro y aleatorio
+                                durante el inicio de sesión, que podrás obtener
+                                desde la aplicación compatible con TOTP en tu
+                                teléfono.
                             </p>
 
                             <TwoFactorRecoveryCodes
@@ -83,10 +86,9 @@ export default function TwoFactor({
                             <Badge variant="destructive">Deshabilitada</Badge>
                             <p className="text-muted-foreground">
                                 Cuando actives la autenticación de doble factor,
-                                se te pedirá un PIN seguro durante el inicio de sesión.
-                                Este PIN podrás recibirlo en la aplicación compatible 
-                                con TOTP en tu teléfono.
-
+                                se te pedirá un PIN seguro durante el inicio de
+                                sesión. Este PIN podrás recibirlo en la
+                                aplicación compatible con TOTP en tu teléfono.
                             </p>
 
                             <div>

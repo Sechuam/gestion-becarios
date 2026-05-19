@@ -65,19 +65,19 @@ export default function Index({ practice_types, filters = {} }: Props) {
             sortKey: 'name',
         },
         { key: 'description', label: 'Descripción', sortKey: 'description' },
-        { 
-            key: 'priority', 
-            label: 'Prioridad', 
+        {
+            key: 'priority',
+            label: 'Prioridad',
             sortKey: 'priority',
             headClassName: 'text-center',
             cellClassName: 'text-center',
             render: (row: any) => (
                 <div className="flex justify-center">
-                    <span className="inline-block w-20 text-center text-[10px] font-black uppercase tracking-widest text-white bg-gradient-to-r from-sidebar to-[#1f4f52] py-1 rounded-lg shadow-md border border-white/10">
+                    <span className="inline-block w-20 rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] py-1 text-center text-[10px] font-black tracking-widest text-white uppercase shadow-md">
                         {row.priority || '—'}
                     </span>
                 </div>
-            )
+            ),
         },
         {
             key: 'color',
@@ -90,9 +90,9 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     <div className="flex items-center justify-center gap-2">
                         <div
                             className="h-4 w-4 rounded-full border-2 border-white shadow-sm transition-transform hover:scale-110"
-                            style={{ 
+                            style={{
                                 backgroundColor: row.color,
-                                boxShadow: `0 0 10px ${row.color}50`
+                                boxShadow: `0 0 10px ${row.color}50`,
                             }}
                             title={`Color identificativo: ${row.color}`}
                         />
@@ -110,10 +110,10 @@ export default function Index({ practice_types, filters = {} }: Props) {
             render: (row: any) => (
                 <div className="flex justify-center">
                     <span
-                        className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest w-24 shadow-sm transition-all ${
+                        className={`inline-flex w-24 items-center justify-center rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase shadow-sm transition-all ${
                             row.is_active
-                                ? 'bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-md border border-white/10'
-                                : 'bg-white text-sidebar border border-sidebar/20'
+                                ? 'border border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-md'
+                                : 'border border-sidebar/20 bg-white text-sidebar'
                         }`}
                     >
                         {row.is_active ? 'Activo' : 'Inactivo'}
@@ -137,18 +137,27 @@ export default function Index({ practice_types, filters = {} }: Props) {
                             },
                             {
                                 label: row.is_active ? 'Desactivar' : 'Activar',
-                                onClick: () => router.patch(`/tipos-practica/${row.id}/toggle`),
+                                onClick: () =>
+                                    router.patch(
+                                        `/tipos-practica/${row.id}/toggle`,
+                                    ),
                             },
                             {
                                 label: 'Eliminar',
                                 icon: 'delete',
                                 variant: 'destructive',
                                 onClick: () => {
-                                    if (confirm(`¿Seguro que quieres eliminar "${row.name}"?`)) {
-                                        router.delete(`/tipos-practica/${row.id}`);
+                                    if (
+                                        confirm(
+                                            `¿Seguro que quieres eliminar "${row.name}"?`,
+                                        )
+                                    ) {
+                                        router.delete(
+                                            `/tipos-practica/${row.id}`,
+                                        );
                                     }
-                                }
-                            }
+                                },
+                            },
                         ]}
                     />
                 </div>
@@ -167,7 +176,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     icon={<Shapes className="h-6 w-6" />}
                     actions={
                         isAdmin ? (
-                            <HeaderActionButton 
+                            <HeaderActionButton
                                 label="Nuevo tipo"
                                 href="/tipos-practica/create"
                             />
@@ -175,13 +184,13 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     }
                 />
 
-                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg dark:bg-slate-900/60 transition-all">
+                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
                     <div className="flex flex-wrap items-center gap-2">
                         <div className="relative flex-1">
                             <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por nombre..."
-                                className="h-8 border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus:ring-sidebar/20 w-full"
+                                className="h-8 w-full rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
                                 defaultValue={filters.search}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -194,7 +203,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
                                 value={filters.status || 'all'}
                                 onValueChange={(v) => handleFilter('status', v)}
                             >
-                                <SelectTrigger className="h-8 w-full border-sidebar/10 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
                                     <SelectValue>
                                         {{
                                             active: 'Activos',
@@ -204,7 +213,9 @@ export default function Index({ practice_types, filters = {} }: Props) {
                                 </SelectTrigger>
                                 <SelectContent className="rounded-lg border-sidebar/20">
                                     <SelectItem value="all">Todos</SelectItem>
-                                    <SelectItem value="active">Activos</SelectItem>
+                                    <SelectItem value="active">
+                                        Activos
+                                    </SelectItem>
                                     <SelectItem value="inactive">
                                         Inactivos
                                     </SelectItem>
@@ -212,10 +223,11 @@ export default function Index({ practice_types, filters = {} }: Props) {
                             </Select>
                         </div>
 
-                        <div className="flex-none flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg dark:bg-slate-800 border border-sidebar/5 h-8">
-                            <span className="flex h-1 w-1 rounded-full bg-sidebar animate-pulse" />
-                            <span className="text-[10px] font-bold text-muted-foreground tabular-nums whitespace-nowrap uppercase tracking-widest">
-                                {practice_types.data.length} / {practice_types.total} TIPOS
+                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-3 py-1 dark:bg-slate-800">
+                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                            <span className="text-[10px] font-bold tracking-widest whitespace-nowrap text-muted-foreground uppercase tabular-nums">
+                                {practice_types.data.length} /{' '}
+                                {practice_types.total} TIPOS
                             </span>
                         </div>
                     </div>
@@ -234,7 +246,8 @@ export default function Index({ practice_types, filters = {} }: Props) {
                 <div className="mt-6 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
-                            Página {practice_types.current_page} de {practice_types.last_page}
+                            Página {practice_types.current_page} de{' '}
+                            {practice_types.last_page}
                         </span>
                         <Pagination links={practice_types.links} />
                     </div>

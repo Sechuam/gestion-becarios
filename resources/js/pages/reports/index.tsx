@@ -206,7 +206,7 @@ export default function Index({ datasets, templates, summary }: Props) {
             </div>
 
             <Dialog open={saveTemplateOpen} onOpenChange={setSaveTemplateOpen}>
-                <DialogContent className="overflow-hidden border-sidebar/10 p-0 shadow-2xl sm:max-w-lg [&>button]:text-white [&>button]:hover:bg-white/10">
+                <DialogContent className="overflow-hidden border-sidebar/10 p-0 shadow-xl sm:max-w-lg [&>button]:text-white [&>button]:hover:bg-white/10">
                     <DialogHeader className="bg-sidebar px-6 py-5 text-white">
                         <DialogTitle className="text-left text-xl font-black text-white">
                             Guardar plantilla
@@ -230,7 +230,7 @@ export default function Index({ datasets, templates, summary }: Props) {
             </Dialog>
 
             <Dialog open={templatesOpen} onOpenChange={setTemplatesOpen}>
-                <DialogContent className="max-h-[85vh] overflow-hidden border-sidebar/10 p-0 shadow-2xl sm:max-w-3xl [&>button]:text-white [&>button]:hover:bg-white/10">
+                <DialogContent className="max-h-[85vh] overflow-hidden border-sidebar/10 p-0 shadow-xl sm:max-w-3xl [&>button]:text-white [&>button]:hover:bg-white/10">
                     <DialogHeader className="bg-sidebar px-6 py-5 text-white">
                         <DialogTitle className="text-left text-xl font-black text-white">
                             Plantillas guardadas

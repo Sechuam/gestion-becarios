@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { GraduationCap, Search, Eye } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
@@ -177,9 +178,12 @@ export default function Index({
             cellClassName: 'text-foreground',
             render: (tutor: TutorRow) => (
                 <div className="flex items-center gap-3">
-                    <Avatar className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border border-border bg-muted">
-                        <AvatarImage src={tutor.avatar || ''} alt={tutor.name || ''} />
-                        <AvatarFallback className="text-xs font-bold text-muted-foreground bg-transparent">
+                    <Avatar className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
+                        <AvatarImage
+                            src={tutor.avatar || ''}
+                            alt={tutor.name || ''}
+                        />
+                        <AvatarFallback className="bg-transparent text-xs font-bold text-muted-foreground">
                             {tutor.name
                                 ? tutor.name
                                       .split(' ')
@@ -261,8 +265,8 @@ export default function Index({
                     title="Módulo de Tutores"
                     description="Consulta los tutores de empresa, su carga de becarios y la actividad reciente que generan en el sistema."
                     icon={<GraduationCap className="h-6 w-6" />}
-                    metrics={headerMetrics}
                 />
+                <MetricPills metrics={headerMetrics} />
 
                 <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
                     <div className="flex flex-wrap items-center gap-2">
@@ -270,7 +274,7 @@ export default function Index({
                             <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar tutor..."
-                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
+                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
                                 defaultValue={filters.search}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -280,7 +284,7 @@ export default function Index({
 
                         <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
                             <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
-                            <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                            <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                                 {tutors.data.length} / {tutors.total}
                             </span>
                         </div>
@@ -293,7 +297,7 @@ export default function Index({
                     onClearAll={clearAllFilters}
                 />
 
-                <div className="rounded-xl border border-sidebar/10 bg-white shadow-lg dark:bg-slate-900/60 overflow-hidden">
+                <div className="overflow-hidden rounded-xl border border-sidebar/10 bg-white shadow-lg dark:bg-slate-900/60">
                     <SimpleTable
                         columns={columns}
                         rows={tutors.data}

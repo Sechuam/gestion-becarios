@@ -37,13 +37,13 @@ export default function Create() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nuevo tipo de práctica" />
-            <div className="w-full space-y-4 p-4 dark:bg-slate-900/20 min-h-screen">
+            <div className="min-h-screen w-full space-y-4 p-4 dark:bg-slate-900/20">
                 {/* CABECERA ESTILIZADA */}
-                <div className="relative overflow-hidden rounded-[1.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-lg">
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-lg">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                     <div className="relative">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white border border-white/20 backdrop-blur-sm">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm">
                                 <Plus className="h-6 w-6" />
                             </div>
                             <h1 className="text-xl font-black tracking-tight text-white">
@@ -51,104 +51,179 @@ export default function Create() {
                             </h1>
                         </div>
                         <p className="mt-1 ml-[52px] text-xs font-medium text-white/60 italic">
-                            Define una nueva categoría para organizar las tareas de los becarios.
+                            Define una nueva categoría para organizar las tareas
+                            de los becarios.
                         </p>
                     </div>
                 </div>
 
-                <form onSubmit={submit} className="app-panel rounded-[1.5rem] border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900">
+                <form
+                    onSubmit={submit}
+                    className="app-panel rounded-xl border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900"
+                >
                     {/* SECCIÓN 01: INFORMACIÓN BÁSICA */}
                     <div className="mb-8">
                         <div className="mb-6 flex items-center gap-3 border-b border-sidebar/5 pb-3">
-                            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sidebar text-xs font-black text-white shadow-md">01</span>
+                            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sidebar text-xs font-black text-white shadow-md">
+                                01
+                            </span>
                             <div>
-                                <h2 className="text-sm font-black tracking-tight text-slate-800 dark:text-white uppercase tracking-widest">Identificación</h2>
+                                <h2 className="text-sm font-black tracking-tight tracking-widest text-slate-800 uppercase dark:text-white">
+                                    Identificación
+                                </h2>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-1.5">
-                                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-[#1f4f52]">Nombre del Tipo</Label>
+                                <Label
+                                    htmlFor="name"
+                                    className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                                >
+                                    Nombre del Tipo
+                                </Label>
                                 <Input
                                     id="name"
                                     value={data.name}
                                     placeholder="Ej: Desarrollo Frontend, Sistemas..."
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    className="h-10 border-sidebar/10 bg-slate-50/30 rounded-xl focus:border-sidebar/40 transition-all text-sm"
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
+                                    className="h-10 rounded-xl border-sidebar/10 bg-slate-50/30 text-sm transition-all focus:border-sidebar/40"
                                 />
-                                {errors.name && <p className="text-[10px] font-bold text-red-500 uppercase">{errors.name}</p>}
+                                {errors.name && (
+                                    <p className="text-[10px] font-bold text-red-500 uppercase">
+                                        {errors.name}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="priority" className="text-[10px] font-black uppercase tracking-widest text-[#1f4f52]">Prioridad Sugerida</Label>
+                                <Label
+                                    htmlFor="priority"
+                                    className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                                >
+                                    Prioridad Sugerida
+                                </Label>
                                 <Select
                                     value={data.priority}
-                                    onValueChange={(value) => setData('priority', value)}
+                                    onValueChange={(value) =>
+                                        setData('priority', value)
+                                    }
                                 >
-                                    <SelectTrigger className="h-10 border-sidebar/10 bg-slate-50/30 rounded-xl focus:border-sidebar/40 transition-all text-sm">
+                                    <SelectTrigger className="h-10 rounded-xl border-sidebar/10 bg-slate-50/30 text-sm transition-all focus:border-sidebar/40">
                                         <SelectValue placeholder="Selecciona prioridad" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-xl border-sidebar/10">
-                                        <SelectItem value="baja">Baja</SelectItem>
-                                        <SelectItem value="media">Media</SelectItem>
-                                        <SelectItem value="alta">Alta</SelectItem>
+                                        <SelectItem value="baja">
+                                            Baja
+                                        </SelectItem>
+                                        <SelectItem value="media">
+                                            Media
+                                        </SelectItem>
+                                        <SelectItem value="alta">
+                                            Alta
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {errors.priority && <p className="text-[10px] font-bold text-red-500 uppercase">{errors.priority}</p>}
+                                {errors.priority && (
+                                    <p className="text-[10px] font-bold text-red-500 uppercase">
+                                        {errors.priority}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
                         <div className="mt-6 space-y-1.5">
-                            <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-[#1f4f52]">Descripción</Label>
+                            <Label
+                                htmlFor="description"
+                                className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                            >
+                                Descripción
+                            </Label>
                             <textarea
                                 id="description"
                                 value={data.description}
-                                onChange={(e) => setData('description', e.target.value)}
+                                onChange={(e) =>
+                                    setData('description', e.target.value)
+                                }
                                 placeholder="Describe brevemente el propósito de este tipo de práctica..."
-                                className="min-h-[80px] w-full rounded-xl border border-sidebar/10 bg-slate-50/30 p-3 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-sidebar/40 focus:ring-4 focus:ring-sidebar/5"
+                                className="min-h-[80px] w-full rounded-xl border border-sidebar/10 bg-slate-50/30 p-3 text-sm text-slate-700 shadow-sm transition-all outline-none focus:border-sidebar/40 focus:ring-4 focus:ring-sidebar/5"
                             />
-                            {errors.description && <p className="text-[10px] font-bold text-red-500 uppercase">{errors.description}</p>}
+                            {errors.description && (
+                                <p className="text-[10px] font-bold text-red-500 uppercase">
+                                    {errors.description}
+                                </p>
+                            )}
                         </div>
                     </div>
 
                     {/* SECCIÓN 02: CONFIGURACIÓN VISUAL */}
                     <div className="mb-8">
                         <div className="mb-6 flex items-center gap-3 border-b border-sidebar/5 pb-3">
-                            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sidebar text-xs font-black text-white shadow-md">02</span>
+                            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sidebar text-xs font-black text-white shadow-md">
+                                02
+                            </span>
                             <div>
-                                <h2 className="text-sm font-black tracking-tight text-slate-800 dark:text-white uppercase tracking-widest">Estética y Estado</h2>
+                                <h2 className="text-sm font-black tracking-tight tracking-widest text-slate-800 uppercase dark:text-white">
+                                    Estética y Estado
+                                </h2>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-1.5">
-                                <Label htmlFor="color" className="text-[10px] font-black uppercase tracking-widest text-[#1f4f52]">Color Corporativo (HEX)</Label>
+                                <Label
+                                    htmlFor="color"
+                                    className="text-[10px] font-black tracking-widest text-[#1f4f52] uppercase"
+                                >
+                                    Color Corporativo (HEX)
+                                </Label>
                                 <div className="flex gap-2">
                                     <Input
                                         id="color"
                                         placeholder="#3b82f6"
                                         value={data.color}
-                                        onChange={(e) => setData('color', e.target.value)}
-                                        className="h-10 border-sidebar/10 bg-slate-50/30 rounded-xl text-sm"
+                                        onChange={(e) =>
+                                            setData('color', e.target.value)
+                                        }
+                                        className="h-10 rounded-xl border-sidebar/10 bg-slate-50/30 text-sm"
                                     />
-                                    <div 
-                                        className="h-10 w-10 shrink-0 rounded-xl border-2 border-white shadow-md transition-transform hover:scale-105" 
-                                        style={{ backgroundColor: data.color || '#e2e8f0' }}
+                                    <div
+                                        className="h-10 w-10 shrink-0 rounded-xl border-2 border-white shadow-md transition-transform hover:scale-105"
+                                        style={{
+                                            backgroundColor:
+                                                data.color || '#e2e8f0',
+                                        }}
                                     />
                                 </div>
-                                {errors.color && <p className="text-[10px] font-bold text-red-500 uppercase">{errors.color}</p>}
+                                {errors.color && (
+                                    <p className="text-[10px] font-bold text-red-500 uppercase">
+                                        {errors.color}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="flex items-center gap-4 pt-6">
-                                <div className="relative inline-flex h-10 items-center cursor-pointer rounded-xl border border-sidebar/10 bg-slate-50/50 px-4 transition-all hover:bg-slate-100">
+                                <div className="relative inline-flex h-10 cursor-pointer items-center rounded-xl border border-sidebar/10 bg-slate-50/50 px-4 transition-all hover:bg-slate-100">
                                     <input
                                         id="is_active"
                                         type="checkbox"
                                         checked={data.is_active}
-                                        onChange={(e) => setData('is_active', e.target.checked)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'is_active',
+                                                e.target.checked,
+                                            )
+                                        }
                                         className="h-4 w-4 rounded border-sidebar/20 text-sidebar focus:ring-sidebar"
                                     />
-                                    <Label htmlFor="is_active" className="ml-3 cursor-pointer text-[10px] font-black text-sidebar uppercase tracking-widest">¿Activar Tipo?</Label>
+                                    <Label
+                                        htmlFor="is_active"
+                                        className="ml-3 cursor-pointer text-[10px] font-black tracking-widest text-sidebar uppercase"
+                                    >
+                                        ¿Activar Tipo?
+                                    </Label>
                                 </div>
                             </div>
                         </div>
@@ -158,7 +233,7 @@ export default function Create() {
                         <Button
                             type="button"
                             variant="ghost"
-                            className="rounded-xl px-6 h-10 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all"
+                            className="h-10 rounded-xl px-6 text-[10px] font-black tracking-widest text-slate-400 uppercase transition-all hover:bg-slate-50 hover:text-slate-600"
                             asChild
                         >
                             <Link href="/tipos-practica">Cancelar</Link>
@@ -166,10 +241,12 @@ export default function Create() {
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="relative overflow-hidden h-10 rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-8 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-sidebar/20 hover:opacity-95 transition-all border-none"
+                            className="relative h-10 overflow-hidden rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-8 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
                         >
                             <div className="pointer-events-none absolute inset-x-0 top-0 h-3 bg-gradient-to-b from-white/10 to-transparent" />
-                            {processing ? 'Guardando...' : 'Crear Tipo de Práctica'}
+                            {processing
+                                ? 'Guardando...'
+                                : 'Crear Tipo de Práctica'}
                         </Button>
                     </div>
                 </form>

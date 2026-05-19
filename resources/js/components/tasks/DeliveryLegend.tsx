@@ -43,18 +43,27 @@ export function DeliveryLegend() {
                 >
                     <Info className="h-3.5 w-3.5 text-sidebar/60" />
                     <span>Leyenda</span>
-                    {open
-                        ? <ChevronUp className="h-3.5 w-3.5" />
-                        : <ChevronDown className="h-3.5 w-3.5" />
-                    }
+                    {open ? (
+                        <ChevronUp className="h-3.5 w-3.5" />
+                    ) : (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                    )}
                 </button>
 
                 {open && (
                     <div className="flex max-w-3xl flex-wrap gap-x-4 gap-y-1.5 border-t border-sidebar/10 bg-white px-3 py-2 dark:bg-slate-900">
                         {LEGEND_ITEMS.map((item) => (
-                            <div key={item.label} className="flex items-center gap-2">
-                                <div className={cn('h-2 w-2 rounded-full shrink-0', item.dotClass)} />
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-foreground">
+                            <div
+                                key={item.label}
+                                className="flex items-center gap-2"
+                            >
+                                <div
+                                    className={cn(
+                                        'h-2 w-2 shrink-0 rounded-full',
+                                        item.dotClass,
+                                    )}
+                                />
+                                <span className="text-[10px] font-bold tracking-wider text-foreground uppercase">
                                     {item.label}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground">

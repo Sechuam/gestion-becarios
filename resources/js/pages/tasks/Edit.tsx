@@ -131,7 +131,7 @@ export default function Edit({
                     onChange={(event) =>
                         setData('description', event.target.value)
                     }
-                    className="min-h-[120px] w-full rounded-2xl border border-sidebar/10 bg-white px-4 py-3 text-sm font-medium text-foreground shadow-sm transition-all outline-none focus-visible:border-sidebar focus-visible:ring-4 focus-visible:ring-sidebar/10"
+                    className="min-h-[120px] w-full rounded-xl border border-sidebar/10 bg-white px-4 py-3 text-sm font-medium text-foreground shadow-sm transition-all outline-none focus-visible:border-sidebar focus-visible:ring-4 focus-visible:ring-sidebar/10"
                 />
             </div>
         </>
@@ -158,7 +158,7 @@ export default function Edit({
                         key={intern.id}
                         value={String(intern.id)}
                         onClick={() => toggleIntern(intern.id)}
-                        className="h-9 rounded-xl border border-sidebar/10 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=on]:bg-sidebar data-[state=on]:text-sidebar-foreground dark:bg-slate-900"
+                        className="h-9 rounded-xl border border-sidebar/10 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=on]:border-slate-400 data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 dark:bg-slate-900 dark:data-[state=on]:border-slate-600 dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                     >
                         {intern.user?.name || `Becario #${intern.id}`}
                     </ToggleGroupItem>

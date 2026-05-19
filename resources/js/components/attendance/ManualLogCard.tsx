@@ -52,7 +52,8 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
     }
 
     return (
-        <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg dark:bg-slate-900">
+        <Card className="gap-0 rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
             <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
                     <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
@@ -71,7 +72,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
 
                             {selectedIntern && !showInternDropdown && (
                                 <div
-                                    className="flex h-11 cursor-pointer items-center justify-between rounded-2xl border border-sidebar/20 bg-card px-4 shadow-sm transition-colors hover:bg-slate-50"
+                                    className="flex h-11 cursor-pointer items-center justify-between rounded-xl border border-sidebar/20 bg-card px-4 shadow-sm transition-colors hover:bg-slate-50"
                                     onClick={() => {
                                         setInternSearch('');
                                         setShowInternDropdown(true);
@@ -112,12 +113,12 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                                             setShowInternDropdown(true)
                                         }
                                         placeholder="Buscar becario por nombre o centro..."
-                                        className="h-11 rounded-2xl border-sidebar/20 bg-card pl-10 text-foreground shadow-sm"
+                                        className="h-11 rounded-xl border-sidebar/20 bg-card pl-10 text-foreground shadow-sm"
                                     />
                                     <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
                                     {showInternDropdown && (
-                                        <div className="absolute top-[calc(100%+4px)] right-0 left-0 z-50 max-h-56 overflow-y-auto rounded-2xl border border-sidebar/20 bg-white shadow-xl dark:bg-slate-900">
+                                        <div className="absolute top-[calc(100%+4px)] right-0 left-0 z-50 max-h-56 overflow-y-auto rounded-xl border border-sidebar/20 bg-white shadow-xl dark:bg-slate-900">
                                             {filteredInterns.length > 0 ? (
                                                 filteredInterns.map(
                                                     (intern) => (
@@ -176,7 +177,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                                 Fecha de Registro
                             </Label>
                             <DatePicker
-                                className="h-11 rounded-2xl border-sidebar/20 bg-card text-foreground shadow-sm"
+                                className="h-11 rounded-xl border-sidebar/20 bg-card text-foreground shadow-sm"
                                 value={form.data.date}
                                 onChange={(value) =>
                                     form.setData('date', value)
@@ -197,7 +198,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                             </Label>
                             <Input
                                 type="time"
-                                className="h-11 rounded-2xl border-sidebar/20 bg-card text-foreground shadow-sm"
+                                className="h-11 rounded-xl border-sidebar/20 bg-card text-foreground shadow-sm"
                                 value={form.data.clock_in}
                                 onChange={(event) =>
                                     form.setData('clock_in', event.target.value)
@@ -216,7 +217,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                             </Label>
                             <Input
                                 type="time"
-                                className="h-11 rounded-2xl border-sidebar/20 bg-card text-foreground shadow-sm"
+                                className="h-11 rounded-xl border-sidebar/20 bg-card text-foreground shadow-sm"
                                 value={form.data.clock_out}
                                 onChange={(event) =>
                                     form.setData(
@@ -238,7 +239,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                             Notas y Observaciones
                         </Label>
                         <Input
-                            className="h-11 rounded-2xl border-sidebar/20 bg-card text-foreground shadow-sm"
+                            className="h-11 rounded-xl border-sidebar/20 bg-card text-foreground shadow-sm"
                             value={form.data.notes}
                             onChange={(event) =>
                                 form.setData('notes', event.target.value)

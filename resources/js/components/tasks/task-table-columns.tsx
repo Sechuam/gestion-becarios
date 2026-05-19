@@ -97,27 +97,27 @@ export const buildTaskTableColumns = ({ isIntern }: { isIntern: boolean }) => [
                 task.completed_at &&
                 task.due_date &&
                 new Date(task.completed_at.split(/T| /)[0]) >
-                new Date(task.due_date);
+                    new Date(task.due_date);
 
             const dotClass = isCompleted
                 ? isLate
                     ? 'bg-orange-500'
                     : 'bg-emerald-500'
                 : status === 'overdue'
-                    ? 'bg-rose-500'
-                    : status === 'soon'
-                        ? 'bg-amber-400'
-                        : 'bg-sidebar/20';
+                  ? 'bg-rose-500'
+                  : status === 'soon'
+                    ? 'bg-amber-400'
+                    : 'bg-sidebar/20';
 
             const smartLabel = isCompleted
                 ? isLate
                     ? 'Tarde'
                     : 'Completada'
                 : status === 'overdue'
-                    ? 'No entregada'
-                    : status === 'soon'
-                        ? 'Pronto'
-                        : formatDateEs(task.due_date);
+                  ? 'No entregada'
+                  : status === 'soon'
+                    ? 'Pronto'
+                    : formatDateEs(task.due_date);
 
             return task.due_date ? (
                 <Tooltip>
@@ -172,32 +172,32 @@ export const buildTaskTableColumns = ({ isIntern }: { isIntern: boolean }) => [
                         },
                         ...(!isIntern
                             ? [
-                                {
-                                    label: 'Editar tarea',
-                                    icon: 'edit' as const,
-                                    href: `/tareas/${task.id}/edit`,
-                                },
-                            ]
+                                  {
+                                      label: 'Editar tarea',
+                                      icon: 'edit' as const,
+                                      href: `/tareas/${task.id}/edit`,
+                                  },
+                              ]
                             : []),
                         ...(!isIntern && canDelete
                             ? [
-                                {
-                                    label: 'Eliminar tarea',
-                                    icon: 'delete' as const,
-                                    onClick: () => {
-                                        if (
-                                            confirm(
-                                                '¿Seguro que quieres eliminar esta tarea?',
-                                            )
-                                        ) {
-                                            router.delete(
-                                                `/tareas/${task.id}`,
-                                            );
-                                        }
-                                    },
-                                    variant: 'destructive' as const,
-                                },
-                            ]
+                                  {
+                                      label: 'Eliminar tarea',
+                                      icon: 'delete' as const,
+                                      onClick: () => {
+                                          if (
+                                              confirm(
+                                                  '¿Seguro que quieres eliminar esta tarea?',
+                                              )
+                                          ) {
+                                              router.delete(
+                                                  `/tareas/${task.id}`,
+                                              );
+                                          }
+                                      },
+                                      variant: 'destructive' as const,
+                                  },
+                              ]
                             : []),
                     ]}
                 />

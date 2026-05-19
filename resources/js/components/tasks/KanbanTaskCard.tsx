@@ -129,14 +129,16 @@ export default function KanbanTaskCard({
         <div
             ref={setNodeRef}
             style={style}
-            className={`relative task-surface-soft group rounded-xl border border-border p-4 pl-5 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${isDragging ? 'opacity-40 border-dashed z-0' : ''
-                } ${onOpenDetails ? 'cursor-pointer' : ''} ${highlightMove ? 'task-card-drop-highlight' : ''
-                }`}
+            className={`task-surface-soft group relative rounded-xl border border-border p-4 pl-5 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                isDragging ? 'z-0 border-dashed opacity-40' : ''
+            } ${onOpenDetails ? 'cursor-pointer' : ''} ${
+                highlightMove ? 'task-card-drop-highlight' : ''
+            }`}
             onClick={() => onOpenDetails?.(task)}
         >
             {task.practice_type?.color && (
                 <div
-                    className="absolute left-0 top-4 bottom-4 w-1 rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"
+                    className="absolute top-4 bottom-4 left-0 w-1 rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"
                     style={{ backgroundColor: task.practice_type.color }}
                 />
             )}
@@ -145,7 +147,7 @@ export default function KanbanTaskCard({
                     {onOpenDetails ? (
                         <button
                             type="button"
-                            className="block line-clam-2 text-left font-semibold leading-tight text-foreground hover:underline"
+                            className="line-clam-2 block text-left leading-tight font-semibold text-foreground hover:underline"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();
@@ -157,7 +159,7 @@ export default function KanbanTaskCard({
                     ) : (
                         <Link
                             href={`/tareas/${task.id}`}
-                            className="block line-clamp-2 font-semibold leading-tight text-foreground hover:underline"
+                            className="line-clamp-2 block leading-tight font-semibold text-foreground hover:underline"
                         >
                             {task.title}
                         </Link>
@@ -169,8 +171,7 @@ export default function KanbanTaskCard({
                 {canDrag && (
                     <button
                         type="button"
-                        className="absolute right-0 top-0 inline-flex cursor-grab items-center rounded-md border border-border/70 bg-muted/30 p-1.5 text-muted-foreground/70 shadow-sm transition hover:border-primary/30 hover:bg-primary/8 hover:text-foreground active:cursor-grabbing"
-
+                        className="absolute top-0 right-0 inline-flex cursor-grab items-center rounded-md border border-border/70 bg-muted/30 p-1.5 text-muted-foreground/70 shadow-sm transition hover:border-primary/30 hover:bg-primary/8 hover:text-foreground active:cursor-grabbing"
                         {...listeners}
                         {...attributes}
                         onClick={(event) => {
@@ -188,57 +189,82 @@ export default function KanbanTaskCard({
             <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
                 {/* Estado */}
                 <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
-                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
-                        'bg-slate-300': task.status === 'pending',
-                        'bg-blue-400': task.status === 'in_progress',
-                        'bg-violet-400': task.status === 'in_review',
-                        'bg-emerald-500': task.status === 'completed',
-                        'bg-rose-500': task.status === 'rejected',
-                    })} />
-                    <span className="text-[10px] uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                    <div
+                        className={cn('h-1.5 w-1.5 shrink-0 rounded-full', {
+                            'bg-slate-300': task.status === 'pending',
+                            'bg-blue-400': task.status === 'in_progress',
+                            'bg-violet-400': task.status === 'in_review',
+                            'bg-emerald-500': task.status === 'completed',
+                            'bg-rose-500': task.status === 'rejected',
+                        })}
+                    />
+                    <span className="text-[10px] tracking-wider uppercase">
+                        {getTaskStatusLabel(task.status)}
+                    </span>
                 </div>
 
                 {/* Prioridad */}
                 <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
-                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", {
-                        'bg-rose-500': task.priority === 'high',
-                        'bg-amber-400': task.priority === 'medium',
-                        'bg-emerald-400': task.priority === 'low',
-                    })} />
-                    <span className="text-[10px] uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                    <div
+                        className={cn('h-1.5 w-1.5 shrink-0 rounded-full', {
+                            'bg-rose-500': task.priority === 'high',
+                            'bg-amber-400': task.priority === 'medium',
+                            'bg-emerald-400': task.priority === 'low',
+                        })}
+                    />
+                    <span className="text-[10px] tracking-wider uppercase">
+                        {getTaskPriorityLabel(task.priority)}
+                    </span>
                 </div>
 
                 {/* Entrega */}
                 {task.due_date && (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80 cursor-default">
+                            <div className="flex cursor-default items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
                                 {(() => {
                                     const dStatus = dueStatus(task.due_date);
-                                    const isCompleted = task.status === 'completed';
-                                    const isLate = isCompleted && task.completed_at && task.due_date &&
-                                        new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
+                                    const isCompleted =
+                                        task.status === 'completed';
+                                    const isLate =
+                                        isCompleted &&
+                                        task.completed_at &&
+                                        task.due_date &&
+                                        new Date(
+                                            task.completed_at.split(/T| /)[0],
+                                        ) > new Date(task.due_date);
 
                                     const dotClass = isCompleted
-                                        ? (isLate ? 'bg-orange-500' : 'bg-emerald-500')
+                                        ? isLate
+                                            ? 'bg-orange-500'
+                                            : 'bg-emerald-500'
                                         : dStatus === 'overdue'
-                                            ? 'bg-rose-500'
-                                            : dStatus === 'soon'
-                                                ? 'bg-amber-400'
-                                                : 'bg-sidebar/20';
+                                          ? 'bg-rose-500'
+                                          : dStatus === 'soon'
+                                            ? 'bg-amber-400'
+                                            : 'bg-sidebar/20';
 
                                     const smartLabel = isCompleted
-                                        ? (isLate ? 'Tarde' : 'Completada')
+                                        ? isLate
+                                            ? 'Tarde'
+                                            : 'Completada'
                                         : dStatus === 'overdue'
-                                            ? 'No entregada'
-                                            : dStatus === 'soon'
-                                                ? 'Pronto'
-                                                : formatDateEs(task.due_date);
+                                          ? 'No entregada'
+                                          : dStatus === 'soon'
+                                            ? 'Pronto'
+                                            : formatDateEs(task.due_date);
 
                                     return (
                                         <>
-                                            <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", dotClass)} />
-                                            <span className="text-[10px] uppercase tracking-wider">{smartLabel}</span>
+                                            <div
+                                                className={cn(
+                                                    'h-1.5 w-1.5 shrink-0 rounded-full',
+                                                    dotClass,
+                                                )}
+                                            />
+                                            <span className="text-[10px] tracking-wider uppercase">
+                                                {smartLabel}
+                                            </span>
                                         </>
                                     );
                                 })()}
@@ -321,7 +347,7 @@ export default function KanbanTaskCard({
                     completeStatuses.includes(String(task.status)) && (
                         <Button
                             size="sm"
-                            className="h-8 w-full gap-1.5 px-3 bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white hover:opacity-95 border-0 shadow-sm"
+                            className="h-8 w-full gap-1.5 border-0 bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] px-3 text-white shadow-sm hover:opacity-95"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();

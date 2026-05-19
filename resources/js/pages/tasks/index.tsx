@@ -3,6 +3,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { Head, router, usePage } from '@inertiajs/react';
 import { KanbanSquare } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
@@ -381,8 +382,8 @@ export default function Index({
         const resolvedRejectReason =
             newStatus === 'rejected'
                 ? (rejectReason ??
-                    window.prompt('Indica el motivo del rechazo:') ??
-                    '')
+                  window.prompt('Indica el motivo del rechazo:') ??
+                  '')
                 : '';
 
         if (newStatus === 'rejected' && !resolvedRejectReason.trim()) {
@@ -455,8 +456,6 @@ export default function Index({
                     title="Tareas"
                     description="Sigue el trabajo por estado, detecta entregas sensibles y cambia entre kanban y tabla según el momento."
                     icon={<KanbanSquare className="h-6 w-6" />}
-                    metrics={headerMetrics}
-                    metricsVariant="solid"
                     actions={
                         <TasksHeaderActions
                             isTutor={isTutor}
@@ -468,6 +467,7 @@ export default function Index({
                         />
                     }
                 />
+                <MetricPills metrics={headerMetrics} />
 
                 <TaskFilters
                     filters={filters}
@@ -497,7 +497,7 @@ export default function Index({
                             if (taskId)
                                 setActiveDragTask(
                                     boardTasks.find((t) => t.id === taskId) ||
-                                    null,
+                                        null,
                                 );
                         }}
                         onDragOver={(event) => {

@@ -114,45 +114,84 @@ export default function TaskQuickViewSheet({
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent
                 side="right"
-                className="w-full gap-0 overflow-y-auto border-l border-sidebar/20 bg-background p-0 sm:max-w-xl flex flex-col"
+                className="flex w-full flex-col gap-0 overflow-y-auto border-l border-sidebar/20 bg-background p-0 sm:max-w-xl"
                 closeClassName="text-white hover:text-white/80 focus:ring-white/50"
             >
                 {task ? (
                     <>
-                        <SheetHeader className="relative space-y-3 bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 pb-6 pt-8 text-white shadow-xl">
+                        <SheetHeader className="relative space-y-3 bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 pt-8 pb-6 text-white shadow-xl">
                             <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
                             <div className="relative flex flex-wrap items-center gap-x-5 gap-y-2 pr-8">
                                 {/* Estado */}
                                 <div className="flex items-center gap-1.5 font-medium text-white/90">
-                                    <div className={cn("h-2 w-2 rounded-full shrink-0", {
-                                        'bg-slate-300': task.status === 'pending',
-                                        'bg-blue-400': task.status === 'in_progress',
-                                        'bg-violet-400': task.status === 'in_review',
-                                        'bg-emerald-500': task.status === 'completed',
-                                        'bg-rose-500': task.status === 'rejected',
-                                    })} />
-                                    <span className="text-[10px] uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                                    <div
+                                        className={cn(
+                                            'h-2 w-2 shrink-0 rounded-full',
+                                            {
+                                                'bg-slate-300':
+                                                    task.status === 'pending',
+                                                'bg-blue-400':
+                                                    task.status ===
+                                                    'in_progress',
+                                                'bg-violet-400':
+                                                    task.status === 'in_review',
+                                                'bg-emerald-500':
+                                                    task.status === 'completed',
+                                                'bg-rose-500':
+                                                    task.status === 'rejected',
+                                            },
+                                        )}
+                                    />
+                                    <span className="text-[10px] tracking-wider uppercase">
+                                        {getTaskStatusLabel(task.status)}
+                                    </span>
                                 </div>
 
                                 {/* Prioridad */}
                                 <div className="flex items-center gap-1.5 font-medium text-white/90">
-                                    <div className={cn("h-2 w-2 rounded-full shrink-0", {
-                                        'bg-rose-500': task.priority === 'high',
-                                        'bg-amber-400': task.priority === 'medium',
-                                        'bg-emerald-400': task.priority === 'low',
-                                    })} />
-                                    <span className="text-[10px] uppercase tracking-wider">{getTaskPriorityLabel(task.priority)}</span>
+                                    <div
+                                        className={cn(
+                                            'h-2 w-2 shrink-0 rounded-full',
+                                            {
+                                                'bg-rose-500':
+                                                    task.priority === 'high',
+                                                'bg-amber-400':
+                                                    task.priority === 'medium',
+                                                'bg-emerald-400':
+                                                    task.priority === 'low',
+                                            },
+                                        )}
+                                    />
+                                    <span className="text-[10px] tracking-wider uppercase">
+                                        {getTaskPriorityLabel(task.priority)}
+                                    </span>
                                 </div>
 
                                 {/* Entrega */}
                                 {task.due_date && (
                                     <div className="flex items-center gap-1.5 font-medium text-white/90">
-                                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
-                                            'bg-rose-500': dueStatus(task.due_date) === 'overdue',
-                                            'bg-amber-400': dueStatus(task.due_date) === 'soon',
-                                            'bg-white/20': dueStatus(task.due_date) === 'none',
-                                        })} />
-                                        <span className="text-[10px] uppercase tracking-wider">{dueMeta.label}</span>
+                                        <div
+                                            className={cn(
+                                                'h-2 w-2 shrink-0 rounded-full',
+                                                {
+                                                    'bg-rose-500':
+                                                        dueStatus(
+                                                            task.due_date,
+                                                        ) === 'overdue',
+                                                    'bg-amber-400':
+                                                        dueStatus(
+                                                            task.due_date,
+                                                        ) === 'soon',
+                                                    'bg-white/20':
+                                                        dueStatus(
+                                                            task.due_date,
+                                                        ) === 'none',
+                                                },
+                                            )}
+                                        />
+                                        <span className="text-[10px] tracking-wider uppercase">
+                                            {dueMeta.label}
+                                        </span>
                                     </div>
                                 )}
                             </div>
@@ -230,7 +269,8 @@ export default function TaskQuickViewSheet({
                                                 <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-white">
                                                     <MessageSquareText className="h-4 w-4 text-white/70" />
                                                     {Number(
-                                                        task.comments_count ?? 0,
+                                                        task.comments_count ??
+                                                            0,
                                                     )}
                                                 </p>
                                             </div>
@@ -244,7 +284,8 @@ export default function TaskQuickViewSheet({
                                                 <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-white">
                                                     <Paperclip className="h-4 w-4 text-white/70" />
                                                     {Number(
-                                                        task.attachments_count ?? 0,
+                                                        task.attachments_count ??
+                                                            0,
                                                     )}
                                                 </p>
                                             </div>
@@ -332,14 +373,22 @@ export default function TaskQuickViewSheet({
                         <SheetFooter className="relative mt-auto overflow-hidden border-t border-white/10 bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.15)]">
                             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(0deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0)_100%)]" />
                             <div className="relative flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
-                                <Button variant="outline" className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar" asChild>
+                                <Button
+                                    variant="outline"
+                                    className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar"
+                                    asChild
+                                >
                                     <Link href={`/tareas/${task.id}`}>
                                         Ver ficha completa
                                         <ChevronRight className="h-4 w-4" />
                                     </Link>
                                 </Button>
                                 {canEdit && (
-                                <Button variant="outline" className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar" asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="border-0 bg-white text-sidebar shadow-sm hover:bg-slate-50 hover:text-sidebar"
+                                        asChild
+                                    >
                                         <Link href={`/tareas/${task.id}/edit`}>
                                             <Pencil className="h-4 w-4" />
                                             Editar

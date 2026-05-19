@@ -42,7 +42,7 @@ export function EventDetailsFields({ data, errors, colors, setData }: Props) {
                         setData('title', event.currentTarget.value)
                     }
                     style={{ backgroundColor: 'white' }}
-                    className="input-white-bg h-10 rounded-2xl border-slate-300 px-4 text-slate-900 shadow-sm transition-all focus:ring-4 focus:ring-slate-100"
+                    className="input-white-bg h-10 rounded-xl border-slate-300 px-4 text-slate-900 shadow-sm transition-all focus:ring-4 focus:ring-slate-100"
                 />
                 {errors.title && (
                     <p className="ml-1 text-xs font-bold text-red-500">
@@ -62,11 +62,11 @@ export function EventDetailsFields({ data, errors, colors, setData }: Props) {
                         setData('description', event.currentTarget.value)
                     }
                     style={{ backgroundColor: 'white' }}
-                    className="input-white-bg min-h-[60px] resize-none rounded-2xl border-slate-300 px-4 py-3 text-xs text-slate-900 shadow-sm transition-all focus:ring-4 focus:ring-slate-100"
+                    className="input-white-bg min-h-[60px] resize-none rounded-xl border-slate-300 px-4 py-3 text-xs text-slate-900 shadow-sm transition-all focus:ring-4 focus:ring-slate-100"
                 />
             </div>
 
-            <div className="space-y-3 rounded-[1.5rem] border border-slate-100 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-800/30">
+            <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-800/30">
                 <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
                         <Label className="ml-1 text-[9px] font-black tracking-widest text-slate-900 uppercase">

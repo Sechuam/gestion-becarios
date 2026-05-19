@@ -9,7 +9,8 @@ type Props = {
 
 export function NonComplianceCard({ interns }: Props) {
     return (
-        <Card className="rounded-xl border-sidebar/10 bg-white shadow-lg xl:max-h-[34rem] dark:bg-slate-900">
+        <Card className="gap-0 rounded-xl border-slate-200 bg-white py-0 shadow-xs xl:max-h-[34rem] dark:border-slate-800 dark:bg-slate-900">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
             <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
                     <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
@@ -57,7 +58,7 @@ export function NonComplianceCard({ interns }: Props) {
                         </div>
                     ))
                 ) : (
-                    <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
+                    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-5 text-center">
                         <p className="text-sm font-medium text-slate-500 italic">
                             No hay becarios con deuda horaria crítica en este
                             momento. <br /> El cumplimiento es óptimo en la red.

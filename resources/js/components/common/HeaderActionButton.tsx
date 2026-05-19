@@ -11,7 +11,13 @@ interface HeaderActionButtonProps {
     className?: string;
 }
 
-export function HeaderActionButton({ label, href, onClick, icon, className }: HeaderActionButtonProps) {
+export function HeaderActionButton({
+    label,
+    href,
+    onClick,
+    icon,
+    className,
+}: HeaderActionButtonProps) {
     const content = (
         <>
             <div className="pointer-events-none absolute inset-x-0 top-0 h-3 bg-[linear-gradient(180deg,rgba(0,0,0,0.05)_0%,transparent_100%)]" />
@@ -21,16 +27,14 @@ export function HeaderActionButton({ label, href, onClick, icon, className }: He
     );
 
     const baseClasses = cn(
-        "relative overflow-hidden bg-white text-sidebar hover:bg-white/90 rounded-xl px-5 font-black shadow-lg transition-all h-9 border-none text-[10px] uppercase tracking-widest flex items-center justify-center min-w-[200px]",
-        className
+        'relative flex h-9 min-w-0 items-center justify-center overflow-hidden rounded-lg border-none bg-white px-4 text-[10px] font-black tracking-widest text-sidebar uppercase shadow-lg transition-all hover:bg-white/90 sm:min-w-[160px]',
+        className,
     );
 
     if (href) {
         return (
             <Button asChild className={baseClasses}>
-                <Link href={href}>
-                    {content}
-                </Link>
+                <Link href={href}>{content}</Link>
             </Button>
         );
     }

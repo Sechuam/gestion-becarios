@@ -320,13 +320,14 @@ export function ReportBuilderCard({
 
                         {preview.rows.length > 0 ? (
                             <div className="max-w-full overflow-x-auto rounded-lg border border-sidebar/10 bg-white dark:bg-slate-950">
+                                <div className="h-1 bg-gradient-to-r from-sidebar to-[#1f4f52]" />
                                 <table className="min-w-full divide-y divide-sidebar/10 text-sm">
-                                    <thead className="bg-sidebar text-sidebar-foreground">
+                                    <thead className="border-b border-slate-400 bg-slate-200 text-slate-700 dark:border-slate-800 dark:bg-slate-800/70 dark:text-slate-100">
                                         <tr>
                                             {preview.columns.map((column) => (
                                                 <th
                                                     key={column}
-                                                    className="px-3 py-2 text-left text-xs font-bold whitespace-nowrap text-white uppercase"
+                                                    className="px-3 py-2 text-left text-xs font-bold whitespace-nowrap text-slate-700 uppercase dark:text-slate-100"
                                                 >
                                                     {preview.availableColumns[
                                                         column

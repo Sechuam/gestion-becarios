@@ -383,7 +383,7 @@ export default function Create({
                                                             value={String(
                                                                 intern.id,
                                                             )}
-                                                            className="h-8 rounded-lg border border-sidebar/10 bg-white px-3 text-[10px] font-bold shadow-sm transition-all data-[state=on]:bg-sidebar data-[state=on]:text-sidebar-foreground"
+                                                            className="h-8 rounded-lg border border-sidebar/10 bg-white px-3 text-[10px] font-bold shadow-sm transition-all data-[state=on]:border-slate-400 data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 dark:data-[state=on]:border-slate-600 dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                                                         >
                                                             {intern.user
                                                                 ?.name ||

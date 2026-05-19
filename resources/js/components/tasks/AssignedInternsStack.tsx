@@ -1,5 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useInitials } from '@/hooks/use-initials';
 
 type InternAssignment = {
@@ -42,7 +46,10 @@ export default function AssignedInternsStack({
                                     key={intern.id}
                                     className="h-8 w-8 border-2 border-background bg-muted shadow-sm"
                                 >
-                                    <AvatarImage src={intern.user?.avatar || ''} alt={name} />
+                                    <AvatarImage
+                                        src={intern.user?.avatar || ''}
+                                        alt={name}
+                                    />
                                     <AvatarFallback className="bg-primary/15 text-[10px] font-semibold text-primary">
                                         {getInitials(name)}
                                     </AvatarFallback>
@@ -65,15 +72,23 @@ export default function AssignedInternsStack({
                         const email = intern.user?.email?.trim();
 
                         return (
-                            <div key={intern.id} className="flex items-center gap-2 text-xs">
+                            <div
+                                key={intern.id}
+                                className="flex items-center gap-2 text-xs"
+                            >
                                 <Avatar className="h-6 w-6">
-                                    <AvatarImage src={intern.user?.avatar || ''} alt={name} />
-                                    <AvatarFallback className="inline-flex h-full w-full items-center justify-center bg-primary/15 font-semibold text-primary text-[10px]">
+                                    <AvatarImage
+                                        src={intern.user?.avatar || ''}
+                                        alt={name}
+                                    />
+                                    <AvatarFallback className="inline-flex h-full w-full items-center justify-center bg-primary/15 text-[10px] font-semibold text-primary">
                                         {getInitials(name)}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="min-w-0">
-                                    <p className="truncate font-medium">{name}</p>
+                                    <p className="truncate font-medium">
+                                        {name}
+                                    </p>
                                     {email && (
                                         <p className="truncate text-muted-foreground">
                                             {email}

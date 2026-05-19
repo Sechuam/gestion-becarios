@@ -12,7 +12,12 @@ interface DashboardWidgetWrapperProps {
     className?: string;
 }
 
-export function DashboardWidgetWrapper({ id, children, isEditing, className }: DashboardWidgetWrapperProps) {
+export function DashboardWidgetWrapper({
+    id,
+    children,
+    isEditing,
+    className,
+}: DashboardWidgetWrapperProps) {
     const {
         attributes,
         listeners,
@@ -34,12 +39,14 @@ export function DashboardWidgetWrapper({ id, children, isEditing, className }: D
             ref={setNodeRef}
             style={style}
             className={cn(
-                "relative group",
-                isDragging && "opacity-50",
-                className
+                'group relative',
+                isDragging && 'opacity-50',
+                className,
             )}
         >
-            <style dangerouslySetInnerHTML={{__html: `
+            <style
+                dangerouslySetInnerHTML={{
+                    __html: `
                 @keyframes gentle-shake {
                     0%, 100% { transform: rotate(-0.3deg) translateY(0); }
                     50% { transform: rotate(0.3deg) translateY(-1.5px); }
@@ -47,7 +54,9 @@ export function DashboardWidgetWrapper({ id, children, isEditing, className }: D
                 .animate-gentle-shake {
                     animation: gentle-shake 3s ease-in-out infinite;
                 }
-            `}} />
+            `,
+                }}
+            />
             <AnimatePresence>
                 {isEditing && (
                     <motion.div
@@ -56,26 +65,29 @@ export function DashboardWidgetWrapper({ id, children, isEditing, className }: D
                         exit={{ opacity: 0, scale: 0.8 }}
                         className="absolute -top-2 -left-2 z-50 flex items-center gap-1"
                     >
-                        <div 
-                            {...attributes} 
+                        <div
+                            {...attributes}
                             {...listeners}
-                            className="flex h-8 w-8 cursor-grab items-center justify-center rounded-full bg-sidebar text-white shadow-lg active:cursor-grabbing hover:bg-sidebar/90 transition-colors"
+                            className="flex h-8 w-8 cursor-grab items-center justify-center rounded-full bg-sidebar text-white shadow-lg transition-colors hover:bg-sidebar/90 active:cursor-grabbing"
                         >
                             <GripVertical className="h-4 w-4" />
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
- 
-            <div className={cn(
-                "h-full transition-all duration-300",
-                isEditing && "ring-2 ring-sidebar/20 rounded-3xl ring-offset-4 animate-gentle-shake"
-            )}>
+
+            <div
+                className={cn(
+                    'h-full transition-all duration-300',
+                    isEditing &&
+                        'animate-gentle-shake rounded-xl ring-2 ring-sidebar/20 ring-offset-4',
+                )}
+            >
                 {children}
             </div>
-            
+
             {isEditing && (
-                <div className="absolute inset-0 z-40 bg-transparent rounded-3xl" />
+                <div className="absolute inset-0 z-40 rounded-xl bg-transparent" />
             )}
         </div>
     );

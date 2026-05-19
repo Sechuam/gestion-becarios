@@ -83,7 +83,7 @@ export function EventAttendeesPanel({
                 </span>
             </div>
 
-            <div className="space-y-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-800">
+            <div className="space-y-2 rounded-xl border border-slate-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-800">
                 <Input
                     placeholder="Buscar por nombre..."
                     value={searchTerm}
@@ -132,7 +132,7 @@ export function EventAttendeesPanel({
                             className={cn(
                                 'flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all',
                                 selectedAttendeeIds.includes(intern.user_id)
-                                    ? 'border-sidebar bg-sidebar/5 shadow-sm ring-1 ring-sidebar'
+                                    ? 'border-slate-400 bg-slate-200 shadow-sm ring-1 ring-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:ring-slate-600'
                                     : 'border-slate-100 bg-white shadow-sm hover:border-slate-200',
                             )}
                         >
@@ -150,7 +150,7 @@ export function EventAttendeesPanel({
                                 </div>
                             </div>
                             {selectedAttendeeIds.includes(intern.user_id) && (
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar text-white">
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-400 text-white dark:bg-slate-500">
                                     <Check className="h-3 w-3" />
                                 </div>
                             )}

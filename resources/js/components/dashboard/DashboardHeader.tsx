@@ -34,7 +34,6 @@ export function DashboardHeader({
             title={`Dashboard ${roleLabel}`}
             description="Control de rendimiento, tareas activas y seguimiento del programa de becarios en tiempo real."
             icon={<BarChart3 className="h-6 w-6" />}
-            metricsVariant="solid"
             variant="sidebar"
             actions={
                 <div className="flex flex-col gap-2">

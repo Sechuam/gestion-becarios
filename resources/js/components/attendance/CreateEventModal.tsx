@@ -137,7 +137,7 @@ export function CreateEventModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[720px] overflow-hidden rounded-[2.5rem] border-none bg-background p-0 shadow-2xl sm:max-w-[800px] dark:bg-slate-900">
+            <DialogContent className="max-h-[720px] overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[800px] dark:bg-slate-900">
                 <style>{`
                     .input-white-bg {
                         background-color: #ffffff !important;
@@ -179,13 +179,13 @@ export function CreateEventModal({
                     </div>
 
                     {/* Botonera Inferior */}
-                    <div className="flex items-center gap-3 border-t border-slate-100 bg-white p-8 dark:border-slate-800 dark:bg-slate-900">
+                    <div className="flex items-center gap-3 border-t border-slate-100 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
                         {event && (
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={handleDelete}
-                                className="flex h-12 w-12 items-center justify-center rounded-2xl border-red-100 bg-red-50 text-red-500 shadow-sm transition-all hover:bg-red-500 hover:text-white"
+                                className="flex h-10 w-12 items-center justify-center rounded-xl border-red-100 bg-red-50 text-red-500 shadow-sm transition-all hover:bg-red-500 hover:text-white"
                             >
                                 <Trash2 className="h-5 w-5" />
                             </Button>
@@ -194,14 +194,14 @@ export function CreateEventModal({
                             type="button"
                             variant="outline"
                             onClick={() => onOpenChange(false)}
-                            className="h-12 flex-1 rounded-2xl border-slate-200 text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase shadow-sm transition-all hover:bg-slate-50 hover:text-slate-700"
+                            className="h-10 flex-1 rounded-xl border-slate-200 text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase shadow-sm transition-all hover:bg-slate-50 hover:text-slate-700"
                         >
                             Cancelar
                         </Button>
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="h-12 flex-[2] rounded-2xl bg-[#1f4f52] text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-xl shadow-[#1f4f52]/20 transition-all hover:shadow-[#1f4f52]/30 active:scale-[0.98]"
+                            className="h-10 flex-[2] rounded-xl bg-[#1f4f52] text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-xl shadow-[#1f4f52]/20 transition-all hover:shadow-[#1f4f52]/30 active:scale-[0.98]"
                         >
                             {processing ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

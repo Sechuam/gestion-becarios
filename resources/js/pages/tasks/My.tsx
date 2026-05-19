@@ -8,12 +8,17 @@ import { cn } from '@/lib/utils';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { KanbanSquare, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
@@ -28,7 +33,11 @@ import { TaskFilters } from '@/components/tasks/TaskFilters';
 import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
 import { KanbanBoard } from '@/components/tasks/KanbanBoard';
 import { TasksHeaderActions } from '@/components/tasks/TasksHeaderActions';
-import { KANBAN_COLUMNS, TaskViewMode, BoardQuickFilter } from '@/lib/task-constants';
+import {
+    KANBAN_COLUMNS,
+    TaskViewMode,
+    BoardQuickFilter,
+} from '@/lib/task-constants';
 import { dueStatus, parseTaskSortableId } from '@/lib/task-utils';
 
 type Props = {
@@ -41,8 +50,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Mis tareas', href: '/tareas/mis' },
 ];
-
-
 
 export default function My({
     tasks,
@@ -66,7 +73,9 @@ export default function My({
     const [lastMoveMessage, setLastMoveMessage] = useState<string | null>(null);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
     const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-    const [highlightedTaskId, setHighlightedTaskId] = useState<number | null>(null);
+    const [highlightedTaskId, setHighlightedTaskId] = useState<number | null>(
+        null,
+    );
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -127,18 +136,25 @@ export default function My({
     };
 
     const clearAllFilters = () => {
-        router.get('/tareas/mis', {}, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
-        });
+        router.get(
+            '/tareas/mis',
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
     };
 
     const filteredBoardTasks = useMemo(() => {
         return tasks.data.filter((task: any) => {
             if (boardFilter === 'urgent') {
                 const due = dueStatus(task.due_date);
-                return (due === 'overdue' || due === 'soon') && task.status !== 'completed';
+                return (
+                    (due === 'overdue' || due === 'soon') &&
+                    task.status !== 'completed'
+                );
             }
 
             if (boardFilter === 'high') {
@@ -229,14 +245,18 @@ export default function My({
                 cellClassName: 'text-center',
                 render: (task: any) => (
                     <div className="flex items-center justify-center gap-2 font-medium text-sidebar dark:text-white/80">
-                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
-                            'bg-slate-300': task.status === 'pending',
-                            'bg-blue-400': task.status === 'in_progress',
-                            'bg-violet-400': task.status === 'in_review',
-                            'bg-emerald-500': task.status === 'completed',
-                            'bg-rose-500': task.status === 'rejected',
-                        })} />
-                        <span className="text-xs uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
+                        <div
+                            className={cn('h-2 w-2 shrink-0 rounded-full', {
+                                'bg-slate-300': task.status === 'pending',
+                                'bg-blue-400': task.status === 'in_progress',
+                                'bg-violet-400': task.status === 'in_review',
+                                'bg-emerald-500': task.status === 'completed',
+                                'bg-rose-500': task.status === 'rejected',
+                            })}
+                        />
+                        <span className="text-xs tracking-wider uppercase">
+                            {getTaskStatusLabel(task.status)}
+                        </span>
                     </div>
                 ),
             },
@@ -250,12 +270,15 @@ export default function My({
                     <div className="flex justify-center">
                         <span
                             className={cn(
-                                "inline-flex items-center justify-center rounded-full px-2 py-1 text-[9px] font-black uppercase tracking-widest w-20 shadow-sm transition-all",
+                                'inline-flex w-20 items-center justify-center rounded-full px-2 py-1 text-[9px] font-black tracking-widest uppercase shadow-sm transition-all',
                                 {
-                                    'bg-sidebar text-white shadow-sidebar/20': task.priority === 'high',
-                                    'bg-sidebar/70 text-white shadow-sidebar/10': task.priority === 'medium',
-                                    'bg-white text-sidebar border border-sidebar/20': task.priority === 'low',
-                                }
+                                    'bg-sidebar text-white shadow-sidebar/20':
+                                        task.priority === 'high',
+                                    'bg-sidebar/70 text-white shadow-sidebar/10':
+                                        task.priority === 'medium',
+                                    'border border-sidebar/20 bg-white text-sidebar':
+                                        task.priority === 'low',
+                                },
                             )}
                         >
                             {getTaskPriorityLabel(task.priority)}
@@ -270,31 +293,46 @@ export default function My({
                 render: (task: any) => {
                     const status = dueStatus(task.due_date);
                     const isCompleted = task.status === 'completed';
-                    const isLate = isCompleted && task.completed_at && task.due_date && 
-                                   new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
+                    const isLate =
+                        isCompleted &&
+                        task.completed_at &&
+                        task.due_date &&
+                        new Date(task.completed_at.split(/T| /)[0]) >
+                            new Date(task.due_date);
 
                     const dotClass = isCompleted
-                        ? (isLate ? 'bg-orange-500' : 'bg-emerald-500')
+                        ? isLate
+                            ? 'bg-orange-500'
+                            : 'bg-emerald-500'
                         : status === 'overdue'
-                            ? 'bg-rose-500'
-                            : status === 'soon'
-                                ? 'bg-amber-400'
-                                : 'bg-sidebar/20';
+                          ? 'bg-rose-500'
+                          : status === 'soon'
+                            ? 'bg-amber-400'
+                            : 'bg-sidebar/20';
 
                     const smartLabel = isCompleted
-                        ? (isLate ? 'Tarde' : 'Completada')
+                        ? isLate
+                            ? 'Tarde'
+                            : 'Completada'
                         : status === 'overdue'
-                            ? 'No entregada'
-                            : status === 'soon'
-                                ? 'Pronto'
-                                : formatDateEs(task.due_date);
+                          ? 'No entregada'
+                          : status === 'soon'
+                            ? 'Pronto'
+                            : formatDateEs(task.due_date);
 
                     return task.due_date ? (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <div className="flex items-center gap-2 font-medium text-sidebar dark:text-white/80 cursor-default">
-                                    <div className={cn("h-2 w-2 rounded-full shrink-0", dotClass)} />
-                                    <span className="text-xs uppercase tracking-wider">{smartLabel}</span>
+                                <div className="flex cursor-default items-center gap-2 font-medium text-sidebar dark:text-white/80">
+                                    <div
+                                        className={cn(
+                                            'h-2 w-2 shrink-0 rounded-full',
+                                            dotClass,
+                                        )}
+                                    />
+                                    <span className="text-xs tracking-wider uppercase">
+                                        {smartLabel}
+                                    </span>
                                 </div>
                             </TooltipTrigger>
                             <TooltipContent className="rounded-xl border-sidebar/20 font-medium">
@@ -313,7 +351,8 @@ export default function My({
     const activeFilterChips = useMemo(() => {
         const chips = [];
 
-        if (filters.search) chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
+        if (filters.search)
+            chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
         if (filters.status)
             chips.push({
                 key: 'status',
@@ -343,30 +382,48 @@ export default function My({
                 });
             }
         }
-        if (filters.due_from) chips.push({ key: 'due_from', label: `Desde: ${formatDateEs(filters.due_from)}` });
-        if (filters.due_to) chips.push({ key: 'due_to', label: `Hasta: ${formatDateEs(filters.due_to)}` });
+        if (filters.due_from)
+            chips.push({
+                key: 'due_from',
+                label: `Desde: ${formatDateEs(filters.due_from)}`,
+            });
+        if (filters.due_to)
+            chips.push({
+                key: 'due_to',
+                label: `Hasta: ${formatDateEs(filters.due_to)}`,
+            });
 
         return chips;
     }, [filters, practice_types]);
 
     const boardQuickFilters = useMemo(
         () => [
-            { key: 'all' as const, label: 'Todas', tooltip: 'Muestra todas las tareas sin filtrar', count: tasks.data.length },
+            {
+                key: 'all' as const,
+                label: 'Todas',
+                tooltip: 'Muestra todas las tareas sin filtrar',
+                count: tasks.data.length,
+            },
             {
                 key: 'urgent' as const,
                 label: 'Urgentes',
-                tooltip: 'Muestra tareas vencidas o que vencen pronto, que no han sido finalizadas',
+                tooltip:
+                    'Muestra tareas vencidas o que vencen pronto, que no han sido finalizadas',
                 count: tasks.data.filter((task: any) => {
                     const due = dueStatus(task.due_date);
-                    return (due === 'overdue' || due === 'soon') && task.status !== 'completed';
+                    return (
+                        (due === 'overdue' || due === 'soon') &&
+                        task.status !== 'completed'
+                    );
                 }).length,
             },
             {
                 key: 'high' as const,
                 label: 'Alta prioridad',
                 tooltip: 'Muestra solo tareas marcadas con prioridad Alta',
-                count: tasks.data.filter((task: any) => task.priority === 'high')
-                    .length,
+                count: tasks.data.filter(
+                    (task: any) => task.priority === 'high',
+                ).length,
             },
             {
                 key: 'review' as const,
@@ -386,16 +443,43 @@ export default function My({
             {},
             {
                 preserveScroll: true,
-                onSuccess: () =>
-                    {
-                        setSelectedTask(null);
-                        toast({
-                            title: 'Tarea entregada',
-                            description: `"${selectedTask.title}" se ha enviado a revisión.`,
-                        });
-                    },
+                onSuccess: () => {
+                    setSelectedTask(null);
+                    toast({
+                        title: 'Tarea entregada',
+                        description: `"${selectedTask.title}" se ha enviado a revisión.`,
+                    });
+                },
             },
         );
+
+    const headerMetrics = [
+        {
+            label: 'Resultados',
+            value: tasks.total,
+            hint: 'Total según filtros actuales',
+        },
+        {
+            label: 'Pendientes',
+            value: tasks.data.filter((task: any) => task.status === 'pending')
+                .length,
+            hint: 'En esta página',
+        },
+        {
+            label: 'En revisión',
+            value: tasks.data.filter((task: any) => task.status === 'in_review')
+                .length,
+            hint: 'Esperando validación',
+        },
+        {
+            label: 'Entrega sensible',
+            value: tasks.data.filter((task: any) => {
+                const due = dueStatus(task.due_date);
+                return due === 'overdue' || due === 'soon';
+            }).length,
+            hint: 'Atrasadas o próximas',
+        },
+    ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -406,36 +490,6 @@ export default function My({
                     title="Mis tareas"
                     description="Tu tablero personal de ejecución, con foco en entregas cercanas, revisión y cierre rápido."
                     icon={<KanbanSquare className="h-6 w-6" />}
-                    metricsVariant="solid"
-                    metrics={[
-                        {
-                            label: 'Resultados',
-                            value: tasks.total,
-                            hint: 'Total según filtros actuales',
-                        },
-                        {
-                            label: 'Pendientes',
-                            value: tasks.data.filter(
-                                (task: any) => task.status === 'pending',
-                            ).length,
-                            hint: 'En esta página',
-                        },
-                        {
-                            label: 'En revisión',
-                            value: tasks.data.filter(
-                                (task: any) => task.status === 'in_review',
-                            ).length,
-                            hint: 'Esperando validación',
-                        },
-                        {
-                            label: 'Entrega sensible',
-                            value: tasks.data.filter((task: any) => {
-                                const due = dueStatus(task.due_date);
-                                return due === 'overdue' || due === 'soon';
-                            }).length,
-                            hint: 'Atrasadas o próximas',
-                        },
-                    ]}
                     actions={
                         <TasksHeaderActions
                             isTutor={isTutor}
@@ -447,6 +501,7 @@ export default function My({
                         />
                     }
                 />
+                <MetricPills metrics={headerMetrics} />
 
                 <TaskFilters
                     filters={filters}
@@ -517,7 +572,8 @@ export default function My({
 
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                     <span className="text-sm font-medium text-muted-foreground">
-                        Página {tasks.current_page ?? 1} de {tasks.last_page ?? 1}
+                        Página {tasks.current_page ?? 1} de{' '}
+                        {tasks.last_page ?? 1}
                     </span>
                     <Pagination links={tasks.links} />
                 </div>
@@ -534,8 +590,7 @@ export default function My({
                 onComplete={submitTask}
                 onMoveTask={
                     !isIntern
-                        ? (task, status) =>
-                              updateTaskStatus(task, status, true)
+                        ? (task, status) => updateTaskStatus(task, status, true)
                         : undefined
                 }
                 availableStatuses={KANBAN_COLUMNS}

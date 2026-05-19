@@ -43,10 +43,14 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader className="border-b border-sidebar-border/80 pb-4 pt-2 group-data-[collapsible=icon]:px-0">
+            <SidebarHeader className="border-b border-sidebar-border/80 pt-2 pb-4 group-data-[collapsible=icon]:px-0">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild className="rounded-2xl bg-white/8 p-1.5 hover:bg-white/12 group-data-[collapsible=icon]:justify-center">
+                        <SidebarMenuButton
+                            size="lg"
+                            asChild
+                            className="rounded-xl bg-white/8 p-1.5 group-data-[collapsible=icon]:justify-center hover:bg-white/12"
+                        >
                             <Link href={dashboard()} prefetch>
                                 <AppLogo />
                             </Link>

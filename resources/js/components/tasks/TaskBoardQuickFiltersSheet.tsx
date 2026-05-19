@@ -30,7 +30,9 @@ export function TaskBoardQuickFiltersSheet({
     onFilterChange,
 }: Props) {
     const [open, setOpen] = useState(false);
-    const activeBoardFilter = filters.find((filter) => filter.key === activeFilter);
+    const activeBoardFilter = filters.find(
+        (filter) => filter.key === activeFilter,
+    );
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -65,7 +67,8 @@ export function TaskBoardQuickFiltersSheet({
                         Filtros rápidos
                     </SheetTitle>
                     <SheetDescription className="text-xs">
-                        Cambia la lectura del tablero sin mover los filtros principales.
+                        Cambia la lectura del tablero sin mover los filtros
+                        principales.
                     </SheetDescription>
                 </SheetHeader>
 
@@ -76,7 +79,7 @@ export function TaskBoardQuickFiltersSheet({
                             type="button"
                             className={`rounded-xl border p-3 text-left shadow-sm transition-all ${
                                 activeFilter === filter.key
-                                    ? 'border-sidebar bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white shadow-sidebar/20'
+                                    ? 'border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white'
                                     : 'border-sidebar/10 bg-white text-foreground hover:border-sidebar/30 hover:bg-slate-50'
                             }`}
                             onClick={() => {
@@ -91,7 +94,7 @@ export function TaskBoardQuickFiltersSheet({
                                 <span
                                     className={`rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums ${
                                         activeFilter === filter.key
-                                            ? 'bg-white/20 text-white'
+                                            ? 'border border-slate-400 bg-slate-100 text-slate-800 dark:border-slate-500 dark:bg-slate-600 dark:text-white'
                                             : 'border border-sidebar/10 bg-slate-100 text-sidebar'
                                     }`}
                                 >
@@ -102,7 +105,7 @@ export function TaskBoardQuickFiltersSheet({
                                 <p
                                     className={`mt-1.5 text-[11px] leading-snug ${
                                         activeFilter === filter.key
-                                            ? 'text-white/75'
+                                            ? 'text-slate-600 dark:text-slate-200'
                                             : 'text-muted-foreground'
                                     }`}
                                 >

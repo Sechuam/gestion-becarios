@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Building2, Plus, Search, FileDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
@@ -435,16 +436,16 @@ export default function Index({
                     title="Centros Educativos"
                     description="Gestiona instituciones, universidades y centros de formación con una visión rápida del estado de tu red de convenios."
                     icon={<Building2 className="h-6 w-6" />}
-                    metrics={headerMetrics}
                     actions={
                         canManage ? (
-                            <HeaderActionButton 
+                            <HeaderActionButton
                                 label="Añadir Centro"
                                 href="/centros/create"
                             />
                         ) : undefined
                     }
                 />
+                <MetricPills metrics={headerMetrics} />
 
                 {/* FILTROS */}
                 <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
@@ -453,16 +454,20 @@ export default function Index({
                             <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar centro..."
-                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
+                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
                                 value={filters.search || ''}
-                                onChange={(e) => handleFilter('search', e.target.value)}
+                                onChange={(e) =>
+                                    handleFilter('search', e.target.value)
+                                }
                             />
                         </div>
 
                         <div className="min-w-[120px] flex-1">
                             <Select
                                 value={filters.trashed || 'none'}
-                                onValueChange={(v) => handleFilter('trashed', v)}
+                                onValueChange={(v) =>
+                                    handleFilter('trashed', v)
+                                }
                             >
                                 <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
                                     <SelectValue>
@@ -474,9 +479,15 @@ export default function Index({
                                     </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent className="rounded-lg border-sidebar/20">
-                                    <SelectItem value="none">Solo Activos</SelectItem>
-                                    <SelectItem value="only">Archivados</SelectItem>
-                                    <SelectItem value="with">Ver Todos</SelectItem>
+                                    <SelectItem value="none">
+                                        Solo Activos
+                                    </SelectItem>
+                                    <SelectItem value="only">
+                                        Archivados
+                                    </SelectItem>
+                                    <SelectItem value="with">
+                                        Ver Todos
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -489,22 +500,25 @@ export default function Index({
                                 <DialogTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="h-8 rounded-lg border-sidebar/20 bg-card px-4 text-[10px] font-black uppercase tracking-widest text-sidebar hover:bg-sidebar hover:text-white transition-all shadow-sm"
+                                        className="h-8 rounded-lg border-sidebar/20 bg-card px-4 text-[10px] font-black tracking-widest text-sidebar uppercase shadow-sm transition-all hover:bg-sidebar hover:text-white"
                                     >
                                         <FileDown className="mr-2 h-4 w-4" />
                                         Exportar Excel
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="max-w-xl rounded-[2.5rem] border-sidebar/10 p-8 shadow-2xl">
+                                <DialogContent className="max-w-xl rounded-xl border-sidebar/10 p-5 shadow-xl">
                                     <DialogHeader>
                                         <DialogTitle className="text-2xl font-black tracking-tight text-slate-800">
                                             Exportación Personalizada
                                         </DialogTitle>
                                         <DialogDescription className="text-base font-medium text-slate-500 italic">
-                                            Elige las columnas que quieres incluir en el archivo Excel. Se respetarán los filtros actuales de la tabla.
+                                            Elige las columnas que quieres
+                                            incluir en el archivo Excel. Se
+                                            respetarán los filtros actuales de
+                                            la tabla.
                                         </DialogDescription>
                                     </DialogHeader>
-                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 mt-4">
+                                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                         {exportColumns.map((column) => {
                                             const isChecked =
                                                 selectedColumns.includes(
@@ -513,7 +527,7 @@ export default function Index({
                                             return (
                                                 <label
                                                     key={column.key}
-                                                    className="flex items-center gap-3 rounded-2xl border border-sidebar/10 bg-slate-50 px-4 py-3 text-xs font-black uppercase tracking-widest text-[#1f4f52]/80 hover:bg-sidebar/5 cursor-pointer transition-colors"
+                                                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-sidebar/10 bg-slate-50 px-4 py-3 text-xs font-black tracking-widest text-[#1f4f52]/80 uppercase transition-colors hover:bg-sidebar/5"
                                                 >
                                                     <Checkbox
                                                         checked={isChecked}
@@ -554,8 +568,8 @@ export default function Index({
                                         >
                                             Cancelar
                                         </Button>
-                                        <Button 
-                                            className="h-11 rounded-2xl bg-sidebar px-8 font-black text-white shadow-lg shadow-sidebar/20"
+                                        <Button
+                                            className="h-11 rounded-xl bg-sidebar px-8 font-black text-white shadow-lg shadow-sidebar/20"
                                             onClick={handleExport}
                                             disabled={
                                                 selectedColumns.length === 0
@@ -568,9 +582,9 @@ export default function Index({
                             </Dialog>
                         )}
 
-                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800 ml-auto">
+                        <div className="ml-auto flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
                             <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
-                            <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                            <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                                 {schools.data.length} / {schools.total} centros
                             </span>
                         </div>
@@ -598,7 +612,8 @@ export default function Index({
                 {/* PAGINACIÓN */}
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                     <span className="text-sm font-medium text-muted-foreground">
-                        Página {schools.current_page ?? 1} de {schools.last_page ?? 1}
+                        Página {schools.current_page ?? 1} de{' '}
+                        {schools.last_page ?? 1}
                     </span>
                     <Pagination links={schools.links} />
                 </div>
