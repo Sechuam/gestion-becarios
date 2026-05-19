@@ -24,6 +24,7 @@ import {
     ExternalLink
 } from 'lucide-react';
 import { Pagination } from '@/components/common/Pagination';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { StatusBadge } from '@/components/interns/StatusBadge';
@@ -43,6 +44,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
+import { cn } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -170,10 +172,28 @@ export default function Show({
         }
     }, [filters, interns.data.length]);
 
-    const breadcrumbs: BreadcrumbItem[] = [
+    const breadcrumbs: BreadcrumbItem[] = isIntern ? [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Mi Centro', href: '/mi-centro' },
+    ] : [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Centros Educativos', href: '/centros' },
         { title: educationCenter.name, href: `/centros/${educationCenter.id}` },
+    ];
+
+    const headerMetrics = [
+        {
+            label: 'Becarios registrados',
+            value: interns.total,
+        },
+        {
+            label: 'Plazas de convenio',
+            value: educationCenter.agreement_slots ?? 'Ilimitadas',
+        },
+        {
+            label: 'Vencimiento convenio',
+            value: educationCenter.agreement_expires_at ? formatDateEs(educationCenter.agreement_expires_at) : 'Sin vencimiento',
+        }
     ];
 
     return (
@@ -181,65 +201,39 @@ export default function Show({
             <Head title={`Centro: ${educationCenter.name}`} />
 
             <div className="space-y-6">
-                {/* CABECERA DE ACCIÓN RÁPIDA */}
-                <div className="flex items-center justify-between px-2">
-                    <Button
-                        variant="default"
-                        className="bg-gradient-to-r from-sidebar to-[#1f4f52] text-white hover:opacity-95 shadow-sm rounded-xl font-bold uppercase tracking-widest text-[10px] border-0"
-                        asChild
-                    >
-                        <Link href="/centros">
-                            <ArrowLeft className="h-4 w-4 mr-2" /> Volver al listado
-                        </Link>
-                    </Button>
-                </div>
-
-                {/* HERO INTEGRADO CON GRADIENTE */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-2xl md:p-10">
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
-                    <div className="relative flex flex-wrap items-center gap-8">
-                        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/10 border-4 border-white/20 shadow-2xl backdrop-blur-md">
-                            <School className="h-10 w-10 text-white" />
-                        </div>
-
-                        <div className="flex-1 space-y-2">
-                            <div className="flex flex-wrap items-center gap-4">
-                                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-none">
-                                    {educationCenter.name}
-                                </h1>
-                                {isTrashed && (
-                                    <Badge variant="destructive" className="bg-white/20 text-white border-white/30 backdrop-blur-md rounded-lg h-6 text-[10px]">
-                                        Archivado
-                                    </Badge>
-                                )}
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/80">
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="h-4 w-4" />
-                                    <span className="font-bold tracking-tight text-xs uppercase">{educationCenter.city || 'Ciudad no especificada'}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Hash className="h-4 w-4" />
-                                    <span className="font-bold tracking-tight text-xs uppercase">{educationCenter.code || 'Sin código'}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-3 pt-2">
+                <ModuleHeader
+                    title={educationCenter.name}
+                    description={`Ficha oficial del centro de formación. Localidad: ${educationCenter.city || 'No especificada'} · Código de centro: ${educationCenter.code || 'Sin código'}`}
+                    icon={<School className="h-5 w-5" />}
+                    metrics={headerMetrics}
+                    metricsVariant="solid"
+                    variant="sidebar"
+                    actions={
+                        <div className="flex flex-wrap items-center gap-2">
+                            {!isIntern && (
+                                <Button
+                                    variant="default"
+                                    className="h-8 rounded-lg border border-slate-200 bg-white text-sidebar hover:bg-slate-50 shadow-xs text-xs font-bold"
+                                    asChild
+                                >
+                                    <Link href="/centros">
+                                        <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Volver al listado
+                                    </Link>
+                                </Button>
+                            )}
                             {isTrashed ? (
                                 canManage && (
-                                    <>
+                                    <div className="flex gap-2">
                                         <Button
                                             variant="outline"
-                                            className="bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-2xl px-6 font-bold"
+                                            className="h-8 rounded-lg bg-white/10 border-white/20 text-white hover:bg-white/20 px-3 font-bold text-xs"
                                             onClick={() => router.post(`/centros/${educationCenter.id}/restore`)}
                                         >
                                             Restaurar
                                         </Button>
                                         <Button
                                             variant="destructive"
-                                            className="rounded-2xl px-6 font-bold"
+                                            className="h-8 rounded-lg px-3 font-bold text-xs"
                                             onClick={() => {
                                                 if (confirm('¿Seguro que quieres eliminar definitivamente este centro?')) {
                                                     router.delete(`/centros/${educationCenter.id}/force`);
@@ -248,36 +242,38 @@ export default function Show({
                                         >
                                             Eliminar Definitivo
                                         </Button>
-                                    </>
+                                    </div>
                                 )
                             ) : (
-                                canManage && (
+                                canManage && !isIntern && (
                                     <ConfirmNavigationButton
                                         href={`/centros/${educationCenter.id}/edit`}
                                         title="Confirmar edición"
                                         description={`Vas a editar la ficha de ${educationCenter.name}.`}
                                         confirmLabel="Ir a editar"
-                                        className="bg-white text-sidebar hover:bg-white/90 rounded-2xl px-8 font-black shadow-lg transition-all"
+                                        className="h-8 bg-white text-sidebar hover:bg-white/90 rounded-lg px-4 font-black shadow-xs text-xs"
                                     >
-                                        Editar Información
+                                        Editar Ficha
                                     </ConfirmNavigationButton>
                                 )
                             )}
                         </div>
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* PANEL ÚNICO UNIFICADO */}
                 <Card className="app-panel rounded-3xl overflow-hidden border-sidebar/10 pt-0 pb-0 shadow-2xl">
                     <Tabs defaultValue="general" className="w-full">
-                        {/* NAVEGACIÓN INTEGRADA */}
                         <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
-                            <TabsList className="h-auto w-full grid grid-cols-1 gap-2 bg-transparent p-0 md:h-12 md:grid-cols-3">
+                            <TabsList className={cn(
+                                "h-auto w-full grid grid-cols-1 gap-2 bg-transparent p-0 md:h-12",
+                                isIntern ? "md:grid-cols-2" : "md:grid-cols-3"
+                            )}>
                                 {[
                                     { value: 'general', label: 'Información General', icon: Info },
                                     { value: 'becarios', label: `Becarios (${interns.total})`, icon: Users },
-                                    { value: 'seguimiento', label: 'Seguimiento y Auditoría', icon: HistoryIcon },
-                                ].map((tab) => (
+                                    !isIntern && { value: 'seguimiento', label: 'Seguimiento y Auditoría', icon: HistoryIcon },
+                                ].filter((tab): tab is { value: string; label: string; icon: any } => !!tab).map((tab) => (
                                     <TabsTrigger
                                         key={tab.value}
                                         value={tab.value}
@@ -292,12 +288,12 @@ export default function Show({
                             </TabsList>
                         </div>
 
-                        <CardContent className="p-8">
+                        <CardContent className="p-5">
                             {/* PESTAÑA GENERAL */}
-                            <TabsContent value="general" className="mt-0 space-y-12 animate-in fade-in duration-500">
-                                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-                                    <div className="md:col-span-8 space-y-10">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                            <TabsContent value="general" className="mt-0 space-y-6 animate-in fade-in duration-500">
+                                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                                    <div className="md:col-span-8 space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                                             {[
                                                 { label: 'Código de Centro', value: educationCenter.code, icon: Hash },
                                                 { label: 'Localidad / Ciudad', value: educationCenter.city, icon: MapPin },
@@ -307,61 +303,63 @@ export default function Show({
                                                 { label: 'Teléfono', value: educationCenter.phone, icon: Phone },
                                                 { label: 'Sitio Web', value: educationCenter.web, icon: Globe, isLink: true, href: educationCenter.web, target: '_blank' },
                                             ].map((item, i) => (
-                                                <div key={i} className="space-y-1.5 group">
-                                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest flex items-center gap-2">
-                                                        <item.icon className="h-3 w-3" /> {item.label}
+                                                <div key={i} className="space-y-1 group">
+                                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest flex items-center gap-1.5">
+                                                        <item.icon className="h-3.5 w-3.5 text-sidebar/65 dark:text-white/60" /> {item.label}
                                                     </p>
                                                     {item.isLink && item.value ? (
-                                                        <a href={item.href} target={item.target} className="text-sm font-bold text-primary hover:underline block truncate">
+                                                        <a href={item.href} target={item.target} className="text-xs font-semibold text-primary hover:underline block truncate">
                                                             {item.value}
                                                         </a>
                                                     ) : (
-                                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{item.value || '—'}</p>
+                                                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-100">{item.value || '—'}</p>
                                                     )}
                                                 </div>
                                             ))}
-                                            <div className="md:col-span-2 space-y-1.5">
-                                                <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Dirección Completa</p>
+                                            <div className="md:col-span-2 space-y-1">
+                                                <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest flex items-center gap-1.5">
+                                                    <MapPin className="h-3.5 w-3.5 text-sidebar/65 dark:text-white/60" /> Dirección Completa
+                                                </p>
                                                 {educationCenter.address ? (
                                                     <a
                                                         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${educationCenter.address}, ${educationCenter.city || ''}`)}`}
                                                         target="_blank"
-                                                        className="text-sm font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 transition-colors flex items-center gap-2"
+                                                        className="text-xs font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-600 transition-colors flex items-center gap-1.5"
                                                     >
                                                         {educationCenter.address} <ExternalLink className="h-3 w-3 opacity-50" />
                                                     </a>
-                                                ) : <p className="text-sm font-bold text-slate-400">—</p>}
+                                                ) : <p className="text-xs font-semibold text-slate-400">—</p>}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="md:col-span-4 translate-y-[-10px]">
-                                        <div className="space-y-4 rounded-3xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-6 shadow-xl shadow-sidebar/10">
-                                            <h4 className="mb-4 flex items-center gap-2 text-xs font-black uppercase text-white/75">
-                                                <FileText className="h-3 w-3" /> Convenio de Prácticas
+                                    <div className="md:col-span-4">
+                                        <div className="space-y-3.5 rounded-2xl bg-gradient-to-br from-sidebar to-[#1f4f52] p-4 shadow-xl shadow-sidebar/10">
+                                            <h4 className="mb-2.5 flex items-center gap-1.5 text-[10px] font-black uppercase text-white/75 tracking-wider">
+                                                <FileText className="h-3.5 w-3.5" /> Convenio de Prácticas
                                             </h4>
 
-                                            <div className="space-y-4">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-medium text-white/70">Fecha Firma</span>
-                                                    <span className="text-sm font-bold text-white">{formatDateEs(educationCenter.agreement_signed_at)}</span>
+                                            <div className="space-y-2.5 border-t border-white/10 pt-2.5">
+                                                <div className="flex justify-between items-center text-xs">
+                                                    <span className="font-medium text-white/70">Fecha Firma</span>
+                                                    <span className="font-semibold text-white">{formatDateEs(educationCenter.agreement_signed_at)}</span>
                                                 </div>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-medium text-white/70">Vencimiento</span>
-                                                    <span className="text-sm font-bold text-white">{formatDateEs(educationCenter.agreement_expires_at)}</span>
+                                                <div className="flex justify-between items-center text-xs">
+                                                    <span className="font-medium text-white/70">Vencimiento</span>
+                                                    <span className="font-semibold text-white">{formatDateEs(educationCenter.agreement_expires_at)}</span>
                                                 </div>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-medium text-white/70">Plazas Máximas</span>
-                                                    <span className="text-sm font-bold text-white">{educationCenter.agreement_slots ?? 'Ilimitadas'}</span>
+                                                <div className="flex justify-between items-center text-xs">
+                                                    <span className="font-medium text-white/70">Plazas Máximas</span>
+                                                    <span className="font-semibold text-white">{educationCenter.agreement_slots ?? 'Ilimitadas'}</span>
                                                 </div>
                                             </div>
 
                                             {agreement_url && (
-                                                <div className="pt-2 grid grid-cols-2 gap-3">
-                                                    <Button variant="outline" size="sm" className="rounded-xl border-white/25 bg-white/10 text-white hover:bg-white/20" asChild>
+                                                <div className="pt-2 grid grid-cols-2 gap-2">
+                                                    <Button variant="outline" size="sm" className="h-8 rounded-lg border-white/20 bg-white/10 text-white hover:bg-white/20 text-xs" asChild>
                                                         <a href={agreement_url} target="_blank">Ver</a>
                                                     </Button>
-                                                    <Button size="sm" className="rounded-xl bg-white text-sidebar hover:bg-white/90" asChild>
+                                                    <Button size="sm" className="h-8 rounded-lg bg-white text-sidebar hover:bg-white/90 text-xs font-bold" asChild>
                                                         <a href={agreement_url} download>Descargar</a>
                                                     </Button>
                                                 </div>
@@ -372,23 +370,23 @@ export default function Show({
                             </TabsContent>
 
                             {/* PESTAÑA BECARIOS */}
-                            <TabsContent value="becarios" className="mt-0 space-y-8 animate-in fade-in duration-500">
+                            <TabsContent value="becarios" className="mt-0 space-y-4 animate-in fade-in duration-500">
                                 {/* BARRA DE HERRAMIENTAS DE BECARIOS */}
-                                <div className="mb-8 rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                                <div className="rounded-xl border border-sidebar/10 bg-white/70 backdrop-blur-md p-1.5 shadow-xs transition-all dark:bg-slate-900/60">
                                     <div className="flex flex-wrap items-center gap-2">
                                         <div className="relative w-full flex-none sm:w-64">
                                             <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                                             <Input
                                                 placeholder="Buscar por nombre o DNI..."
-                                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
+                                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-xs focus:ring-sidebar/20"
                                                 defaultValue={filters?.search}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: e.target.value, status: filters?.status, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
                                             />
                                         </div>
 
-                                        <div className="min-w-[150px] flex-1">
+                                        <div className="min-w-[140px] flex-1">
                                             <select
-                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:bg-slate-50"
+                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-semibold text-foreground shadow-xs transition-colors hover:bg-slate-50"
                                                 value={filters?.status ?? ''}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: e.target.value || undefined, order: filters?.order }, { preserveState: true, preserveScroll: true, replace: true })}
                                             >
@@ -397,12 +395,11 @@ export default function Show({
                                                 <option value="completed">Finalizados</option>
                                                 <option value="abandoned">Abandonados</option>
                                             </select>
-
                                         </div>
 
-                                        <div className="min-w-[150px] flex-1">
+                                        <div className="min-w-[140px] flex-1">
                                             <select
-                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:bg-slate-50"
+                                                className="h-8 w-full rounded-lg border border-sidebar/10 bg-card px-3 text-[11px] font-semibold text-foreground shadow-xs transition-colors hover:bg-slate-50"
                                                 value={filters?.order ?? 'az'}
                                                 onChange={(e) => router.get(`/centros/${educationCenter.id}`, { search: filters?.search, status: filters?.status, order: e.target.value }, { preserveState: true, preserveScroll: true, replace: true })}
                                             >
@@ -415,21 +412,21 @@ export default function Show({
                                         {canExport && (
                                             <Dialog open={exportOpen} onOpenChange={setExportOpen}>
                                                 <DialogTrigger asChild>
-                                                    <Button className="h-8 flex-1 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-[10px] font-black uppercase tracking-widest text-white shadow-sm sm:flex-none">
+                                                    <Button className="h-8 flex-1 rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-[9px] font-black uppercase tracking-widest text-white shadow-xs sm:flex-none">
                                                         <FileDown className="mr-1.5 h-3.5 w-3.5" />
                                                         Exportar Excel
                                                     </Button>
                                                 </DialogTrigger>
-                                                <DialogContent className="max-w-xl rounded-3xl border-none p-8">
+                                                <DialogContent className="max-w-xl rounded-3xl border-none p-6">
                                                     <DialogHeader>
                                                         <DialogTitle className="text-xl font-bold">Personalizar Exportación</DialogTitle>
-                                                        <DialogDescription className="text-slate-500 py-2">
+                                                        <DialogDescription className="text-slate-500 py-1.5 text-xs">
                                                             Selecciona los campos que deseas incluir en el informe de {interns.total} alumnos.
                                                         </DialogDescription>
                                                     </DialogHeader>
-                                                    <div className="grid grid-cols-2 gap-3 py-6">
+                                                    <div className="grid grid-cols-2 gap-3 py-4">
                                                         {exportColumns.map((column) => (
-                                                            <label key={column.key} className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 p-3 transition-colors hover:bg-slate-50">
+                                                            <label key={column.key} className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 p-2.5 transition-colors hover:bg-slate-50">
                                                                 <Checkbox
                                                                     checked={selectedColumns.includes(column.key)}
                                                                     onCheckedChange={(checked) => {
@@ -437,19 +434,19 @@ export default function Show({
                                                                         else setSelectedColumns(selectedColumns.filter(c => c !== column.key));
                                                                     }}
                                                                 />
-                                                                <span className="text-sm font-medium">{column.label}</span>
+                                                                <span className="text-xs font-semibold">{column.label}</span>
                                                             </label>
                                                         ))}
                                                     </div>
                                                     <DialogFooter>
-                                                        <Button variant="outline" className="rounded-xl px-6" onClick={() => setExportOpen(false)}>Cerrar</Button>
-                                                        <Button className="rounded-xl px-8 bg-indigo-600 hover:bg-indigo-700" onClick={handleExport}>Descargar Listado</Button>
+                                                        <Button variant="outline" className="rounded-xl px-5 h-9 text-xs" onClick={() => setExportOpen(false)}>Cerrar</Button>
+                                                        <Button className="rounded-xl px-6 h-9 bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold" onClick={handleExport}>Descargar Listado</Button>
                                                     </DialogFooter>
                                                 </DialogContent>
                                             </Dialog>
                                         )}
 
-                                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
+                                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2.5 dark:bg-slate-800">
                                             <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
                                             <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
                                                 {interns.data.length} / {interns.total}
@@ -459,50 +456,50 @@ export default function Show({
                                 </div>
 
                                 {/* LISTADO DE BECARIOS (TABLA INTEGRADA) */}
-                                <div className="w-full overflow-hidden rounded-3xl border border-sidebar/30 bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10">
+                                <div className="w-full overflow-hidden rounded-2xl border border-sidebar/30 bg-gradient-to-br from-sidebar to-[#1f4f52] shadow-xl shadow-sidebar/10">
                                     <div className="w-full overflow-x-auto">
                                         <table className="w-full text-left text-sm border-collapse">
                                             <thead>
                                                 <tr className="border-b border-white/15 bg-white/10">
-                                                    <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-white/70">Alumno</th>
-                                                    <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-white/70">Titulación</th>
-                                                    <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-white/70">Estado</th>
-                                                    <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-white/70">Acción</th>
+                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-white/70">Alumno</th>
+                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-white/70">Titulación</th>
+                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-white/70">Estado</th>
+                                                    <th className="px-4 py-3 text-right text-[9px] font-black uppercase tracking-widest text-white/70">Acción</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-white/10">
                                                 {interns.data.length > 0 ? (
                                                     interns.data.map((intern: any) => (
                                                         <tr key={intern.id} className="transition-colors hover:bg-white/5">
-                                                            <td className="px-6 py-4">
-                                                                <div className="flex items-center gap-3">
-                                                                    <Avatar className="h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-xl bg-white/15">
+                                                            <td className="px-4 py-2.5">
+                                                                <div className="flex items-center gap-2.5">
+                                                                    <Avatar className="h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-lg bg-white/15">
                                                                         <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
-                                                                        <AvatarFallback className="bg-transparent font-bold text-white">
+                                                                        <AvatarFallback className="bg-transparent font-bold text-white text-xs">
                                                                             {intern.user?.name ? intern.user.name.substring(0, 2).toUpperCase() : 'BE'}
                                                                         </AvatarFallback>
                                                                     </Avatar>
                                                                     <div className="flex flex-col">
                                                                         {!isIntern ? (
-                                                                            <Link href={`/becarios/${intern.id}`} className="font-bold text-white transition-colors hover:text-white/80">
+                                                                            <Link href={`/becarios/${intern.id}`} className="text-xs font-bold text-white transition-colors hover:text-white/80">
                                                                                 {intern.user.name}
                                                                             </Link>
                                                                         ) : (
-                                                                            <span className="font-bold text-white">{intern.user.name}</span>
+                                                                            <span className="text-xs font-bold text-white">{intern.user.name}</span>
                                                                         )}
-                                                                        <span className="text-[10px] font-bold uppercase text-white/60">{intern.dni}</span>
+                                                                        <span className="text-[9px] font-bold uppercase text-white/50">{intern.dni}</span>
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-6 py-4">
-                                                                <span className="font-medium text-white/85">{intern.academic_degree}</span>
+                                                            <td className="px-4 py-2.5">
+                                                                <span className="text-xs font-semibold text-white/90">{intern.academic_degree}</span>
                                                             </td>
-                                                            <td className="px-6 py-4">
+                                                            <td className="px-4 py-2.5">
                                                                 <StatusBadge status={intern.status} />
                                                             </td>
-                                                            <td className="px-6 py-4 text-right">
+                                                            <td className="px-4 py-2.5 text-right">
                                                                 {!isIntern && (
-                                                                    <Button variant="ghost" size="sm" className="rounded-xl border border-white/20 bg-white text-sidebar hover:bg-white/90 hover:shadow-sm" asChild>
+                                                                    <Button variant="ghost" size="sm" className="h-7 text-[10px] rounded-lg border border-white/20 bg-white text-sidebar hover:bg-white/90 hover:shadow-xs px-3 font-bold" asChild>
                                                                         <Link href={`/becarios/${intern.id}`}>Ver Perfil</Link>
                                                                     </Button>
                                                                 )}
@@ -511,10 +508,10 @@ export default function Show({
                                                     ))
                                                 ) : (
                                                     <tr>
-                                                        <td colSpan={4} className="px-6 py-20 text-center">
+                                                        <td colSpan={4} className="px-4 py-12 text-center">
                                                             <div className="flex flex-col items-center">
-                                                                <Users className="mb-4 h-10 w-10 text-white/35" />
-                                                                <p className="font-medium text-white/70">No se encontraron becarios con estos filtros.</p>
+                                                                <Users className="mb-3 h-8 w-8 text-white/35" />
+                                                                <p className="text-xs font-medium text-white/70">No se encontraron becarios con estos filtros.</p>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -524,8 +521,8 @@ export default function Show({
                                     </div>
 
                                     {/* PAGINACIÓN INTEGRADA */}
-                                    <div className="flex items-center justify-between border-t border-white/15 bg-white/10 px-6 py-4">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+                                    <div className="flex items-center justify-between border-t border-white/15 bg-white/10 px-4 py-3">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-white/70">
                                             Mostrando {interns.from || 0} a {interns.to || 0} de {interns.total} alumnos
                                         </p>
                                         <Pagination links={interns.links} />
@@ -535,40 +532,40 @@ export default function Show({
 
                             {/* PESTAÑA SEGUIMIENTO */}
                             <TabsContent value="seguimiento" className="mt-0 animate-in fade-in duration-500">
-                                <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
-                                    <div className="md:col-span-12 flex items-center justify-between border-b border-slate-50 pb-3 tracking-tight dark:border-slate-800">
-                                        <h3 className="text-xl font-bold flex items-center gap-2">
-                                            <HistoryIcon className="h-5 w-5 text-slate-500" />
+                                <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
+                                    <div className="md:col-span-12 flex items-center justify-between border-b border-slate-50 pb-2 tracking-tight dark:border-slate-800">
+                                        <h3 className="text-sm font-bold flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
+                                            <HistoryIcon className="h-4.5 w-4.5 text-slate-500" />
                                             Historial y Notas de Auditoría
                                         </h3>
                                     </div>
 
                                     {canViewNotes && (
-                                        <div className="md:col-span-5 space-y-6">
-                                            <div className="space-y-4">
-                                                <div className="rounded-2xl border border-sidebar/15 bg-white p-5 shadow-sm dark:bg-slate-900">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Notas del centro</p>
-                                                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                                        Escribe aquí observaciones internas sobre este centro educativo y guarda cuando quieras.
+                                        <div className="md:col-span-5 space-y-4">
+                                            <div className="space-y-3">
+                                                <div className="rounded-xl border border-sidebar/15 bg-white p-4 shadow-xs dark:bg-slate-900">
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Notas del centro</p>
+                                                    <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                                                        Escribe observaciones internas sobre este centro educativo y guarda cuando quieras.
                                                     </p>
                                                     <textarea
                                                         value={notesValue}
                                                         onChange={(e) => setNotesValue(e.target.value)}
-                                                        className="mt-4 min-h-[220px] w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-700 outline-none transition-all focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-800"
+                                                        className="mt-3 min-h-[140px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-700 outline-none transition-all focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-800"
                                                         placeholder="Añade observaciones internas sobre este centro..."
                                                     />
-                                                    <div className="mt-4 flex justify-end gap-2">
+                                                    <div className="mt-3 flex justify-end gap-2">
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
-                                                            className="rounded-xl px-6"
+                                                            className="rounded-lg px-4 h-8 text-xs"
                                                             onClick={() => setNotesValue(educationCenter.internal_notes || '')}
                                                         >
                                                             Cancelar
                                                         </Button>
                                                         <Button
                                                             size="sm"
-                                                            className="rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] px-6 text-white hover:opacity-95"
+                                                            className="rounded-lg bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 h-8 text-white text-xs font-bold hover:opacity-95"
                                                             onClick={() =>
                                                                 router.patch(`/centros/${educationCenter.id}/notes`, { internal_notes: notesValue }, { preserveScroll: true })
                                                             }
@@ -578,9 +575,9 @@ export default function Show({
                                                     </div>
 
                                                     {(educationCenter.notes_updated_by || educationCenter.internal_notes_updated_at) && (
-                                                        <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
-                                                            <span className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Última edición</span>
-                                                            <span className="text-[10px] font-bold text-slate-500">
+                                                        <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 dark:border-slate-700 text-[9px] font-semibold text-slate-400">
+                                                            <span className="uppercase tracking-tighter opacity-70">Última edición</span>
+                                                            <span className="text-slate-500">
                                                                 {educationCenter.notes_updated_by?.name || 'Sistema'}
                                                                 {educationCenter.internal_notes_updated_at ? ` · ${formatDateTimeEs(educationCenter.internal_notes_updated_at)}` : ''}
                                                             </span>
@@ -591,9 +588,9 @@ export default function Show({
                                         </div>
                                     )}
 
-                                    <div className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} relative min-w-0 space-y-6 pl-8 before:absolute before:bottom-0 before:left-0 before:top-4 before:w-px before:bg-slate-100 dark:before:bg-slate-800`}>
-                                        <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-slate-400">Actividad Reciente</h4>
-                                        <div className="space-y-10">
+                                    <div className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} relative min-w-0 space-y-4 pl-6 before:absolute before:bottom-0 before:left-0 before:top-3 before:w-px before:bg-slate-100 dark:before:bg-slate-800`}>
+                                        <h4 className="mb-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Actividad Reciente</h4>
+                                        <div className="space-y-6">
                                             {displayedActivities.length > 0 ? (
                                                 displayedActivities.map((activity) => {
                                                     const changes = activity.properties?.attributes ?? {};
@@ -615,7 +612,7 @@ export default function Show({
                                                                 return formatDateEs(value);
                                                             } catch (e) {
                                                                 return value;
-                                                            }
+                                                              }
                                                         }
 
                                                         return String(value);
@@ -625,23 +622,23 @@ export default function Show({
 
                                                     return (
                                                         <div key={activity.id} className="relative group">
-                                                            <div className="absolute -left-[37px] top-1.5 h-4 w-4 rounded-full border-4 border-white dark:border-slate-900 bg-slate-200 group-hover:bg-primary z-10 transition-colors" />
+                                                            <div className="absolute -left-[29px] top-1.5 h-3.5 w-3.5 rounded-full border-4 border-white dark:border-slate-900 bg-slate-200 group-hover:bg-primary z-10 transition-colors" />
                                                             <div>
-                                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{formatDateTimeEs(activity.created_at)}</p>
-                                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-1 uppercase">
+                                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{formatDateTimeEs(activity.created_at)}</p>
+                                                                <p className="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5 uppercase">
                                                                     {activity.event === 'updated' ? 'Actualización de ficha' : 'Registro creado'}
                                                                 </p>
-                                                                <p className="text-xs text-slate-500 mt-0.5">Realizado por <span className="font-bold text-slate-700 dark:text-slate-300">{activity.causer_name || 'Sistema'}</span></p>
+                                                                <p className="text-[11px] text-slate-500 mt-0.5">Realizado por <span className="font-bold text-slate-700 dark:text-slate-300">{activity.causer_name || 'Sistema'}</span></p>
 
                                                                 {visibleFields.length > 0 && (
-                                                                    <div className="mt-4 space-y-2 p-4 rounded-2xl border border-sidebar/20 bg-white dark:bg-slate-900">
+                                                                    <div className="mt-2.5 space-y-1.5 p-3 rounded-xl border border-sidebar/15 bg-white dark:bg-slate-900">
                                                                         {visibleFields.map(field => (
-                                                                            <div key={field} className="text-[11px] grid grid-cols-12 gap-2">
+                                                                            <div key={field} className="text-[10px] grid grid-cols-12 gap-2">
                                                                                 <span className="col-span-4 text-slate-500 font-bold">{labels[field]}:</span>
                                                                                 <div className="col-span-8">
                                                                                     <span className="line-through opacity-30 italic">{formatValue(field, old[field])}</span>
-                                                                                    <span className="mx-2 text-primary/40">→</span>
-                                                                                    <span className="font-bold text-primary">{formatValue(field, changes[field])}</span>
+                                                                                    <span className="mx-1.5 text-primary/40">→</span>
+                                                                                    <span className="font-semibold text-primary">{formatValue(field, changes[field])}</span>
                                                                                 </div>
                                                                             </div>
                                                                         ))}
@@ -652,24 +649,24 @@ export default function Show({
                                                     );
                                                 })
                                             ) : (
-                                                <p className="text-sm text-slate-400 italic py-4">Aún no hay actividad registrada para este centro.</p>
+                                                <p className="text-xs text-slate-400 italic py-2">Aún no hay actividad registrada para este centro.</p>
                                             )}
                                         </div>
 
                                         {totalActivityPages > 1 && (
-                                            <div className="mt-8 flex items-center justify-between border-t border-sidebar/20 pt-8">
+                                            <div className="mt-6 flex items-center justify-between border-t border-sidebar/20 pt-4">
                                                 <Button
                                                     variant="default"
                                                     size="sm"
                                                     disabled={activityPage === 1}
                                                     onClick={() => setActivityPage((p) => p - 1)}
-                                                    className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
+                                                    className="h-8 rounded-lg border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-white text-xs shadow-xs hover:opacity-95 disabled:opacity-50"
                                                 >
-                                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                                    <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
                                                     Anterior
                                                 </Button>
 
-                                                <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
                                                     Página {activityPage} de {totalActivityPages}
                                                 </span>
 
@@ -678,10 +675,10 @@ export default function Show({
                                                     size="sm"
                                                     disabled={activityPage === totalActivityPages}
                                                     onClick={() => setActivityPage((p) => p + 1)}
-                                                    className="h-10 rounded-xl border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-4 text-white shadow-lg shadow-sidebar/10 hover:opacity-95 disabled:opacity-50"
+                                                    className="h-8 rounded-lg border-none bg-gradient-to-r from-sidebar to-[#1f4f52] px-3 text-white text-xs shadow-xs hover:opacity-95 disabled:opacity-50"
                                                 >
                                                     Siguiente
-                                                    <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
+                                                    <ArrowLeft className="ml-1.5 h-3.5 w-3.5 rotate-180" />
                                                 </Button>
                                             </div>
                                         )}
