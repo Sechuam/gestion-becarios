@@ -28,9 +28,8 @@ export function AbsencesPagination({
             <div className="flex items-center gap-2">
                 <Button
                     type="button"
-                    variant="outline"
                     size="sm"
-                    className="h-8 rounded-lg active:border-slate-400 active:bg-slate-200 active:text-slate-800"
+                    className="h-8 rounded-lg bg-sidebar text-white hover:bg-sidebar/90 disabled:bg-sidebar/40 disabled:text-white/70"
                     disabled={absencePage === 1}
                     onClick={() =>
                         onPageChange((page) => Math.max(1, page - 1))
@@ -43,9 +42,8 @@ export function AbsencesPagination({
                 </span>
                 <Button
                     type="button"
-                    variant="outline"
                     size="sm"
-                    className="h-8 rounded-lg active:border-slate-400 active:bg-slate-200 active:text-slate-800"
+                    className="h-8 rounded-lg bg-sidebar text-white hover:bg-sidebar/90 disabled:bg-sidebar/40 disabled:text-white/70"
                     disabled={absencePage === totalAbsencePages}
                     onClick={() =>
                         onPageChange((page) =>

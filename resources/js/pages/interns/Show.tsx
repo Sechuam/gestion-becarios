@@ -1,19 +1,4 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-import { MetricPills } from '@/components/common/MetricPills';
-import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
-import { StatusBadge } from '@/components/interns/StatusBadge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import AppLayout from '@/layouts/app-layout';
-import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
-import type { BreadcrumbItem } from '@/types/navigation';
-import { CreateScheduleModal } from '@/components/interns/CreateScheduleModal';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import {
     AlertTriangle,
     ArrowLeft,
@@ -27,14 +12,30 @@ import {
     GraduationCap,
     HardDrive,
     History as HistoryIcon,
-    Mail,
     Pencil,
     RotateCcw,
     Trash2,
     User,
 } from 'lucide-react';
+import { useState } from 'react';
+import { AbsencesPagination } from '@/components/attendance/AbsencesPagination';
+import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
+import { MetricPills } from '@/components/common/MetricPills';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { CreateScheduleModal } from '@/components/interns/CreateScheduleModal';
 import { ExportReportModal } from '@/components/interns/ExportReportModal';
+import { StatusBadge } from '@/components/interns/StatusBadge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AppLayout from '@/layouts/app-layout';
+import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
+import type { BreadcrumbItem } from '@/types/navigation';
+
+const ABSENCES_PER_PAGE = 3;
 
 export default function Show({
     intern,
@@ -104,11 +105,29 @@ export default function Show({
     );
     const [notesValue, setNotesValue] = useState(visibleNoteContent);
     const [activityPage, setActivityPage] = useState(1);
+    const [absencePage, setAbsencePage] = useState(1);
     const activitiesPerPage = 3;
     const totalActivityPages = Math.ceil(activities.length / activitiesPerPage);
     const displayedActivities = activities.slice(
         (activityPage - 1) * activitiesPerPage,
         activityPage * activitiesPerPage,
+    );
+    const totalAbsencePages = Math.max(
+        1,
+        Math.ceil((absences?.length ?? 0) / ABSENCES_PER_PAGE),
+    );
+    const safeAbsencePage = Math.min(absencePage, totalAbsencePages);
+    const displayedAbsences = (absences ?? []).slice(
+        (safeAbsencePage - 1) * ABSENCES_PER_PAGE,
+        safeAbsencePage * ABSENCES_PER_PAGE,
+    );
+    const absenceRangeStart =
+        (absences?.length ?? 0) > 0
+            ? (safeAbsencePage - 1) * ABSENCES_PER_PAGE + 1
+            : 0;
+    const absenceRangeEnd = Math.min(
+        safeAbsencePage * ABSENCES_PER_PAGE,
+        absences?.length ?? 0,
     );
     const today = new Date().toISOString().split('T')[0];
     const schedules = [...(intern.user?.schedules ?? [])].sort(
@@ -768,102 +787,132 @@ export default function Show({
 
                                         <div className="space-y-4">
                                             {absences?.length > 0 ? (
-                                                absences.map((abs: any) => (
-                                                    <div
-                                                        key={abs.id}
-                                                        className="group flex items-center justify-between rounded-xl border border-sidebar/20 bg-white p-5 transition-all hover:shadow-md dark:bg-slate-900"
-                                                    >
-                                                        <div className="flex items-center gap-4">
+                                                <>
+                                                    {displayedAbsences.map(
+                                                        (abs: any) => (
                                                             <div
-                                                                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                                                                    abs.status ===
-                                                                    'approved'
-                                                                        ? 'bg-sidebar/10 text-sidebar'
-                                                                        : abs.status ===
-                                                                            'rejected'
-                                                                          ? 'bg-rose-50 text-rose-600'
-                                                                          : 'bg-amber-50 text-amber-600'
-                                                                }`}
+                                                                key={abs.id}
+                                                                className="group flex items-center justify-between rounded-xl border border-sidebar/20 bg-white p-5 transition-all hover:shadow-md dark:bg-slate-900"
                                                             >
-                                                                <FileText className="h-5 w-5" />
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                                                                    {abs.reason}
-                                                                </p>
-                                                                <div className="mt-1 flex items-center gap-3">
-                                                                    <span className="text-xs font-medium text-slate-400">
-                                                                        {formatDateEs(
-                                                                            abs.date,
-                                                                        )}
-                                                                    </span>
-                                                                    {abs.justification_url && (
-                                                                        <a
-                                                                            href={
-                                                                                abs.justification_url
+                                                                <div className="flex items-center gap-4">
+                                                                    <div
+                                                                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                                                                            abs.status ===
+                                                                            'approved'
+                                                                                ? 'bg-sidebar/10 text-sidebar'
+                                                                                : abs.status ===
+                                                                                    'rejected'
+                                                                                  ? 'bg-rose-50 text-rose-600'
+                                                                                  : 'bg-amber-50 text-amber-600'
+                                                                        }`}
+                                                                    >
+                                                                        <FileText className="h-5 w-5" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                                                                            {
+                                                                                abs.reason
                                                                             }
-                                                                            target="_blank"
-                                                                            className="text-[10px] font-black tracking-widest text-indigo-600 uppercase hover:underline"
+                                                                        </p>
+                                                                        <div className="mt-1 flex items-center gap-3">
+                                                                            <span className="text-xs font-medium text-slate-400">
+                                                                                {formatDateEs(
+                                                                                    abs.date,
+                                                                                )}
+                                                                            </span>
+                                                                            {abs.justification_url && (
+                                                                                <a
+                                                                                    href={
+                                                                                        abs.justification_url
+                                                                                    }
+                                                                                    target="_blank"
+                                                                                    className="text-[10px] font-black tracking-widest text-indigo-600 uppercase hover:underline"
+                                                                                >
+                                                                                    Justificante
+                                                                                </a>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="flex items-center gap-3">
+                                                                    {abs.status ===
+                                                                    'pending' ? (
+                                                                        <div className="flex gap-2">
+                                                                            <Button
+                                                                                size="sm"
+                                                                                className="h-9 rounded-xl"
+                                                                                onClick={() =>
+                                                                                    router.patch(
+                                                                                        `/absences/${abs.id}/status`,
+                                                                                        {
+                                                                                            status: 'approved',
+                                                                                        },
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                <CheckCircle2 className="h-4 w-4" />
+                                                                            </Button>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                variant="destructive"
+                                                                                className="h-9 rounded-xl"
+                                                                                onClick={() =>
+                                                                                    router.patch(
+                                                                                        `/absences/${abs.id}/status`,
+                                                                                        {
+                                                                                            status: 'rejected',
+                                                                                        },
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                <ArrowLeft className="h-4 w-4 rotate-45" />
+                                                                            </Button>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <span
+                                                                            className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
+                                                                                abs.status ===
+                                                                                'approved'
+                                                                                    ? 'bg-sidebar/10 text-sidebar'
+                                                                                    : 'bg-rose-100 text-rose-700'
+                                                                            }`}
                                                                         >
-                                                                            Justificante
-                                                                        </a>
+                                                                            {abs.status ===
+                                                                            'approved'
+                                                                                ? 'Aprobada'
+                                                                                : 'Denegada'}
+                                                                        </span>
                                                                     )}
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        ),
+                                                    )}
 
-                                                        <div className="flex items-center gap-3">
-                                                            {abs.status ===
-                                                            'pending' ? (
-                                                                <div className="flex gap-2">
-                                                                    <Button
-                                                                        size="sm"
-                                                                        className="h-9 rounded-xl"
-                                                                        onClick={() =>
-                                                                            router.patch(
-                                                                                `/absences/${abs.id}/status`,
-                                                                                {
-                                                                                    status: 'approved',
-                                                                                },
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        <CheckCircle2 className="h-4 w-4" />
-                                                                    </Button>
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="destructive"
-                                                                        className="h-9 rounded-xl"
-                                                                        onClick={() =>
-                                                                            router.patch(
-                                                                                `/absences/${abs.id}/status`,
-                                                                                {
-                                                                                    status: 'rejected',
-                                                                                },
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        <ArrowLeft className="h-4 w-4 rotate-45" />
-                                                                    </Button>
-                                                                </div>
-                                                            ) : (
-                                                                <span
-                                                                    className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
-                                                                        abs.status ===
-                                                                        'approved'
-                                                                            ? 'bg-sidebar/10 text-sidebar'
-                                                                            : 'bg-rose-100 text-rose-700'
-                                                                    }`}
-                                                                >
-                                                                    {abs.status ===
-                                                                    'approved'
-                                                                        ? 'Aprobada'
-                                                                        : 'Denegada'}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                ))
+                                                    {absences.length >
+                                                        ABSENCES_PER_PAGE && (
+                                                        <AbsencesPagination
+                                                            absencePage={
+                                                                safeAbsencePage
+                                                            }
+                                                            totalAbsencePages={
+                                                                totalAbsencePages
+                                                            }
+                                                            absenceRangeStart={
+                                                                absenceRangeStart
+                                                            }
+                                                            absenceRangeEnd={
+                                                                absenceRangeEnd
+                                                            }
+                                                            totalAbsences={
+                                                                absences.length
+                                                            }
+                                                            onPageChange={
+                                                                setAbsencePage
+                                                            }
+                                                        />
+                                                    )}
+                                                </>
                                             ) : (
                                                 <p className="py-8 text-center text-sm text-slate-500 italic">
                                                     No hay registros de
@@ -1143,7 +1192,7 @@ export default function Show({
                                                                     return formatDateEs(
                                                                         value,
                                                                     );
-                                                                } catch (e) {
+                                                                } catch {
                                                                     return value;
                                                                 }
                                                             }
