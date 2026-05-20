@@ -772,7 +772,7 @@ export default function Show({
                                                                         <div className="flex flex-col">
                                                                             {!isIntern ? (
                                                                                 <Link
-                                                                                    href={`/becarios/${intern.id}`}
+                                                                                    href={`/interns/${intern.id}`}
                                                                                     className="text-xs font-bold text-slate-900 transition-colors hover:text-sidebar dark:text-slate-100"
                                                                                 >
                                                                                     {
@@ -812,21 +812,14 @@ export default function Show({
                                                                         }
                                                                     />
                                                                 </td>
-                                                                <td className="px-4 py-2.5 text-right">
-                                                                    {!isIntern && (
-                                                                        <Button
-                                                                            size="sm"
-                                                                            className="h-7 rounded-lg bg-sidebar px-3 text-[10px] font-bold text-white hover:bg-sidebar/90 hover:shadow-xs"
-                                                                            asChild
-                                                                        >
-                                                                            <Link
-                                                                                href={`/becarios/${intern.id}`}
-                                                                            >
-                                                                                Ver
-                                                                                Perfil
-                                                                            </Link>
-                                                                        </Button>
-                                                                    )}
+                                                                <td className="min-w-[120px] px-4 py-2.5 text-right">
+                                                                    <Link
+                                                                        href={`/interns/${intern.id}`}
+                                                                        className="inline-flex h-7 items-center justify-center rounded-lg bg-sidebar px-3 text-[10px] font-bold whitespace-nowrap text-white transition hover:bg-sidebar/90 hover:shadow-xs"
+                                                                    >
+                                                                        Ver
+                                                                        Perfil
+                                                                    </Link>
                                                                 </td>
                                                             </tr>
                                                         ),
