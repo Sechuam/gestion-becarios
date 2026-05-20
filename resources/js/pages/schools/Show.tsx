@@ -1,36 +1,30 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
-    Search,
-    FileDown,
     ArrowLeft,
-    School,
-    Users,
-    History as HistoryIcon,
-    HardDrive,
-    Calendar,
-    MapPin,
-    Mail,
-    Phone,
-    Globe,
-    FileText,
-    Download,
-    GraduationCap,
-    Clock,
-    User,
-    AlertTriangle,
-    BarChart3,
-    Info,
-    Hash,
     ExternalLink,
+    FileDown,
+    FileText,
+    Globe,
+    Hash,
+    History as HistoryIcon,
+    Info,
+    Mail,
+    MapPin,
+    Phone,
+    School,
+    Search,
+    User,
+    Users,
 } from 'lucide-react';
-import { Pagination } from '@/components/common/Pagination';
-import { MetricPills } from '@/components/common/MetricPills';
-import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
+import { MetricPills } from '@/components/common/MetricPills';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { Pagination } from '@/components/common/Pagination';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
@@ -42,14 +36,12 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 
 type Props = {
     educationCenter: any;
@@ -71,7 +63,6 @@ export default function Show({
     interns,
     filters,
     is_intern,
-    current_intern,
     activities = [],
 }: Props) {
     const isTrashed = !!educationCenter.deleted_at;
@@ -94,7 +85,6 @@ export default function Show({
     const lastEmptyKeyRef = useRef<string>('');
 
     const isIntern = !!is_intern;
-    const currentIntern = current_intern;
     const exportColumns = useMemo(
         () => [
             { key: 'id', label: 'ID' },
@@ -721,7 +711,7 @@ export default function Show({
                                 </div>
 
                                 {/* LISTADO DE BECARIOS (TABLA INTEGRADA) */}
-                                <div className="w-full overflow-hidden rounded-xl border border-sidebar/30 bg-gradient-to-br from-sidebar to-sidebar-accent shadow-xl shadow-sidebar/10">
+                                <div className="w-full overflow-hidden rounded-xl border border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
                                     <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                                     <div className="w-full overflow-x-auto">
                                         <table className="w-full border-collapse text-left text-sm">
@@ -741,17 +731,17 @@ export default function Show({
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-white/10">
+                                            <tbody className="divide-y divide-sidebar/10">
                                                 {interns.data.length > 0 ? (
                                                     interns.data.map(
                                                         (intern: any) => (
                                                             <tr
                                                                 key={intern.id}
-                                                                className="transition-colors hover:bg-white/5"
+                                                                className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                                                             >
                                                                 <td className="px-4 py-2.5">
                                                                     <div className="flex items-center gap-2.5">
-                                                                        <Avatar className="h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/15">
+                                                                        <Avatar className="h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-sidebar/10">
                                                                             <AvatarImage
                                                                                 src={
                                                                                     intern
@@ -766,7 +756,7 @@ export default function Show({
                                                                                     ''
                                                                                 }
                                                                             />
-                                                                            <AvatarFallback className="bg-transparent text-xs font-bold text-white">
+                                                                            <AvatarFallback className="bg-transparent text-xs font-bold text-sidebar">
                                                                                 {intern
                                                                                     .user
                                                                                     ?.name
@@ -783,7 +773,7 @@ export default function Show({
                                                                             {!isIntern ? (
                                                                                 <Link
                                                                                     href={`/becarios/${intern.id}`}
-                                                                                    className="text-xs font-bold text-white transition-colors hover:text-white/80"
+                                                                                    className="text-xs font-bold text-slate-900 transition-colors hover:text-sidebar dark:text-slate-100"
                                                                                 >
                                                                                     {
                                                                                         intern
@@ -792,7 +782,7 @@ export default function Show({
                                                                                     }
                                                                                 </Link>
                                                                             ) : (
-                                                                                <span className="text-xs font-bold text-white">
+                                                                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
                                                                                     {
                                                                                         intern
                                                                                             .user
@@ -800,7 +790,7 @@ export default function Show({
                                                                                     }
                                                                                 </span>
                                                                             )}
-                                                                            <span className="text-[9px] font-bold text-white/50 uppercase">
+                                                                            <span className="text-[9px] font-bold text-slate-400 uppercase">
                                                                                 {
                                                                                     intern.dni
                                                                                 }
@@ -809,7 +799,7 @@ export default function Show({
                                                                     </div>
                                                                 </td>
                                                                 <td className="px-4 py-2.5">
-                                                                    <span className="text-xs font-semibold text-white/90">
+                                                                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                                                                         {
                                                                             intern.academic_degree
                                                                         }
@@ -825,9 +815,8 @@ export default function Show({
                                                                 <td className="px-4 py-2.5 text-right">
                                                                     {!isIntern && (
                                                                         <Button
-                                                                            variant="ghost"
                                                                             size="sm"
-                                                                            className="h-7 rounded-lg border border-white/20 bg-white px-3 text-[10px] font-bold text-sidebar hover:bg-white/90 hover:shadow-xs"
+                                                                            className="h-7 rounded-lg bg-sidebar px-3 text-[10px] font-bold text-white hover:bg-sidebar/90 hover:shadow-xs"
                                                                             asChild
                                                                         >
                                                                             <Link
@@ -849,8 +838,8 @@ export default function Show({
                                                             className="px-4 py-8 text-center"
                                                         >
                                                             <div className="flex flex-col items-center">
-                                                                <Users className="mb-3 h-8 w-8 text-white/35" />
-                                                                <p className="text-xs font-medium text-white/70">
+                                                                <Users className="mb-3 h-8 w-8 text-slate-300" />
+                                                                <p className="text-xs font-medium text-slate-500">
                                                                     No se
                                                                     encontraron
                                                                     becarios con
@@ -866,8 +855,8 @@ export default function Show({
                                     </div>
 
                                     {/* PAGINACIÓN INTEGRADA */}
-                                    <div className="flex items-center justify-between border-t border-white/15 bg-white/10 px-4 py-3">
-                                        <p className="text-[9px] font-black tracking-widest text-white/70 uppercase">
+                                    <div className="flex items-center justify-between border-t border-sidebar/10 bg-slate-50/50 px-4 py-3 dark:bg-slate-800/70">
+                                        <p className="text-[9px] font-black tracking-widest text-slate-500 uppercase">
                                             Mostrando {interns.from || 0} a{' '}
                                             {interns.to || 0} de {interns.total}{' '}
                                             alumnos
@@ -1038,7 +1027,7 @@ export default function Show({
                                                                     return formatDateEs(
                                                                         value,
                                                                     );
-                                                                } catch (e) {
+                                                                } catch {
                                                                     return value;
                                                                 }
                                                             }
