@@ -7,7 +7,7 @@ type Props = {
 
 export function DashboardMetricCards({ metrics }: Props) {
     return (
-        <div className="grid gap-2.5 md:grid-cols-3 xl:grid-cols-5">
+        <div className="grid gap-2.5 md:grid-cols-3">
             {metrics.map((metric) => (
                 <Card
                     key={metric.label}

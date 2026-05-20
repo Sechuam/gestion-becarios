@@ -95,6 +95,30 @@ const DEFAULT_SECTIONS = [
 ];
 const DEFAULT_TOP_CHARTS = ['interns_chart', 'task_chart'];
 const DEFAULT_BOTTOM_PANELS = ['attendance', 'agenda', 'progress'];
+const DEFAULT_VISIBLE_WIDGETS = DEFAULT_TOP_CHARTS.concat(
+    DEFAULT_BOTTOM_PANELS,
+).concat(['metrics', 'alerts']);
+const INTERN_VISIBLE_WIDGETS = ['metrics', 'attendance', 'agenda', 'progress'];
+
+function getSupportedWidgets(role: DashboardRole) {
+    if (role === 'intern') {
+        return INTERN_VISIBLE_WIDGETS;
+    }
+
+    return DEFAULT_VISIBLE_WIDGETS;
+}
+
+function getDefaultTopCharts(role: DashboardRole) {
+    return role === 'intern' ? [] : DEFAULT_TOP_CHARTS;
+}
+
+function getDefaultVisibleWidgets(role: DashboardRole) {
+    return getSupportedWidgets(role);
+}
+
+function filterSupported(items: string[], supported: string[]) {
+    return items.filter((item) => supported.includes(item));
+}
 
 interface DashboardProps {
     role: DashboardRole;
@@ -171,33 +195,47 @@ export default function Dashboard({
     const [isEditing, setIsEditing] = useState(false);
     const [isManageModalOpen, setIsManageModalOpen] = useState(false);
     const [sections, setSections] = useState<string[]>(DEFAULT_SECTIONS);
-    const [topCharts, setTopCharts] = useState<string[]>(DEFAULT_TOP_CHARTS);
+    const supportedWidgets = getSupportedWidgets(role);
+    const layoutStorageKey = `dashboard-puzzle-${role}`;
+    const [topCharts, setTopCharts] = useState<string[]>(
+        getDefaultTopCharts(role),
+    );
     const [bottomPanels, setBottomPanels] = useState<string[]>(
         DEFAULT_BOTTOM_PANELS,
     );
     const [visibleWidgets, setVisibleWidgets] = useState<string[]>(
-        DEFAULT_TOP_CHARTS.concat(DEFAULT_BOTTOM_PANELS).concat([
-            'metrics',
-            'alerts',
-        ]),
+        getDefaultVisibleWidgets(role),
     );
     const [activeId, setActiveId] = useState<string | null>(null);
 
     useEffect(() => {
-        const saved = localStorage.getItem('dashboard-puzzle');
+        const saved =
+            localStorage.getItem(layoutStorageKey) ??
+            localStorage.getItem('dashboard-puzzle');
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
                 if (parsed.sections) setSections(parsed.sections);
-                if (parsed.topCharts) setTopCharts(parsed.topCharts);
-                if (parsed.bottomPanels) setBottomPanels(parsed.bottomPanels);
+                if (parsed.topCharts)
+                    setTopCharts(
+                        filterSupported(parsed.topCharts, supportedWidgets),
+                    );
+                if (parsed.bottomPanels)
+                    setBottomPanels(
+                        filterSupported(parsed.bottomPanels, supportedWidgets),
+                    );
                 if (parsed.visibleWidgets)
-                    setVisibleWidgets(parsed.visibleWidgets);
+                    setVisibleWidgets(
+                        filterSupported(
+                            parsed.visibleWidgets,
+                            supportedWidgets,
+                        ),
+                    );
             } catch (e) {
                 console.error(e);
             }
         }
-    }, []);
+    }, [layoutStorageKey, supportedWidgets]);
 
     const saveLayout = (
         newSections: string[],
@@ -205,18 +243,24 @@ export default function Dashboard({
         newBottom: string[],
         newVisible: string[],
     ) => {
+        const filteredTop = filterSupported(newTop, supportedWidgets);
+        const filteredBottom = filterSupported(newBottom, supportedWidgets);
+        const filteredVisible = filterSupported(newVisible, supportedWidgets);
+
         localStorage.setItem(
-            'dashboard-puzzle',
+            layoutStorageKey,
             JSON.stringify({
                 sections: newSections,
-                topCharts: newTop,
-                bottomPanels: newBottom,
-                visibleWidgets: newVisible,
+                topCharts: filteredTop,
+                bottomPanels: filteredBottom,
+                visibleWidgets: filteredVisible,
             }),
         );
     };
 
     const toggleWidget = (id: string) => {
+        if (!supportedWidgets.includes(id)) return;
+
         const newVisible = visibleWidgets.includes(id)
             ? visibleWidgets.filter((w) => w !== id)
             : [...visibleWidgets, id];
@@ -317,7 +361,13 @@ export default function Dashboard({
             hint: 'Ausencias y jornadas por revisar',
             icon: AlertTriangle,
         },
-    ];
+    ].filter((metric) => {
+        if (role === 'intern') {
+            return !['Mi práctica', 'Alertas activas'].includes(metric.label);
+        }
+
+        return !['Tareas abiertas', 'Alertas activas'].includes(metric.label);
+    });
 
     const renderWidget = (id: string, isOverlay = false) => {
         switch (id) {
@@ -340,11 +390,11 @@ export default function Dashboard({
                     <div className="flex h-full flex-col gap-2.5">
                         <Suspense fallback={<ChartFallback />}>
                             <AttendanceChart
-                                className="flex-1"
+                                className="min-h-[300px] flex-[1_1_0]"
                                 data={attendance_chart}
                             />
                             <AttendanceStatsCard
-                                className="flex-1"
+                                className="shrink-0"
                                 completeAttendanceRate={
                                     stats.complete_attendance_rate
                                 }
@@ -368,6 +418,7 @@ export default function Dashboard({
                 return (
                     <InternTaskProgressPanel
                         className="h-full"
+                        role={role}
                         taskProgress={task_progress}
                         averageResolutionDays={
                             stats.average_task_resolution_days
@@ -496,6 +547,7 @@ export default function Dashboard({
                     open={isManageModalOpen}
                     onOpenChange={setIsManageModalOpen}
                     visibleWidgets={visibleWidgets}
+                    supportedWidgets={supportedWidgets}
                     onToggleWidget={toggleWidget}
                 />
 

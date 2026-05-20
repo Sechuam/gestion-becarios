@@ -270,23 +270,19 @@ export function AttendanceStatsCard({
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="grid flex-1 items-stretch gap-1.5 bg-slate-50/60 px-2.5 pt-2 pb-2 sm:grid-cols-3 dark:bg-slate-950/20">
+            <CardContent className="grid items-stretch gap-1.5 bg-slate-50/60 px-2.5 pt-2 pb-2 sm:grid-cols-3 dark:bg-slate-950/20">
                 {stats.map((stat) => (
                     <div
                         key={stat.label}
-                        className="flex h-full flex-col rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white p-2 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
+                        className="flex min-h-[88px] flex-col rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white p-2 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
                     >
-                        {/* Top row: icon left, line right */}
-                        <div className="flex items-start justify-between">
+                        <div className="flex items-center justify-between">
                             <span className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar text-white shadow-sm">
                                 <stat.icon className="h-3.5 w-3.5" />
                             </span>
                             <div className="h-1 w-6 rounded-full bg-sidebar" />
                         </div>
-                        {/* Spacer */}
-                        <div className="flex-1" />
-                        {/* Bottom: fixed height so all cards align perfectly */}
-                        <div className="min-h-[72px]">
+                        <div className="mt-2">
                             <p className="text-[9px] leading-3 font-black tracking-widest text-slate-500 uppercase">
                                 {stat.label}
                             </p>
