@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import {
     AlertTriangle,
@@ -10,12 +10,6 @@ import {
     Save,
     GripHorizontal,
 } from 'lucide-react';
-import {
-    AttendanceStatsCard,
-    AttendanceChart,
-    InternsByCenterChart,
-    TaskStatusChart,
-} from '@/components/dashboard/DashboardCharts';
 import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
@@ -64,6 +58,33 @@ import type { BreadcrumbItem } from '@/types';
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
 ];
+
+const InternsByCenterChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.InternsByCenterChart,
+    })),
+);
+const TaskStatusChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.TaskStatusChart,
+    })),
+);
+const AttendanceChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.AttendanceChart,
+    })),
+);
+const AttendanceStatsCard = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.AttendanceStatsCard,
+    })),
+);
+
+function ChartFallback() {
+    return (
+        <div className="min-h-[220px] rounded-xl border border-slate-200 bg-white/75 shadow-xs dark:border-slate-800 dark:bg-slate-900/75" />
+    );
+}
 
 // Estructura inicial del puzzle
 const DEFAULT_SECTIONS = [
@@ -303,24 +324,36 @@ export default function Dashboard({
             case 'metrics':
                 return <DashboardMetricCards metrics={metrics} />;
             case 'interns_chart':
-                return <InternsByCenterChart data={interns_by_center} />;
+                return (
+                    <Suspense fallback={<ChartFallback />}>
+                        <InternsByCenterChart data={interns_by_center} />
+                    </Suspense>
+                );
             case 'task_chart':
-                return <TaskStatusChart data={task_status_chart} />;
+                return (
+                    <Suspense fallback={<ChartFallback />}>
+                        <TaskStatusChart data={task_status_chart} />
+                    </Suspense>
+                );
             case 'attendance':
                 return (
                     <div className="flex h-full flex-col gap-2.5">
-                        <AttendanceChart
-                            className="flex-1"
-                            data={attendance_chart}
-                        />
-                        <AttendanceStatsCard
-                            className="flex-1"
-                            completeAttendanceRate={
-                                stats.complete_attendance_rate
-                            }
-                            averageDelayMinutes={stats.average_delay_minutes}
-                            absenceRate={stats.absence_rate}
-                        />
+                        <Suspense fallback={<ChartFallback />}>
+                            <AttendanceChart
+                                className="flex-1"
+                                data={attendance_chart}
+                            />
+                            <AttendanceStatsCard
+                                className="flex-1"
+                                completeAttendanceRate={
+                                    stats.complete_attendance_rate
+                                }
+                                averageDelayMinutes={
+                                    stats.average_delay_minutes
+                                }
+                                absenceRate={stats.absence_rate}
+                            />
+                        </Suspense>
                     </div>
                 );
             case 'agenda':

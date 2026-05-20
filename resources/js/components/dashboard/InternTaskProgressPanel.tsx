@@ -156,6 +156,7 @@ export function InternTaskProgressPanel({
                                         <div className="mt-1.5 flex items-center gap-2">
                                             <Progress
                                                 value={intern.progress}
+                                                aria-label={`Progreso de tareas de ${intern.name}: ${intern.progress}%`}
                                                 className="h-1"
                                                 indicatorClassName="bg-sidebar dark:bg-teal-400"
                                             />
@@ -183,6 +184,7 @@ export function InternTaskProgressPanel({
                                     type="button"
                                     variant="outline"
                                     size="icon"
+                                    aria-label="Ver página anterior de progreso"
                                     className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                     onClick={() =>
                                         setPage((current) =>
@@ -200,6 +202,7 @@ export function InternTaskProgressPanel({
                                     type="button"
                                     variant="outline"
                                     size="icon"
+                                    aria-label="Ver página siguiente de progreso"
                                     className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                     onClick={() =>
                                         setPage((current) =>

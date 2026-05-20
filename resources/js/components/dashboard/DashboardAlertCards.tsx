@@ -47,7 +47,7 @@ export function DashboardAlertCards({ alerts }: Props) {
                                         {alert.label}
                                     </span>
                                 </div>
-                                <span className="line-clamp-1 text-[10px] font-medium text-slate-400 mt-0.5 leading-none block">
+                                <span className="mt-0.5 block line-clamp-1 text-[10px] leading-none font-medium text-slate-600 dark:text-slate-300">
                                     {isAlertActive ? 'Requiere atención' : 'Sin incidencias hoy'}
                                 </span>
                             </div>

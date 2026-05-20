@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2 } from 'lucide-react';
+import { BookOpen, LifeBuoy } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -23,14 +23,14 @@ interface NavItem extends BaseNavItem {
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Ayuda / Guía',
-        href: '#',
-        icon: FolderGit2,
+        title: 'Guía de uso',
+        href: '/dashboard',
+        icon: BookOpen,
     },
     {
-        title: 'Soporte / Contacto',
-        href: '#',
-        icon: BookOpen,
+        title: 'Soporte',
+        href: 'mailto:soporte@becagest.local',
+        icon: LifeBuoy,
     },
 ];
 
