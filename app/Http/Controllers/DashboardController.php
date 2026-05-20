@@ -173,7 +173,7 @@ class DashboardController extends Controller
     protected function attendanceChart(Collection $userIds): array
     {
         $start = Carbon::today()->subDays(29);
-        $end = Carbon::today();
+        $end = now();
 
         $rows = TimeLog::query()
             ->selectRaw('date, ROUND(SUM(total_hours), 2) as hours')
