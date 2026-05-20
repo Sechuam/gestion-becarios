@@ -726,9 +726,11 @@ export default function Show({
                                                     <th className="px-4 py-3 text-[9px] font-black tracking-widest text-slate-700 uppercase">
                                                         Estado
                                                     </th>
-                                                    <th className="px-4 py-3 text-right text-[9px] font-black tracking-widest text-slate-700 uppercase">
-                                                        Acción
-                                                    </th>
+                                                    {!isIntern && (
+                                                        <th className="px-4 py-3 text-right text-[9px] font-black tracking-widest text-slate-700 uppercase">
+                                                            Acción
+                                                        </th>
+                                                    )}
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-sidebar/10">
@@ -812,22 +814,26 @@ export default function Show({
                                                                         }
                                                                     />
                                                                 </td>
-                                                                <td className="min-w-[120px] px-4 py-2.5 text-right">
-                                                                    <Link
-                                                                        href={`/interns/${intern.id}`}
-                                                                        className="inline-flex h-7 items-center justify-center rounded-lg bg-sidebar px-3 text-[10px] font-bold whitespace-nowrap text-white transition hover:bg-sidebar/90 hover:shadow-xs"
-                                                                    >
-                                                                        Ver
-                                                                        Perfil
-                                                                    </Link>
-                                                                </td>
+                                                                {!isIntern && (
+                                                                    <td className="min-w-[120px] px-4 py-2.5 text-right">
+                                                                        <Link
+                                                                            href={`/interns/${intern.id}`}
+                                                                            className="inline-flex h-7 items-center justify-center rounded-lg bg-sidebar px-3 text-[10px] font-bold whitespace-nowrap text-white transition hover:bg-sidebar/90 hover:shadow-xs"
+                                                                        >
+                                                                            Ver
+                                                                            Perfil
+                                                                        </Link>
+                                                                    </td>
+                                                                )}
                                                             </tr>
                                                         ),
                                                     )
                                                 ) : (
                                                     <tr>
                                                         <td
-                                                            colSpan={4}
+                                                            colSpan={
+                                                                isIntern ? 3 : 4
+                                                            }
                                                             className="px-4 py-8 text-center"
                                                         >
                                                             <div className="flex flex-col items-center">

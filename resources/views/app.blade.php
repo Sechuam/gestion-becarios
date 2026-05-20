@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="BecaGest centraliza la gestión de becarios, centros, tareas, evaluaciones, asistencias y reportes en una aplicación web privada.">
+        <meta name="theme-color" content="#2b3036">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
@@ -32,11 +34,8 @@
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-        <link rel="icon" href="/images/becagest-logo.png" type="image/png">
-        <link rel="apple-touch-icon" href="/images/becagest-logo.png">
-
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700" rel="stylesheet" />
+        <link rel="icon" href="/images/favicon.png" type="image/png" sizes="32x32">
+        <link rel="apple-touch-icon" href="/images/becagest-apple-touch.png">
 
         @viteReactRefresh
         @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])

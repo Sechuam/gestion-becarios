@@ -50,6 +50,7 @@ export function DashboardHeader({
                         <Button
                             variant="outline"
                             onClick={onManageWidgets}
+                            aria-label="Gestionar widgets del dashboard"
                             className="h-9 w-9 rounded-lg border-slate-200 bg-white p-0 text-slate-600 shadow-sm hover:bg-slate-50"
                             title="Gestionar Widgets"
                         >

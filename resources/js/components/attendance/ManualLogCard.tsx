@@ -52,7 +52,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
     }
 
     return (
-        <Card className="gap-0 rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+        <Card className="gap-0 overflow-visible rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-slate-800 dark:bg-slate-900">
             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
             <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
@@ -178,6 +178,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                             </Label>
                             <DatePicker
                                 className="h-11 rounded-xl border-sidebar/20 bg-card text-foreground shadow-sm"
+                                panelClassName="right-0 z-[80]"
                                 value={form.data.date}
                                 onChange={(value) =>
                                     form.setData('date', value)

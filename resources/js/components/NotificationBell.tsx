@@ -25,6 +25,11 @@ export function NotificationBell({ triggerClassName }: NotificationBellProps) {
                 <Button
                     variant="ghost"
                     size="icon"
+                    aria-label={
+                        notifications.length > 0
+                            ? `Abrir notificaciones (${notifications.length} sin leer)`
+                            : 'Abrir notificaciones'
+                    }
                     className={cn(
                         'group relative h-9 w-9 rounded-full border border-white/10 bg-sidebar/85 text-white shadow-md transition-all duration-300 hover:bg-sidebar hover:text-white',
                         triggerClassName,

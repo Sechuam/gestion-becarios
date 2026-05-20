@@ -203,6 +203,7 @@ export function TodayAgendaPanel({
                                             type="button"
                                             variant="outline"
                                             size="icon"
+                                            aria-label="Ver página anterior de la agenda"
                                             className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                             disabled={currentAgendaPage === 1}
                                             onClick={() =>
@@ -221,6 +222,7 @@ export function TodayAgendaPanel({
                                             type="button"
                                             variant="outline"
                                             size="icon"
+                                            aria-label="Ver página siguiente de la agenda"
                                             className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                             disabled={
                                                 currentAgendaPage ===

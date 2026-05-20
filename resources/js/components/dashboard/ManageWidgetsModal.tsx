@@ -75,6 +75,7 @@ interface ManageWidgetsModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     visibleWidgets: string[];
+    supportedWidgets?: string[];
     onToggleWidget: (id: string) => void;
 }
 
@@ -82,8 +83,15 @@ export function ManageWidgetsModal({
     open,
     onOpenChange,
     visibleWidgets,
+    supportedWidgets,
     onToggleWidget,
 }: ManageWidgetsModalProps) {
+    const widgets = supportedWidgets
+        ? AVAILABLE_WIDGETS.filter((widget) =>
+              supportedWidgets.includes(widget.id),
+          )
+        : AVAILABLE_WIDGETS;
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[500px]">
@@ -102,7 +110,7 @@ export function ManageWidgetsModal({
                 </DialogHeader>
 
                 <div className="custom-scrollbar max-h-[450px] space-y-3 overflow-y-auto p-6">
-                    {AVAILABLE_WIDGETS.map((widget) => {
+                    {widgets.map((widget) => {
                         const isVisible = visibleWidgets.includes(widget.id);
                         return (
                             <div

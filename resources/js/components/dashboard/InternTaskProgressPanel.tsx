@@ -11,19 +11,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import type { DashboardTaskProgress } from './types';
+import type { DashboardRole, DashboardTaskProgress } from './types';
 
 const ITEMS_PER_PAGE = 4;
+const EMPTY_PROGRESS_SLOTS = Array.from({ length: ITEMS_PER_PAGE });
 
 type Props = {
     taskProgress: DashboardTaskProgress[];
     averageResolutionDays: number | null;
+    role?: DashboardRole;
     className?: string;
 };
 
 export function InternTaskProgressPanel({
     taskProgress,
     averageResolutionDays,
+    role,
     className,
 }: Props) {
     const [search, setSearch] = useState('');
@@ -54,6 +57,16 @@ export function InternTaskProgressPanel({
     function handleSearch(value: string) {
         setSearch(value);
         setPage(1);
+    }
+
+    if (role === 'intern') {
+        return (
+            <InternOwnProgressPanel
+                taskProgress={taskProgress}
+                averageResolutionDays={averageResolutionDays}
+                className={className}
+            />
+        );
     }
 
     return (
@@ -96,7 +109,7 @@ export function InternTaskProgressPanel({
                     </div>
                 ) : (
                     <div className="flex flex-1 flex-col justify-between">
-                        <div className="min-h-[380px] flex-1 space-y-1.5">
+                        <div className="flex min-h-[380px] flex-1 flex-col gap-1.5">
                             <div className="relative">
                                 <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-sidebar/70" />
                                 <Input
@@ -115,60 +128,78 @@ export function InternTaskProgressPanel({
                                     búsqueda.
                                 </div>
                             ) : (
-                                visibleProgress.map((intern) => (
-                                    <div
-                                        key={intern.id}
-                                        className="rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-1.5 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
-                                    >
-                                        <div className="flex items-center justify-between gap-2">
-                                            <div className="min-w-0">
-                                                <p className="truncate text-xs font-black text-slate-900 dark:text-white">
-                                                    {intern.name}
-                                                </p>
-                                                <p className="truncate text-[10px] text-slate-500">
-                                                    {intern.center}
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-col items-end gap-1">
-                                                <Badge
-                                                    variant="outline"
-                                                    className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
-                                                >
-                                                    {intern.hours} h
-                                                </Badge>
-                                                {intern.average_delay !==
-                                                    undefined &&
-                                                    intern.average_delay >
-                                                        0 && (
+                                <div className="grid flex-1 grid-rows-4 gap-1.5">
+                                    {EMPTY_PROGRESS_SLOTS.map((_, index) => {
+                                        const intern = visibleProgress[index];
+
+                                        if (!intern) {
+                                            return (
+                                                <div
+                                                    key={`empty-${currentPage}-${index}`}
+                                                    aria-hidden="true"
+                                                    className="min-h-[76px] rounded-md border border-transparent px-2.5 py-1.5 opacity-0"
+                                                />
+                                            );
+                                        }
+
+                                        return (
+                                            <div
+                                                key={intern.id}
+                                                className="min-h-[76px] rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-1.5 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
+                                            >
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="min-w-0">
+                                                        <p className="truncate text-xs font-black text-slate-900 dark:text-white">
+                                                            {intern.name}
+                                                        </p>
+                                                        <p className="truncate text-[10px] text-slate-500">
+                                                            {intern.center}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex flex-col items-end gap-1">
                                                         <Badge
-                                                            variant="secondary"
-                                                            className="rounded-md border-amber-500/20 bg-amber-500/10 px-1.5 py-0 text-[9px] font-bold text-amber-600"
+                                                            variant="outline"
+                                                            className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
                                                         >
-                                                            +
-                                                            {
-                                                                intern.average_delay
-                                                            }{' '}
-                                                            min retraso
+                                                            {intern.hours} h
                                                         </Badge>
-                                                    )}
+                                                        {intern.average_delay !==
+                                                            undefined &&
+                                                            intern.average_delay >
+                                                                0 && (
+                                                                <Badge
+                                                                    variant="secondary"
+                                                                    className="rounded-md border-amber-500/20 bg-amber-500/10 px-1.5 py-0 text-[9px] font-bold text-amber-600"
+                                                                >
+                                                                    +
+                                                                    {
+                                                                        intern.average_delay
+                                                                    }{' '}
+                                                                    min retraso
+                                                                </Badge>
+                                                            )}
+                                                    </div>
+                                                </div>
+                                                <div className="mt-1.5 flex items-center gap-2">
+                                                    <Progress
+                                                        value={intern.progress}
+                                                        aria-label={`Progreso de tareas de ${intern.name}: ${intern.progress}%`}
+                                                        className="h-1"
+                                                        indicatorClassName="bg-sidebar dark:bg-teal-400"
+                                                    />
+                                                    <span className="w-9 text-right text-[11px] font-black text-slate-500">
+                                                        {intern.progress}%
+                                                    </span>
+                                                </div>
+                                                <p className="mt-1 text-[10px] text-slate-500">
+                                                    {intern.completed} de{' '}
+                                                    {intern.total} tareas
+                                                    completadas
+                                                </p>
                                             </div>
-                                        </div>
-                                        <div className="mt-1.5 flex items-center gap-2">
-                                            <Progress
-                                                value={intern.progress}
-                                                className="h-1"
-                                                indicatorClassName="bg-sidebar dark:bg-teal-400"
-                                            />
-                                            <span className="w-9 text-right text-[11px] font-black text-slate-500">
-                                                {intern.progress}%
-                                            </span>
-                                        </div>
-                                        <p className="mt-1 text-[10px] text-slate-500">
-                                            {intern.completed} de {intern.total}{' '}
-                                            tareas completadas
-                                        </p>
-                                    </div>
-                                ))
+                                        );
+                                    })}
+                                </div>
                             )}
                         </div>
 
@@ -183,6 +214,7 @@ export function InternTaskProgressPanel({
                                     type="button"
                                     variant="outline"
                                     size="icon"
+                                    aria-label="Ver página anterior de progreso"
                                     className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                     onClick={() =>
                                         setPage((current) =>
@@ -200,6 +232,7 @@ export function InternTaskProgressPanel({
                                     type="button"
                                     variant="outline"
                                     size="icon"
+                                    aria-label="Ver página siguiente de progreso"
                                     className="h-7 w-7 border-sidebar bg-sidebar text-white hover:bg-sidebar/90 disabled:border-sidebar/20 disabled:bg-sidebar/10 disabled:text-sidebar/40"
                                     onClick={() =>
                                         setPage((current) =>
@@ -216,5 +249,124 @@ export function InternTaskProgressPanel({
                 )}
             </CardContent>
         </Card>
+    );
+}
+
+function InternOwnProgressPanel({
+    taskProgress,
+    averageResolutionDays,
+    className,
+}: Pick<Props, 'taskProgress' | 'averageResolutionDays' | 'className'>) {
+    const intern = taskProgress[0];
+    const progress = intern?.progress ?? 0;
+    const completed = intern?.completed ?? 0;
+    const total = intern?.total ?? 0;
+    const hours = intern?.hours ?? 0;
+
+    return (
+        <Card
+            className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 ${className}`}
+        >
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+                <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                        <TrendingUp className="h-4 w-4" />
+                    </span>
+                    <div>
+                        <CardTitle className="text-sm leading-tight font-black text-slate-800 dark:text-slate-100">
+                            Mi progreso
+                        </CardTitle>
+                        <p className="mt-0.5 text-[11px] leading-none text-slate-500">
+                            Tu avance de tareas y actividad registrada.
+                        </p>
+                    </div>
+                </div>
+                <Badge
+                    variant="outline"
+                    className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
+                >
+                    {averageResolutionDays === null
+                        ? 'Sin media'
+                        : `${averageResolutionDays} días`}
+                </Badge>
+            </CardHeader>
+            <CardContent className="flex flex-1 flex-col justify-between gap-4 bg-slate-50/60 px-4 pt-4 pb-4 dark:bg-slate-950/20">
+                {!intern ? (
+                    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white px-4 py-8 text-center text-sm font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-900">
+                        Todavía no hay tareas vinculadas para mostrar progreso.
+                    </div>
+                ) : (
+                    <>
+                        <div className="flex flex-1 flex-col items-center justify-center gap-4">
+                            <div
+                                className="relative grid aspect-square w-full max-w-[220px] place-items-center rounded-full"
+                                role="img"
+                                aria-label={`Has completado el ${progress}% de tus tareas`}
+                                style={{
+                                    background: `conic-gradient(var(--sidebar) ${progress * 3.6}deg, #e2e8f0 0deg)`,
+                                }}
+                            >
+                                <div className="absolute inset-3 rounded-full bg-white shadow-inner dark:bg-slate-900" />
+                                <div className="relative text-center">
+                                    <p className="text-5xl leading-none font-black text-slate-900 dark:text-white">
+                                        {progress}%
+                                    </p>
+                                    <p className="mt-2 text-[10px] font-black tracking-[0.22em] text-slate-500 uppercase">
+                                        completado
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="min-w-0 text-center">
+                                <p className="truncate text-sm font-black text-slate-900 dark:text-white">
+                                    {intern.name}
+                                </p>
+                                <p className="mt-0.5 truncate text-[11px] font-medium text-slate-500">
+                                    {intern.center}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <InternProgressStat
+                                label="Tareas"
+                                value={`${completed}/${total}`}
+                                hint="completadas"
+                            />
+                            <InternProgressStat
+                                label="Horas"
+                                value={`${hours} h`}
+                                hint="registradas"
+                            />
+                        </div>
+                    </>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+function InternProgressStat({
+    label,
+    value,
+    hint,
+}: {
+    label: string;
+    value: string;
+    hint: string;
+}) {
+    return (
+        <div className="rounded-lg border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-2 text-center shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900">
+            <p className="text-[9px] leading-3 font-black tracking-widest text-slate-500 uppercase">
+                {label}
+            </p>
+            <p className="mt-1 text-base leading-5 font-black text-slate-900 dark:text-white">
+                {value}
+            </p>
+            <p className="mt-0.5 truncate text-[10px] font-medium text-slate-500">
+                {hint}
+            </p>
+        </div>
     );
 }

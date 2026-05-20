@@ -5,6 +5,9 @@ export type DashboardRole = 'admin' | 'tutor' | 'intern' | string;
 export type DashboardChartPoint = {
     name?: string;
     month?: string;
+    day?: string;
+    date?: string;
+    iso_date?: string;
     becarios?: number;
     horas?: number;
     value?: number;
