@@ -240,14 +240,14 @@ export default function Index({ datasets, templates, summary }: Props) {
                             nombres.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="max-h-[calc(85vh-112px)] overflow-y-auto p-6">
-                        <ReportTemplatesCard
-                            templates={templates}
-                            datasets={datasets}
-                            onApplyTemplate={applyTemplate}
-                            framed={false}
-                        />
-                    </div>
+                    <div className="max-h-[calc(85vh-112px)] overflow-y-auto p-6"> 
+<ReportTemplatesCard 
+templates={templates} 
+datasets={datasets} 
+onApplyTemplate={applyTemplate} 
+framed={false} 
+/> 
+</div>  
                 </DialogContent>
             </Dialog>
         </AppLayout>

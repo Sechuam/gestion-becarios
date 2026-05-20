@@ -84,7 +84,7 @@ export function ReportTemplatesCard({
                                 onApplyTemplate(template);
                             }
                         }}
-                        className="w-full cursor-pointer rounded-lg border border-sidebar/10 p-3 text-left transition hover:bg-slate-50 dark:hover:bg-slate-800"
+                        className="w-full cursor-pointer rounded-lg border border-sidebar/10 bg-white p-3 text-left transition hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800"
                     >
                         <div className="flex items-center justify-between gap-2">
                             {editingId === template.id ? (

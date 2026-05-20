@@ -171,7 +171,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
+                        className="rounded-xl border-0 bg-linear-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
                         asChild
                     >
                         <Link href="/evaluaciones">
@@ -249,12 +249,12 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                     icon={<ClipboardList className="h-5 w-5" />}
                     actions={
                         <div className="flex flex-wrap items-center gap-3">
-                            <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black tracking-widest text-white uppercase backdrop-blur-md">
+                            <span className="rounded-full border border-white/25 bg-white px-3 py-1 text-[9px] font-black tracking-widest text-slate-900 uppercase backdrop-blur-md">
                                 {getEvaluationTypeLabel(
                                     evaluation.evaluation_type,
                                 )}
                             </span>
-                            <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black tracking-widest text-white uppercase backdrop-blur-md">
+                            <span className="rounded-full border border-white/25 bg-white px-3 py-1 text-[9px] font-black tracking-widest text-slate-900 uppercase backdrop-blur-md">
                                 {evaluation.is_self_evaluation
                                     ? 'Autoevaluación'
                                     : 'Evaluación externa'}
@@ -264,7 +264,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
 
                             <Button
                                 size="sm"
-                                className="h-8 rounded-lg border border-white/20 bg-white/10 px-3 text-[9px] font-black tracking-widest text-white uppercase shadow-lg backdrop-blur-md transition-all hover:bg-white/20"
+                                className="h-8 rounded-lg border border-white/20 bg-white px-3 text-[9px] font-black tracking-widest text-slate-900 uppercase shadow-lg backdrop-blur-md transition-all hover:bg-white/20"
                                 asChild
                             >
                                 <a
@@ -442,7 +442,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         <TabsContent value="general" className="mt-0">
                             <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         01
                                     </span>
                                     <div>
@@ -457,7 +457,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                                    <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
                                         <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
                                             Becario
                                         </p>
@@ -465,7 +465,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             {subjectName}
                                         </p>
                                     </div>
-                                    <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
                                         <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
                                             Tipo
                                         </p>
@@ -475,7 +475,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             )}
                                         </p>
                                     </div>
-                                    <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
                                         <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
                                             Fecha de evaluación
                                         </p>
@@ -485,7 +485,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             )}
                                         </p>
                                     </div>
-                                    <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
                                         <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
                                             Módulo
                                         </p>
@@ -494,7 +494,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                 ?.academic_degree || '—'}
                                         </p>
                                     </div>
-                                    <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
                                         <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
                                             Inicio del período
                                         </p>
@@ -506,7 +506,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                 : '—'}
                                         </p>
                                     </div>
-                                    <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
                                         <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
                                             Fin del período
                                         </p>
@@ -525,7 +525,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         <TabsContent value="comments" className="mt-0">
                             <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         02
                                     </span>
                                     <div>
@@ -539,7 +539,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                     </div>
                                 </div>
 
-                                <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-6 shadow-lg">
+                                <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-6 shadow-lg">
                                     <div className="mb-3 flex items-center gap-2 text-white/70">
                                         <MessageSquareText className="h-4 w-4" />
                                         <span className="text-xs font-black tracking-widest uppercase">
@@ -557,7 +557,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         <TabsContent value="criteria" className="mt-0">
                             <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         03
                                     </span>
                                     <div>
@@ -575,7 +575,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                     {evaluation.scores.map((score) => (
                                         <div
                                             key={score.id}
-                                            className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-6 shadow-lg transition-all hover:scale-[1.01]"
+                                            className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-6 shadow-lg transition-all hover:scale-[1.01]"
                                         >
                                             <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
                                                 <div>
@@ -611,7 +611,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                     )}
                                                 </div>
 
-                                                <div className="grid min-w-[220px] grid-cols-2 gap-3">
+                                                <div className="grid min-w-55 grid-cols-2 gap-3">
                                                     <div className="rounded-xl border border-sidebar/10 bg-white p-4 text-center shadow-sm">
                                                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                             Nota
@@ -664,7 +664,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         <TabsContent value="history" className="mt-0">
                             <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         04
                                     </span>
                                     <div>
@@ -695,7 +695,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                         return (
                                             <div
                                                 key={item.id}
-                                                className={`rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-5 shadow-lg transition-all ${
+                                                className={`rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-5 shadow-lg transition-all ${
                                                     item.is_current
                                                         ? 'shadow-xl ring-2 ring-white/30 ring-offset-2 ring-offset-sidebar'
                                                         : 'opacity-90'
@@ -755,7 +755,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                         </p>
                                                     </div>
 
-                                                    <div className="grid min-w-[240px] grid-cols-2 gap-3">
+                                                    <div className="grid min-w-60 grid-cols-2 gap-3">
                                                         <div className="rounded-xl border border-sidebar/10 bg-white p-4 text-center">
                                                             <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                                 Nota ponderada
