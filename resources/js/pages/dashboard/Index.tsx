@@ -392,6 +392,7 @@ export default function Dashboard({
                             <AttendanceChart
                                 className="min-h-[300px] flex-[1_1_0]"
                                 data={attendance_chart}
+                                currentLog={current_log}
                             />
                             <AttendanceStatsCard
                                 className="shrink-0"

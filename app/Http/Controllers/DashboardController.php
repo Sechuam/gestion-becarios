@@ -172,27 +172,35 @@ class DashboardController extends Controller
 
     protected function attendanceChart(Collection $userIds): array
     {
-        $start = Carbon::now()->subMonths(5)->startOfMonth();
-        $monthExpression = match (DB::getDriverName()) {
-            'sqlite' => 'strftime("%Y-%m", date)',
-            'pgsql' => "to_char(date, 'YYYY-MM')",
-            default => 'DATE_FORMAT(date, "%Y-%m")',
-        };
+        $start = Carbon::today()->subDays(29);
+        $end = Carbon::today();
 
         $rows = TimeLog::query()
-            ->selectRaw("{$monthExpression} as month, ROUND(SUM(total_hours), 2) as hours")
+            ->selectRaw('date, ROUND(SUM(total_hours), 2) as hours')
             ->whereIn('user_id', $userIds)
-            ->whereDate('date', '>=', $start)
-            ->groupBy('month')
-            ->pluck('hours', 'month');
+            ->whereBetween('date', [$start, $end])
+            ->groupBy('date')
+            ->pluck('hours', 'date');
 
-        return collect(range(0, 5))
-            ->map(function ($offset) use ($start, $rows) {
-                $month = $start->copy()->addMonths($offset);
+        $weekdayLabels = [
+            1 => 'L',
+            2 => 'M',
+            3 => 'M',
+            4 => 'J',
+            5 => 'V',
+            6 => 'S',
+            7 => 'D',
+        ];
+
+        return collect(range(0, 29))
+            ->map(function ($offset) use ($start, $rows, $weekdayLabels) {
+                $date = $start->copy()->addDays($offset);
 
                 return [
-                    'month' => $month->translatedFormat('M'),
-                    'horas' => (float) ($rows[$month->format('Y-m')] ?? 0),
+                    'day' => $weekdayLabels[$date->dayOfWeekIso],
+                    'date' => $date->format('d/m'),
+                    'iso_date' => $date->format('Y-m-d'),
+                    'horas' => (float) ($rows[$date->format('Y-m-d')] ?? 0),
                 ];
             })
             ->values()
