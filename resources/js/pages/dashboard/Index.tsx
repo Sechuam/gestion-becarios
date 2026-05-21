@@ -390,7 +390,7 @@ export default function Dashboard({
                     <div className="flex h-full flex-col gap-2.5">
                         <Suspense fallback={<ChartFallback />}>
                             <AttendanceChart
-                                className="min-h-[300px] flex-[1_1_0]"
+                                className="min-h-[380px] flex-[1_1_0]"
                                 data={attendance_chart}
                                 currentLog={current_log}
                             />

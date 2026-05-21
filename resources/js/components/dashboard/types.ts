@@ -10,6 +10,8 @@ export type DashboardChartPoint = {
     iso_date?: string;
     becarios?: number;
     horas?: number;
+    live_hours?: number;
+    total_hours?: number;
     value?: number;
 };
 

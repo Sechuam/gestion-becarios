@@ -44,7 +44,13 @@ function formatHoursToHoursMinutes(hours: number) {
     return `${wholeHours}h ${minutes}m`;
 }
 
-type AttendanceView = 'day' | 'month';
+type AttendanceRange = '7d' | '30d' | 'month';
+
+const attendanceRangeLabels: Record<AttendanceRange, string> = {
+    '7d': '7D',
+    '30d': '30D',
+    month: 'Mes',
+};
 
 function groupAttendanceByMonth(data: DashboardChartPoint[]) {
     const formatter = new Intl.DateTimeFormat('es-ES', { month: 'short' });
@@ -84,7 +90,9 @@ function AttendanceTooltip({
     if (!active || !payload?.length) return null;
 
     const point = payload[0]?.payload;
-    const hours = Number(point?.horas ?? payload[0]?.value ?? 0);
+    const closedHours = Number(point?.horas ?? payload[0]?.value ?? 0);
+    const liveHours = Number(point?.live_hours ?? 0);
+    const totalHours = Number(point?.total_hours ?? closedHours + liveHours);
     const date = point?.date;
 
     return (
@@ -94,8 +102,24 @@ function AttendanceTooltip({
                 {date ? ` · ${date}` : ''}
             </p>
             <p className="mt-1 font-medium text-slate-600 dark:text-slate-300">
-                {formatHoursToHoursMinutes(hours)} registradas
+                {formatHoursToHoursMinutes(totalHours)} registradas
             </p>
+            {liveHours > 0 && (
+                <div className="mt-2 space-y-1 border-t border-slate-100 pt-2 text-[11px] dark:border-slate-800">
+                    <p className="flex items-center justify-between gap-4 text-slate-500">
+                        <span>Horas cerradas</span>
+                        <span className="font-bold text-slate-700 dark:text-slate-200">
+                            {formatHoursToHoursMinutes(closedHours)}
+                        </span>
+                    </p>
+                    <p className="flex items-center justify-between gap-4 text-rose-500">
+                        <span>En curso</span>
+                        <span className="font-bold">
+                            {formatHoursToHoursMinutes(liveHours)}
+                        </span>
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
@@ -228,7 +252,7 @@ export function AttendanceChart({
     className?: string;
     currentLog?: DashboardCurrentLog | null;
 }) {
-    const [view, setView] = useState<AttendanceView>('day');
+    const [range, setRange] = useState<AttendanceRange>('30d');
     const scrollRef = useRef<HTMLDivElement>(null);
     const [elapsedSeconds, setElapsedSeconds] = useState(
         currentLog?.elapsed_seconds ?? 0,
@@ -237,38 +261,67 @@ export function AttendanceChart({
     const todayLoggedHours = Number(currentLog?.today_logged_hours ?? 0);
     const todayLiveTotalHours = todayLoggedHours + liveHours;
     const dailyData = useMemo(
-        () =>
-            [...data]
+        () => {
+            const visibleDays = range === '7d' ? 7 : data.length;
+
+            return [...data]
                 .reverse()
+                .slice(0, visibleDays)
                 .map((point, index) => {
                     const isToday = index === 0;
+                    const closedHours =
+                        isToday && currentLog
+                            ? todayLoggedHours
+                            : Number(point.horas ?? 0);
+                    const currentLiveHours =
+                        isToday && currentLog ? liveHours : 0;
 
                     return {
                         ...point,
                         day: isToday ? 'Hoy' : point.day,
-                        horas:
-                            isToday && currentLog
-                                ? todayLiveTotalHours
-                                : point.horas,
+                        horas: closedHours,
+                        live_hours: currentLiveHours,
+                        total_hours: closedHours + currentLiveHours,
                     };
-                }),
-        [currentLog, data, todayLiveTotalHours],
+                });
+        },
+        [currentLog, data, liveHours, range, todayLoggedHours],
     );
     const monthlyData = useMemo(() => groupAttendanceByMonth(data), [data]);
-    const chartData = view === 'day' ? dailyData : monthlyData;
+    const isMonthView = range === 'month';
+    const chartData = isMonthView ? monthlyData : dailyData;
     const totalHours = chartData.reduce(
-        (sum, item) => sum + Number(item.horas ?? 0),
+        (sum, item) =>
+            sum +
+            Number(
+                item.total_hours ??
+                    Number(item.horas ?? 0) + Number(item.live_hours ?? 0),
+            ),
         0,
     );
+    const activeDays = chartData.filter(
+        (item) =>
+            Number(item.total_hours ?? item.horas ?? 0) > 0 ||
+            Number(item.live_hours ?? 0) > 0,
+    ).length;
+    const averageHours = activeDays > 0 ? totalHours / activeDays : 0;
+    const bestDay = chartData.reduce<DashboardChartPoint | null>(
+        (best, item) =>
+            Number(item.total_hours ?? item.horas ?? 0) >
+            Number(best?.total_hours ?? best?.horas ?? 0)
+                ? item
+                : best,
+        null,
+    );
     const chartWidth =
-        view === 'day'
-            ? Math.max(860, chartData.length * 34)
+        !isMonthView
+            ? Math.max(range === '7d' ? 520 : 860, chartData.length * 38)
             : Math.max(520, chartData.length * 96);
 
     useLayoutEffect(() => {
         const container = scrollRef.current;
 
-        if (!container || view !== 'day') return;
+        if (!container || isMonthView) return;
 
         const scrollToToday = () => {
             container.scrollLeft = 0;
@@ -282,7 +335,7 @@ export function AttendanceChart({
             window.cancelAnimationFrame(frame);
             window.clearTimeout(timeout);
         };
-    }, [view, chartData.length, chartWidth]);
+    }, [isMonthView, range, chartData.length, chartWidth]);
 
     useEffect(() => {
         if (!currentLog) {
@@ -303,7 +356,7 @@ export function AttendanceChart({
             className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 ${className}`}
         >
             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+            <CardHeader className="flex flex-col gap-2 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-slate-800/70">
                 <div className="flex items-center gap-2.5">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <Clock className="h-4 w-4" />
@@ -313,45 +366,62 @@ export function AttendanceChart({
                             Cumplimiento horario
                         </CardTitle>
                         <p className="mt-0.5 text-[11px] leading-none text-slate-500">
-                            Horas registradas durante los últimos 30 días.
+                            Horas registradas con lectura rápida del periodo.
                         </p>
                     </div>
                 </div>
-                <div className="shrink-0">
+                <div className="flex shrink-0 items-center gap-2">
                     <div className="flex rounded-lg border border-sidebar/15 bg-white p-0.5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        {(['day', 'month'] as AttendanceView[]).map(
+                        {(Object.keys(attendanceRangeLabels) as AttendanceRange[]).map(
                             (option) => (
                                 <button
                                     key={option}
                                     type="button"
-                                    onClick={() => setView(option)}
+                                    onClick={() => setRange(option)}
                                     className={`rounded-md px-2 py-1 text-[10px] font-black uppercase transition-colors ${
-                                        view === option
-                                            ? 'bg-sidebar text-white'
+                                        range === option
+                                            ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900'
                                             : 'text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
                                     }`}
                                 >
-                                    {option === 'day' ? 'Día' : 'Mes'}
+                                    {attendanceRangeLabels[option]}
                                 </button>
                             ),
                         )}
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="flex flex-1 flex-col bg-slate-50/60 px-3 pt-3 pb-3 dark:bg-slate-950/20">
+            <CardContent className="flex flex-1 flex-col bg-slate-50/60 px-2.5 pt-2 pb-2.5 dark:bg-slate-950/20">
+                <div className="mb-2 grid grid-cols-2 gap-1.5">
+                    {[
+                        ['Total', formatHoursToHoursMinutes(totalHours)],
+                        ['Promedio', formatHoursToHoursMinutes(averageHours)],
+                        [
+                            'Mejor día',
+                            bestDay
+                                ? `${bestDay.day} ${formatHoursToHoursMinutes(Number(bestDay.total_hours ?? bestDay.horas ?? 0))}`
+                                : 'Sin datos',
+                        ],
+                        ['Días con registro', activeDays],
+                    ].map(([label, value]) => (
+                        <div
+                            key={label}
+                            className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+                        >
+                            <p className="text-[9px] leading-none font-black tracking-widest text-slate-400 uppercase">
+                                {label}
+                            </p>
+                            <p className="mt-1 truncate text-sm leading-none font-black text-slate-900 dark:text-white">
+                                {value}
+                            </p>
+                        </div>
+                    ))}
+                </div>
                 <div
                     ref={scrollRef}
-                    className="relative min-h-[230px] min-w-0 overflow-x-auto rounded-lg border border-slate-200 bg-white px-2 pt-3 pb-2 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+                    className="relative min-h-[260px] min-w-0 overflow-x-auto rounded-lg border border-slate-200 bg-white px-1.5 pt-2 pb-2 shadow-sm dark:border-slate-700 dark:bg-slate-900"
                 >
-                    <div className="sticky top-2 right-2 z-10 float-right rounded-lg border border-sidebar/15 bg-white/95 px-2.5 py-1 text-right shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/95">
-                        <p className="text-[9px] leading-none font-black tracking-widest text-slate-400 uppercase">
-                            Total
-                        </p>
-                        <p className="mt-1 text-sm leading-none font-black text-slate-900 dark:text-white">
-                            {formatHoursToHoursMinutes(totalHours)}
-                        </p>
-                    </div>
-                    <div className="h-[220px]" style={{ width: chartWidth }}>
+                    <div className="h-[255px]" style={{ width: chartWidth }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart
                                 data={chartData}
@@ -359,7 +429,7 @@ export function AttendanceChart({
                                     left: 8,
                                     right: 8,
                                     top: 6,
-                                    bottom: 48,
+                                    bottom: 38,
                                 }}
                             >
                                 <CartesianGrid
@@ -376,7 +446,7 @@ export function AttendanceChart({
                                         fontSize: 10,
                                         fill: '#475569',
                                     }}
-                                    height={54}
+                                    height={44}
                                     interval={0}
                                 />
                                 <YAxis
@@ -391,7 +461,7 @@ export function AttendanceChart({
                                     width={52}
                                 />
                                 <Tooltip content={<AttendanceTooltip />} />
-                                {view === 'day' && currentLog && (
+                                {!isMonthView && currentLog && (
                                     <ReferenceLine
                                         y={todayLiveTotalHours}
                                         stroke="#ef4444"
@@ -409,6 +479,14 @@ export function AttendanceChart({
                                 <Bar
                                     dataKey="horas"
                                     fill="#65b84d"
+                                    stackId="attendance"
+                                    radius={[2, 2, 0, 0]}
+                                    maxBarSize={28}
+                                />
+                                <Bar
+                                    dataKey="live_hours"
+                                    fill="#ef4444"
+                                    stackId="attendance"
                                     radius={[2, 2, 0, 0]}
                                     maxBarSize={28}
                                 />
