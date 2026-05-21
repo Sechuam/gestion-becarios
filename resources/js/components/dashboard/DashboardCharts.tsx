@@ -234,7 +234,7 @@ export function AttendanceChart({
         currentLog?.elapsed_seconds ?? 0,
     );
     const liveHours = currentLog ? elapsedSeconds / 3600 : 0;
-    const todayLoggedHours = Number(data[data.length - 1]?.horas ?? 0);
+    const todayLoggedHours = Number(currentLog?.today_logged_hours ?? 0);
     const todayLiveTotalHours = todayLoggedHours + liveHours;
     const dailyData = useMemo(
         () =>
@@ -248,11 +248,11 @@ export function AttendanceChart({
                         day: isToday ? 'Hoy' : point.day,
                         horas:
                             isToday && currentLog
-                                ? Number(point.horas ?? 0) + liveHours
+                                ? todayLiveTotalHours
                                 : point.horas,
                     };
                 }),
-        [currentLog, data, liveHours],
+        [currentLog, data, todayLiveTotalHours],
     );
     const monthlyData = useMemo(() => groupAttendanceByMonth(data), [data]);
     const chartData = view === 'day' ? dailyData : monthlyData;

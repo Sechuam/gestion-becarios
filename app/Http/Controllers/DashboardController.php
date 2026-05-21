@@ -133,6 +133,10 @@ class DashboardController extends Controller
         $data['today_agenda'] = $todayEvents->concat($todayAbsences);
         $data['current_log'] = $currentLog ? [
             'clock_in' => $currentLog->clock_in,
+            'today_logged_hours' => (float) TimeLog::where('user_id', $user->id)
+                ->whereDate('date', $today)
+                ->whereNotNull('clock_out')
+                ->sum('total_hours'),
             'elapsed_seconds' => Carbon::parse($currentLog->clock_in)->diffInSeconds(now())
         ] : null;
 

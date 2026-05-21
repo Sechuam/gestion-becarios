@@ -62,5 +62,6 @@ export type DashboardAgendaItem = {
 
 export type DashboardCurrentLog = {
     clock_in: string;
+    today_logged_hours: number;
     elapsed_seconds: number;
 };
