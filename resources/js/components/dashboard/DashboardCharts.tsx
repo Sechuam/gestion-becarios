@@ -305,14 +305,6 @@ export function AttendanceChart({
             Number(item.live_hours ?? 0) > 0,
     ).length;
     const averageHours = activeDays > 0 ? totalHours / activeDays : 0;
-    const bestDay = chartData.reduce<DashboardChartPoint | null>(
-        (best, item) =>
-            Number(item.total_hours ?? item.horas ?? 0) >
-            Number(best?.total_hours ?? best?.horas ?? 0)
-                ? item
-                : best,
-        null,
-    );
     const chartWidth =
         !isMonthView
             ? Math.max(range === '7d' ? 520 : 860, chartData.length * 38)
@@ -396,13 +388,6 @@ export function AttendanceChart({
                     {[
                         ['Total', formatHoursToHoursMinutes(totalHours)],
                         ['Promedio', formatHoursToHoursMinutes(averageHours)],
-                        [
-                            'Mejor día',
-                            bestDay
-                                ? `${bestDay.day} ${formatHoursToHoursMinutes(Number(bestDay.total_hours ?? bestDay.horas ?? 0))}`
-                                : 'Sin datos',
-                        ],
-                        ['Días con registro', activeDays],
                     ].map(([label, value]) => (
                         <div
                             key={label}
@@ -419,17 +404,20 @@ export function AttendanceChart({
                 </div>
                 <div
                     ref={scrollRef}
-                    className="relative min-h-[260px] min-w-0 overflow-x-auto rounded-lg border border-slate-200 bg-white px-1.5 pt-2 pb-2 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+                    className="relative min-h-[320px] min-w-0 overflow-x-auto rounded-lg border border-slate-200 bg-white px-1.5 pt-3 pb-3 shadow-sm dark:border-slate-700 dark:bg-slate-900"
                 >
-                    <div className="h-[255px]" style={{ width: chartWidth }}>
+                    <div
+                        className="h-[305px]"
+                        style={{ width: chartWidth }}
+                    >
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart
                                 data={chartData}
                                 margin={{
                                     left: 8,
                                     right: 8,
-                                    top: 6,
-                                    bottom: 38,
+                                    top: 10,
+                                    bottom: 52,
                                 }}
                             >
                                 <CartesianGrid
@@ -446,7 +434,7 @@ export function AttendanceChart({
                                         fontSize: 10,
                                         fill: '#475569',
                                     }}
-                                    height={44}
+                                    height={56}
                                     interval={0}
                                 />
                                 <YAxis
