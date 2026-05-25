@@ -10,7 +10,7 @@ export default function AppLogo() {
                 <span className="truncate leading-none font-black uppercase tracking-[0.15em] text-white text-base drop-shadow-sm">
                     Beca<span className="text-emerald-400">Gest</span>
                 </span>
-                <span className="truncate text-[9px] font-bold uppercase tracking-[0.2em] text-white/50 mt-1 leading-none">
+                <span className="mt-1 truncate text-[9px] leading-none font-bold tracking-[0.2em] text-white/75 uppercase">
                     Management System
                 </span>
             </div>

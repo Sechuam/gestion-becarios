@@ -2,6 +2,7 @@ import {
     Building2,
     ClipboardList,
     Clock,
+    FileText,
     LayoutGrid,
     UserCircle,
 } from 'lucide-react';
@@ -43,6 +44,11 @@ export function getInternSidebar(): SidebarSection[] {
                     title: 'Control horario',
                     href: '/asistencia',
                     icon: Clock,
+                },
+                {
+                    title: 'Reportes e informes',
+                    href: '/reportes',
+                    icon: FileText,
                 },
             ],
         },

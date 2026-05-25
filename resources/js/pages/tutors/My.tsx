@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { GraduationCap, Plus, Search } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
@@ -199,9 +200,12 @@ export default function My({
             cellClassName: 'text-foreground',
             render: (intern: InternRow) => (
                 <div className="flex items-center gap-3">
-                    <Avatar className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border border-border bg-muted">
-                        <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
-                        <AvatarFallback className="text-xs font-bold text-muted-foreground bg-transparent">
+                    <Avatar className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
+                        <AvatarImage
+                            src={intern.user?.avatar || ''}
+                            alt={intern.user?.name || ''}
+                        />
+                        <AvatarFallback className="bg-transparent text-xs font-bold text-muted-foreground">
                             {intern.user?.name
                                 ? intern.user.name.substring(0, 2).toUpperCase()
                                 : 'B'}
@@ -273,53 +277,55 @@ export default function My({
         },
     ];
 
+    const headerMetrics = [
+        {
+            label: 'Asignados',
+            value: stats.assigned,
+            hint: 'Becarios vinculados a tu perfil',
+        },
+        {
+            label: 'Activos',
+            value: stats.active,
+            hint: 'Becarios actualmente en prácticas',
+        },
+        {
+            label: 'Retrasados',
+            value: stats.delayed,
+            hint: 'Con fecha vencida y no finalizados',
+        },
+        {
+            label: 'Tareas abiertas',
+            value: stats.open_tasks,
+            hint: 'Pendientes, en progreso o en revisión',
+        },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Mis becarios" />
 
-            <div className="space-y-6">
+            <div className="space-y-3">
                 <ModuleHeader
                     title="Mis Becarios"
                     description={`Gestiona el seguimiento diario de tus becarios, detecta bloqueos y mantén a mano las tareas que has creado, ${tutor.name}.`}
                     avatar={tutor.avatar}
                     icon={<GraduationCap className="h-6 w-6" />}
-                    metrics={[
-                        {
-                            label: 'Asignados',
-                            value: stats.assigned,
-                            hint: 'Becarios vinculados a tu perfil',
-                        },
-                        {
-                            label: 'Activos',
-                            value: stats.active,
-                            hint: 'Becarios actualmente en prácticas',
-                        },
-                        {
-                            label: 'Retrasados',
-                            value: stats.delayed,
-                            hint: 'Con fecha vencida y no finalizados',
-                        },
-                        {
-                            label: 'Tareas abiertas',
-                            value: stats.open_tasks,
-                            hint: 'Pendientes, en progreso o en revisión',
-                        },
-                    ]}
                     actions={
-                        <HeaderActionButton 
+                        <HeaderActionButton
                             label="Nueva tarea"
                             href="/tareas/create"
                         />
                     }
                 />
+                <MetricPills metrics={headerMetrics} />
 
-                <div className="space-y-4 rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
+                <div className="space-y-4 rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="relative min-w-[240px] flex-1">
                             <Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar por nombre, email, DNI o centro..."
-                                className="border-sidebar/20 bg-card pl-10 h-12 text-foreground placeholder:text-muted-foreground rounded-2xl shadow-sm"
+                                className="h-10 rounded-xl border-sidebar/20 bg-card pl-10 text-foreground shadow-sm placeholder:text-muted-foreground"
                                 defaultValue={filters.search}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -333,7 +339,7 @@ export default function My({
                                 handleFilter('status', value)
                             }
                         >
-                            <SelectTrigger className="w-[180px] h-12 border-sidebar/20 bg-card text-foreground rounded-2xl shadow-sm">
+                            <SelectTrigger className="h-10 w-[180px] rounded-xl border-sidebar/20 bg-card text-foreground shadow-sm">
                                 <SelectValue>
                                     {{
                                         active: 'Activos',
@@ -342,7 +348,7 @@ export default function My({
                                     }[filters.status as string] || 'Todos'}
                                 </SelectValue>
                             </SelectTrigger>
-                            <SelectContent className="rounded-2xl border-sidebar/20">
+                            <SelectContent className="rounded-xl border-sidebar/20">
                                 <SelectItem value="all">Todos</SelectItem>
                                 <SelectItem value="active">Activos</SelectItem>
                                 <SelectItem value="completed">
@@ -354,7 +360,7 @@ export default function My({
                             </SelectContent>
                         </Select>
 
-                        <p className="ml-auto text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-slate-50 px-3 py-1 rounded-full dark:bg-slate-800">
+                        <p className="ml-auto rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase dark:bg-slate-800">
                             Mostrando {interns.data.length} de {interns.total}{' '}
                             becarios
                         </p>
@@ -383,9 +389,11 @@ export default function My({
                     </div>
                 </div>
 
-                <Card className="app-panel rounded-[2rem] border-sidebar/10 shadow-xl overflow-hidden bg-white dark:bg-slate-900">
-                    <CardHeader className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-sidebar/10 pb-4">
-                        <CardTitle className="text-lg font-black tracking-tight text-slate-800 dark:text-white">Tareas recientes creadas por mí</CardTitle>
+                <Card className="app-panel overflow-hidden rounded-xl border-sidebar/10 bg-white shadow-xl dark:bg-slate-900">
+                    <CardHeader className="border-b border-sidebar/10 bg-slate-50/50 pb-4 dark:bg-slate-800/50">
+                        <CardTitle className="text-lg font-black tracking-tight text-slate-800 dark:text-white">
+                            Tareas recientes creadas por mí
+                        </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3 pt-1">
                         {recent_tasks.length > 0 ? (

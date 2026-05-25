@@ -17,8 +17,10 @@ export function EmptyState({
     className,
 }: Props) {
     return (
-        <div className={`flex flex-col items-center justify-center space-y-4 p-12 text-center ${className || ''}`}>
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-sidebar/5 text-sidebar border border-sidebar/10 shadow-inner">
+        <div
+            className={`flex flex-col items-center justify-center space-y-4 p-12 text-center ${className || ''}`}
+        >
+            <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-sidebar/10 bg-sidebar/5 text-sidebar shadow-inner">
                 {icon ?? <Sparkles className="h-8 w-8" />}
             </div>
             <div className="space-y-1">

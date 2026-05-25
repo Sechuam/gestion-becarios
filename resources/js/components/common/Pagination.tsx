@@ -10,40 +10,44 @@ interface LinkProp {
 interface Props {
     links: LinkProp[];
     className?: string;
+    preserveScroll?: boolean;
 }
 
-export function Pagination({ links, className }: Props) {
+export function Pagination({ links, className, preserveScroll = true }: Props) {
     if (!links || links.length <= 3) return null; // Don't show if only one page or no pages
 
     return (
-        <div className={cn("flex flex-wrap items-center gap-2", className)}>
+        <div className={cn('flex flex-wrap items-center gap-2', className)}>
             {links.map((link, i) => {
                 const isPrevious = link.label.includes('Previous');
                 const isNext = link.label.includes('Next');
-                
+
                 return (
                     <Link
                         key={i}
                         href={link.url ?? '#'}
                         preserveState
+                        preserveScroll={preserveScroll}
                         className={cn(
-                            "relative rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all overflow-hidden",
+                            'relative overflow-hidden rounded-xl border px-4 py-2 text-[10px] font-bold tracking-widest uppercase shadow-sm transition-all active:border-slate-400 active:bg-slate-200 active:text-slate-800',
                             link.active
-                                ? 'scale-105 transform border-none bg-gradient-to-r from-sidebar to-[#1f4f52] text-white shadow-md shadow-sidebar/20'
-                                : (isPrevious || isNext)
-                                    ? 'border-sidebar/20 bg-sidebar/[0.03] text-sidebar hover:bg-sidebar/10 hover:border-sidebar/40'
-                                    : 'border-sidebar/10 bg-white text-slate-600 hover:border-sidebar/40 hover:bg-slate-50',
-                            !link.url && 'pointer-events-none opacity-45'
+                                ? 'scale-105 transform border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white'
+                                : isPrevious || isNext
+                                  ? 'border-sidebar/20 bg-sidebar/3 text-sidebar hover:border-sidebar/40 hover:bg-sidebar/10'
+                                  : 'border-sidebar/10 bg-white text-slate-600 hover:border-sidebar/40 hover:bg-slate-50',
+                            !link.url && 'pointer-events-none opacity-45',
                         )}
                     >
                         {link.active && (
-                            <div className="pointer-events-none absolute inset-x-0 top-0 h-2 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-slate-400 dark:bg-slate-500" />
                         )}
-                        <span dangerouslySetInnerHTML={{
-                            __html: link.label
-                                .replace('Previous', 'Anterior')
-                                .replace('Next', 'Siguiente'),
-                        }} />
+                        <span
+                            dangerouslySetInnerHTML={{
+                                __html: link.label
+                                    .replace('Previous', 'Anterior')
+                                    .replace('Next', 'Siguiente'),
+                            }}
+                        />
                     </Link>
                 );
             })}

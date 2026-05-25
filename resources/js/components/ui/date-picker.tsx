@@ -24,6 +24,7 @@ type DatePickerProps = {
     disabled?: boolean;
     allowClear?: boolean;
     className?: string;
+    panelClassName?: string;
 };
 
 export function DatePicker({
@@ -36,6 +37,7 @@ export function DatePicker({
     disabled,
     allowClear = true,
     className,
+    panelClassName,
 }: DatePickerProps) {
     const selectedDate = value ? parseISO(value) : undefined;
     const isSelectedValid = selectedDate && isValid(selectedDate);
@@ -101,7 +103,12 @@ export function DatePicker({
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
             >
-                <Popover.Panel className="absolute z-50 mt-2 w-auto rounded-xl border border-border bg-card p-0 shadow-lg">
+                <Popover.Panel
+                    className={cn(
+                        'absolute z-50 mt-2 w-auto rounded-xl border border-border bg-card p-0 shadow-lg',
+                        panelClassName,
+                    )}
+                >
                     <div className="flex items-center gap-2 border-b border-border px-3 py-3">
                         <Select
                             value={String(viewMonth.getMonth())}

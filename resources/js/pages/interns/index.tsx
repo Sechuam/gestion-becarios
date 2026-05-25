@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Users, Plus, Search, FileDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
@@ -214,15 +215,20 @@ export default function Index({
                 return (
                     <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
-                            <AvatarImage src={intern.user?.avatar || ''} alt={intern.user?.name || ''} />
-                            <AvatarFallback className="text-xs font-bold text-muted-foreground bg-transparent">
-                                {intern.user?.name ? intern.user.name.charAt(0).toUpperCase() : '?'}
+                            <AvatarImage
+                                src={intern.user?.avatar || ''}
+                                alt={intern.user?.name || ''}
+                            />
+                            <AvatarFallback className="bg-transparent text-xs font-bold text-muted-foreground">
+                                {intern.user?.name
+                                    ? intern.user.name.charAt(0).toUpperCase()
+                                    : '?'}
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col gap-1">
                             <Link
                                 href={`/interns/${intern.id}`}
-                                className="font-semibold text-foreground hover:text-sidebar hover:underline transition-colors"
+                                className="font-semibold text-foreground transition-colors hover:text-sidebar hover:underline"
                             >
                                 {intern.user?.name}
                             </Link>
@@ -478,16 +484,16 @@ export default function Index({
                     title="Gestión de Becarios"
                     description="Administra los becarios, sus centros y estados de prácticas con una vista rápida de carga y seguimiento."
                     icon={<Users className="h-6 w-6" />}
-                    metrics={headerMetrics}
                     actions={
                         canManage ? (
-                            <HeaderActionButton 
+                            <HeaderActionButton
                                 label="Añadir Becario"
                                 href="/interns/create"
                             />
                         ) : undefined
                     }
                 />
+                <MetricPills metrics={headerMetrics} />
 
                 <InternFilters
                     filters={filters}

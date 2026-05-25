@@ -5,8 +5,11 @@ export default function AppLogoIcon(props: ComponentPropsWithoutRef<'img'>) {
 
     return (
         <img
-            src="/images/becagest-logo.png"
+            src="/images/becagest-logo-small.webp"
             alt="BecaGest"
+            width={176}
+            height={96}
+            decoding="async"
             className={className}
             {...rest}
         />

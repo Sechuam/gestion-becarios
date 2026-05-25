@@ -13,7 +13,7 @@ import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 type Props = {
     status?: string;
@@ -35,10 +35,9 @@ export default function Login({
         >
             <Head title="Iniciar sesión" />
 
-            {/* Fade general del login */}
             <motion.div
                 variants={fadeInUp}
-                initial="initial"   // ⚠️ CORREGIDO (tenías "animate")
+                initial="initial"
                 animate="animate"
                 transition={{ duration: 0.6, delay: 0.2 }}
             >
@@ -49,7 +48,6 @@ export default function Login({
                 >
                     {({ processing, errors }) => (
                         <>
-                            {/* CONTENEDOR CON CASCADA */}
                             <motion.div
                                 className="grid gap-6"
                                 initial="initial"
@@ -62,13 +60,15 @@ export default function Login({
                                     },
                                 }}
                             >
-                                {/* EMAIL */}
-                                <motion.div variants={fadeInUp} className="grid gap-2">
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="grid gap-2"
+                                >
                                     <Label htmlFor="email">
                                         Correo electrónico
                                     </Label>
                                     <div className="relative">
-                                        <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                         <Input
                                             id="email"
                                             type="email"
@@ -84,8 +84,10 @@ export default function Login({
                                     <InputError message={errors.email} />
                                 </motion.div>
 
-                                {/* PASSWORD */}
-                                <motion.div variants={fadeInUp} className="grid gap-2">
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="grid gap-2"
+                                >
                                     <div className="flex items-center">
                                         <Label htmlFor="password">
                                             Contraseña
@@ -102,22 +104,28 @@ export default function Login({
                                     </div>
 
                                     <div className="relative">
-                                        <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                         <Input
                                             id="password"
-                                            type={showPassword ? 'text' : 'password'}
+                                            type={
+                                                showPassword
+                                                    ? 'text'
+                                                    : 'password'
+                                            }
                                             name="password"
                                             required
                                             tabIndex={2}
                                             autoComplete="current-password"
                                             placeholder="Contraseña"
-                                            className="pl-10 pr-10"
+                                            className="pr-10 pl-10"
                                         />
 
                                         <button
                                             type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            onClick={() =>
+                                                setShowPassword(!showPassword)
+                                            }
+                                            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                         >
                                             {showPassword ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -130,23 +138,22 @@ export default function Login({
                                     <InputError message={errors.password} />
                                 </motion.div>
 
-                                {/* REMEMBER */}
-                                <motion.div variants={fadeInUp} className="flex items-center space-x-3">
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="flex items-center space-x-3"
+                                >
                                     <Checkbox
                                         id="remember"
                                         name="remember"
                                         tabIndex={3}
                                     />
-                                    <Label htmlFor="remember">
-                                        Recuérdame
-                                    </Label>
+                                    <Label htmlFor="remember">Recuérdame</Label>
                                 </motion.div>
 
-                                {/* BOTÓN */}
                                 <motion.div variants={fadeInUp}>
                                     <Button
                                         type="submit"
-                                        className="mt-4 h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+                                        className="mt-4 h-11 w-full"
                                         tabIndex={4}
                                         disabled={processing}
                                     >
@@ -156,7 +163,6 @@ export default function Login({
                                 </motion.div>
                             </motion.div>
 
-                            {/* REGISTER */}
                             {canRegister && (
                                 <motion.div
                                     variants={fadeInUp}
@@ -169,7 +175,6 @@ export default function Login({
                                 </motion.div>
                             )}
 
-                            {/* SEGURIDAD */}
                             <motion.div
                                 variants={fadeInUp}
                                 className="flex items-center justify-center gap-2 text-xs text-slate-500"
@@ -183,7 +188,7 @@ export default function Login({
             </motion.div>
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-4 rounded-lg border border-slate-300 bg-slate-100 px-3 py-2 text-center text-sm font-medium text-slate-700">
                     {status}
                 </div>
             )}

@@ -24,6 +24,20 @@ class ScheduleController extends Controller
             'friday_hours' => 'numeric|min:0|max:24',
             'saturday_hours' => 'numeric|min:0|max:24',
             'sunday_hours' => 'numeric|min:0|max:24',
+            'monday_entry_time' => 'nullable|date_format:H:i',
+            'monday_exit_time' => 'nullable|date_format:H:i',
+            'tuesday_entry_time' => 'nullable|date_format:H:i',
+            'tuesday_exit_time' => 'nullable|date_format:H:i',
+            'wednesday_entry_time' => 'nullable|date_format:H:i',
+            'wednesday_exit_time' => 'nullable|date_format:H:i',
+            'thursday_entry_time' => 'nullable|date_format:H:i',
+            'thursday_exit_time' => 'nullable|date_format:H:i',
+            'friday_entry_time' => 'nullable|date_format:H:i',
+            'friday_exit_time' => 'nullable|date_format:H:i',
+            'saturday_entry_time' => 'nullable|date_format:H:i',
+            'saturday_exit_time' => 'nullable|date_format:H:i',
+            'sunday_entry_time' => 'nullable|date_format:H:i',
+            'sunday_exit_time' => 'nullable|date_format:H:i',
         ]);
 
         $this->authorizeScheduleManagement($request->user(), (int) $validated['user_id']);
@@ -49,6 +63,20 @@ class ScheduleController extends Controller
             'friday_hours' => 'numeric|min:0|max:24',
             'saturday_hours' => 'numeric|min:0|max:24',
             'sunday_hours' => 'numeric|min:0|max:24',
+            'monday_entry_time' => 'nullable|date_format:H:i',
+            'monday_exit_time' => 'nullable|date_format:H:i',
+            'tuesday_entry_time' => 'nullable|date_format:H:i',
+            'tuesday_exit_time' => 'nullable|date_format:H:i',
+            'wednesday_entry_time' => 'nullable|date_format:H:i',
+            'wednesday_exit_time' => 'nullable|date_format:H:i',
+            'thursday_entry_time' => 'nullable|date_format:H:i',
+            'thursday_exit_time' => 'nullable|date_format:H:i',
+            'friday_entry_time' => 'nullable|date_format:H:i',
+            'friday_exit_time' => 'nullable|date_format:H:i',
+            'saturday_entry_time' => 'nullable|date_format:H:i',
+            'saturday_exit_time' => 'nullable|date_format:H:i',
+            'sunday_entry_time' => 'nullable|date_format:H:i',
+            'sunday_exit_time' => 'nullable|date_format:H:i',
         ]);
 
         $this->authorizeScheduleManagement($request->user(), (int) $schedule->user_id);
@@ -77,8 +105,8 @@ class ScheduleController extends Controller
 
         abort_unless(
             ($user->isAdmin() && $hasPermission)
-                || ($hasPermission && $intern && $intern->company_tutor_user_id === $user->id)
-                || ($user->isTutor() && $intern && $intern->company_tutor_user_id === $user->id),
+            || ($hasPermission && $intern && $intern->company_tutor_user_id === $user->id)
+            || ($user->isTutor() && $intern && $intern->company_tutor_user_id === $user->id),
             403
         );
     }

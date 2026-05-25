@@ -25,7 +25,7 @@ export default function ConfirmPassword() {
                         <div className="grid gap-2">
                             <Label htmlFor="password">Contraseña</Label>
                             <div className="relative">
-                                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                 <Input
                                     id="password"
                                     type={showPassword ? 'text' : 'password'}
@@ -33,14 +33,14 @@ export default function ConfirmPassword() {
                                     placeholder="Contraseña"
                                     autoComplete="current-password"
                                     autoFocus
-                                    className="pl-10 pr-10"
+                                    className="pr-10 pl-10"
                                 />
                                 <button
                                     type="button"
                                     onClick={() =>
                                         setShowPassword(!showPassword)
                                     }
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                     aria-label={
                                         showPassword
                                             ? 'Ocultar contraseña'
@@ -60,7 +60,7 @@ export default function ConfirmPassword() {
 
                         <div className="flex items-center">
                             <Button
-                                className="h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+                                className="h-11 w-full"
                                 disabled={processing}
                                 data-test="confirm-password-button"
                             >

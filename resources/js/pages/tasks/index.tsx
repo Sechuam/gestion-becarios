@@ -1,56 +1,19 @@
-import {
-    pointerWithin,
-    DndContext,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    DragOverlay,
-    type DragEndEvent,
-    type DragOverEvent,
-} from '@dnd-kit/core';
-import {
-    arrayMove,
-} from '@dnd-kit/sortable';
-import { cn } from '@/lib/utils';
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
-    KanbanSquare,
-    LayoutGrid,
-    List,
-    PlusCircle,
-    Sparkles,
-    Loader2,
-    Calendar
-} from 'lucide-react';
+import { PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
+import { Head, router, usePage } from '@inertiajs/react';
+import { KanbanSquare } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { SimpleTable } from '@/components/common/SimpleTable';
-import { TableActionMenu } from '@/components/common/TableActionMenu';
 import { Pagination } from '@/components/common/Pagination';
-import { HeaderActionButton } from '@/components/common/HeaderActionButton';
-import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
-import { formatDateEs } from '@/lib/date-format';
-import {
-    getTaskPriorityLabel,
-    getTaskPriorityTone,
-    getTaskStatusLabel,
-    getTaskStatusTone,
-} from '@/lib/task-labels';
+import { getTaskStatusLabel } from '@/lib/task-labels';
 import {
     KANBAN_COLUMNS,
     KANBAN_ORDER_STORAGE_KEY,
-    KANBAN_WIP_LIMIT,
     type TaskViewMode,
     type BoardQuickFilter,
 } from '@/lib/task-constants';
@@ -64,6 +27,11 @@ import {
 import { TaskFilters } from '@/components/tasks/TaskFilters';
 import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
 import { KanbanBoard } from '@/components/tasks/KanbanBoard';
+import { TasksHeaderActions } from '@/components/tasks/TasksHeaderActions';
+import { buildActiveTaskFilterChips } from '@/components/tasks/active-task-filter-chips';
+import { buildKanbanQuickFilters } from '@/components/tasks/kanban-quick-filters';
+import { buildTaskTableColumns } from '@/components/tasks/task-table-columns';
+import { buildTaskHeaderMetrics } from '@/components/tasks/task-header-metrics';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
@@ -77,7 +45,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Tareas', href: '/tareas' },
 ];
-
 
 const applyStoredKanbanOrder = (tasks: any[]) => {
     if (typeof window === 'undefined') return tasks;
@@ -145,7 +112,9 @@ const reorderBoardTasks = (
     activeTaskId: number,
     overId: string,
 ) => {
-    const activeIndex = currentTasks.findIndex(task => Number(task.id) === activeTaskId);
+    const activeIndex = currentTasks.findIndex(
+        (task) => Number(task.id) === activeTaskId,
+    );
     if (activeIndex === -1) return currentTasks;
     const activeTask = currentTasks[activeIndex];
 
@@ -159,9 +128,10 @@ const reorderBoardTasks = (
         const [movedTask] = newTasks.splice(activeIndex, 1);
         movedTask.status = targetColumn;
         newTasks.push(movedTask);
-    }
-    else {
-        const overIndex = newTasks.findIndex(task => Number(task.id) === overTaskId);
+    } else {
+        const overIndex = newTasks.findIndex(
+            (task) => Number(task.id) === overTaskId,
+        );
         if (overIndex === -1) return currentTasks;
 
         const overTask = newTasks[overIndex];
@@ -172,7 +142,9 @@ const reorderBoardTasks = (
             const [movedTask] = newTasks.splice(activeIndex, 1);
             movedTask.status = overTask.status;
 
-            const newOverIndex = newTasks.findIndex(task => Number(task.id) === overTaskId);
+            const newOverIndex = newTasks.findIndex(
+                (task) => Number(task.id) === overTaskId,
+            );
             newTasks.splice(newOverIndex, 0, movedTask);
         }
     }
@@ -188,7 +160,6 @@ const reorderBoardTasks = (
 
     return KANBAN_COLUMNS.flatMap((col) => grouped[col.key] || []);
 };
-
 
 const buildBoardOrderPayload = (tasks: any[]) =>
     KANBAN_COLUMNS.flatMap((column) =>
@@ -331,7 +302,9 @@ export default function Index({
                         setSelectedTask(null);
                     }
                     toast({
-                        title: isIntern ? 'Tarea entregada' : 'Tarea completada',
+                        title: isIntern
+                            ? 'Tarea entregada'
+                            : 'Tarea completada',
                         description: `"${task.title}" se ha marcado como ${isIntern ? 'en revisión' : 'completada'}.`,
                     });
                 },
@@ -356,7 +329,10 @@ export default function Index({
         return boardTasks.filter((task: any) => {
             if (boardFilter === 'urgent') {
                 const due = dueStatus(task.due_date);
-                return (due === 'overdue' || due === 'soon') && task.status !== 'completed';
+                return (
+                    (due === 'overdue' || due === 'soon') &&
+                    task.status !== 'completed'
+                );
             }
 
             if (boardFilter === 'high') {
@@ -406,8 +382,8 @@ export default function Index({
         const resolvedRejectReason =
             newStatus === 'rejected'
                 ? (rejectReason ??
-                    window.prompt('Indica el motivo del rechazo:') ??
-                    '')
+                  window.prompt('Indica el motivo del rechazo:') ??
+                  '')
                 : '';
 
         if (newStatus === 'rejected' && !resolvedRejectReason.trim()) {
@@ -450,313 +426,26 @@ export default function Index({
     };
 
     const columns = useMemo(
-        () => [
-            {
-                key: 'title',
-                label: 'Tarea',
-                sortKey: 'title',
-                render: (task: any) => (
-                    <div className="flex flex-col gap-1">
-                        <Link
-                            href={`/tareas/${task.id}`}
-                            className="font-semibold text-foreground hover:underline"
-                        >
-                            {task.title}
-                        </Link>
-                        <span className="text-xs text-muted-foreground">
-                            {task.description || 'Sin descripción'}
-                        </span>
-                    </div>
-                ),
-            },
-            {
-                key: 'practice_type',
-                label: 'Tipo',
-                sortKey: 'practice_type',
-                render: (task: any) => task.practice_type?.name || '—',
-            },
-            {
-                key: 'status',
-                label: 'Estado',
-                sortKey: 'status',
-                headClassName: 'text-center',
-                cellClassName: 'text-center',
-                render: (task: any) => (
-                    <div className="flex items-center justify-center gap-2 font-medium text-sidebar dark:text-white/80">
-                        <div className={cn("h-2 w-2 rounded-full shrink-0", {
-                            'bg-slate-300': task.status === 'pending',
-                            'bg-blue-400': task.status === 'in_progress',
-                            'bg-violet-400': task.status === 'in_review',
-                            'bg-emerald-500': task.status === 'completed',
-                            'bg-rose-500': task.status === 'rejected',
-                        })} />
-                        <span className="text-xs uppercase tracking-wider">{getTaskStatusLabel(task.status)}</span>
-                    </div>
-                ),
-            },
-            {
-                key: 'priority',
-                label: 'Prioridad',
-                sortKey: 'priority',
-                headClassName: 'text-center',
-                cellClassName: 'text-center',
-                render: (task: any) => (
-                    <div className="flex justify-center">
-                        <span
-                            className={cn(
-                                "inline-flex items-center justify-center rounded-full px-2 py-1 text-[9px] font-black uppercase tracking-widest w-20 shadow-sm transition-all",
-                                {
-                                    'bg-sidebar text-white shadow-sidebar/20': task.priority === 'high',
-                                    'bg-sidebar/70 text-white shadow-sidebar/10': task.priority === 'medium',
-                                    'bg-white text-sidebar border border-sidebar/20': task.priority === 'low',
-                                }
-                            )}
-                        >
-                            {getTaskPriorityLabel(task.priority)}
-                        </span>
-                    </div>
-                ),
-            },
-            {
-                key: 'due_date',
-                label: 'Entrega',
-                sortKey: 'due_date',
-                render: (task: any) => {
-                    const status = dueStatus(task.due_date);
-                    const isCompleted = task.status === 'completed';
-                    const isLate = isCompleted && task.completed_at && task.due_date && 
-                                   new Date(task.completed_at.split(/T| /)[0]) > new Date(task.due_date);
-                    
-                    // dot color
-                    const dotClass = isCompleted
-                        ? (isLate ? 'bg-orange-500' : 'bg-emerald-500')
-                        : status === 'overdue'
-                            ? 'bg-rose-500'
-                            : status === 'soon'
-                                ? 'bg-amber-400'
-                                : 'bg-sidebar/20';
-
-                    // label
-                    const smartLabel = isCompleted
-                        ? (isLate ? 'Tarde' : 'Completada')
-                        : status === 'overdue'
-                            ? 'No entregada'
-                            : status === 'soon'
-                                ? 'Pronto'
-                                : formatDateEs(task.due_date);
-
-                    return task.due_date ? (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <div className="flex items-center gap-2 font-medium text-sidebar dark:text-white/80 cursor-default">
-                                    <div className={cn("h-2 w-2 rounded-full shrink-0", dotClass)} />
-                                    <span className="text-xs uppercase tracking-wider">{smartLabel}</span>
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent className="rounded-xl border-sidebar/20 font-medium">
-                                Fecha límite: {formatDateEs(task.due_date)}
-                            </TooltipContent>
-                        </Tooltip>
-                    ) : (
-                        '—'
-                    );
-                },
-            },
-            {
-                key: 'interns',
-                label: 'Asignados',
-                render: (task: any) => (
-                    <AssignedInternsStack interns={task.interns || []} />
-                ),
-            },
-            {
-                key: 'actions',
-                label: 'Acciones',
-                render: (task: any) => {
-                    const statusValue = String(task.status ?? '').toLowerCase();
-                    const canDelete = [
-                        'completed',
-                        'rejected',
-                        'completada',
-                        'rechazada',
-                    ].includes(statusValue);
-
-                    return (
-                        <TableActionMenu
-                            actions={[
-                                {
-                                    label: 'Ver tarea',
-                                    icon: 'view',
-                                    href: `/tareas/${task.id}`,
-                                },
-                                ...(!isIntern
-                                    ? [
-                                        {
-                                            label: 'Editar tarea',
-                                            icon: 'edit' as const,
-                                            href: `/tareas/${task.id}/edit`,
-                                        },
-                                    ]
-                                    : []),
-                                ...(!isIntern && canDelete
-                                    ? [
-                                        {
-                                            label: 'Eliminar tarea',
-                                            icon: 'delete' as const,
-                                            onClick: () => {
-                                                if (
-                                                    confirm(
-                                                        '¿Seguro que quieres eliminar esta tarea?',
-                                                    )
-                                                ) {
-                                                    router.delete(
-                                                        `/tareas/${task.id}`,
-                                                    );
-                                                }
-                                            },
-                                            variant: 'destructive' as const,
-                                        },
-                                    ]
-                                    : []),
-                            ]}
-                        />
-                    );
-                },
-            },
-        ],
+        () => buildTaskTableColumns({ isIntern }),
         [isIntern],
     );
 
-    const activeFilterChips = useMemo(() => {
-        const chips = [];
-
-        if (filters.search)
-            chips.push({ key: 'search', label: `Buscar: ${filters.search}` });
-        if (filters.status)
-            chips.push({
-                key: 'status',
-                label: `Estado: ${getTaskStatusLabel(filters.status)}`,
-            });
-        if (filters.delivery_status) {
-            const labels: any = {
-                completed_ontime: 'Completada',
-                late: 'Tarde',
-                not_delivered: 'No entregada',
-                soon: 'Pronto',
-            };
-            chips.push({
-                key: 'delivery_status',
-                label: `Entrega: ${labels[filters.delivery_status] || filters.delivery_status}`,
-            });
-        }
-        if (filters.practice_type) {
-            const typeName = practice_types.find(
-                (type: any) =>
-                    String(type.id) === String(filters.practice_type),
-            )?.name;
-            if (typeName) {
-                chips.push({
-                    key: 'practice_type',
-                    label: `Tipo: ${typeName}`,
-                });
-            }
-        }
-        if (filters.intern_id) {
-            const internName = interns.find(
-                (intern) => String(intern.id) === String(filters.intern_id),
-            )?.name;
-            if (internName) {
-                chips.push({
-                    key: 'intern_id',
-                    label: `Becario: ${internName}`,
-                });
-            }
-        }
-        if (filters.due_from)
-            chips.push({
-                key: 'due_from',
-                label: `Desde: ${formatDateEs(filters.due_from)}`,
-            });
-        if (filters.due_to)
-            chips.push({
-                key: 'due_to',
-                label: `Hasta: ${formatDateEs(filters.due_to)}`,
-            });
-
-        return chips;
-    }, [filters, interns, practice_types]);
+    const activeFilterChips = useMemo(
+        () =>
+            buildActiveTaskFilterChips({
+                filters,
+                interns,
+                practiceTypes: practice_types,
+            }),
+        [filters, interns, practice_types],
+    );
 
     const boardQuickFilters = useMemo(
-        () => [
-            { key: 'all' as const, label: 'Todas', tooltip: 'Muestra todas las tareas sin filtrar', count: tasks.data.length },
-            {
-                key: 'urgent' as const,
-                label: 'Urgentes',
-                tooltip: 'Muestra tareas vencidas o que vencen pronto, que no han sido finalizadas',
-                count: tasks.data.filter((task: any) => {
-                    const due = dueStatus(task.due_date);
-                    return (due === 'overdue' || due === 'soon') && task.status !== 'completed';
-                }).length,
-            },
-            {
-                key: 'high' as const,
-                label: 'Alta prioridad',
-                tooltip: 'Muestra solo tareas marcadas con prioridad Alta',
-                count: tasks.data.filter(
-                    (task: any) => task.priority === 'high',
-                ).length,
-            },
-            {
-                key: 'review' as const,
-                label: 'En revisión',
-                tooltip: 'Muestra tareas que esperan la revisión del tutor',
-                count: tasks.data.filter(
-                    (task: any) => task.status === 'in_review',
-                ).length,
-            },
-            {
-                key: 'unassigned' as const,
-                label: 'Sin asignar',
-                tooltip: 'Muestra tareas que no tienen ningún becario asignado',
-                count: tasks.data.filter((task: any) => !task.interns?.length)
-                    .length,
-            },
-        ],
+        () => buildKanbanQuickFilters(tasks.data),
         [tasks.data],
     );
 
-    const headerMetrics = useMemo(
-        () => [
-            {
-                label: 'Resultados',
-                value: tasks.total,
-                hint: 'Total según filtros actuales',
-            },
-            {
-                label: 'Pendientes',
-                value: tasks.data.filter(
-                    (task: any) => task.status === 'pending',
-                ).length,
-                hint: 'En esta página',
-            },
-            {
-                label: 'En revisión',
-                value: tasks.data.filter(
-                    (task: any) => task.status === 'in_review',
-                ).length,
-                hint: 'Esperando validación',
-            },
-            {
-                label: 'Entrega sensible',
-                value: tasks.data.filter((task: any) => {
-                    const status = dueStatus(task.due_date);
-                    return status === 'overdue' || status === 'soon';
-                }).length,
-                hint: 'Atrasadas o próximas',
-            },
-        ],
-        [tasks.data, tasks.total],
-    );
+    const headerMetrics = useMemo(() => buildTaskHeaderMetrics(tasks), [tasks]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -767,43 +456,18 @@ export default function Index({
                     title="Tareas"
                     description="Sigue el trabajo por estado, detecta entregas sensibles y cambia entre kanban y tabla según el momento."
                     icon={<KanbanSquare className="h-6 w-6" />}
-                    metrics={headerMetrics}
                     actions={
-                        <div className="flex items-center gap-3">
-                            {isTutor && (
-                                <HeaderActionButton 
-                                    label="Nueva tarea"
-                                    href="/tareas/create"
-                                />
-                            )}
-                            <ToggleGroup
-                                type="single"
-                                value={viewMode}
-                                onValueChange={(value) => {
-                                    if (value) setViewMode(value as TaskViewMode);
-                                }}
-                                className="bg-white/10 p-1 rounded-2xl border border-white/20 backdrop-blur-md"
-                            >
-                                <ToggleGroupItem
-                                    value="kanban"
-                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
-                                    aria-label="Vista kanban"
-                                >
-                                    <LayoutGrid className="h-4 w-4 mr-2" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Tablero</span>
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="table"
-                                    className="rounded-xl px-4 h-9 text-white data-[state=on]:bg-white data-[state=on]:text-sidebar data-[state=on]:shadow-lg transition-all min-w-[200px]"
-                                    aria-label="Vista tabla"
-                                >
-                                    <List className="h-4 w-4 mr-2" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Lista</span>
-                                </ToggleGroupItem>
-                            </ToggleGroup>
-                        </div>
+                        <TasksHeaderActions
+                            isTutor={isTutor}
+                            viewMode={viewMode}
+                            onViewModeChange={setViewMode}
+                            boardFilter={boardFilter}
+                            boardQuickFilters={boardQuickFilters}
+                            onBoardFilterChange={setBoardFilter}
+                        />
                     }
                 />
+                <MetricPills metrics={headerMetrics} />
 
                 <TaskFilters
                     filters={filters}
@@ -815,9 +479,8 @@ export default function Index({
                     onClearFilter={clearFilter}
                     onClearAll={clearAllFilters}
                     activeFilterChips={activeFilterChips}
+                    rightSlot={<DeliveryLegend />}
                 />
-
-                <DeliveryLegend />
 
                 {viewMode === 'kanban' ? (
                     <KanbanBoard
@@ -827,29 +490,52 @@ export default function Index({
                         activeDragTask={activeDragTask}
                         lastMoveMessage={lastMoveMessage}
                         highlightedTaskId={highlightedTaskId}
-                        boardFilter={boardFilter}
-                        boardQuickFilters={boardQuickFilters}
                         isIntern={isIntern}
                         isTutor={isTutor}
-                        onBoardFilterChange={setBoardFilter}
                         onDragStart={({ active }) => {
                             const taskId = parseTaskSortableId(active.id);
-                            if (taskId) setActiveDragTask(boardTasks.find(t => t.id === taskId) || null);
+                            if (taskId)
+                                setActiveDragTask(
+                                    boardTasks.find((t) => t.id === taskId) ||
+                                        null,
+                                );
                         }}
                         onDragOver={(event) => {
-                            const activeTaskId = parseTaskSortableId(event.active.id);
+                            const activeTaskId = parseTaskSortableId(
+                                event.active.id,
+                            );
                             if (activeTaskId && event.over) {
-                                setBoardTasks((prev) => reorderBoardTasks(prev, activeTaskId, String(event.over?.id)));
+                                setBoardTasks((prev) =>
+                                    reorderBoardTasks(
+                                        prev,
+                                        activeTaskId,
+                                        String(event.over?.id),
+                                    ),
+                                );
                             }
                         }}
                         onDragEnd={(event) => {
-                            const activeTaskId = parseTaskSortableId(event.active.id);
+                            const activeTaskId = parseTaskSortableId(
+                                event.active.id,
+                            );
                             if (activeTaskId && event.over) {
-                                const originalTask = boardTasks.find(t => Number(t.id) === activeTaskId);
+                                const originalTask = boardTasks.find(
+                                    (t) => Number(t.id) === activeTaskId,
+                                );
                                 setBoardTasks((prev) => {
-                                    const newTasks = reorderBoardTasks(prev, activeTaskId, String(event.over?.id));
-                                    const movedTask = newTasks.find(t => t.id === activeTaskId);
-                                    if (movedTask && originalTask) updateTaskStatus(originalTask, movedTask.status);
+                                    const newTasks = reorderBoardTasks(
+                                        prev,
+                                        activeTaskId,
+                                        String(event.over?.id),
+                                    );
+                                    const movedTask = newTasks.find(
+                                        (t) => t.id === activeTaskId,
+                                    );
+                                    if (movedTask && originalTask)
+                                        updateTaskStatus(
+                                            originalTask,
+                                            movedTask.status,
+                                        );
                                     persistBoardOrder(newTasks);
                                     return newTasks;
                                 });
@@ -881,7 +567,7 @@ export default function Index({
                     />
                 )}
 
-                <div className="flex flex-wrap items-center justify-between gap-4 mt-6">
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                     <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
                         Página {tasks.current_page} de {tasks.last_page}
                     </span>

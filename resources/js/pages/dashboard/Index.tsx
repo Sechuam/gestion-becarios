@@ -1,69 +1,185 @@
-import { Head, Link } from '@inertiajs/react';
-import { AlertTriangle, BarChart3, Building2, CheckCircle2, Clock3, FileDown, KanbanSquare, TrendingUp, Users } from 'lucide-react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { Head } from '@inertiajs/react';
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts';
-import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { Badge } from '@/components/ui/badge';
+    AlertTriangle,
+    CalendarClock,
+    ClipboardCheck,
+    KanbanSquare,
+    Users,
+    LayoutDashboard,
+    Save,
+    GripHorizontal,
+} from 'lucide-react';
+import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
+import { InternTaskProgressPanel } from '@/components/dashboard/InternTaskProgressPanel';
+import { TodayAgendaPanel } from '@/components/dashboard/TodayAgendaPanel';
+import { DashboardWidgetWrapper } from '@/components/dashboard/DashboardWidgetWrapper';
+import { ManageWidgetsModal } from '@/components/dashboard/ManageWidgetsModal';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+    DragStartEvent,
+    DragOverlay,
+    defaultDropAnimationSideEffects,
+    rectIntersection,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    rectSortingStrategy,
+    verticalListSortingStrategy,
+    useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type {
+    DashboardAgendaItem,
+    DashboardAlert,
+    DashboardChartPoint,
+    DashboardCurrentLog,
+    DashboardMetric,
+    DashboardRole,
+    DashboardStats,
+    DashboardTaskProgress,
+} from '@/components/dashboard/types';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: dashboard().url }];
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: dashboard().url },
+];
 
-type Role = 'admin' | 'tutor' | 'intern' | string;
+const InternsByCenterChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.InternsByCenterChart,
+    })),
+);
+const TaskStatusChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.TaskStatusChart,
+    })),
+);
+const AttendanceChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.AttendanceChart,
+    })),
+);
+const AttendanceStatsCard = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.AttendanceStatsCard,
+    })),
+);
 
-type ChartPoint = {
-    name?: string;
-    month?: string;
-    becarios?: number;
-    horas?: number;
-    value?: number;
-};
-
-type TaskProgress = {
-    id: number;
-    name: string;
-    center: string;
-    completed: number;
-    total: number;
-    progress: number;
-    hours: number;
-};
-
-interface DashboardProps {
-    role: Role;
-    stats: {
-        active_interns: number;
-        active_centers: number;
-        active_tasks: number;
-        alerts: number;
-        attendance_compliance: number;
-        completed_tasks: number;
-        total_tasks: number;
-    };
-    interns_by_center: ChartPoint[];
-    attendance_chart: ChartPoint[];
-    task_status_chart: ChartPoint[];
-    task_progress: TaskProgress[];
-    alerts: { label: string; value: number; tone: string }[];
+function ChartFallback() {
+    return (
+        <div className="min-h-[220px] rounded-xl border border-slate-200 bg-white/75 shadow-xs dark:border-slate-800 dark:bg-slate-900/75" />
+    );
 }
 
-const pieColors = ['#0f766e', '#2563eb', '#f59e0b', '#e11d48', '#7c3aed', '#16a34a'];
+// Estructura inicial del puzzle
+const DEFAULT_SECTIONS = [
+    'row_metrics',
+    'row_top_charts',
+    'row_bottom_panels',
+    'row_alerts',
+];
+const DEFAULT_TOP_CHARTS = ['interns_chart', 'task_chart'];
+const DEFAULT_BOTTOM_PANELS = ['attendance', 'agenda', 'progress'];
+const DEFAULT_VISIBLE_WIDGETS = DEFAULT_TOP_CHARTS.concat(
+    DEFAULT_BOTTOM_PANELS,
+).concat(['metrics', 'alerts']);
+const INTERN_VISIBLE_WIDGETS = ['metrics', 'attendance', 'agenda', 'progress'];
+
+function getSupportedWidgets(role: DashboardRole) {
+    if (role === 'intern') {
+        return INTERN_VISIBLE_WIDGETS;
+    }
+
+    return DEFAULT_VISIBLE_WIDGETS;
+}
+
+function getDefaultTopCharts(role: DashboardRole) {
+    return role === 'intern' ? [] : DEFAULT_TOP_CHARTS;
+}
+
+function getDefaultVisibleWidgets(role: DashboardRole) {
+    return getSupportedWidgets(role);
+}
+
+function filterSupported(items: string[], supported: string[]) {
+    return items.filter((item) => supported.includes(item));
+}
+
+interface DashboardProps {
+    role: DashboardRole;
+    stats: DashboardStats;
+    interns_by_center: DashboardChartPoint[];
+    attendance_chart: DashboardChartPoint[];
+    task_status_chart: DashboardChartPoint[];
+    task_progress: DashboardTaskProgress[];
+    alerts: DashboardAlert[];
+    today_agenda: DashboardAgendaItem[];
+    current_log: DashboardCurrentLog | null;
+}
+
+// Componente para las filas móviles
+function SortableRow({
+    id,
+    children,
+    isEditing,
+}: {
+    id: string;
+    children: React.ReactNode;
+    isEditing: boolean;
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 40 : 'auto',
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={cn(
+                'relative transition-all duration-300',
+                isDragging && 'opacity-30',
+                isEditing && 'pl-10',
+            )}
+        >
+            {isEditing && (
+                <div
+                    {...attributes}
+                    {...listeners}
+                    className="group absolute top-0 bottom-0 left-0 flex w-8 cursor-grab items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50 text-slate-400 transition-all hover:bg-slate-100 hover:text-sidebar"
+                    title="Arrastrar fila"
+                >
+                    <GripHorizontal className="h-4 w-4 rotate-90 opacity-40 group-hover:opacity-100" />
+                </div>
+            )}
+            {children}
+        </div>
+    );
+}
 
 export default function Dashboard({
     role,
@@ -73,22 +189,153 @@ export default function Dashboard({
     task_status_chart,
     task_progress,
     alerts,
+    today_agenda,
+    current_log,
 }: DashboardProps) {
-    const roleLabel = role === 'admin' ? 'Administración' : role === 'tutor' ? 'Tutoría' : 'Becario';
-    const taskCompletion = stats.total_tasks > 0 ? Math.round((stats.completed_tasks / stats.total_tasks) * 100) : 0;
+    const [isEditing, setIsEditing] = useState(false);
+    const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+    const [sections, setSections] = useState<string[]>(DEFAULT_SECTIONS);
+    const supportedWidgets = getSupportedWidgets(role);
+    const layoutStorageKey = `dashboard-puzzle-${role}`;
+    const [topCharts, setTopCharts] = useState<string[]>(
+        getDefaultTopCharts(role),
+    );
+    const [bottomPanels, setBottomPanels] = useState<string[]>(
+        DEFAULT_BOTTOM_PANELS,
+    );
+    const [visibleWidgets, setVisibleWidgets] = useState<string[]>(
+        getDefaultVisibleWidgets(role),
+    );
+    const [activeId, setActiveId] = useState<string | null>(null);
 
-    const metrics = [
+    useEffect(() => {
+        const saved =
+            localStorage.getItem(layoutStorageKey) ??
+            localStorage.getItem('dashboard-puzzle');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.sections) setSections(parsed.sections);
+                if (parsed.topCharts)
+                    setTopCharts(
+                        filterSupported(parsed.topCharts, supportedWidgets),
+                    );
+                if (parsed.bottomPanels)
+                    setBottomPanels(
+                        filterSupported(parsed.bottomPanels, supportedWidgets),
+                    );
+                if (parsed.visibleWidgets)
+                    setVisibleWidgets(
+                        filterSupported(
+                            parsed.visibleWidgets,
+                            supportedWidgets,
+                        ),
+                    );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }, [layoutStorageKey, supportedWidgets]);
+
+    const saveLayout = (
+        newSections: string[],
+        newTop: string[],
+        newBottom: string[],
+        newVisible: string[],
+    ) => {
+        const filteredTop = filterSupported(newTop, supportedWidgets);
+        const filteredBottom = filterSupported(newBottom, supportedWidgets);
+        const filteredVisible = filterSupported(newVisible, supportedWidgets);
+
+        localStorage.setItem(
+            layoutStorageKey,
+            JSON.stringify({
+                sections: newSections,
+                topCharts: filteredTop,
+                bottomPanels: filteredBottom,
+                visibleWidgets: filteredVisible,
+            }),
+        );
+    };
+
+    const toggleWidget = (id: string) => {
+        if (!supportedWidgets.includes(id)) return;
+
+        const newVisible = visibleWidgets.includes(id)
+            ? visibleWidgets.filter((w) => w !== id)
+            : [...visibleWidgets, id];
+        setVisibleWidgets(newVisible);
+        saveLayout(sections, topCharts, bottomPanels, newVisible);
+    };
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
+    );
+
+    const handleDragStart = (event: DragStartEvent) =>
+        setActiveId(event.active.id as string);
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) {
+            setActiveId(null);
+            return;
+        }
+
+        const activeId = active.id as string;
+        const overId = over.id as string;
+
+        // Si es una fila principal
+        if (sections.includes(activeId)) {
+            const oldIndex = sections.indexOf(activeId);
+            const newIndex = sections.indexOf(overId);
+            const newSections = arrayMove(sections, oldIndex, newIndex);
+            setSections(newSections);
+            saveLayout(newSections, topCharts, bottomPanels, visibleWidgets);
+        }
+        // Si es un gráfico superior
+        else if (topCharts.includes(activeId)) {
+            const oldIndex = topCharts.indexOf(activeId);
+            const newIndex = topCharts.indexOf(overId);
+            const newTop = arrayMove(topCharts, oldIndex, newIndex);
+            setTopCharts(newTop);
+            saveLayout(sections, newTop, bottomPanels, visibleWidgets);
+        }
+        // Si es un panel inferior
+        else if (bottomPanels.includes(activeId)) {
+            const oldIndex = bottomPanels.indexOf(activeId);
+            const newIndex = bottomPanels.indexOf(overId);
+            const newBottom = arrayMove(bottomPanels, oldIndex, newIndex);
+            setBottomPanels(newBottom);
+            saveLayout(sections, topCharts, newBottom, visibleWidgets);
+        }
+
+        setActiveId(null);
+    };
+
+    const roleLabel =
+        role === 'admin'
+            ? 'Administración'
+            : role === 'tutor'
+              ? 'Tutoría'
+              : 'Becario';
+    const taskCompletion =
+        stats.total_tasks > 0
+            ? Math.round((stats.completed_tasks / stats.total_tasks) * 100)
+            : 0;
+
+    const metrics: DashboardMetric[] = [
         {
             label: role === 'intern' ? 'Mi práctica' : 'Becarios activos',
             value: stats.active_interns,
-            hint: role === 'admin' ? 'En todos los centros' : 'Dentro de tu alcance',
+            hint:
+                role === 'admin'
+                    ? 'En todos los centros'
+                    : 'Dentro de tu alcance',
             icon: Users,
-        },
-        {
-            label: 'Centros vinculados',
-            value: stats.active_centers,
-            hint: 'Con actividad registrada',
-            icon: Building2,
         },
         {
             label: 'Tareas abiertas',
@@ -97,162 +344,256 @@ export default function Dashboard({
             icon: KanbanSquare,
         },
         {
-            label: 'Cumplimiento horario',
-            value: `${stats.attendance_compliance}%`,
-            hint: 'Horas registradas sobre objetivo',
-            icon: Clock3,
+            label: 'Evaluaciones pendientes',
+            value: stats.pending_evaluations,
+            hint: 'Sin evaluación registrada este mes',
+            icon: ClipboardCheck,
         },
-    ];
+        {
+            label: 'Próximas finalizaciones',
+            value: stats.upcoming_endings,
+            hint: 'Prácticas que terminan en 30 días',
+            icon: CalendarClock,
+        },
+        {
+            label: 'Alertas activas',
+            value: stats.alerts,
+            hint: 'Ausencias y jornadas por revisar',
+            icon: AlertTriangle,
+        },
+    ].filter((metric) => {
+        if (role === 'intern') {
+            return !['Mi práctica', 'Alertas activas'].includes(metric.label);
+        }
+
+        return !['Tareas abiertas', 'Alertas activas'].includes(metric.label);
+    });
+
+    const renderWidget = (id: string, isOverlay = false) => {
+        switch (id) {
+            case 'metrics':
+                return <DashboardMetricCards metrics={metrics} />;
+            case 'interns_chart':
+                return (
+                    <Suspense fallback={<ChartFallback />}>
+                        <InternsByCenterChart data={interns_by_center} />
+                    </Suspense>
+                );
+            case 'task_chart':
+                return (
+                    <Suspense fallback={<ChartFallback />}>
+                        <TaskStatusChart data={task_status_chart} />
+                    </Suspense>
+                );
+            case 'attendance':
+                return (
+                    <div className="flex h-full flex-col gap-2.5">
+                        <Suspense fallback={<ChartFallback />}>
+                            <AttendanceChart
+                                className="min-h-[380px] flex-[1_1_0]"
+                                data={attendance_chart}
+                                currentLog={current_log}
+                            />
+                            <AttendanceStatsCard
+                                className="shrink-0"
+                                completeAttendanceRate={
+                                    stats.complete_attendance_rate
+                                }
+                                averageDelayMinutes={
+                                    stats.average_delay_minutes
+                                }
+                                absenceRate={stats.absence_rate}
+                            />
+                        </Suspense>
+                    </div>
+                );
+            case 'agenda':
+                return (
+                    <TodayAgendaPanel
+                        className="h-full"
+                        todayAgenda={today_agenda}
+                        currentLog={current_log}
+                    />
+                );
+            case 'progress':
+                return (
+                    <InternTaskProgressPanel
+                        className="h-full"
+                        role={role}
+                        taskProgress={task_progress}
+                        averageResolutionDays={
+                            stats.average_task_resolution_days
+                        }
+                    />
+                );
+            case 'alerts':
+                return <DashboardAlertCards alerts={alerts} />;
+            default:
+                return null;
+        }
+    };
+
+    const renderSection = (rowId: string) => {
+        switch (rowId) {
+            case 'row_metrics':
+                if (!visibleWidgets.includes('metrics')) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <DashboardWidgetWrapper
+                            id="metrics"
+                            isEditing={isEditing}
+                            className="w-full"
+                        >
+                            {renderWidget('metrics')}
+                        </DashboardWidgetWrapper>
+                    </SortableRow>
+                );
+            case 'row_top_charts':
+                const visibleTop = topCharts.filter((id) =>
+                    visibleWidgets.includes(id),
+                );
+                if (visibleTop.length === 0) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <SortableContext
+                            items={visibleTop}
+                            strategy={rectSortingStrategy}
+                        >
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+                                {topCharts.map((id) => {
+                                    if (!visibleWidgets.includes(id))
+                                        return null;
+                                    return (
+                                        <DashboardWidgetWrapper
+                                            key={id}
+                                            id={id}
+                                            isEditing={isEditing}
+                                            className={
+                                                id === 'interns_chart'
+                                                    ? 'md:col-span-7'
+                                                    : 'md:col-span-5'
+                                            }
+                                        >
+                                            {renderWidget(id)}
+                                        </DashboardWidgetWrapper>
+                                    );
+                                })}
+                            </div>
+                        </SortableContext>
+                    </SortableRow>
+                );
+            case 'row_bottom_panels':
+                const visibleBottom = bottomPanels.filter((id) =>
+                    visibleWidgets.includes(id),
+                );
+                if (visibleBottom.length === 0) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <SortableContext
+                            items={visibleBottom}
+                            strategy={rectSortingStrategy}
+                        >
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                {bottomPanels.map((id) => {
+                                    if (!visibleWidgets.includes(id))
+                                        return null;
+                                    return (
+                                        <DashboardWidgetWrapper
+                                            key={id}
+                                            id={id}
+                                            isEditing={isEditing}
+                                            className="col-span-1"
+                                        >
+                                            {renderWidget(id)}
+                                        </DashboardWidgetWrapper>
+                                    );
+                                })}
+                            </div>
+                        </SortableContext>
+                    </SortableRow>
+                );
+            case 'row_alerts':
+                if (!visibleWidgets.includes('alerts')) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <DashboardWidgetWrapper
+                            id="alerts"
+                            isEditing={isEditing}
+                            className="w-full"
+                        >
+                            {renderWidget('alerts')}
+                        </DashboardWidgetWrapper>
+                    </SortableRow>
+                );
+            default:
+                return null;
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="space-y-5">
-                <ModuleHeader
-                    title={`Dashboard ${roleLabel}`}
-                    description="Centro de control operativo con KPIs, actividad horaria, tareas y reportes exportables."
-                    icon={<BarChart3 className="h-6 w-6" />}
-                    actions={
-                        <Button asChild className="h-9 rounded-lg bg-white text-sidebar hover:bg-white/90">
-                            <Link href="/reportes">
-                                <FileDown className="mr-2 h-4 w-4" />
-                                Reportes
-                            </Link>
-                        </Button>
-                    }
-                    metrics={[
-                        { label: 'Alertas', value: stats.alerts, hint: 'Necesitan revisión' },
-                        { label: 'Tareas completadas', value: stats.completed_tasks, hint: `${taskCompletion}% del total` },
-                        { label: 'Widgets', value: 4, hint: 'Datos con caché' },
-                    ]}
+            <div className="space-y-4">
+                <DashboardHeader
+                    roleLabel={roleLabel}
+                    alerts={stats.alerts}
+                    completedTasks={stats.completed_tasks}
+                    taskCompletion={taskCompletion}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                    onManageWidgets={() => setIsManageModalOpen(true)}
                 />
 
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                    {metrics.map((metric) => (
-                        <Card key={metric.label} className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-                            <CardContent className="flex items-start justify-between gap-3 p-4">
-                                <div className="min-w-0 space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{metric.label}</p>
-                                    <p className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{metric.value}</p>
-                                    <p className="text-xs font-medium text-slate-500">{metric.hint}</p>
-                                </div>
-                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sidebar text-white">
-                                    <metric.icon className="h-5 w-5" />
-                                </span>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                <ManageWidgetsModal
+                    open={isManageModalOpen}
+                    onOpenChange={setIsManageModalOpen}
+                    visibleWidgets={visibleWidgets}
+                    supportedWidgets={supportedWidgets}
+                    onToggleWidget={toggleWidget}
+                />
 
-                <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
-                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-                        <CardHeader className="flex flex-row items-center justify-between gap-4">
-                            <div>
-                                <CardTitle className="text-lg font-black">Becarios por centro educativo</CardTitle>
-                                <p className="text-sm text-slate-500">Distribución activa para priorizar carga y seguimiento.</p>
-                            </div>
-                            <Badge variant="outline" className="rounded-lg">Recharts</Badge>
-                        </CardHeader>
-                        <CardContent className="h-80">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={interns_by_center} margin={{ left: 0, right: 8, top: 8, bottom: 8 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} height={60} angle={-15} textAnchor="end" />
-                                    <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
-                                    <Tooltip />
-                                    <Bar dataKey="becarios" radius={[6, 6, 0, 0]} fill="#0f766e" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-                        <CardHeader>
-                            <CardTitle className="text-lg font-black">Progreso de tareas</CardTitle>
-                            <p className="text-sm text-slate-500">Estado global del trabajo asignado.</p>
-                        </CardHeader>
-                        <CardContent className="h-80">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie data={task_status_chart} dataKey="value" nameKey="name" innerRadius={58} outerRadius={102} paddingAngle={3}>
-                                        {task_status_chart.map((entry, index) => (
-                                            <Cell key={`${entry.name}-${index}`} fill={pieColors[index % pieColors.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-                        <CardHeader>
-                            <CardTitle className="text-lg font-black">Cumplimiento horario</CardTitle>
-                            <p className="text-sm text-slate-500">Horas registradas durante los últimos seis meses.</p>
-                        </CardHeader>
-                        <CardContent className="h-72">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={attendance_chart} margin={{ left: 0, right: 12, top: 8, bottom: 8 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                                    <YAxis tick={{ fontSize: 11 }} />
-                                    <Tooltip />
-                                    <Line type="monotone" dataKey="horas" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-                        <CardHeader className="flex flex-row items-center justify-between gap-4">
-                            <div>
-                                <CardTitle className="text-lg font-black">Panel de progreso por becario</CardTitle>
-                                <p className="text-sm text-slate-500">Tareas completadas, carga total y horas fichadas.</p>
-                            </div>
-                            <TrendingUp className="h-5 w-5 text-sidebar" />
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            {task_progress.length === 0 ? (
-                                <div className="rounded-lg border border-dashed border-sidebar/20 p-6 text-sm text-slate-500">Todavía no hay tareas vinculadas para mostrar progreso.</div>
-                            ) : (
-                                task_progress.map((intern) => (
-                                    <div key={intern.id} className="rounded-lg border border-sidebar/10 p-3">
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div className="min-w-0">
-                                                <p className="truncate text-sm font-black text-slate-900 dark:text-white">{intern.name}</p>
-                                                <p className="truncate text-xs text-slate-500">{intern.center}</p>
-                                            </div>
-                                            <Badge variant="outline" className="rounded-lg">{intern.hours} h</Badge>
-                                        </div>
-                                        <div className="mt-3 flex items-center gap-3">
-                                            <Progress value={intern.progress} className="h-2" />
-                                            <span className="w-10 text-right text-xs font-black text-slate-500">{intern.progress}%</span>
-                                        </div>
-                                        <p className="mt-2 text-xs text-slate-500">{intern.completed} de {intern.total} tareas completadas</p>
-                                    </div>
-                                ))
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={rectIntersection}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    onDragCancel={() => setActiveId(null)}
+                >
+                    <SortableContext
+                        items={sections}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        <div
+                            className={cn(
+                                '-m-4 flex flex-col gap-6 rounded-xl p-4 transition-all duration-500',
+                                isEditing &&
+                                    'bg-slate-100/50 bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:24px_24px] shadow-inner ring-1 ring-slate-200/60 dark:bg-slate-950/20 dark:ring-slate-800/60',
                             )}
-                        </CardContent>
-                    </Card>
-                </div>
+                        >
+                            {sections.map((rowId) => renderSection(rowId))}
+                        </div>
+                    </SortableContext>
 
-                <div className="grid gap-3 md:grid-cols-3">
-                    {alerts.map((alert) => (
-                        <Card key={alert.label} className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
-                            <CardContent className="flex items-center gap-3 p-4">
-                                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
-                                    {alert.value > 0 ? <AlertTriangle className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
-                                </span>
-                                <div>
-                                    <p className="text-2xl font-black text-slate-900 dark:text-white">{alert.value}</p>
-                                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{alert.label}</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                    <DragOverlay
+                        dropAnimation={{
+                            sideEffects: defaultDropAnimationSideEffects({
+                                styles: { active: { opacity: '0.4' } },
+                            }),
+                        }}
+                    >
+                        {activeId ? (
+                            <div className="pointer-events-none scale-[1.02] opacity-90 shadow-xl transition-transform">
+                                {sections.includes(activeId) ? (
+                                    <div className="rounded-xl border-2 border-dashed border-sidebar/20 bg-white/50 p-4 backdrop-blur-sm">
+                                        Moviendo sección completa...
+                                    </div>
+                                ) : (
+                                    renderWidget(activeId, true)
+                                )}
+                            </div>
+                        ) : null}
+                    </DragOverlay>
+                </DndContext>
             </div>
         </AppLayout>
     );

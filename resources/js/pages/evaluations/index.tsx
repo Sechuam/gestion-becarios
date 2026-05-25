@@ -32,7 +32,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Evaluaciones', href: '/evaluaciones' },
 ];
 
-export default function Index({ evaluations, filters = {}, modules = [], types = [], userMode }: Props) {
+export default function Index({
+    evaluations,
+    filters = {},
+    modules = [],
+    types = [],
+    userMode,
+}: Props) {
     const { auth } = usePage().props as any;
     const isAdmin = auth?.user?.roles?.includes('admin');
     const isTutor = auth?.user?.roles?.includes('tutor');
@@ -40,7 +46,8 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
 
     const canCreateEvaluation = isAdmin || isTutor;
     const canCreateSelfEvaluation = isIntern;
-    const canDeleteEvaluation = auth?.user?.permissions?.includes('delete evaluations');
+    const canDeleteEvaluation =
+        auth?.user?.permissions?.includes('delete evaluations');
 
     const handleFilter = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value };
@@ -75,7 +82,7 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
         }
 
         if (score >= 8) {
-            return 'bg-emerald-100 text-emerald-700';
+            return 'bg-sidebar/10 text-sidebar';
         }
 
         if (score >= 6) {
@@ -97,14 +104,19 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
             label: 'Evaluador',
             render: (row: any) => (
                 <div className="space-y-1">
-                    <p className="font-medium text-slate-700">{row.evaluator?.name ?? 'Sin evaluador'}</p>
+                    <p className="font-medium text-slate-700">
+                        {row.evaluator?.name ?? 'Sin evaluador'}
+                    </p>
                     <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${row.is_self_evaluation
+                        className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase ${
+                            row.is_self_evaluation
                                 ? 'bg-violet-100 text-violet-700'
                                 : 'bg-slate-100 text-slate-600'
-                            }`}
+                        }`}
                     >
-                        {row.is_self_evaluation ? 'Autoevaluación' : 'Tutor / admin'}
+                        {row.is_self_evaluation
+                            ? 'Autoevaluación'
+                            : 'Tutor / admin'}
                     </span>
                 </div>
             ),
@@ -113,7 +125,7 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
             key: 'evaluation_type',
             label: 'Tipo',
             render: (row: any) => (
-                <span className="rounded-full bg-sidebar/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-sidebar">
+                <span className="rounded-full bg-sidebar/10 px-3 py-1 text-[10px] font-black tracking-widest text-sidebar uppercase">
                     {getEvaluationTypeLabel(row.evaluation_type)}
                 </span>
             ),
@@ -121,13 +133,17 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
         {
             key: 'evaluated_at',
             label: 'Fecha',
-            render: (row: any) => (row.evaluated_at ? formatDateEs(row.evaluated_at) : 'Sin fecha'),
+            render: (row: any) =>
+                row.evaluated_at ? formatDateEs(row.evaluated_at) : 'Sin fecha',
         },
         {
             key: 'weighted_score',
             label: 'Nota ponderada',
             render: (row: any) => {
-                const numericScore = row.weighted_score !== null ? Number(row.weighted_score) : null;
+                const numericScore =
+                    row.weighted_score !== null
+                        ? Number(row.weighted_score)
+                        : null;
 
                 return (
                     <span
@@ -135,7 +151,9 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             numericScore,
                         )}`}
                     >
-                        {row.weighted_score !== null ? row.weighted_score : 'Pendiente'}
+                        {row.weighted_score !== null
+                            ? row.weighted_score
+                            : 'Pendiente'}
                     </span>
                 );
             },
@@ -151,17 +169,27 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             icon: 'view',
                             href: `/evaluaciones/${row.id}`,
                         },
-                        ...(canDeleteEvaluation ? [{
-                            label: 'Eliminar',
-                            icon: 'delete' as const,
-                            variant: 'destructive' as const,
-                            onClick: () => { router.delete(`/evaluaciones/${row.id}`) },
-                            confirm: {
-                                title: '¿Eliminar evaluación?',
-                                description: 'Esta acción no se puede deshacer. Se eliminarán la evaluación y todas sus puntuaciones.',
-                                confirmLabel: 'Eliminar definitivamente',
-                            }
-                        }] : []),
+                        ...(canDeleteEvaluation
+                            ? [
+                                  {
+                                      label: 'Eliminar',
+                                      icon: 'delete' as const,
+                                      variant: 'destructive' as const,
+                                      onClick: () => {
+                                          router.delete(
+                                              `/evaluaciones/${row.id}`,
+                                          );
+                                      },
+                                      confirm: {
+                                          title: '¿Eliminar evaluación?',
+                                          description:
+                                              'Esta acción no se puede deshacer. Se eliminarán la evaluación y todas sus puntuaciones.',
+                                          confirmLabel:
+                                              'Eliminar definitivamente',
+                                      },
+                                  },
+                              ]
+                            : []),
                     ]}
                 />
             ),
@@ -179,22 +207,24 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                     actions={
                         <div className="flex flex-wrap gap-2">
                             {canCreateEvaluation && (
-                                <HeaderActionButton 
+                                <HeaderActionButton
                                     label="Nueva evaluacion"
                                     href="/evaluaciones/create"
                                 />
                             )}
                             {canCreateSelfEvaluation && (
-                                <HeaderActionButton 
+                                <HeaderActionButton
                                     label="Nueva autoevaluacion"
                                     href="/evaluaciones/create"
                                 />
                             )}
                             {isAdmin && (
-                                <HeaderActionButton 
+                                <HeaderActionButton
                                     label="Gestionar criterios"
                                     href="/evaluaciones/criterios"
-                                    icon={<SlidersHorizontal className="h-3.5 w-3.5 mr-1.5" />}
+                                    icon={
+                                        <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+                                    }
                                 />
                             )}
                         </div>
@@ -203,7 +233,7 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
 
                 {isIntern ? (
                     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">
+                        <span className="ml-1 text-[9px] font-black tracking-widest text-slate-500 uppercase">
                             Tipo
                         </span>
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -219,7 +249,11 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                                 <Button
                                     key={type}
                                     type="button"
-                                    variant={filters.type === type ? 'default' : 'outline'}
+                                    variant={
+                                        filters.type === type
+                                            ? 'default'
+                                            : 'outline'
+                                    }
                                     className="h-7 rounded-lg px-3 text-[10px] font-bold"
                                     onClick={() => handleFilter('type', type)}
                                 >
@@ -228,37 +262,47 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             ))}
                         </div>
 
-                        <p className="ml-auto rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:bg-slate-800 border border-sidebar/5">
-                            {evaluations.data.length} / {evaluations.total} evaluaciones
+                        <p className="ml-auto rounded-full border border-sidebar/5 bg-slate-50 px-2 py-0.5 text-[9px] font-black tracking-widest text-muted-foreground uppercase dark:bg-slate-800">
+                            {evaluations.data.length} / {evaluations.total}{' '}
+                            evaluaciones
                         </p>
                     </div>
                 ) : (
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg dark:bg-slate-900/60 transition-all">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
                         <div className="flex flex-wrap items-center gap-2">
                             {/* Búsqueda */}
-                            <div className="relative w-full sm:w-64 flex-none">
+                            <div className="relative w-full flex-none sm:w-64">
                                 <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     value={filters.search || ''}
-                                    onChange={(e) => handleSearchChange(e.target.value)}
+                                    onChange={(e) =>
+                                        handleSearchChange(e.target.value)
+                                    }
                                     placeholder="Buscar becario..."
-                                    className="h-8 border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground rounded-lg shadow-sm focus:ring-sidebar/20"
+                                    className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
                                 />
                             </div>
 
                             {/* Filtros de Selección (Distribuidos) */}
-                            <div className="flex-1 min-w-[150px]">
+                            <div className="min-w-[150px] flex-1">
                                 <Select
                                     value={filters.module || 'all'}
-                                    onValueChange={(value) => handleFilter('module', value)}
+                                    onValueChange={(value) =>
+                                        handleFilter('module', value)
+                                    }
                                 >
-                                    <SelectTrigger className="h-8 w-full border-sidebar/10 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                                    <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
                                         <SelectValue placeholder="Todos los módulos" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-lg border-sidebar/20">
-                                        <SelectItem value="all">Todos los módulos</SelectItem>
+                                        <SelectItem value="all">
+                                            Todos los módulos
+                                        </SelectItem>
                                         {modules.map((module) => (
-                                            <SelectItem key={module} value={module}>
+                                            <SelectItem
+                                                key={module}
+                                                value={module}
+                                            >
                                                 {module}
                                             </SelectItem>
                                         ))}
@@ -266,16 +310,20 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                                 </Select>
                             </div>
 
-                            <div className="flex-1 min-w-[150px]">
+                            <div className="min-w-[150px] flex-1">
                                 <Select
                                     value={filters.type || 'all'}
-                                    onValueChange={(value) => handleFilter('type', value)}
+                                    onValueChange={(value) =>
+                                        handleFilter('type', value)
+                                    }
                                 >
-                                    <SelectTrigger className="h-8 w-full border-sidebar/10 bg-card text-[11px] text-foreground rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+                                    <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
                                         <SelectValue placeholder="Todos los tipos" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-lg border-sidebar/20">
-                                        <SelectItem value="all">Todos los tipos</SelectItem>
+                                        <SelectItem value="all">
+                                            Todos los tipos
+                                        </SelectItem>
                                         {types.map((type) => (
                                             <SelectItem key={type} value={type}>
                                                 {getEvaluationTypeLabel(type)}
@@ -286,10 +334,11 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                             </div>
 
                             {/* Contador */}
-                            <div className="flex-none flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg dark:bg-slate-800 border border-sidebar/5 ml-auto">
-                                <span className="flex h-1 w-1 rounded-full bg-sidebar animate-pulse" />
-                                <span className="text-[10px] font-bold text-muted-foreground tabular-nums whitespace-nowrap">
-                                    {evaluations.data.length} / {evaluations.total} registrados
+                            <div className="ml-auto flex flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-3 py-1 dark:bg-slate-800">
+                                <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                                <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
+                                    {evaluations.data.length} /{' '}
+                                    {evaluations.total} registrados
                                 </span>
                             </div>
                         </div>
@@ -300,7 +349,11 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
                     columns={columns}
                     rows={evaluations.data}
                     rowKey={(row) => row.id}
-                    emptyTitle={isIntern ? 'Aun no tienes evaluaciones registradas' : 'Aun no hay evaluaciones registradas'}
+                    emptyTitle={
+                        isIntern
+                            ? 'Aun no tienes evaluaciones registradas'
+                            : 'Aun no hay evaluaciones registradas'
+                    }
                     emptyDescription={
                         isIntern
                             ? 'Aquí verás las evaluaciones de tu tutor y las autoevaluaciones que vayas enviando.'
@@ -311,8 +364,9 @@ export default function Index({ evaluations, filters = {}, modules = [], types =
 
                 <div className="mt-6 w-full">
                     <div className="flex flex-wrap items-center justify-between gap-4">
-                        <span className="whitespace-nowrap text-sm font-medium text-muted-foreground">
-                            Pagina {evaluations.current_page} de {evaluations.last_page}
+                        <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+                            Pagina {evaluations.current_page} de{' '}
+                            {evaluations.last_page}
                         </span>
                         <Pagination links={evaluations.links} />
                     </div>

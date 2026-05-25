@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CalendarEvent;
 use App\Models\Intern;
 use App\Models\TimeLog;
 use App\Services\TimeTrackingService;
@@ -185,22 +186,32 @@ class TimeLogController extends Controller
 
         $events = [];
 
-        // 1. Procesar fichajes (como ya teníamos)
+        $absenceDates = $absences->filter(fn ($abs) => $abs->status !== 'rejected')
+            ->pluck('date')
+            ->map(fn ($d) => $d->format('Y-m-d'))
+            ->toArray();
+
+        // 1. Procesar fichajes (franja de tiempo)
         foreach ($logs as $log) {
             if ($log->clock_in) {
+                $start = $log->date->format('Y-m-d').'T'.$log->clock_in;
+                $end = null;
+
+                if ($log->clock_out) {
+                    $end = $log->date->format('Y-m-d').'T'.$log->clock_out;
+                } elseif ($log->date->isToday()) {
+                    $end = now()->format('Y-m-d\TH:i:s');
+                }
+
+                $isConflict = in_array($log->date->format('Y-m-d'), $absenceDates);
+                $className = $isConflict ? 'is-jornada has-conflict' : 'is-jornada';
+
                 $events[] = [
-                    'id' => 'in_'.$log->id,
-                    'title' => 'Entrada',
-                    'start' => $log->date->format('Y-m-d').'T'.$log->clock_in,
-                    'color' => '#10b981',
-                ];
-            }
-            if ($log->clock_out) {
-                $events[] = [
-                    'id' => 'out_'.$log->id,
-                    'title' => 'Salida',
-                    'start' => $log->date->format('Y-m-d').'T'.$log->clock_out,
-                    'color' => '#f43f5e',
+                    'id' => 'log_'.$log->id,
+                    'title' => $isConflict ? 'Jornada (Conflicto)' : 'Jornada',
+                    'start' => $start,
+                    'end' => $end,
+                    'className' => $className,
                 ];
             }
         }
@@ -208,6 +219,7 @@ class TimeLogController extends Controller
         foreach ($absences as $abs) {
             $color = '#f59e0b';
             $title = "Ausencia ({$abs->reason}) - Pendiente";
+            $className = 'is-absence';
 
             if ($abs->status === 'approved') {
                 $color = '#10b981';
@@ -223,6 +235,65 @@ class TimeLogController extends Controller
                 'start' => $abs->date->format('Y-m-d'),
                 'allDay' => true,
                 'color' => $color,
+                'className' => $className,
+            ];
+        }
+
+        // Resumen de horas diarias
+        $logsByDate = $logs->groupBy(fn ($log) => $log->date->format('Y-m-d'));
+        foreach ($logsByDate as $date => $dayLogs) {
+            $totalHours = $dayLogs->sum('total_hours');
+            if ($totalHours > 0) {
+                $hours = floor($totalHours);
+                $minutes = round(($totalHours - $hours) * 60);
+                $timeString = $hours.'h '.($minutes > 0 ? $minutes.'m' : '');
+
+                $events[] = [
+                    'id' => 'summary_'.$date,
+                    'title' => '+ '.trim($timeString),
+                    'start' => $date,
+                    'allDay' => true,
+                    'className' => 'daily-summary-event',
+                ];
+            }
+        }
+
+        // 3. Procesar Eventos Personales (Propios e Invitaciones)
+        $personalEvents = CalendarEvent::with(['user', 'attendees'])
+            ->where('user_id', $user->id)
+            ->orWhereHas('attendees', fn ($q) => $q->where('users.id', $user->id))
+            ->get();
+        foreach ($personalEvents as $event) {
+            $start = $event->start_date->format('Y-m-d');
+            if (! $event->all_day && $event->start_time) {
+                $start .= 'T'.$event->start_time;
+            }
+
+            $end = null;
+            if ($event->end_date) {
+                $end = $event->end_date->format('Y-m-d');
+                if (! $event->all_day && $event->end_time) {
+                    $end .= 'T'.$event->end_time;
+                }
+            }
+
+            $events[] = [
+                'id' => 'evt_'.$event->id,
+                'title' => $event->title,
+                'start' => $start,
+                'end' => $end,
+                'allDay' => $event->all_day,
+                'backgroundColor' => $event->color,
+                'borderColor' => $event->color,
+                'className' => 'is-personal-event',
+                'extendedProps' => [
+                    'calendarEventId' => $event->id,
+                    'description' => $event->description,
+                    'creator' => $event->user_id !== $user->id ? $event->user->name : null,
+                    'isPersonal' => true,
+                    'canEdit' => $event->user_id === $user->id,
+                    'attendee_ids' => $event->attendees->pluck('id')->toArray(),
+                ],
             ];
         }
 
@@ -249,5 +320,46 @@ class TimeLogController extends Controller
         }
 
         abort(403);
+    }
+
+    public function updateEvent(Request $request, TimeLog $timeLog)
+    {
+        $user = $request->user();
+
+        $intern = Intern::where('user_id', $timeLog->user_id)->first();
+        if ($intern) {
+            $this->authorizeAttendanceManagement($user, $intern);
+        } elseif (! $user->isStaff()) {
+            abort(403); // If no intern profile, only staff can manage. Or if it's the user's own log?
+            // Wait, this is for drag & drop. Usually admins/tutors modify intern logs.
+        }
+
+        $validated = $request->validate([
+            'start' => 'required|date',
+            'end' => 'nullable|date',
+        ]);
+
+        $start = Carbon::parse($validated['start']);
+        $timeLog->date = $start->copy()->startOfDay();
+        $timeLog->clock_in = $start->format('H:i:s');
+
+        if (! empty($validated['end'])) {
+            $end = Carbon::parse($validated['end']);
+            $timeLog->clock_out = $end->format('H:i:s');
+
+            // Prevent end time before start time if they drop it weirdly (FullCalendar usually prevents this)
+            if ($end->greaterThan($start)) {
+                $timeLog->total_hours = round($start->diffInMinutes($end) / 60, 2);
+            } else {
+                $timeLog->total_hours = 0;
+            }
+        } else {
+            $timeLog->clock_out = null;
+            $timeLog->total_hours = null;
+        }
+
+        $timeLog->save();
+
+        return response()->json(['success' => true]);
     }
 }

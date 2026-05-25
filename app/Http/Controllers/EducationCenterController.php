@@ -30,7 +30,7 @@ class EducationCenterController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('name', 'ilike', '%'.$request->search.'%');
+            $query->where('name', 'ilike', '%' . $request->search . '%');
         }
 
         $sort = $request->input('sort');
@@ -111,8 +111,8 @@ class EducationCenterController extends Controller
         $user = Auth::user();
         $isIntern = $user?->isIntern() ?? false;
         $currentIntern = $isIntern
-        ? $user->intern()->with('companyTutor')->first()
-        : null;
+            ? $user->intern()->with('companyTutor')->first()
+            : null;
         $school = EducationCenter::withTrashed()
             ->with('notesUpdatedBy')
             ->findOrFail($school);
@@ -122,7 +122,7 @@ class EducationCenterController extends Controller
             ->select('interns.*');
 
         if ($request->filled('search')) {
-            $internsQuery->where(DB::raw('lower(users.name)'), 'like', '%'.strtolower($request->search).'%');
+            $internsQuery->where(DB::raw('lower(users.name)'), 'like', '%' . strtolower($request->search) . '%');
         }
         if ($request->filled('status')) {
             $internsQuery->where('status', $request->status);
@@ -215,7 +215,7 @@ class EducationCenterController extends Controller
 
             return Excel::download(
                 new InternsExport($filters),
-                'becarios_'.$school->id.'_'.date('Y-m-d').'.xlsx'
+                'becarios_' . $school->id . '_' . date('Y-m-d') . '.xlsx'
             );
         } catch (\Throwable $e) {
             report($e);
@@ -229,7 +229,7 @@ class EducationCenterController extends Controller
         try {
             return Excel::download(
                 new EducationCentersExport($request->all()),
-                'centros_'.date('Y-m-d').'.xlsx'
+                'centros_' . date('Y-m-d') . '.xlsx'
             );
         } catch (\Throwable $e) {
             report($e);
@@ -269,18 +269,81 @@ class EducationCenterController extends Controller
         return back()->with('success', 'Notas actualizadas correctamente');
     }
 
+    public function storeInternalNote(Request $request, EducationCenter $school)
+    {
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $school->internalNotes()->create([
+            'content' => $request->input('content'),
+            'user_id' => Auth::id(),
+        ]);
+
+        $this->syncInternalNoteSummary($school);
+
+        return back()->with('success', 'Nota añadida correctamente');
+    }
+
+    public function updateInternalNote(Request $request, EducationCenter $school, \App\Models\InternalNote $note)
+    {
+        abort_unless(
+            $note->notable_type === EducationCenter::class && (int) $note->notable_id === (int) $school->id,
+            404,
+        );
+
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $note->update([
+            'content' => $request->input('content'),
+            'edited_at' => now(),
+        ]);
+
+        $this->syncInternalNoteSummary($school);
+
+        return back()->with('success', 'Nota actualizada correctamente');
+    }
+
+    public function destroyInternalNote(EducationCenter $school, \App\Models\InternalNote $note)
+    {
+        abort_unless(
+            $note->notable_type === EducationCenter::class && (int) $note->notable_id === (int) $school->id,
+            404,
+        );
+
+        $note->delete();
+
+        $this->syncInternalNoteSummary($school);
+
+        return back()->with('success', 'Nota eliminada correctamente');
+    }
+
+    protected function syncInternalNoteSummary(EducationCenter $school): void
+    {
+        /** @var \App\Models\InternalNote|null $latestNote */
+        $latestNote = $school->internalNotes()->with('user')->latest('created_at')->first();
+
+        $school->update([
+            'internal_notes' => $latestNote?->content,
+            'internal_notes_updated_by' => $latestNote?->user_id,
+            'internal_notes_updated_at' => $latestNote?->created_at,
+        ]);
+    }
+
     public function myCenter()
     {
         $user = Auth::user();
         $isIntern = $user?->isIntern() ?? false;
 
-        if (! $isIntern) {
+        if (!$isIntern) {
             return back()->with('error', 'Solo los becarios pueden acceder a su centro');
         }
 
         $centerId = $user->intern?->education_center_id;
 
-        if (! $centerId) {
+        if (!$centerId) {
             return back()->with('error', 'No tienes un centro asignado');
         }
 

@@ -1,5 +1,20 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { AlertTriangle, ArrowLeft, ClipboardList, Download, History, Info, ListChecks, MessageSquareText, Minus, Percent, Trash2, TrendingDown, TrendingUp, UserRound } from 'lucide-react';
+import {
+    AlertTriangle,
+    ArrowLeft,
+    ClipboardList,
+    Download,
+    History,
+    Info,
+    ListChecks,
+    MessageSquareText,
+    Minus,
+    Percent,
+    Trash2,
+    TrendingDown,
+    TrendingUp,
+    UserRound,
+} from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Button } from '@/components/ui/button';
@@ -84,52 +99,70 @@ type Props = {
 export default function Show({ evaluation, history = [], userMode }: Props) {
     const { auth } = usePage().props as any;
     const isIntern = userMode === 'intern';
-    const canDeleteEvaluation = auth?.user?.permissions?.includes('delete evaluations');
-    const historyWithScore = history.filter((item) => item.weighted_score !== null && item.weighted_score !== undefined);
+    const canDeleteEvaluation =
+        auth?.user?.permissions?.includes('delete evaluations');
+    const historyWithScore = history.filter(
+        (item) =>
+            item.weighted_score !== null && item.weighted_score !== undefined,
+    );
     const bestScore = historyWithScore.length
-        ? Math.max(...historyWithScore.map((item) => Number(item.weighted_score)))
+        ? Math.max(
+              ...historyWithScore.map((item) => Number(item.weighted_score)),
+          )
         : null;
     const averageScore = historyWithScore.length
         ? (
-            historyWithScore.reduce((sum, item) => sum + Number(item.weighted_score), 0) /
-            historyWithScore.length
-        ).toFixed(2)
+              historyWithScore.reduce(
+                  (sum, item) => sum + Number(item.weighted_score),
+                  0,
+              ) / historyWithScore.length
+          ).toFixed(2)
         : null;
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Evaluaciones', href: '/evaluaciones' },
-        { title: `Evaluación #${evaluation.id}`, href: `/evaluaciones/${evaluation.id}` },
+        {
+            title: `Evaluación #${evaluation.id}`,
+            href: `/evaluaciones/${evaluation.id}`,
+        },
     ];
 
     const subjectName = evaluation.intern?.user?.name ?? 'Sin becario';
-    const evaluatorName = evaluation.evaluator?.name ?? (evaluation.is_self_evaluation ? subjectName : 'Sin evaluador');
-    const currentWeightedScore = evaluation.weighted_score !== null ? Number(evaluation.weighted_score) : null;
+    const evaluatorName =
+        evaluation.evaluator?.name ??
+        (evaluation.is_self_evaluation ? subjectName : 'Sin evaluador');
+    const currentWeightedScore =
+        evaluation.weighted_score !== null
+            ? Number(evaluation.weighted_score)
+            : null;
     const scoreTone =
         currentWeightedScore === null || Number.isNaN(currentWeightedScore)
             ? 'text-slate-900'
             : currentWeightedScore >= 8
-                ? 'text-emerald-600'
-                : currentWeightedScore >= 6
-                    ? 'text-amber-600'
-                    : 'text-rose-600';
+              ? 'text-sidebar'
+              : currentWeightedScore >= 6
+                ? 'text-amber-600'
+                : 'text-rose-600';
 
     // Performance alerts
     const currentEvaluation = history.find((item) => item.is_current);
-    const significantDrop = currentEvaluation?.delta_from_previous !== null && currentEvaluation?.delta_from_previous !== undefined
-        ? Number(currentEvaluation.delta_from_previous) < -1
-        : false;
+    const significantDrop =
+        currentEvaluation?.delta_from_previous !== null &&
+        currentEvaluation?.delta_from_previous !== undefined
+            ? Number(currentEvaluation.delta_from_previous) < -1
+            : false;
 
     const recentHistory = history.slice(0, 3).reverse();
-    const downwardTrend = recentHistory.length >= 3
-        ? recentHistory[0].delta_from_previous !== null &&
-        recentHistory[1].delta_from_previous !== null &&
-        Number(recentHistory[0].delta_from_previous) < 0 &&
-        Number(recentHistory[1].delta_from_previous) < 0
-        : false;
+    const downwardTrend =
+        recentHistory.length >= 3
+            ? recentHistory[0].delta_from_previous !== null &&
+              recentHistory[1].delta_from_previous !== null &&
+              Number(recentHistory[0].delta_from_previous) < 0 &&
+              Number(recentHistory[1].delta_from_previous) < 0
+            : false;
 
     return (
-
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Evaluación #${evaluation.id}`} />
 
@@ -138,11 +171,12 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="bg-gradient-to-r from-sidebar to-[#1f4f52] text-white hover:opacity-95 shadow-sm rounded-xl font-bold uppercase tracking-widest text-[10px] border-0"
+                        className="rounded-xl border-0 bg-linear-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
                         asChild
                     >
                         <Link href="/evaluaciones">
-                            <ArrowLeft className="h-4 w-4 mr-1.5" /> Volver al listado
+                            <ArrowLeft className="mr-1.5 h-4 w-4" /> Volver al
+                            listado
                         </Link>
                     </Button>
                 </div>
@@ -159,17 +193,45 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                 </h3>
                                 {significantDrop && (
                                     <p className="mt-2 text-sm text-rose-800 dark:text-rose-200">
-                                        <strong>Bajada significativa detectada:</strong> Esta evaluación muestra una <strong>disminución de {Math.abs(Number(currentEvaluation?.delta_from_previous)).toFixed(2)} puntos</strong> respecto a la anterior. Se recomienda revisar los criterios con menor puntuación y planificar actividades de mejora.
+                                        <strong>
+                                            Bajada significativa detectada:
+                                        </strong>{' '}
+                                        Esta evaluación muestra una{' '}
+                                        <strong>
+                                            disminución de{' '}
+                                            {Math.abs(
+                                                Number(
+                                                    currentEvaluation?.delta_from_previous,
+                                                ),
+                                            ).toFixed(2)}{' '}
+                                            puntos
+                                        </strong>{' '}
+                                        respecto a la anterior. Se recomienda
+                                        revisar los criterios con menor
+                                        puntuación y planificar actividades de
+                                        mejora.
                                     </p>
                                 )}
                                 {downwardTrend && !significantDrop && (
                                     <p className="mt-2 text-sm text-rose-800 dark:text-rose-200">
-                                        <strong>Tendencia a la baja:</strong> El becario ha mostrado <strong>disminución en las últimas evaluaciones</strong>. Es recomendable realizar una reunión de seguimiento para identificar las causas y ofrecer apoyo.
+                                        <strong>Tendencia a la baja:</strong> El
+                                        becario ha mostrado{' '}
+                                        <strong>
+                                            disminución en las últimas
+                                            evaluaciones
+                                        </strong>
+                                        . Es recomendable realizar una reunión
+                                        de seguimiento para identificar las
+                                        causas y ofrecer apoyo.
                                     </p>
                                 )}
                                 {downwardTrend && significantDrop && (
                                     <p className="mt-2 text-sm text-rose-800 dark:text-rose-200">
-                                        <strong>Atención urgente:</strong> Se detecta tanto una bajada significativa actual como una tendencia decreciente. Se recomienda intervención inmediata para revertir esta situación.
+                                        <strong>Atención urgente:</strong> Se
+                                        detecta tanto una bajada significativa
+                                        actual como una tendencia decreciente.
+                                        Se recomienda intervención inmediata
+                                        para revertir esta situación.
                                     </p>
                                 )}
                             </div>
@@ -178,26 +240,38 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                 )}
 
                 <ModuleHeader
-                    title={isIntern ? 'Tu evaluación' : `Evaluación de ${subjectName}`}
+                    title={
+                        isIntern
+                            ? 'Tu evaluación'
+                            : `Evaluación de ${subjectName}`
+                    }
                     description="Revisa el detalle completo de la evaluación, las puntuaciones por criterio y las observaciones registradas."
                     icon={<ClipboardList className="h-5 w-5" />}
                     actions={
                         <div className="flex flex-wrap items-center gap-3">
-                            <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md">
-                                {getEvaluationTypeLabel(evaluation.evaluation_type)}
+                            <span className="rounded-full border border-white/25 bg-white px-3 py-1 text-[9px] font-black tracking-widest text-slate-900 uppercase backdrop-blur-md">
+                                {getEvaluationTypeLabel(
+                                    evaluation.evaluation_type,
+                                )}
                             </span>
-                            <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md">
-                                {evaluation.is_self_evaluation ? 'Autoevaluación' : 'Evaluación externa'}
+                            <span className="rounded-full border border-white/25 bg-white px-3 py-1 text-[9px] font-black tracking-widest text-slate-900 uppercase backdrop-blur-md">
+                                {evaluation.is_self_evaluation
+                                    ? 'Autoevaluación'
+                                    : 'Evaluación externa'}
                             </span>
 
-                            <div className="h-4 w-px bg-white/20 mx-1" />
+                            <div className="mx-1 h-4 w-px bg-white/20" />
 
                             <Button
                                 size="sm"
-                                className="h-8 rounded-lg bg-white/10 px-3 text-[9px] font-black uppercase tracking-widest text-white shadow-lg backdrop-blur-md border border-white/20 transition-all hover:bg-white/20"
+                                className="h-8 rounded-lg border border-white/20 bg-white px-3 text-[9px] font-black tracking-widest text-slate-900 uppercase shadow-lg backdrop-blur-md transition-all hover:bg-white/20"
                                 asChild
                             >
-                                <a href={`/evaluaciones/${evaluation.id}/pdf`} target="_blank" rel="noreferrer">
+                                <a
+                                    href={`/evaluaciones/${evaluation.id}/pdf`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
                                     <Download className="mr-1.5 h-3 w-3" />
                                     Informe
                                 </a>
@@ -209,24 +283,37 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                         <Button
                                             size="sm"
                                             variant="destructive"
-                                            className="h-8 rounded-lg px-3 text-[9px] font-black uppercase tracking-widest shadow-lg transition-all"
+                                            className="h-8 rounded-lg px-3 text-[9px] font-black tracking-widest uppercase shadow-lg transition-all"
                                         >
                                             <Trash2 className="mr-1.5 h-3 w-3" />
                                             Eliminar
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="max-w-md rounded-3xl border-sidebar/10 shadow-2xl">
-                                        <DialogTitle className="text-xl font-bold">¿Eliminar evaluación?</DialogTitle>
+                                    <DialogContent className="max-w-md rounded-xl border-sidebar/10 shadow-xl">
+                                        <DialogTitle className="text-xl font-bold">
+                                            ¿Eliminar evaluación?
+                                        </DialogTitle>
                                         <DialogDescription className="py-2 text-slate-500">
-                                            Esta acción no se puede deshacer. Se eliminarán la evaluación y todas sus puntuaciones de forma permanente.
+                                            Esta acción no se puede deshacer. Se
+                                            eliminarán la evaluación y todas sus
+                                            puntuaciones de forma permanente.
                                         </DialogDescription>
                                         <DialogFooter className="gap-2 pt-4">
                                             <DialogClose asChild>
-                                                <Button variant="ghost" className="rounded-xl border-border px-6">Cancelar</Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="rounded-xl border-border px-6"
+                                                >
+                                                    Cancelar
+                                                </Button>
                                             </DialogClose>
                                             <Button
                                                 variant="destructive"
-                                                onClick={() => router.delete(`/evaluaciones/${evaluation.id}`)}
+                                                onClick={() =>
+                                                    router.delete(
+                                                        `/evaluaciones/${evaluation.id}`,
+                                                    )
+                                                }
                                                 className="rounded-xl px-8 shadow-lg transition-all"
                                             >
                                                 Eliminar definitivamente
@@ -240,84 +327,111 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                 />
 
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm dark:bg-slate-900/60 transition-all hover:shadow-md">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
                         <div className="mb-1 flex items-center gap-1.5 text-sidebar">
                             <Percent className="h-3 w-3" />
-                            <span className="text-[9px] font-black uppercase tracking-widest">Nota</span>
+                            <span className="text-[9px] font-black tracking-widest uppercase">
+                                Nota
+                            </span>
                         </div>
-                        <p className={`text-base font-black dark:text-white ${scoreTone}`}>
+                        <p
+                            className={`text-base font-black dark:text-white ${scoreTone}`}
+                        >
                             {evaluation.weighted_score ?? '—'}
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm dark:bg-slate-900/60 transition-all hover:shadow-md">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
                         <div className="mb-1 flex items-center gap-1.5 text-sidebar">
                             <ClipboardList className="h-3 w-3" />
-                            <span className="text-[9px] font-black uppercase tracking-widest">Total</span>
+                            <span className="text-[9px] font-black tracking-widest uppercase">
+                                Total
+                            </span>
                         </div>
                         <p className="text-base font-black text-slate-900 dark:text-white">
                             {evaluation.total_score ?? '—'}
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm dark:bg-slate-900/60 transition-all hover:shadow-md">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
                         <div className="mb-1 flex items-center gap-1.5 text-sidebar">
                             <UserRound className="h-3 w-3" />
-                            <span className="text-[9px] font-black uppercase tracking-widest">Evaluador</span>
+                            <span className="text-[9px] font-black tracking-widest uppercase">
+                                Evaluador
+                            </span>
                         </div>
-                        <p className="truncate text-[11px] font-black text-slate-900 dark:text-white" title={evaluatorName}>
+                        <p
+                            className="truncate text-[11px] font-black text-slate-900 dark:text-white"
+                            title={evaluatorName}
+                        >
                             {evaluatorName}
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm dark:bg-slate-900/60 transition-all hover:shadow-md">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
                         <div className="mb-1 flex items-center gap-1.5 text-slate-400">
-                            <span className="text-[9px] font-black uppercase tracking-widest">Registros</span>
+                            <span className="text-[9px] font-black tracking-widest uppercase">
+                                Registros
+                            </span>
                         </div>
-                        <p className="text-base font-black text-slate-900 dark:text-white">{history.length}</p>
+                        <p className="text-base font-black text-slate-900 dark:text-white">
+                            {history.length}
+                        </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm dark:bg-slate-900/60 transition-all hover:shadow-md">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
                         <div className="mb-1 flex items-center gap-1.5 text-slate-400">
-                            <span className="text-[9px] font-black uppercase tracking-widest">Mejor nota</span>
+                            <span className="text-[9px] font-black tracking-widest uppercase">
+                                Mejor nota
+                            </span>
                         </div>
-                        <p className="text-base font-black text-slate-900 dark:text-white">{bestScore ?? '—'}</p>
+                        <p className="text-base font-black text-slate-900 dark:text-white">
+                            {bestScore ?? '—'}
+                        </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm dark:bg-slate-900/60 transition-all hover:shadow-md">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
                         <div className="mb-1 flex items-center gap-1.5 text-slate-400">
-                            <span className="text-[9px] font-black uppercase tracking-widest">Media</span>
+                            <span className="text-[9px] font-black tracking-widest uppercase">
+                                Media
+                            </span>
                         </div>
-                        <p className="text-base font-black text-slate-900 dark:text-white">{averageScore ?? '—'}</p>
+                        <p className="text-base font-black text-slate-900 dark:text-white">
+                            {averageScore ?? '—'}
+                        </p>
                     </div>
                 </div>
 
-                <Tabs defaultValue="criteria" orientation="vertical" className="flex flex-col gap-6 lg:flex-row">
+                <Tabs
+                    defaultValue="criteria"
+                    orientation="vertical"
+                    className="flex flex-col gap-6 lg:flex-row"
+                >
                     <TabsList className="flex h-auto w-full flex-col items-stretch justify-start gap-2 bg-transparent p-0 lg:w-64">
                         <TabsTrigger
                             value="general"
-                            className="flex h-12 justify-start gap-3 rounded-2xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-sidebar/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white dark:bg-slate-900/60"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                         >
                             <Info className="h-4 w-4" />
                             Información general
                         </TabsTrigger>
                         <TabsTrigger
                             value="comments"
-                            className="flex h-12 justify-start gap-3 rounded-2xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-sidebar/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white dark:bg-slate-900/60"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                         >
                             <MessageSquareText className="h-4 w-4" />
                             Comentario general
                         </TabsTrigger>
                         <TabsTrigger
                             value="criteria"
-                            className="flex h-12 justify-start gap-3 rounded-2xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-sidebar/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white dark:bg-slate-900/60"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                         >
                             <ListChecks className="h-4 w-4" />
                             Criterios evaluados
                         </TabsTrigger>
                         <TabsTrigger
                             value="history"
-                            className="flex h-12 justify-start gap-3 rounded-2xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-sidebar/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white dark:bg-slate-900/60"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                         >
                             <History className="h-4 w-4" />
                             Historia y evolución
@@ -326,9 +440,9 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
 
                     <div className="flex-1">
                         <TabsContent value="general" className="mt-0">
-                            <div className="rounded-[2rem] border border-sidebar/10 bg-white p-8 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         01
                                     </span>
                                     <div>
@@ -336,44 +450,72 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             Información general
                                         </h2>
                                         <p className="text-sm font-medium text-slate-500">
-                                            Datos principales de la evaluación y del periodo valorado.
+                                            Datos principales de la evaluación y
+                                            del periodo valorado.
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                                    <div className="rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Becario</p>
-                                        <p className="mt-2 text-sm font-bold text-white">{subjectName}</p>
-                                    </div>
-                                    <div className="rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Tipo</p>
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                        <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
+                                            Becario
+                                        </p>
                                         <p className="mt-2 text-sm font-bold text-white">
-                                            {getEvaluationTypeLabel(evaluation.evaluation_type)}
+                                            {subjectName}
                                         </p>
                                     </div>
-                                    <div className="rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Fecha de evaluación</p>
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                        <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
+                                            Tipo
+                                        </p>
                                         <p className="mt-2 text-sm font-bold text-white">
-                                            {formatDateEs(evaluation.evaluated_at)}
+                                            {getEvaluationTypeLabel(
+                                                evaluation.evaluation_type,
+                                            )}
                                         </p>
                                     </div>
-                                    <div className="rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Módulo</p>
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                        <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
+                                            Fecha de evaluación
+                                        </p>
                                         <p className="mt-2 text-sm font-bold text-white">
-                                            {evaluation.intern?.academic_degree || '—'}
+                                            {formatDateEs(
+                                                evaluation.evaluated_at,
+                                            )}
                                         </p>
                                     </div>
-                                    <div className="rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Inicio del período</p>
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                        <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
+                                            Módulo
+                                        </p>
                                         <p className="mt-2 text-sm font-bold text-white">
-                                            {evaluation.period_start ? formatDateEs(evaluation.period_start) : '—'}
+                                            {evaluation.intern
+                                                ?.academic_degree || '—'}
                                         </p>
                                     </div>
-                                    <div className="rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Fin del período</p>
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                        <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
+                                            Inicio del período
+                                        </p>
                                         <p className="mt-2 text-sm font-bold text-white">
-                                            {evaluation.period_end ? formatDateEs(evaluation.period_end) : '—'}
+                                            {evaluation.period_start
+                                                ? formatDateEs(
+                                                      evaluation.period_start,
+                                                  )
+                                                : '—'}
+                                        </p>
+                                    </div>
+                                    <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-4 shadow-lg">
+                                        <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">
+                                            Fin del período
+                                        </p>
+                                        <p className="mt-2 text-sm font-bold text-white">
+                                            {evaluation.period_end
+                                                ? formatDateEs(
+                                                      evaluation.period_end,
+                                                  )
+                                                : '—'}
                                         </p>
                                     </div>
                                 </div>
@@ -381,9 +523,9 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </TabsContent>
 
                         <TabsContent value="comments" className="mt-0">
-                            <div className="rounded-[2rem] border border-sidebar/10 bg-white p-8 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         02
                                     </span>
                                     <div>
@@ -391,27 +533,31 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             Comentario general
                                         </h2>
                                         <p className="text-sm font-medium text-slate-500">
-                                            Resumen global registrado en la evaluación.
+                                            Resumen global registrado en la
+                                            evaluación.
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="rounded-[1.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-lg">
+                                <div className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-6 shadow-lg">
                                     <div className="mb-3 flex items-center gap-2 text-white/70">
                                         <MessageSquareText className="h-4 w-4" />
-                                        <span className="text-xs font-black uppercase tracking-widest">Observaciones</span>
+                                        <span className="text-xs font-black tracking-widest uppercase">
+                                            Observaciones
+                                        </span>
                                     </div>
                                     <p className="text-sm leading-7 text-white">
-                                        {evaluation.general_comments || 'No se han añadido observaciones generales para esta evaluación.'}
+                                        {evaluation.general_comments ||
+                                            'No se han añadido observaciones generales para esta evaluación.'}
                                     </p>
                                 </div>
                             </div>
                         </TabsContent>
 
                         <TabsContent value="criteria" className="mt-0">
-                            <div className="rounded-[2rem] border border-sidebar/10 bg-white p-8 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         03
                                     </span>
                                     <div>
@@ -419,7 +565,8 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             Criterios evaluados
                                         </h2>
                                         <p className="text-sm font-medium text-slate-500">
-                                            Desglose de puntuaciones, peso y comentarios por criterio.
+                                            Desglose de puntuaciones, peso y
+                                            comentarios por criterio.
                                         </p>
                                     </div>
                                 </div>
@@ -428,53 +575,84 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                     {evaluation.scores.map((score) => (
                                         <div
                                             key={score.id}
-                                            className="rounded-[1.5rem] bg-gradient-to-r from-sidebar to-[#1f4f52] p-6 shadow-lg transition-all hover:scale-[1.01]"
+                                            className="rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-6 shadow-lg transition-all hover:scale-[1.01]"
                                         >
                                             <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
                                                 <div>
                                                     <div className="flex flex-wrap items-center gap-2">
                                                         <h3 className="text-lg font-black text-white">
-                                                            {score.criterion?.name ?? 'Criterio'}
+                                                            {score.criterion
+                                                                ?.name ??
+                                                                'Criterio'}
                                                         </h3>
-                                                        <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
-                                                            {score.criterion?.category ?? 'General'}
+                                                        <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase">
+                                                            {score.criterion
+                                                                ?.category ??
+                                                                'General'}
                                                         </span>
                                                     </div>
-                                                    {score.criterion?.description && (
-                                                        <p className="mt-2 text-sm text-white/70">{score.criterion.description}</p>
+                                                    {score.criterion
+                                                        ?.description && (
+                                                        <p className="mt-2 text-sm text-white/70">
+                                                            {
+                                                                score.criterion
+                                                                    .description
+                                                            }
+                                                        </p>
                                                     )}
-                                                    {score.criterion?.rubric && (
-                                                        <p className="mt-2 text-sm italic text-white/60">{score.criterion.rubric}</p>
+                                                    {score.criterion
+                                                        ?.rubric && (
+                                                        <p className="mt-2 text-sm text-white/60 italic">
+                                                            {
+                                                                score.criterion
+                                                                    .rubric
+                                                            }
+                                                        </p>
                                                     )}
                                                 </div>
 
-                                                <div className="grid min-w-[220px] grid-cols-2 gap-3">
-                                                    <div className="rounded-2xl border border-sidebar/10 bg-white p-4 text-center shadow-sm">
-                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nota</p>
+                                                <div className="grid min-w-55 grid-cols-2 gap-3">
+                                                    <div className="rounded-xl border border-sidebar/10 bg-white p-4 text-center shadow-sm">
+                                                        <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                                                            Nota
+                                                        </p>
                                                         <p className="mt-2 text-2xl font-black text-slate-900 dark:text-white">
                                                             {score.score}
                                                         </p>
                                                         <p className="mt-1 text-[10px] font-medium text-slate-500">
-                                                            / {score.criterion?.max_score ?? '—'}
+                                                            /{' '}
+                                                            {score.criterion
+                                                                ?.max_score ??
+                                                                '—'}
                                                         </p>
                                                     </div>
 
-                                                    <div className="rounded-2xl border border-sidebar/10 bg-white p-4 text-center shadow-sm">
-                                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Peso aplicado</p>
+                                                    <div className="rounded-xl border border-sidebar/10 bg-white p-4 text-center shadow-sm">
+                                                        <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                                                            Peso aplicado
+                                                        </p>
                                                         <p className="mt-2 text-2xl font-black text-slate-900 dark:text-white">
-                                                            {score.weighted_score}
+                                                            {
+                                                                score.weighted_score
+                                                            }
                                                         </p>
                                                         <p className="mt-1 text-[10px] font-medium text-slate-500">
-                                                            Peso {score.criterion?.weight ?? '—'}%
+                                                            Peso{' '}
+                                                            {score.criterion
+                                                                ?.weight ?? '—'}
+                                                            %
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="rounded-2xl bg-white p-4 shadow-xl">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Comentario del criterio</p>
+                                            <div className="rounded-xl bg-white p-4 shadow-xl">
+                                                <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                                                    Comentario del criterio
+                                                </p>
                                                 <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">
-                                                    {score.comment || 'No se ha añadido comentario para este criterio.'}
+                                                    {score.comment ||
+                                                        'No se ha añadido comentario para este criterio.'}
                                                 </p>
                                             </div>
                                         </div>
@@ -484,9 +662,9 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </TabsContent>
 
                         <TabsContent value="history" className="mt-0">
-                            <div className="rounded-[2rem] border border-sidebar/10 bg-white p-8 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-xl font-black text-white shadow-lg">
+                                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         04
                                     </span>
                                     <div>
@@ -494,7 +672,9 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                             Historial y evolución
                                         </h2>
                                         <p className="text-sm font-medium text-slate-500">
-                                            Recorrido cronológico de las evaluaciones del becario y variación respecto a la anterior.
+                                            Recorrido cronológico de las
+                                            evaluaciones del becario y variación
+                                            respecto a la anterior.
                                         </p>
                                     </div>
                                 </div>
@@ -502,80 +682,131 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                 <div className="space-y-4">
                                     {history.map((item) => {
                                         const delta = item.delta_from_previous;
-                                        const isPositive = typeof delta === 'number' && delta > 0;
-                                        const isNegative = typeof delta === 'number' && delta < 0;
-                                        const isNeutral = typeof delta === 'number' && delta === 0;
+                                        const isPositive =
+                                            typeof delta === 'number' &&
+                                            delta > 0;
+                                        const isNegative =
+                                            typeof delta === 'number' &&
+                                            delta < 0;
+                                        const isNeutral =
+                                            typeof delta === 'number' &&
+                                            delta === 0;
 
                                         return (
                                             <div
                                                 key={item.id}
-                                                className={`rounded-[1.5rem] p-5 shadow-lg transition-all bg-gradient-to-r from-sidebar to-[#1f4f52] ${item.is_current
-                                                        ? 'ring-2 ring-white/30 ring-offset-2 ring-offset-sidebar shadow-2xl'
+                                                className={`rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent p-5 shadow-lg transition-all ${
+                                                    item.is_current
+                                                        ? 'shadow-xl ring-2 ring-white/30 ring-offset-2 ring-offset-sidebar'
                                                         : 'opacity-90'
-                                                    }`}
+                                                }`}
                                             >
                                                 <div className="flex flex-wrap items-start justify-between gap-4">
                                                     <div className="space-y-2">
                                                         <div className="flex flex-wrap items-center gap-2">
                                                             <span className="text-sm font-black text-white">
-                                                                {getEvaluationTypeLabel(item.evaluation_type)}
+                                                                {getEvaluationTypeLabel(
+                                                                    item.evaluation_type,
+                                                                )}
                                                             </span>
-                                                            <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-sm">
-                                                                {formatDateEs(item.evaluated_at)}
+                                                            <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase shadow-sm">
+                                                                {formatDateEs(
+                                                                    item.evaluated_at,
+                                                                )}
                                                             </span>
                                                             <span
-                                                                className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${item.is_self_evaluation
+                                                                className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
+                                                                    item.is_self_evaluation
                                                                         ? 'bg-violet-500/20 text-violet-200'
                                                                         : 'bg-white/20 text-white'
-                                                                    }`}
+                                                                }`}
                                                             >
-                                                                {item.is_self_evaluation ? 'Autoevaluación' : 'Tutor / admin'}
+                                                                {item.is_self_evaluation
+                                                                    ? 'Autoevaluación'
+                                                                    : 'Tutor / admin'}
                                                             </span>
                                                             {item.is_current && (
-                                                                <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-widest text-sidebar">
+                                                                <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black tracking-widest text-sidebar uppercase">
                                                                     Actual
                                                                 </span>
                                                             )}
                                                         </div>
 
                                                         <p className="text-sm text-white/60">
-                                                            Periodo: {item.period_start ? formatDateEs(item.period_start) : '—'} -{' '}
-                                                            {item.period_end ? formatDateEs(item.period_end) : '—'}
+                                                            Periodo:{' '}
+                                                            {item.period_start
+                                                                ? formatDateEs(
+                                                                      item.period_start,
+                                                                  )
+                                                                : '—'}{' '}
+                                                            -{' '}
+                                                            {item.period_end
+                                                                ? formatDateEs(
+                                                                      item.period_end,
+                                                                  )
+                                                                : '—'}
                                                         </p>
 
                                                         <p className="text-sm text-white/60">
-                                                            Evaluador: {item.evaluator?.name ?? subjectName}
+                                                            Evaluador:{' '}
+                                                            {item.evaluator
+                                                                ?.name ??
+                                                                subjectName}
                                                         </p>
                                                     </div>
 
-                                                    <div className="grid min-w-[240px] grid-cols-2 gap-3">
-                                                        <div className="rounded-2xl border border-sidebar/10 bg-white p-4 text-center">
-                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nota ponderada</p>
+                                                    <div className="grid min-w-60 grid-cols-2 gap-3">
+                                                        <div className="rounded-xl border border-sidebar/10 bg-white p-4 text-center">
+                                                            <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                                                                Nota ponderada
+                                                            </p>
                                                             <p className="mt-2 text-2xl font-black text-slate-900 dark:text-white">
-                                                                {item.weighted_score ?? '—'}
+                                                                {item.weighted_score ??
+                                                                    '—'}
                                                             </p>
                                                         </div>
 
-                                                        <div className="rounded-2xl border border-sidebar/10 bg-white p-4 text-center">
-                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Evolución</p>
+                                                        <div className="rounded-xl border border-sidebar/10 bg-white p-4 text-center">
+                                                            <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                                                                Evolución
+                                                            </p>
                                                             <div className="mt-2 flex items-center justify-center gap-2">
-                                                                {isPositive && <TrendingUp className="h-5 w-5 text-emerald-600" />}
-                                                                {isNegative && <TrendingDown className="h-5 w-5 text-rose-600" />}
-                                                                {isNeutral && <Minus className="h-5 w-5 text-slate-500" />}
-                                                                {!isPositive && !isNegative && !isNeutral && (
-                                                                    <span className="text-sm font-semibold text-slate-500">—</span>
+                                                                {isPositive && (
+                                                                    <TrendingUp className="h-5 w-5 text-sidebar" />
                                                                 )}
-                                                                {(isPositive || isNegative || isNeutral) && (
+                                                                {isNegative && (
+                                                                    <TrendingDown className="h-5 w-5 text-rose-600" />
+                                                                )}
+                                                                {isNeutral && (
+                                                                    <Minus className="h-5 w-5 text-slate-500" />
+                                                                )}
+                                                                {!isPositive &&
+                                                                    !isNegative &&
+                                                                    !isNeutral && (
+                                                                        <span className="text-sm font-semibold text-slate-500">
+                                                                            —
+                                                                        </span>
+                                                                    )}
+                                                                {(isPositive ||
+                                                                    isNegative ||
+                                                                    isNeutral) && (
                                                                     <span
-                                                                        className={`text-sm font-black ${isPositive
-                                                                                ? 'text-emerald-600'
+                                                                        className={`text-sm font-black ${
+                                                                            isPositive
+                                                                                ? 'text-sidebar'
                                                                                 : isNegative
-                                                                                    ? 'text-rose-600'
-                                                                                    : 'text-slate-500'
-                                                                            }`}
+                                                                                  ? 'text-rose-600'
+                                                                                  : 'text-slate-500'
+                                                                        }`}
                                                                     >
-                                                                        {delta && delta > 0 ? '+' : ''}
-                                                                        {delta?.toFixed(2)}
+                                                                        {delta &&
+                                                                        delta >
+                                                                            0
+                                                                            ? '+'
+                                                                            : ''}
+                                                                        {delta?.toFixed(
+                                                                            2,
+                                                                        )}
                                                                     </span>
                                                                 )}
                                                             </div>
@@ -587,7 +818,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                     <div className="mt-4">
                                                         <Link
                                                             href={`/evaluaciones/${item.id}`}
-                                                            className="text-xs font-black uppercase tracking-widest text-white hover:underline"
+                                                            className="text-xs font-black tracking-widest text-white uppercase hover:underline"
                                                         >
                                                             Ver esta evaluación
                                                         </Link>
@@ -598,8 +829,9 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                     })}
 
                                     {history.length === 0 && (
-                                        <div className="rounded-[1.5rem] border border-dashed border-sidebar/20 bg-slate-50/60 p-6 text-sm text-slate-500">
-                                            Aún no hay suficiente historial para mostrar evolución.
+                                        <div className="rounded-xl border border-dashed border-sidebar/20 bg-slate-50/60 p-6 text-sm text-slate-500">
+                                            Aún no hay suficiente historial para
+                                            mostrar evolución.
                                         </div>
                                     )}
                                 </div>

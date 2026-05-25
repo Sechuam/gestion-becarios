@@ -33,11 +33,9 @@ export default function ResetPassword({ token, email }: Props) {
                 {({ processing, errors }) => (
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="email">
-                                Correo electrónico
-                            </Label>
+                            <Label htmlFor="email">Correo electrónico</Label>
                             <div className="relative">
-                                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                 <Input
                                     id="email"
                                     type="email"
@@ -57,15 +55,13 @@ export default function ResetPassword({ token, email }: Props) {
                         <div className="grid gap-2">
                             <Label htmlFor="password">Contraseña</Label>
                             <div className="relative">
-                                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                 <Input
                                     id="password"
-                                    type={
-                                        showPassword ? 'text' : 'password'
-                                    }
+                                    type={showPassword ? 'text' : 'password'}
                                     name="password"
                                     autoComplete="new-password"
-                                    className="mt-1 block w-full pl-10 pr-10"
+                                    className="mt-1 block w-full pr-10 pl-10"
                                     autoFocus
                                     placeholder="Contraseña"
                                 />
@@ -74,7 +70,7 @@ export default function ResetPassword({ token, email }: Props) {
                                     onClick={() =>
                                         setShowPassword(!showPassword)
                                     }
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                     aria-label={
                                         showPassword
                                             ? 'Ocultar contraseña'
@@ -96,19 +92,19 @@ export default function ResetPassword({ token, email }: Props) {
                                 Confirmar contraseña
                             </Label>
                             <div className="relative">
-                                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                 <Input
                                     id="password_confirmation"
                                     type={showConfirm ? 'text' : 'password'}
                                     name="password_confirmation"
                                     autoComplete="new-password"
-                                    className="mt-1 block w-full pl-10 pr-10"
+                                    className="mt-1 block w-full pr-10 pl-10"
                                     placeholder="Confirmar contraseña"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowConfirm(!showConfirm)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                     aria-label={
                                         showConfirm
                                             ? 'Ocultar contraseña'
@@ -130,7 +126,7 @@ export default function ResetPassword({ token, email }: Props) {
 
                         <Button
                             type="submit"
-                            className="mt-4 h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+                            className="mt-4 h-11 w-full"
                             disabled={processing}
                             data-test="reset-password-button"
                         >

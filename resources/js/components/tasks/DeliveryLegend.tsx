@@ -35,26 +35,35 @@ export function DeliveryLegend() {
 
     return (
         <div className="flex justify-end">
-            <div className="inline-block rounded-xl border border-sidebar/10 bg-white shadow-sm dark:bg-slate-900/60 overflow-hidden transition-all">
+            <div className="inline-block overflow-hidden rounded-lg border border-sidebar/10 bg-slate-50 shadow-sm transition-all dark:bg-slate-900/60">
                 <button
                     type="button"
                     onClick={() => setOpen((v) => !v)}
-                    className="flex items-center gap-2 px-3 py-1.5 text-[11px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+                    className="flex h-8 items-center gap-2 px-2.5 text-[10px] font-bold tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
                 >
-                    <Info className="h-3.5 w-3.5 text-sidebar/50" />
-                    <span>Ver leyenda de entrega</span>
-                    {open
-                        ? <ChevronUp className="h-3.5 w-3.5" />
-                        : <ChevronDown className="h-3.5 w-3.5" />
-                    }
+                    <Info className="h-3.5 w-3.5 text-sidebar/60" />
+                    <span>Leyenda</span>
+                    {open ? (
+                        <ChevronUp className="h-3.5 w-3.5" />
+                    ) : (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                    )}
                 </button>
 
                 {open && (
-                    <div className="border-t border-sidebar/10 px-3 py-2 flex flex-wrap gap-x-5 gap-y-1.5">
+                    <div className="flex max-w-3xl flex-wrap gap-x-4 gap-y-1.5 border-t border-sidebar/10 bg-white px-3 py-2 dark:bg-slate-900">
                         {LEGEND_ITEMS.map((item) => (
-                            <div key={item.label} className="flex items-center gap-2">
-                                <div className={cn('h-2 w-2 rounded-full shrink-0', item.dotClass)} />
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-foreground">
+                            <div
+                                key={item.label}
+                                className="flex items-center gap-2"
+                            >
+                                <div
+                                    className={cn(
+                                        'h-2 w-2 shrink-0 rounded-full',
+                                        item.dotClass,
+                                    )}
+                                />
+                                <span className="text-[10px] font-bold tracking-wider text-foreground uppercase">
                                     {item.label}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground">

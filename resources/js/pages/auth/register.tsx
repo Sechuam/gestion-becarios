@@ -24,7 +24,6 @@ export default function Register() {
         >
             <Head title="Crear cuenta" />
 
-            {/* Contenedor principal animado */}
             <motion.div
                 variants={fadeInUp}
                 initial="initial"
@@ -39,20 +38,25 @@ export default function Register() {
                 >
                     {({ processing, errors }) => (
                         <>
-                            {/* Contenedor en cascada para stagger */}
                             <motion.div
                                 className="grid gap-6"
                                 initial="initial"
                                 animate="animate"
                                 variants={{
-                                    animate: { transition: { staggerChildren: 0.1 } },
+                                    animate: {
+                                        transition: { staggerChildren: 0.1 },
+                                    },
                                 }}
                             >
-                                {/* NOMBRE */}
-                                <motion.div variants={fadeInUp} className="grid gap-2">
-                                    <Label htmlFor="name">Nombre completo</Label>
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="grid gap-2"
+                                >
+                                    <Label htmlFor="name">
+                                        Nombre completo
+                                    </Label>
                                     <div className="relative">
-                                        <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <User className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                         <Input
                                             id="name"
                                             type="text"
@@ -71,11 +75,15 @@ export default function Register() {
                                     />
                                 </motion.div>
 
-                                {/* EMAIL */}
-                                <motion.div variants={fadeInUp} className="grid gap-2">
-                                    <Label htmlFor="email">Correo electrónico</Label>
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="grid gap-2"
+                                >
+                                    <Label htmlFor="email">
+                                        Correo electrónico
+                                    </Label>
                                     <div className="relative">
-                                        <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                         <Input
                                             id="email"
                                             type="email"
@@ -90,26 +98,38 @@ export default function Register() {
                                     <InputError message={errors.email} />
                                 </motion.div>
 
-                                {/* PASSWORD */}
-                                <motion.div variants={fadeInUp} className="grid gap-2">
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="grid gap-2"
+                                >
                                     <Label htmlFor="password">Contraseña</Label>
                                     <div className="relative">
-                                        <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                         <Input
                                             id="password"
-                                            type={showPassword ? 'text' : 'password'}
+                                            type={
+                                                showPassword
+                                                    ? 'text'
+                                                    : 'password'
+                                            }
                                             required
                                             tabIndex={3}
                                             autoComplete="new-password"
                                             name="password"
                                             placeholder="Contraseña"
-                                            className="pl-10 pr-10"
+                                            className="pr-10 pl-10"
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                                            aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                                            onClick={() =>
+                                                setShowPassword(!showPassword)
+                                            }
+                                            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            aria-label={
+                                                showPassword
+                                                    ? 'Ocultar contraseña'
+                                                    : 'Mostrar contraseña'
+                                            }
                                         >
                                             {showPassword ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -121,26 +141,40 @@ export default function Register() {
                                     <InputError message={errors.password} />
                                 </motion.div>
 
-                                {/* CONFIRMAR PASSWORD */}
-                                <motion.div variants={fadeInUp} className="grid gap-2">
-                                    <Label htmlFor="password_confirmation">Confirmar contraseña</Label>
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="grid gap-2"
+                                >
+                                    <Label htmlFor="password_confirmation">
+                                        Confirmar contraseña
+                                    </Label>
                                     <div className="relative">
-                                        <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                         <Input
                                             id="password_confirmation"
-                                            type={showConfirm ? 'text' : 'password'}
+                                            type={
+                                                showConfirm
+                                                    ? 'text'
+                                                    : 'password'
+                                            }
                                             required
                                             tabIndex={4}
                                             autoComplete="new-password"
                                             name="password_confirmation"
                                             placeholder="Confirmar contraseña"
-                                            className="pl-10 pr-10"
+                                            className="pr-10 pl-10"
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => setShowConfirm(!showConfirm)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                                            aria-label={showConfirm ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                                            onClick={() =>
+                                                setShowConfirm(!showConfirm)
+                                            }
+                                            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            aria-label={
+                                                showConfirm
+                                                    ? 'Ocultar contraseña'
+                                                    : 'Mostrar contraseña'
+                                            }
                                         >
                                             {showConfirm ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -149,14 +183,15 @@ export default function Register() {
                                             )}
                                         </button>
                                     </div>
-                                    <InputError message={errors.password_confirmation} />
+                                    <InputError
+                                        message={errors.password_confirmation}
+                                    />
                                 </motion.div>
 
-                                {/* BOTÓN */}
                                 <motion.div variants={fadeInUp}>
                                     <Button
                                         type="submit"
-                                        className="mt-2 h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+                                        className="mt-2 h-11 w-full"
                                         tabIndex={5}
                                         data-test="register-user-button"
                                         disabled={processing}
@@ -167,10 +202,9 @@ export default function Register() {
                                 </motion.div>
                             </motion.div>
 
-                            {/* LOGIN LINK */}
                             <motion.div
                                 variants={fadeInUp}
-                                className="text-center text-sm text-muted-foreground mt-2"
+                                className="mt-2 text-center text-sm text-muted-foreground"
                             >
                                 ¿Ya tienes cuenta?{' '}
                                 <TextLink href={login()} tabIndex={6}>
@@ -178,10 +212,9 @@ export default function Register() {
                                 </TextLink>
                             </motion.div>
 
-                            {/* SEGURIDAD */}
                             <motion.div
                                 variants={fadeInUp}
-                                className="flex items-center justify-center gap-2 text-xs text-slate-500 mt-2"
+                                className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-500"
                             >
                                 <ShieldCheck className="h-3.5 w-3.5" />
                                 Tus datos están seguros

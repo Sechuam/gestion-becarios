@@ -4,44 +4,57 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\EducationCenter;
 use App\Models\Intern;
 use App\Models\PracticeType;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskStatusLog;
+use App\Models\User;
+use App\Support\DashboardCache;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use App\Models\EducationCenter;
 
 class TaskController extends Controller
 {
+    private function taskPaginationSize(Request $request): int
+    {
+        $perPage = (int) $request->input('per_page', 30);
+
+        return max(10, min($perPage, 100));
+    }
+
     public function index(Request $request)
     {
         $query = Task::query()
             ->with(['practiceType', 'creator', 'interns.user'])
             ->withCount('comments');
 
+        /** @var User|null $user */
         $user = Auth::user();
         if ($user?->isIntern()) {
-            $query->whereHas('interns', function ($q) use ($user) {
+            $query->whereHas('interns', function (Builder $q) use ($user) {
                 $q->where('user_id', $user->id);
             });
         } elseif ($user?->isTutor()) {
-            $query->whereHas('interns', function ($q) use ($user) {
-                $q->where('company_tutor_user_id', $user->id);
+            $query->where(function (Builder $query) use ($user) {
+                $query->where('created_by', $user->id)
+                    ->orWhereHas('interns', function (Builder $q) use ($user) {
+                        $q->where('company_tutor_user_id', $user->id);
+                    });
             });
         }
-
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'ilike', '%' . $request->search . '%');
+            $query->where('title', 'ilike', '%'.$request->search.'%');
         }
 
         if ($request->filled('practice_type')) {
@@ -61,30 +74,30 @@ class TaskController extends Controller
         if ($request->filled('due_to')) {
             $query->whereDate('due_date', '<=', $request->due_to);
         }
-        
+
         if ($request->filled('delivery_status')) {
             $delivery = $request->delivery_status;
             if ($delivery === 'completed_ontime') {
                 // Completada a tiempo
                 $query->where('status', 'completed')
-                      ->where(function($q) {
-                          $q->whereNull('completed_at')
+                    ->where(function ($q) {
+                        $q->whereNull('completed_at')
                             ->orWhereRaw('CAST(completed_at AS DATE) <= due_date');
-                      });
+                    });
             } elseif ($delivery === 'late') {
                 // Completada tarde
                 $query->where('status', 'completed')
-                      ->whereNotNull('completed_at')
-                      ->whereRaw('CAST(completed_at AS DATE) > due_date');
+                    ->whereNotNull('completed_at')
+                    ->whereRaw('CAST(completed_at AS DATE) > due_date');
             } elseif ($delivery === 'not_delivered') {
                 // No entregada (vencida, sin completar)
                 $query->where('status', '!=', 'completed')
-                      ->where('due_date', '<', now()->startOfDay());
+                    ->where('due_date', '<', now()->startOfDay());
             } elseif ($delivery === 'soon') {
                 // Próxima (<=3 días, sin completar)
                 $query->where('due_date', '>=', now()->startOfDay())
-                      ->where('due_date', '<=', now()->addDays(3)->endOfDay())
-                      ->where('status', '!=', 'completed');
+                    ->where('due_date', '<=', now()->addDays(3)->endOfDay())
+                    ->where('status', '!=', 'completed');
             }
         }
 
@@ -112,7 +125,7 @@ class TaskController extends Controller
                 ->latest();
         }
 
-        $tasks = $query->paginate(1000)->withQueryString();
+        $tasks = $query->paginate($this->taskPaginationSize($request))->withQueryString();
 
         return Inertia::render('tasks/index', [
             'tasks' => $tasks,
@@ -124,7 +137,7 @@ class TaskController extends Controller
                 ->orderBy('users.name')
                 ->select('interns.id', 'interns.user_id')
                 ->get()
-                ->map(fn(Intern $intern) => [
+                ->map(fn (Intern $intern) => [
                     'id' => $intern->id,
                     'name' => $intern->user?->name ?? "Becario #{$intern->id}",
                 ]),
@@ -147,7 +160,7 @@ class TaskController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'ilike', '%' . $request->search . '%');
+            $query->where('title', 'ilike', '%'.$request->search.'%');
         }
 
         if ($request->filled('practice_type')) {
@@ -167,24 +180,24 @@ class TaskController extends Controller
             if ($delivery === 'completed_ontime') {
                 // Completada a tiempo
                 $query->where('status', 'completed')
-                      ->where(function($q) {
-                          $q->whereNull('completed_at')
+                    ->where(function ($q) {
+                        $q->whereNull('completed_at')
                             ->orWhereRaw('CAST(completed_at AS DATE) <= due_date');
-                      });
+                    });
             } elseif ($delivery === 'late') {
                 // Completada tarde
                 $query->where('status', 'completed')
-                      ->whereNotNull('completed_at')
-                      ->whereRaw('CAST(completed_at AS DATE) > due_date');
+                    ->whereNotNull('completed_at')
+                    ->whereRaw('CAST(completed_at AS DATE) > due_date');
             } elseif ($delivery === 'not_delivered') {
                 // No entregada (vencida, sin completar)
                 $query->where('status', '!=', 'completed')
-                      ->where('due_date', '<', now()->startOfDay());
+                    ->where('due_date', '<', now()->startOfDay());
             } elseif ($delivery === 'soon') {
                 // Próxima (<=3 días, sin completar)
                 $query->where('due_date', '>=', now()->startOfDay())
-                      ->where('due_date', '<=', now()->addDays(3)->endOfDay())
-                      ->where('status', '!=', 'completed');
+                    ->where('due_date', '<=', now()->addDays(3)->endOfDay())
+                    ->where('status', '!=', 'completed');
             }
         }
 
@@ -212,7 +225,7 @@ class TaskController extends Controller
                 ->latest();
         }
 
-        $tasks = $query->paginate(1000)->withQueryString();
+        $tasks = $query->paginate($this->taskPaginationSize($request))->withQueryString();
 
         return Inertia::render('tasks/My', [
             'tasks' => $tasks,
@@ -223,9 +236,10 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
+        /** @var User|null $user */
         $user = Auth::user();
 
-        if (!$user || !$user->can('manage tasks')) {
+        if (! $user || ! $user->can('manage tasks')) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
         $validated = $request->validated();
@@ -245,23 +259,24 @@ class TaskController extends Controller
         $internIds = $validated['intern_ids'] ?? [];
         $assignmentType = $validated['assignment_type'] ?? 'user';
 
-        if ($assignmentType === 'module' && !empty($validated['module_id'])) {
+        if ($assignmentType === 'module' && ! empty($validated['module_id'])) {
             $module = strtolower((string) $validated['module_id']);
             $internIds = Intern::whereRaw('lower(academic_degree) = ?', [$module])
                 ->pluck('id')
                 ->all();
         }
 
-        if ($assignmentType === 'center' && !empty($validated['education_center_id'])) {
-            $internIds = !empty($internIds)
+        if ($assignmentType === 'center' && ! empty($validated['education_center_id'])) {
+            $internIds = ! empty($internIds)
                 ? $internIds
                 : Intern::where('education_center_id', $validated['education_center_id'])
                     ->pluck('id')
                     ->all();
         }
 
-        if (!empty($internIds)) {
+        if (! empty($internIds)) {
             $task->interns()->sync($internIds);
+            DashboardCache::refresh();
         }
 
         TaskStatusLog::create([
@@ -277,12 +292,12 @@ class TaskController extends Controller
 
     public function create()
     {
+        /** @var User|null $user */
         $user = Auth::user();
 
-        if (!$user || !$user->can('manage tasks')) {
+        if (! $user || ! $user->can('manage tasks')) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
-
 
         return Inertia::render('tasks/Create', [
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
@@ -293,6 +308,7 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
@@ -309,6 +325,7 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
 
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
@@ -329,6 +346,7 @@ class TaskController extends Controller
 
         if ($request->has('intern_ids')) {
             $task->interns()->sync($validated['intern_ids'] ?? []);
+            DashboardCache::refresh();
         }
 
         if ($request->filled('status') && $fromStatus !== $task->status) {
@@ -346,10 +364,11 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
-        if (!in_array($task->status, ['completed', 'rejected'], true)) {
+        if (! in_array($task->status, ['completed', 'rejected'], true)) {
             return back()->with('error', 'Solo puedes eliminar tareas completadas o rechazadas.');
         }
 
@@ -360,6 +379,7 @@ class TaskController extends Controller
 
     public function updateStatus(Request $request, Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canManageTask($user, $task), 403);
 
@@ -399,6 +419,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
         $isIntern = $user?->isIntern() ?? false;
@@ -448,11 +469,11 @@ class TaskController extends Controller
             'comments' => $task->comments
                 ->sortBy('created_at')
                 ->values()
-                ->map(fn(TaskComment $comment) => $this->serializeComment($comment)),
+                ->map(fn (TaskComment $comment) => $this->serializeComment($comment)),
             'status_logs' => $task->statusLogs
                 ->sortByDesc('changed_at')
                 ->values()
-                ->map(fn(TaskStatusLog $log) => [
+                ->map(fn (TaskStatusLog $log) => [
                     'id' => $log->id,
                     'from_status' => $log->from_status,
                     'to_status' => $log->to_status,
@@ -470,6 +491,7 @@ class TaskController extends Controller
     public function complete(Task $task)
     {
 
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -477,7 +499,7 @@ class TaskController extends Controller
         $isTutor = $user?->isTutor() ?? false;
         $isAdmin = $user?->isAdmin() ?? false;
 
-        if (!$isIntern && !$isTutor && !$isAdmin) {
+        if (! $isIntern && ! $isTutor && ! $isAdmin) {
             return back()->with('error', 'No tienes permiso para completar esta tarea.');
         }
 
@@ -487,7 +509,7 @@ class TaskController extends Controller
 
         if ($isIntern) {
             $isAssigned = $task->interns()->where('user_id', $user->id)->exists();
-            if (!$isAssigned) {
+            if (! $isAssigned) {
                 return back()->with('error', 'No tienes esta tarea asignada.');
             }
 
@@ -495,7 +517,7 @@ class TaskController extends Controller
                 return back()->with('success', 'La tarea ya está entregada y en revisión.');
             }
 
-            if (!in_array($task->status, ['pending', 'in_progress'], true)) {
+            if (! in_array($task->status, ['pending', 'in_progress'], true)) {
                 return back()->with('error', 'Solo puedes entregar tareas pendientes o en progreso.');
             }
 
@@ -535,6 +557,7 @@ class TaskController extends Controller
 
     public function storeComment(Request $request, Task $task)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -565,6 +588,7 @@ class TaskController extends Controller
 
     public function updateComment(Request $request, Task $task, TaskComment $comment)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -588,6 +612,7 @@ class TaskController extends Controller
 
     public function destroyComment(Task $task, TaskComment $comment)
     {
+        /** @var User|null $user */
         $user = Auth::user();
         abort_unless($this->canAccessTask($user, $task), 403);
 
@@ -595,7 +620,7 @@ class TaskController extends Controller
 
         $canDelete = (int) $comment->user_id === (int) $user?->id || $user?->isStaff();
 
-        if (!$canDelete) {
+        if (! $canDelete) {
             return back()->with('error', 'No puedes eliminar este comentario.');
         }
 
@@ -620,7 +645,7 @@ class TaskController extends Controller
 
         $user = Auth::user();
 
-        if (!$user || $user->isIntern()) {
+        if (! $user || $user->isIntern()) {
             return back()->with('error', 'No tienes permiso para reordenar tareas.');
         }
 
@@ -629,7 +654,10 @@ class TaskController extends Controller
 
             $allowedCount = Task::query()
                 ->whereIn('id', $taskIds)
-                ->whereHas('interns', fn($q) => $q->where('company_tutor_user_id', $user->id))
+                ->where(function (Builder $query) use ($user) {
+                    $query->where('created_by', $user->id)
+                        ->orWhereHas('interns', fn (Builder $q) => $q->where('company_tutor_user_id', $user->id));
+                })
                 ->count();
 
             abort_unless($allowedCount === $taskIds->count(), 403);
@@ -683,7 +711,7 @@ class TaskController extends Controller
             'replies' => $comment->replies
                 ->sortBy('created_at')
                 ->values()
-                ->map(fn(TaskComment $reply) => [
+                ->map(fn (TaskComment $reply) => [
                     'id' => $reply->id,
                     'comment' => $reply->comment,
                     'edited_at' => $reply->edited_at,
@@ -696,9 +724,10 @@ class TaskController extends Controller
                 ]),
         ];
     }
-    protected function canAccessTask(?\App\Models\User $user, Task $task): bool
+
+    protected function canAccessTask(?User $user, Task $task): bool
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -711,17 +740,18 @@ class TaskController extends Controller
         }
 
         if ($user->isTutor()) {
-            return $task->interns()
-                ->where('company_tutor_user_id', $user->id)
-                ->exists();
+            return (int) $task->created_by === (int) $user->id
+                || $task->interns()
+                    ->where('company_tutor_user_id', $user->id)
+                    ->exists();
         }
 
         return false;
     }
 
-    protected function canManageTask(?\App\Models\User $user, Task $task): bool
+    protected function canManageTask(?User $user, Task $task): bool
     {
-        if (!$user || !$user->can('manage tasks')) {
+        if (! $user || ! $user->can('manage tasks')) {
             return false;
         }
 
@@ -730,14 +760,14 @@ class TaskController extends Controller
         }
 
         if ($user->isTutor()) {
-            return $task->interns()
-                ->where('company_tutor_user_id', $user->id)
-                ->exists();
+            return (int) $task->created_by === (int) $user->id
+                || $task->interns()
+                    ->where('company_tutor_user_id', $user->id)
+                    ->exists();
         }
 
         return false;
     }
-
 
     protected function nextKanbanPosition(): int
     {

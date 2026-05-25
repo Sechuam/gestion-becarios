@@ -31,7 +31,6 @@ export default function Password() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-
                     <Form
                         {...PasswordController.update.form()}
                         options={{

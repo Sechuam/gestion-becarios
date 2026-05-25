@@ -17,23 +17,29 @@ class AbsenceController extends Controller
         ]);
 
         $user = $request->user();
+        $isStaff = $user->isStaff();
 
         $absence = Absence::create([
             'user_id' => $user->id,
             'date' => $validated['date'],
             'reason' => $validated['reason'],
-            'status' => 'pending',
+            'status' => $isStaff ? 'approved' : 'pending',
+            'approved_by' => $isStaff ? $user->id : null,
         ]);
 
         if ($request->hasFile('justification_file')) {
             $absence->addMediaFromRequest('justification_file')->toMediaCollection('justifications');
         }
 
-        if ($user->intern && $user->intern->companyTutor) {
+        if (!$isStaff && $user->intern && $user->intern->companyTutor) {
             $user->intern->companyTutor->notify(new AbsenceRequested($absence));
         }
 
-        return back()->with('success', 'Solicitud de ausencia enviada correctamente al tutor.');
+        $message = $isStaff
+            ? 'Ausencia registrada correctamente.'
+            : 'Solicitud de ausencia enviada correctamente al tutor.';
+
+        return back()->with('success', $message);
     }
 
     public function updateStatus(Request $request, Absence $absence)

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
     DndContext,
     pointerWithin,
@@ -11,8 +11,7 @@ import {
     SortableContext,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Sparkles, AlertTriangle, Info } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Sparkles, AlertTriangle } from 'lucide-react';
 import {
     Tooltip,
     TooltipContent,
@@ -22,6 +21,38 @@ import KanbanTaskCard from '@/components/tasks/KanbanTaskCard';
 import { DroppableColumn } from './DroppableColumn';
 import { KANBAN_COLUMNS, KANBAN_WIP_LIMIT } from '@/lib/task-constants';
 
+const KANBAN_SCROLL_STORAGE_KEY = 'tasks-kanban-scroll';
+
+type KanbanScrollState = {
+    boardLeft?: number;
+    columns?: Record<string, number>;
+};
+
+const readKanbanScrollState = (): KanbanScrollState => {
+    if (typeof window === 'undefined') return {};
+
+    try {
+        return JSON.parse(
+            window.sessionStorage.getItem(KANBAN_SCROLL_STORAGE_KEY) || '{}',
+        );
+    } catch {
+        return {};
+    }
+};
+
+const writeKanbanScrollState = (state: KanbanScrollState) => {
+    if (typeof window === 'undefined') return;
+
+    try {
+        window.sessionStorage.setItem(
+            KANBAN_SCROLL_STORAGE_KEY,
+            JSON.stringify(state),
+        );
+    } catch {
+        // Scroll memory is a UX enhancement; storage can fail in restricted contexts.
+    }
+};
+
 interface KanbanBoardProps {
     boardTasks: any[];
     tasksByStatus: Record<string, any[]>;
@@ -29,11 +60,8 @@ interface KanbanBoardProps {
     activeDragTask: any | null;
     lastMoveMessage: string | null;
     highlightedTaskId: number | null;
-    boardFilter: any;
-    boardQuickFilters: any[];
     isIntern: boolean;
     isTutor: boolean;
-    onBoardFilterChange: (filter: any) => void;
     onDragStart: (event: DragStartEvent) => void;
     onDragOver: (event: DragOverEvent) => void;
     onDragEnd: (event: DragEndEvent) => void;
@@ -51,11 +79,8 @@ export function KanbanBoard({
     activeDragTask,
     lastMoveMessage,
     highlightedTaskId,
-    boardFilter,
-    boardQuickFilters,
     isIntern,
     isTutor,
-    onBoardFilterChange,
     onDragStart,
     onDragOver,
     onDragEnd,
@@ -66,53 +91,59 @@ export function KanbanBoard({
     getTaskSortableId,
     getColumnDropId,
 }: KanbanBoardProps) {
-    return (
-        <div className="space-y-4">
-            <div className="app-panel task-surface flex flex-wrap items-center justify-between gap-3 p-3">
-                <div className="flex flex-wrap items-center gap-2 flex-1">
-                    {boardQuickFilters.map((filter) => (
-                        <Tooltip key={filter.key}>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    type="button"
-                                    variant={boardFilter === filter.key ? 'default' : 'outline'}
-                                    size="sm"
-                                    className={`flex-1 min-w-[140px] h-9 gap-2 rounded-xl border shadow-sm transition-all duration-200 ${
-                                        boardFilter === filter.key
-                                            ? 'border-sidebar bg-[linear-gradient(90deg,var(--sidebar)_0%,#244655_100%)] text-white hover:opacity-95'
-                                            : 'border-border/90 bg-white text-foreground hover:border-sidebar/35 hover:bg-slate-50'
-                                    }`}
-                                    onClick={() => onBoardFilterChange(filter.key)}
-                                >
-                                    <div className="flex items-center gap-1.5 truncate">
-                                        <span className="text-[11px] font-bold uppercase tracking-tight">{filter.label}</span>
-                                        {filter.tooltip && <Info className="h-3 w-3 opacity-50 shrink-0" />}
-                                    </div>
-                                    <span
-                                        className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums ${
-                                            boardFilter === filter.key
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-slate-100 text-slate-600 border border-slate-200/50'
-                                        }`}
-                                    >
-                                        {filter.count}
-                                    </span>
-                                </Button>
-                            </TooltipTrigger>
-                            {filter.tooltip && (
-                                <TooltipContent className="rounded-xl border-sidebar/20 text-xs max-w-xs text-center font-medium">
-                                    {filter.tooltip}
-                                </TooltipContent>
-                            )}
-                        </Tooltip>
-                    ))}
-                </div>
-                <div className="hidden lg:flex flex-none items-center gap-2 text-[10px] font-medium text-muted-foreground bg-slate-50/50 px-3 py-1.5 rounded-lg border border-slate-100">
-                    <Sparkles className="h-3 w-3 text-sidebar/40" />
-                    <span>Filtros rápidos del tablero</span>
-                </div>
-            </div>
+    const boardScrollRef = useRef<HTMLDivElement | null>(null);
+    const columnScrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
+    const columnCountsKey = useMemo(
+        () =>
+            KANBAN_COLUMNS.map(
+                (col) => tasksByStatus[col.key]?.length ?? 0,
+            ).join('|'),
+        [tasksByStatus],
+    );
 
+    useEffect(() => {
+        const savedScroll = readKanbanScrollState();
+        const frame = window.requestAnimationFrame(() => {
+            if (
+                boardScrollRef.current &&
+                typeof savedScroll.boardLeft === 'number'
+            ) {
+                boardScrollRef.current.scrollLeft = savedScroll.boardLeft;
+            }
+
+            KANBAN_COLUMNS.forEach((col) => {
+                const columnNode = columnScrollRefs.current[col.key];
+                const columnTop = savedScroll.columns?.[col.key];
+
+                if (columnNode && typeof columnTop === 'number') {
+                    columnNode.scrollTop = columnTop;
+                }
+            });
+        });
+
+        return () => window.cancelAnimationFrame(frame);
+    }, [columnCountsKey]);
+
+    const persistBoardScroll = (left: number) => {
+        writeKanbanScrollState({
+            ...readKanbanScrollState(),
+            boardLeft: left,
+        });
+    };
+
+    const persistColumnScroll = (key: string, top: number) => {
+        const savedScroll = readKanbanScrollState();
+
+        writeKanbanScrollState({
+            ...savedScroll,
+            columns: {
+                ...(savedScroll.columns ?? {}),
+                [key]: top,
+            },
+        });
+    };
+    return (
+        <div className="relative space-y-2.5">
             {lastMoveMessage && (
                 <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-foreground">
                     <Sparkles className="h-4 w-4 text-primary" />
@@ -128,29 +159,47 @@ export function KanbanBoard({
                 onDragEnd={onDragEnd}
                 onDragCancel={onDragCancel}
             >
-                <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-sidebar/20">
-                    <div className="flex min-w-max lg:min-w-0 lg:w-full gap-3">
+                <div
+                    ref={boardScrollRef}
+                    onScroll={(event) =>
+                        persistBoardScroll(event.currentTarget.scrollLeft)
+                    }
+                    className="scrollbar-thin scrollbar-thumb-sidebar/20 overflow-x-auto pb-2"
+                >
+                    <div className="flex min-w-max gap-3 lg:w-full lg:min-w-0">
                         {KANBAN_COLUMNS.map((col, index) => (
                             <div
                                 key={col.key}
-                                className={`flex min-h-[32rem] w-[14rem] min-w-[14rem] flex-col rounded-2xl border-2 p-2 shadow-sm lg:w-auto lg:min-w-0 lg:flex-1 ${
+                                className={`flex h-[calc(100vh-17rem)] max-h-[38rem] min-h-[27rem] w-[14rem] min-w-[14rem] flex-col overflow-hidden rounded-xl border-2 shadow-sm lg:w-auto lg:min-w-0 lg:flex-1 ${
                                     index % 2 === 0
-                                        ? 'border-white/10 bg-gradient-to-br from-sidebar to-[#1f4f52] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]'
-                                        : 'border-sidebar/20 bg-gradient-to-b from-white to-[#dce9e5]/30'
+                                        ? 'border-slate-400 bg-slate-200 dark:border-slate-600 dark:bg-slate-700'
+                                        : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900'
                                 } ${
-                                    tasksByStatus[col.key].length > KANBAN_WIP_LIMIT
-                                        ? 'ring-2 ring-amber-300/50 border-amber-300/50'
+                                    tasksByStatus[col.key].length >
+                                    KANBAN_WIP_LIMIT
+                                        ? 'border-amber-300/50 ring-2 ring-amber-300/50'
                                         : ''
                                 }`}
                             >
-                                <div className="mb-3 flex items-center justify-between gap-3">
+                                {/* Header de la columna */}
+                                <div
+                                    className={`flex shrink-0 items-center justify-between gap-3 px-3 py-2.5 ${
+                                        index % 2 === 0
+                                            ? 'bg-slate-200 dark:bg-slate-700'
+                                            : 'bg-white dark:bg-slate-900'
+                                    }`}
+                                >
                                     <div className="min-w-0">
-                                        <h3 className={`text-sm font-semibold ${index % 2 === 0 ? 'text-white' : 'text-foreground'}`}>{col.label}</h3>
-                                        <p className={`text-[11px] ${index % 2 === 0 ? 'text-white/70' : 'text-muted-foreground'}`}>
-                                            {tasksByStatus[col.key].length} tareas
+                                        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                                            {col.label}
+                                        </h3>
+                                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                            {tasksByStatus[col.key].length}{' '}
+                                            tareas
                                         </p>
                                     </div>
-                                    {tasksByStatus[col.key].length > KANBAN_WIP_LIMIT ? (
+                                    {tasksByStatus[col.key].length >
+                                    KANBAN_WIP_LIMIT ? (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <div className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
@@ -159,43 +208,85 @@ export function KanbanBoard({
                                                 </div>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                Esta columna supera el límite sugerido de {KANBAN_WIP_LIMIT} tareas.
+                                                Esta columna supera el límite
+                                                sugerido de {KANBAN_WIP_LIMIT}{' '}
+                                                tareas.
                                             </TooltipContent>
                                         </Tooltip>
                                     ) : null}
                                 </div>
-                                <DroppableColumn
-                                    id={getColumnDropId(col.key)}
-                                    label={col.label}
-                                    hovered={hoveredColumn === col.key}
-                                    dark={index % 2 === 0}
-                                >
-                                    <SortableContext
-                                        items={tasksByStatus[col.key].map((task) => getTaskSortableId(task.id))}
-                                        strategy={verticalListSortingStrategy}
+
+                                {/* Cuerpo: exterior liso, interior con estilo propio en DroppableColumn */}
+                                <div className="flex min-h-0 flex-1 flex-col p-1.5">
+                                    <DroppableColumn
+                                        id={getColumnDropId(col.key)}
+                                        label={col.label}
+                                        hovered={hoveredColumn === col.key}
+                                        scrollRef={(node) => {
+                                            columnScrollRefs.current[col.key] =
+                                                node;
+                                        }}
+                                        onScroll={(event) =>
+                                            persistColumnScroll(
+                                                col.key,
+                                                event.currentTarget.scrollTop,
+                                            )
+                                        }
                                     >
-                                        {tasksByStatus[col.key].map((task) => (
-                                            <KanbanTaskCard
-                                                key={task.id}
-                                                task={task}
-                                                canDrag={!isIntern}
-                                                canEdit={!isIntern}
-                                                canComplete={isTutor || isIntern}
-                                                completeLabel={isTutor ? 'Completar' : 'Entregar'}
-                                                completeStatuses={isTutor ? ['in_review'] : ['pending', 'in_progress']}
-                                                onComplete={onComplete}
-                                                onOpenDetails={onOpenDetails}
-                                                highlightMove={highlightedTaskId === Number(task.id)}
-                                            />
-                                        ))}
-                                    </SortableContext>
-                                </DroppableColumn>
+                                        <SortableContext
+                                            items={tasksByStatus[col.key].map(
+                                                (task) =>
+                                                    getTaskSortableId(task.id),
+                                            )}
+                                            strategy={
+                                                verticalListSortingStrategy
+                                            }
+                                        >
+                                            {tasksByStatus[col.key].map(
+                                                (task) => (
+                                                    <KanbanTaskCard
+                                                        key={task.id}
+                                                        task={task}
+                                                        canDrag={!isIntern}
+                                                        canEdit={!isIntern}
+                                                        canComplete={
+                                                            isTutor || isIntern
+                                                        }
+                                                        completeLabel={
+                                                            isTutor
+                                                                ? 'Completar'
+                                                                : 'Entregar'
+                                                        }
+                                                        completeStatuses={
+                                                            isTutor
+                                                                ? ['in_review']
+                                                                : [
+                                                                      'pending',
+                                                                      'in_progress',
+                                                                  ]
+                                                        }
+                                                        onComplete={onComplete}
+                                                        onOpenDetails={
+                                                            onOpenDetails
+                                                        }
+                                                        highlightMove={
+                                                            highlightedTaskId ===
+                                                            Number(task.id)
+                                                        }
+                                                    />
+                                                ),
+                                            )}
+                                        </SortableContext>
+                                    </DroppableColumn>
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
                 <DragOverlay>
-                    {activeDragTask ? <KanbanTaskCard task={activeDragTask} canDrag={false} /> : null}
+                    {activeDragTask ? (
+                        <KanbanTaskCard task={activeDragTask} canDrag={false} />
+                    ) : null}
                 </DragOverlay>
             </DndContext>
         </div>

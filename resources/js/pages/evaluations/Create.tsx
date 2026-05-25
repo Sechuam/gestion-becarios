@@ -1,6 +1,17 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
-import { AlertTriangle, ArrowLeft, Check, ChevronsUpDown, ClipboardList, History, Info, ListChecks, MessageSquareText, Search } from 'lucide-react';
+import {
+    AlertTriangle,
+    ArrowLeft,
+    Check,
+    ChevronsUpDown,
+    ClipboardList,
+    History,
+    Info,
+    ListChecks,
+    MessageSquareText,
+    Search,
+} from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Button } from '@/components/ui/button';
@@ -19,12 +30,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getEvaluationTypeLabel } from '@/lib/evaluation-type-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -82,7 +88,11 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
         post('/evaluaciones');
     };
 
-    const updateScore = (index: number, field: 'score' | 'comment', value: string) => {
+    const updateScore = (
+        index: number,
+        field: 'score' | 'comment',
+        value: string,
+    ) => {
         const nextScores = [...data.scores];
         nextScores[index] = {
             ...nextScores[index],
@@ -95,41 +105,52 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
     const missingComments = data.scores
         .map((score, index) => {
             const scoreNum = parseFloat(score.score);
-            if (!isNaN(scoreNum) && (scoreNum < 4 || scoreNum > 8) && !score.comment.trim()) {
+            if (
+                !isNaN(scoreNum) &&
+                (scoreNum < 4 || scoreNum > 8) &&
+                !score.comment.trim()
+            ) {
                 return index;
             }
             return null;
         })
         .filter((idx) => idx !== null);
 
-    const filteredInterns = interns.filter(i => 
-        i.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredInterns = interns.filter((i) =>
+        i.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-    const selectedIntern = interns.find(i => String(i.id) === data.intern_id);
+    const selectedIntern = interns.find((i) => String(i.id) === data.intern_id);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={isIntern ? 'Nueva autoevaluacion' : 'Nueva evaluacion'} />
+            <Head
+                title={isIntern ? 'Nueva autoevaluacion' : 'Nueva evaluacion'}
+            />
 
             <div className="min-h-screen w-full space-y-4 p-4 dark:bg-slate-950/20">
                 <div className="flex items-center justify-between">
                     <Button
                         variant="outline"
                         size="sm"
-                        className="bg-gradient-to-r from-sidebar to-[#1f4f52] text-white hover:opacity-95 shadow-sm rounded-xl font-bold uppercase tracking-widest text-[10px] border-0"
+                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
                         asChild
                     >
                         <Link href="/evaluaciones">
-                            <ArrowLeft className="h-4 w-4 mr-1.5" /> Volver al listado
+                            <ArrowLeft className="mr-1.5 h-4 w-4" /> Volver al
+                            listado
                         </Link>
                     </Button>
                 </div>
 
                 <ModuleHeader
-                    title={isIntern ? 'Nueva autoevaluacion' : 'Nueva evaluacion'}
-                    description={isIntern
-                        ? 'Haz una reflexión honesta sobre tu progreso y valora cada criterio con calma.'
-                        : 'Registra una evaluacion formal con puntuaciones detalladas por criterio.'}
+                    title={
+                        isIntern ? 'Nueva autoevaluacion' : 'Nueva evaluacion'
+                    }
+                    description={
+                        isIntern
+                            ? 'Haz una reflexión honesta sobre tu progreso y valora cada criterio con calma.'
+                            : 'Registra una evaluacion formal con puntuaciones detalladas por criterio.'
+                    }
                     icon={<ClipboardList className="h-5 w-5" />}
                 />
 
@@ -137,42 +158,48 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                     onSubmit={submit}
                     className="flex flex-col gap-6 lg:flex-row"
                 >
-                    <Tabs defaultValue="general" orientation="vertical" className="flex w-full flex-col gap-6 lg:flex-row">
+                    <Tabs
+                        defaultValue="general"
+                        orientation="vertical"
+                        className="flex w-full flex-col gap-6 lg:flex-row"
+                    >
                         <TabsList className="flex h-auto w-full flex-col items-stretch justify-start gap-2 bg-transparent p-0 lg:w-72">
                             <TabsTrigger
                                 value="general"
-                                className="flex h-12 justify-start gap-3 rounded-2xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-sidebar/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white dark:bg-slate-900/60"
+                                className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                             >
                                 <Info className="h-4 w-4" />
                                 01. Datos generales
                             </TabsTrigger>
                             <TabsTrigger
                                 value="criteria"
-                                className="flex h-12 justify-start gap-3 rounded-2xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-sidebar/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white dark:bg-slate-900/60"
+                                className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                             >
                                 <ListChecks className="h-4 w-4" />
                                 02. Criterios y puntuaciones
                             </TabsTrigger>
                             <TabsTrigger
                                 value="comments"
-                                className="flex h-12 justify-start gap-3 rounded-2xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-sidebar/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sidebar data-[state=active]:to-[#1f4f52] data-[state=active]:text-white dark:bg-slate-900/60"
+                                className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
                             >
                                 <MessageSquareText className="h-4 w-4" />
                                 03. Comentario general
                             </TabsTrigger>
 
-                            <div className="mt-4 flex flex-col gap-2 rounded-[1.5rem] border border-sidebar/10 bg-white p-4 shadow-xl dark:bg-slate-900/60">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Acciones</p>
+                            <div className="mt-4 flex flex-col gap-2 rounded-xl border border-sidebar/10 bg-white p-4 shadow-xl dark:bg-slate-900/60">
+                                <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
+                                    Acciones
+                                </p>
                                 <Button
                                     type="submit"
-                                    className="h-10 w-full rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-xs font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:opacity-90 active:scale-95"
+                                    className="h-10 w-full rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-xs font-black text-white shadow-lg shadow-sidebar/20 transition-all hover:opacity-90 active:scale-95"
                                     disabled={processing || !hasCriteria}
                                 >
                                     {processing
                                         ? 'Guardando...'
                                         : isIntern
-                                            ? 'Enviar'
-                                            : 'Guardar'}
+                                          ? 'Enviar'
+                                          : 'Guardar'}
                                 </Button>
                                 <Button
                                     type="button"
@@ -187,9 +214,9 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
 
                         <div className="flex-1">
                             <TabsContent value="general" className="mt-0">
-                                <div className="rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-2xl dark:bg-slate-900/60">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                                     <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-3">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-lg font-black text-white shadow-lg">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-lg font-black text-white shadow-lg">
                                             01
                                         </span>
                                         <div>
@@ -206,28 +233,32 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
 
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <div className="space-y-1.5">
-                                            <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                                 Becario
                                             </Label>
                                             {isIntern ? (
                                                 <div className="flex h-10 items-center rounded-xl border border-sidebar/10 bg-slate-50/50 px-3 text-xs font-bold text-slate-700">
-                                                    {interns[0]?.name ?? 'Tu perfil de becario'}
+                                                    {interns[0]?.name ??
+                                                        'Tu perfil de becario'}
                                                 </div>
                                             ) : (
                                                 <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button 
-                                                            variant="outline" 
-                                                            className="h-10 w-full justify-between rounded-xl border-sidebar/10 bg-slate-50/50 px-3 text-xs font-bold hover:bg-slate-100 transition-colors"
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
+                                                        <Button
+                                                            variant="outline"
+                                                            className="h-10 w-full justify-between rounded-xl border-sidebar/10 bg-slate-50/50 px-3 text-xs font-bold transition-colors hover:bg-slate-100"
                                                         >
                                                             <span className="truncate">
-                                                                {selectedIntern?.name ?? "Selecciona un becario"}
+                                                                {selectedIntern?.name ??
+                                                                    'Selecciona un becario'}
                                                             </span>
                                                             <ChevronsUpDown className="ml-2 h-3.5 w-3.5 shrink-0 opacity-50" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent 
-                                                        className="w-[--radix-dropdown-menu-trigger-width] min-w-[200px] p-0" 
+                                                    <DropdownMenuContent
+                                                        className="w-[--radix-dropdown-menu-trigger-width] min-w-[200px] p-0"
                                                         align="start"
                                                     >
                                                         <div className="flex items-center border-b border-sidebar/10 px-3 py-2">
@@ -235,114 +266,179 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                                             <input
                                                                 className="flex h-7 w-full bg-transparent text-xs font-medium outline-none placeholder:text-muted-foreground"
                                                                 placeholder="Buscar becario..."
-                                                                value={searchTerm}
-                                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                                value={
+                                                                    searchTerm
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setSearchTerm(
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
                                                                 autoFocus
                                                             />
                                                         </div>
-                                                        <div className="max-h-[240px] overflow-y-auto p-1 scrollbar-thin">
-                                                            {filteredInterns.length === 0 ? (
+                                                        <div className="scrollbar-thin max-h-[240px] overflow-y-auto p-1">
+                                                            {filteredInterns.length ===
+                                                            0 ? (
                                                                 <p className="p-3 text-center text-[11px] font-medium text-muted-foreground">
-                                                                    No se encontraron becarios.
+                                                                    No se
+                                                                    encontraron
+                                                                    becarios.
                                                                 </p>
                                                             ) : (
-                                                                filteredInterns.map((intern) => (
-                                                                    <DropdownMenuItem
-                                                                        key={intern.id}
-                                                                        onSelect={() => {
-                                                                            setData('intern_id', String(intern.id));
-                                                                            setSearchTerm('');
-                                                                        }}
-                                                                        className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-xs font-bold hover:bg-slate-50"
-                                                                    >
-                                                                        {intern.name}
-                                                                        {String(intern.id) === data.intern_id && (
-                                                                            <Check className="h-3.5 w-3.5 text-sidebar" />
-                                                                        )}
-                                                                    </DropdownMenuItem>
-                                                                ))
+                                                                filteredInterns.map(
+                                                                    (
+                                                                        intern,
+                                                                    ) => (
+                                                                        <DropdownMenuItem
+                                                                            key={
+                                                                                intern.id
+                                                                            }
+                                                                            onSelect={() => {
+                                                                                setData(
+                                                                                    'intern_id',
+                                                                                    String(
+                                                                                        intern.id,
+                                                                                    ),
+                                                                                );
+                                                                                setSearchTerm(
+                                                                                    '',
+                                                                                );
+                                                                            }}
+                                                                            className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-xs font-bold hover:bg-slate-50"
+                                                                        >
+                                                                            {
+                                                                                intern.name
+                                                                            }
+                                                                            {String(
+                                                                                intern.id,
+                                                                            ) ===
+                                                                                data.intern_id && (
+                                                                                <Check className="h-3.5 w-3.5 text-sidebar" />
+                                                                            )}
+                                                                        </DropdownMenuItem>
+                                                                    ),
+                                                                )
                                                             )}
                                                         </div>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             )}
                                             {errors.intern_id && (
-                                                <p className="text-[10px] font-bold text-red-500">{errors.intern_id}</p>
+                                                <p className="text-[10px] font-bold text-red-500">
+                                                    {errors.intern_id}
+                                                </p>
                                             )}
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                                 Tipo de evaluacion
                                             </Label>
                                             {isIntern ? (
                                                 <div className="flex h-10 items-center rounded-xl border border-sidebar/10 bg-slate-50/50 px-3 text-xs font-bold text-slate-700">
-                                                    {getEvaluationTypeLabel('self')}
+                                                    {getEvaluationTypeLabel(
+                                                        'self',
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <Select
                                                     value={data.evaluation_type}
-                                                    onValueChange={(value) => setData('evaluation_type', value)}
+                                                    onValueChange={(value) =>
+                                                        setData(
+                                                            'evaluation_type',
+                                                            value,
+                                                        )
+                                                    }
                                                 >
                                                     <SelectTrigger className="h-10 rounded-xl border-sidebar/10 bg-slate-50/50 text-xs font-bold">
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent className="rounded-xl border-sidebar/20">
                                                         {types.map((type) => (
-                                                            <SelectItem key={type} value={type}>
-                                                                {getEvaluationTypeLabel(type)}
+                                                            <SelectItem
+                                                                key={type}
+                                                                value={type}
+                                                            >
+                                                                {getEvaluationTypeLabel(
+                                                                    type,
+                                                                )}
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
                                             )}
                                             {errors.evaluation_type && (
-                                                <p className="text-[10px] font-bold text-red-500">{errors.evaluation_type}</p>
+                                                <p className="text-[10px] font-bold text-red-500">
+                                                    {errors.evaluation_type}
+                                                </p>
                                             )}
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                                 Inicio del periodo
                                             </Label>
                                             <Input
                                                 type="date"
                                                 value={data.period_start}
-                                                onChange={(e) => setData('period_start', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'period_start',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="h-10 rounded-xl border-sidebar/10 bg-slate-50/50 text-xs font-bold"
                                             />
                                             {errors.period_start && (
-                                                <p className="text-[10px] font-bold text-red-500">{errors.period_start}</p>
+                                                <p className="text-[10px] font-bold text-red-500">
+                                                    {errors.period_start}
+                                                </p>
                                             )}
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                                 Fin del periodo
                                             </Label>
                                             <Input
                                                 type="date"
                                                 value={data.period_end}
-                                                onChange={(e) => setData('period_end', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'period_end',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="h-10 rounded-xl border-sidebar/10 bg-slate-50/50 text-xs font-bold"
                                             />
                                             {errors.period_end && (
-                                                <p className="text-[10px] font-bold text-red-500">{errors.period_end}</p>
+                                                <p className="text-[10px] font-bold text-red-500">
+                                                    {errors.period_end}
+                                                </p>
                                             )}
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                                 Fecha de evaluacion
                                             </Label>
                                             <Input
                                                 type="date"
                                                 value={data.evaluated_at}
-                                                onChange={(e) => setData('evaluated_at', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'evaluated_at',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 className="h-10 rounded-xl border-sidebar/10 bg-slate-50/50 text-xs font-bold"
                                             />
                                             {errors.evaluated_at && (
-                                                <p className="text-[10px] font-bold text-red-500">{errors.evaluated_at}</p>
+                                                <p className="text-[10px] font-bold text-red-500">
+                                                    {errors.evaluated_at}
+                                                </p>
                                             )}
                                         </div>
                                     </div>
@@ -350,9 +446,9 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                             </TabsContent>
 
                             <TabsContent value="criteria" className="mt-0">
-                                <div className="rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-2xl dark:bg-slate-900/60">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                                     <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-3">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-lg font-black text-white shadow-lg">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-lg font-black text-white shadow-lg">
                                             02
                                         </span>
                                         <div>
@@ -360,100 +456,171 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                                 Criterios y puntuaciones
                                             </h2>
                                             <p className="text-[11px] font-medium text-slate-500">
-                                                Asigna notas y añade comentarios si hace falta.
+                                                Asigna notas y añade comentarios
+                                                si hace falta.
                                             </p>
                                         </div>
                                     </div>
 
                                     {hasCriteria ? (
                                         <div className="space-y-3">
-                                            {criteria.map((criterion, index) => (
-                                                <div
-                                                    key={criterion.id}
-                                                    className="rounded-2xl bg-gradient-to-r from-sidebar to-[#1f4f52] p-4 shadow-lg"
-                                                >
-                                                    <div className="mb-3">
-                                                        <div className="flex flex-wrap items-center gap-2">
-                                                            <h3 className="text-base font-black text-white">
-                                                                {criterion.name}
-                                                            </h3>
-                                                            <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-white">
-                                                                {criterion.category}
-                                                            </span>
-                                                        </div>
-                                                        <p className="mt-0.5 text-[9px] font-black uppercase tracking-widest text-white/60">
-                                                            Peso {criterion.weight}% · Máx {criterion.max_score}
-                                                        </p>
-                                                        {criterion.description && (
-                                                            <p className="mt-2 text-xs text-white/70">{criterion.description}</p>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                                                        <div className="rounded-xl bg-white p-2.5 shadow-xl">
-                                                            <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                                                Puntuación
-                                                            </Label>
-                                                            <Input
-                                                                type="number"
-                                                                min="0"
-                                                                step="0.01"
-                                                                value={data.scores[index].score}
-                                                                onChange={(e) =>
-                                                                    updateScore(index, 'score', e.target.value)
+                                            {criteria.map(
+                                                (criterion, index) => (
+                                                    <div
+                                                        key={criterion.id}
+                                                        className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-4 shadow-lg"
+                                                    >
+                                                        <div className="mb-3">
+                                                            <div className="flex flex-wrap items-center gap-2">
+                                                                <h3 className="text-base font-black text-white">
+                                                                    {
+                                                                        criterion.name
+                                                                    }
+                                                                </h3>
+                                                                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-black tracking-widest text-white uppercase">
+                                                                    {
+                                                                        criterion.category
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                            <p className="mt-0.5 text-[9px] font-black tracking-widest text-white/60 uppercase">
+                                                                Peso{' '}
+                                                                {
+                                                                    criterion.weight
                                                                 }
-                                                                className="mt-1 h-8 rounded-lg border-sidebar/10 bg-slate-50/50 text-[11px] font-black"
-                                                            />
+                                                                % · Máx{' '}
+                                                                {
+                                                                    criterion.max_score
+                                                                }
+                                                            </p>
+                                                            {criterion.description && (
+                                                                <p className="mt-2 text-xs text-white/70">
+                                                                    {
+                                                                        criterion.description
+                                                                    }
+                                                                </p>
+                                                            )}
                                                         </div>
 
-                                                        <div className="rounded-xl bg-white p-2.5 shadow-xl">
-                                                            <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                                                Comentario
-                                                                {(() => {
-                                                                    const scoreNum = parseFloat(data.scores[index].score);
-                                                                    return scoreNum < 4 || scoreNum > 8 ? (
-                                                                        <span className="ml-1 text-amber-600 font-black">!</span>
-                                                                    ) : null;
-                                                                })()}
-                                                            </Label>
-                                                            <Input
-                                                                value={data.scores[index].comment}
-                                                                onChange={(e) =>
-                                                                    updateScore(index, 'comment', e.target.value)
-                                                                }
-                                                                placeholder="Opcional..."
-                                                                className={`mt-1 h-8 rounded-lg bg-slate-50/50 text-[11px] font-medium transition-all ${
-                                                                    (() => {
-                                                                        const scoreNum = parseFloat(data.scores[index].score);
-                                                                        return (scoreNum < 4 || scoreNum > 8) && !data.scores[index].comment.trim()
+                                                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                                            <div className="rounded-xl bg-white p-2.5 shadow-xl">
+                                                                <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
+                                                                    Puntuación
+                                                                </Label>
+                                                                <Input
+                                                                    type="number"
+                                                                    min="0"
+                                                                    step="0.01"
+                                                                    value={
+                                                                        data
+                                                                            .scores[
+                                                                            index
+                                                                        ].score
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        updateScore(
+                                                                            index,
+                                                                            'score',
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                        )
+                                                                    }
+                                                                    className="mt-1 h-8 rounded-lg border-sidebar/10 bg-slate-50/50 text-[11px] font-black"
+                                                                />
+                                                            </div>
+
+                                                            <div className="rounded-xl bg-white p-2.5 shadow-xl">
+                                                                <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
+                                                                    Comentario
+                                                                    {(() => {
+                                                                        const scoreNum =
+                                                                            parseFloat(
+                                                                                data
+                                                                                    .scores[
+                                                                                    index
+                                                                                ]
+                                                                                    .score,
+                                                                            );
+                                                                        return scoreNum <
+                                                                            4 ||
+                                                                            scoreNum >
+                                                                                8 ? (
+                                                                            <span className="ml-1 font-black text-amber-600">
+                                                                                !
+                                                                            </span>
+                                                                        ) : null;
+                                                                    })()}
+                                                                </Label>
+                                                                <Input
+                                                                    value={
+                                                                        data
+                                                                            .scores[
+                                                                            index
+                                                                        ]
+                                                                            .comment
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        updateScore(
+                                                                            index,
+                                                                            'comment',
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                        )
+                                                                    }
+                                                                    placeholder="Opcional..."
+                                                                    className={`mt-1 h-8 rounded-lg bg-slate-50/50 text-[11px] font-medium transition-all ${(() => {
+                                                                        const scoreNum =
+                                                                            parseFloat(
+                                                                                data
+                                                                                    .scores[
+                                                                                    index
+                                                                                ]
+                                                                                    .score,
+                                                                            );
+                                                                        return (scoreNum <
+                                                                            4 ||
+                                                                            scoreNum >
+                                                                                8) &&
+                                                                            !data.scores[
+                                                                                index
+                                                                            ].comment.trim()
                                                                             ? 'border-2 border-amber-400'
                                                                             : 'border-sidebar/10';
-                                                                    })()
-                                                                }`}
-                                                            />
+                                                                    })()}`}
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                ),
+                                            )}
                                         </div>
                                     ) : (
-                                        <div className="rounded-2xl border border-dashed border-amber-300 bg-amber-50/70 p-4 text-amber-900">
-                                            <p className="text-xs font-black uppercase tracking-widest">
+                                        <div className="rounded-xl border border-dashed border-amber-300 bg-amber-50/70 p-4 text-amber-900">
+                                            <p className="text-xs font-black tracking-widest uppercase">
                                                 No hay criterios activos
                                             </p>
                                         </div>
                                     )}
 
                                     {errors.scores && (
-                                        <p className="mt-3 text-[10px] font-bold text-red-500">{errors.scores}</p>
+                                        <p className="mt-3 text-[10px] font-bold text-red-500">
+                                            {errors.scores}
+                                        </p>
                                     )}
 
                                     {missingComments.length > 0 && (
-                                        <div className="mt-4 rounded-2xl border-2 border-amber-300 bg-amber-50 p-3 shadow-sm">
+                                        <div className="mt-4 rounded-xl border-2 border-amber-300 bg-amber-50 p-3 shadow-sm">
                                             <div className="flex gap-2">
                                                 <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
                                                 <p className="text-[10px] font-bold text-amber-900">
-                                                    Faltan comentarios obligatorios.
+                                                    Faltan comentarios
+                                                    obligatorios.
                                                 </p>
                                             </div>
                                         </div>
@@ -462,9 +629,9 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                             </TabsContent>
 
                             <TabsContent value="comments" className="mt-0">
-                                <div className="rounded-[2rem] border border-sidebar/10 bg-white p-6 shadow-2xl dark:bg-slate-900/60">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
                                     <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-3">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-[#1f4f52] text-lg font-black text-white shadow-lg">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-lg font-black text-white shadow-lg">
                                             03
                                         </span>
                                         <div>
@@ -478,17 +645,24 @@ export default function Create({ interns, criteria, types, userMode }: Props) {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                        <Label className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                             Observaciones globales
                                         </Label>
                                         <textarea
                                             value={data.general_comments}
-                                            onChange={(e) => setData('general_comments', e.target.value)}
-                                            className="min-h-[120px] w-full rounded-2xl border border-sidebar/10 bg-slate-50/50 p-4 text-xs font-medium text-slate-700 shadow-inner outline-none transition-all focus:border-sidebar focus:ring-4 focus:ring-sidebar/5"
+                                            onChange={(e) =>
+                                                setData(
+                                                    'general_comments',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="min-h-[120px] w-full rounded-xl border border-sidebar/10 bg-slate-50/50 p-4 text-xs font-medium text-slate-700 shadow-inner transition-all outline-none focus:border-sidebar focus:ring-4 focus:ring-sidebar/5"
                                             placeholder="Escribe aquí la valoración general..."
                                         />
                                         {errors.general_comments && (
-                                            <p className="text-[10px] font-bold text-red-500">{errors.general_comments}</p>
+                                            <p className="text-[10px] font-bold text-red-500">
+                                                {errors.general_comments}
+                                            </p>
                                         )}
                                     </div>
                                 </div>

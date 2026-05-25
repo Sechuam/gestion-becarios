@@ -1,11 +1,18 @@
-import { FormEventHandler } from 'react';
-import AuthLayout from '@/layouts/auth-layout';
 import { Head, useForm } from '@inertiajs/react';
+import { FormEventHandler } from 'react';
+import InputError from '@/components/input-error';
+import AuthLayout from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function RegisterByInvitation({ token, email }: { token: string, email: string }) {
+export default function RegisterByInvitation({
+    token,
+    email,
+}: {
+    token: string;
+    email: string;
+}) {
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         name: '',
@@ -15,44 +22,43 @@ export default function RegisterByInvitation({ token, email }: { token: string, 
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        
+
         post('/registro/invitacion/registrar', {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
 
     return (
-        <AuthLayout 
-            title="Aceptar Invitación" 
-            description="Has sido invitado a unirte a Gestion Becarios. Solo necesitas rellenar tus datos."
+        <AuthLayout
+            title="Aceptar invitación"
+            description="Has sido invitado a unirte a Gestión Becarios. Solo necesitas completar tus datos."
         >
             <Head title="Aceptar Invitación" />
 
             <form onSubmit={submit} className="flex flex-col gap-6">
-                
-                {/* Mostramos alertas si hay algo general fallando como el token */}
                 {Object.keys(errors).length > 0 && (
-                    <div className="bg-red-100 text-red-600 p-3 rounded-md text-sm border border-red-200">
-                        Hay errores en el registro, revisa los datos aportados. 
-                        {errors.token && <span> (Token inválido o expirado)</span>}
+                    <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                        Hay errores en el registro, revisa los datos aportados.
+                        {errors.token && (
+                            <span> Token inválido o expirado.</span>
+                        )}
                     </div>
                 )}
 
-                {/* Email bloqueado */}
                 <div className="grid gap-2">
-                    <Label htmlFor="email">Correo Electrónico asignado</Label>
+                    <Label htmlFor="email">Correo electrónico asignado</Label>
                     <Input
                         id="email"
                         type="email"
                         name="email"
                         value={email}
-                        disabled // Lo bloqueamos para que no puedan cambiarlo
+                        disabled
                         className="bg-muted text-muted-foreground"
                     />
                 </div>
 
                 <div className="grid gap-2">
-                    <Label htmlFor="name">Tu Nombre Completo</Label>
+                    <Label htmlFor="name">Tu nombre completo</Label>
                     <Input
                         id="name"
                         name="name"
@@ -62,7 +68,7 @@ export default function RegisterByInvitation({ token, email }: { token: string, 
                         autoFocus
                         onChange={(e) => setData('name', e.target.value)}
                     />
-                    {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+                    <InputError message={errors.name} />
                 </div>
 
                 <div className="grid gap-2">
@@ -76,11 +82,13 @@ export default function RegisterByInvitation({ token, email }: { token: string, 
                         autoComplete="new-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
-                    {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+                    <InputError message={errors.password} />
                 </div>
 
                 <div className="grid gap-2">
-                    <Label htmlFor="password_confirmation">Confirmar Contraseña</Label>
+                    <Label htmlFor="password_confirmation">
+                        Confirmar contraseña
+                    </Label>
                     <Input
                         id="password_confirmation"
                         type="password"
@@ -88,13 +96,19 @@ export default function RegisterByInvitation({ token, email }: { token: string, 
                         value={data.password_confirmation}
                         className="mt-1 block w-full"
                         autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
+                        onChange={(e) =>
+                            setData('password_confirmation', e.target.value)
+                        }
                     />
-                    {errors.password_confirmation && <p className="text-sm text-red-500">{errors.password_confirmation}</p>}
+                    <InputError message={errors.password_confirmation} />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={processing}>
-                    {processing ? 'Registrando...' : 'Completar Registro'}
+                <Button
+                    type="submit"
+                    className="h-11 w-full"
+                    disabled={processing}
+                >
+                    {processing ? 'Registrando...' : 'Completar registro'}
                 </Button>
             </form>
         </AuthLayout>

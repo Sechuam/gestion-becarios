@@ -8,9 +8,12 @@ use App\Models\Intern;
 use App\Models\ReportTemplate;
 use App\Models\Task;
 use App\Models\TimeLog;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\LaravelPdf\Facades\Pdf;
@@ -19,7 +22,7 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $user = $request->user();
+        $user = $this->reportUser($request);
 
         return Inertia::render('reports/index', [
             'datasets' => $this->datasets(),
@@ -38,9 +41,11 @@ class ReportController extends Controller
 
     public function storeTemplate(Request $request)
     {
+        $user = $this->reportUser($request);
+
         $validated = $request->validate([
             'name' => 'required|string|max:120',
-            'dataset' => 'required|string|in:interns,tasks,attendance,evaluations',
+            'dataset' => ['required', 'string', Rule::in($this->allowedDatasetKeys($user))],
             'columns' => 'required|array|min:1',
             'columns.*' => 'string',
             'filters' => 'nullable|array',
@@ -48,27 +53,64 @@ class ReportController extends Controller
 
         ReportTemplate::create([
             ...$validated,
-            'user_id' => $request->user()->id,
+            'user_id' => $user->id,
             'filters' => $validated['filters'] ?? [],
         ]);
 
         return back()->with('success', 'Plantilla de informe guardada correctamente.');
     }
 
+    public function updateTemplate(Request $request, ReportTemplate $template)
+    {
+        $user = $this->reportUser($request);
+
+        abort_unless($template->user_id === $user->id, 403);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:120',
+        ]);
+
+        $template->update($validated);
+
+        return back()->with('success', 'Plantilla de informe actualizada correctamente.');
+    }
+
+    public function destroyTemplate(Request $request, ReportTemplate $template)
+    {
+        $user = $this->reportUser($request);
+
+        abort_unless($template->user_id === $user->id, 403);
+
+        $template->delete();
+
+        return back()->with('success', 'Plantilla de informe eliminada correctamente.');
+    }
+
     public function export(Request $request)
     {
+        $user = $this->reportUser($request);
+
         $validated = $request->validate([
-            'dataset' => 'required|string|in:interns,tasks,attendance,evaluations',
+            'dataset' => ['required', 'string', Rule::in($this->allowedDatasetKeys($user))],
             'format' => 'required|string|in:xlsx,pdf',
             'columns' => 'nullable',
             'status' => 'nullable|string|max:40',
             'from' => 'nullable|date',
             'to' => 'nullable|date|after_or_equal:from',
+            'group_by' => 'nullable|string|max:80',
         ]);
 
         $availableColumns = $this->datasets()[$validated['dataset']]['columns'];
         $columns = $this->resolveColumns($validated['columns'] ?? null, $availableColumns);
+        $groupBy = $this->resolveGroupBy($validated['group_by'] ?? null, $availableColumns);
         $rows = $this->reportRows($request, $validated['dataset']);
+
+        if ($groupBy) {
+            $availableColumns = ['group' => ['heading' => 'Grupo']] + $availableColumns;
+            $columns = array_values(array_unique(['group', ...$columns]));
+            $rows = $this->groupRows($rows, $groupBy);
+        }
+
         $filename = 'reporte-'.$validated['dataset'].'-'.now()->format('Y-m-d');
 
         if ($validated['format'] === 'pdf') {
@@ -84,6 +126,38 @@ class ReportController extends Controller
         }
 
         return Excel::download(new CustomReportExport($rows, $columns, $availableColumns), "{$filename}.xlsx");
+    }
+
+    public function preview(Request $request)
+    {
+        $user = $this->reportUser($request);
+
+        $validated = $request->validate([
+            'dataset' => ['required', 'string', Rule::in($this->allowedDatasetKeys($user))],
+            'columns' => 'nullable',
+            'status' => 'nullable|string|max:40',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after_or_equal:from',
+            'group_by' => 'nullable|string|max:80',
+        ]);
+
+        $availableColumns = $this->datasets()[$validated['dataset']]['columns'];
+        $columns = $this->resolveColumns($validated['columns'] ?? null, $availableColumns);
+        $groupBy = $this->resolveGroupBy($validated['group_by'] ?? null, $availableColumns);
+        $rows = $this->reportRows($request, $validated['dataset']);
+
+        if ($groupBy) {
+            $availableColumns = ['group' => ['heading' => 'Grupo']] + $availableColumns;
+            $columns = array_values(array_unique(['group', ...$columns]));
+            $rows = $this->groupRows($rows, $groupBy);
+        }
+
+        return response()->json([
+            'rows' => $rows->take(10)->values(),
+            'columns' => $columns,
+            'availableColumns' => $availableColumns,
+            'total' => $rows->count(),
+        ]);
     }
 
     protected function reportRows(Request $request, string $dataset)
@@ -178,14 +252,53 @@ class ReportController extends Controller
         return count($columns) > 0 ? $columns : $available;
     }
 
-    protected function scopedInternQuery($user): Builder
+    protected function resolveGroupBy(?string $groupBy, array $availableColumns): ?string
+    {
+        if (! $groupBy || ! array_key_exists($groupBy, $availableColumns)) {
+            return null;
+        }
+
+        return $groupBy;
+    }
+
+    protected function groupRows(Collection $rows, string $groupBy): Collection
+    {
+        return $rows
+            ->map(function ($row) use ($groupBy) {
+                $group = data_get($row, $groupBy) ?: 'Sin valor';
+
+                return ['group' => $group] + $row;
+            })
+            ->sortBy('group')
+            ->values();
+    }
+
+    protected function reportUser(Request $request): User
+    {
+        $user = $request->user();
+
+        abort_unless(
+            $user instanceof User
+                && ($user->isStaff() || $user->isIntern() || $user->can('view reports')),
+            403
+        );
+
+        return $user;
+    }
+
+    protected function allowedDatasetKeys(User $user): array
+    {
+        return array_keys($this->datasets());
+    }
+
+    protected function scopedInternQuery(User $user): Builder
     {
         return Intern::query()
             ->when($user->isTutor(), fn (Builder $query) => $query->where('company_tutor_user_id', $user->id))
             ->when($user->isIntern(), fn (Builder $query) => $query->where('user_id', $user->id));
     }
 
-    protected function scopedTaskQuery($user): Builder
+    protected function scopedTaskQuery(User $user): Builder
     {
         $internIds = $this->scopedInternQuery($user)->pluck('id');
 

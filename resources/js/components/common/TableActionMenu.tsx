@@ -1,5 +1,12 @@
 import { Link, router } from '@inertiajs/react';
-import { Ellipsis, Eye, MessageSquare, Pencil, RotateCcw, Trash2 } from 'lucide-react';
+import {
+    Ellipsis,
+    Eye,
+    MessageSquare,
+    Pencil,
+    RotateCcw,
+    Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -76,7 +83,9 @@ export function TableActionMenu({ actions }: { actions: ActionConfig[] }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
                     {enabledActions.map((action, index) => {
-                        const Icon = action.icon ? icons[action.icon] : undefined;
+                        const Icon = action.icon
+                            ? icons[action.icon]
+                            : undefined;
                         const content = (
                             <>
                                 {Icon && <Icon className="h-4 w-4" />}
@@ -86,9 +95,10 @@ export function TableActionMenu({ actions }: { actions: ActionConfig[] }) {
 
                         return (
                             <div key={`${action.label}-${index}`}>
-                                {index > 0 && action.variant === 'destructive' && (
-                                    <DropdownMenuSeparator />
-                                )}
+                                {index > 0 &&
+                                    action.variant === 'destructive' && (
+                                        <DropdownMenuSeparator />
+                                    )}
                                 {action.confirm ? (
                                     <DropdownMenuItem
                                         onClick={() => setPendingAction(action)}
@@ -101,7 +111,9 @@ export function TableActionMenu({ actions }: { actions: ActionConfig[] }) {
                                         asChild
                                         variant={action.variant}
                                     >
-                                        <Link href={action.href}>{content}</Link>
+                                        <Link href={action.href}>
+                                            {content}
+                                        </Link>
                                     </DropdownMenuItem>
                                 ) : (
                                     <DropdownMenuItem
@@ -123,20 +135,28 @@ export function TableActionMenu({ actions }: { actions: ActionConfig[] }) {
                     if (!open) setPendingAction(null);
                 }}
             >
-                <DialogContent className="max-w-md rounded-3xl border-sidebar/10 shadow-2xl">
-                    <DialogTitle className="text-xl font-bold">{pendingAction?.confirm?.title}</DialogTitle>
-                    <DialogDescription className="text-slate-500 py-2">
+                <DialogContent className="max-w-md rounded-xl border-sidebar/10 shadow-xl">
+                    <DialogTitle className="text-xl font-bold">
+                        {pendingAction?.confirm?.title}
+                    </DialogTitle>
+                    <DialogDescription className="py-2 text-slate-500">
                         {pendingAction?.confirm?.description}
                     </DialogDescription>
                     <DialogFooter className="gap-2 pt-4">
                         <DialogClose asChild>
-                            <Button variant="ghost" className="rounded-xl border-border px-6">Cancelar</Button>
+                            <Button
+                                variant="ghost"
+                                className="rounded-xl border-border px-6"
+                            >
+                                Cancelar
+                            </Button>
                         </DialogClose>
-                        <Button 
+                        <Button
                             onClick={handleConfirm}
-                            className="bg-sidebar text-sidebar-foreground hover:bg-sidebar/90 rounded-xl px-8 shadow-lg shadow-sidebar/20 transition-all"
+                            className="rounded-xl bg-sidebar px-8 text-sidebar-foreground shadow-lg shadow-sidebar/20 transition-all hover:bg-sidebar/90"
                         >
-                            {pendingAction?.confirm?.confirmLabel || 'Continuar'}
+                            {pendingAction?.confirm?.confirmLabel ||
+                                'Continuar'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
