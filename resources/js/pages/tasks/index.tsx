@@ -5,18 +5,22 @@ import { KanbanSquare } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
+import { SimpleTable } from '@/components/common/SimpleTable';
+import { buildActiveTaskFilterChips } from '@/components/tasks/active-task-filter-chips';
+import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
+import { buildKanbanQuickFilters } from '@/components/tasks/kanban-quick-filters';
+import { KanbanBoard } from '@/components/tasks/KanbanBoard';
+import { buildTaskHeaderMetrics } from '@/components/tasks/task-header-metrics';
+import { buildTaskTableColumns } from '@/components/tasks/task-table-columns';
+import { TaskFilters } from '@/components/tasks/TaskFilters';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
+import { TasksHeaderActions } from '@/components/tasks/TasksHeaderActions';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
+import { KANBAN_COLUMNS, KANBAN_ORDER_STORAGE_KEY } from '@/lib/task-constants';
+import type { TaskViewMode, BoardQuickFilter } from '@/lib/task-constants';
 import { getTaskStatusLabel } from '@/lib/task-labels';
-import {
-    KANBAN_COLUMNS,
-    KANBAN_ORDER_STORAGE_KEY,
-    type TaskViewMode,
-    type BoardQuickFilter,
-} from '@/lib/task-constants';
 import {
     dueStatus,
     getTaskSortableId,
@@ -24,14 +28,6 @@ import {
     parseTaskSortableId,
     parseColumnDropId,
 } from '@/lib/task-utils';
-import { TaskFilters } from '@/components/tasks/TaskFilters';
-import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
-import { KanbanBoard } from '@/components/tasks/KanbanBoard';
-import { TasksHeaderActions } from '@/components/tasks/TasksHeaderActions';
-import { buildActiveTaskFilterChips } from '@/components/tasks/active-task-filter-chips';
-import { buildKanbanQuickFilters } from '@/components/tasks/kanban-quick-filters';
-import { buildTaskTableColumns } from '@/components/tasks/task-table-columns';
-import { buildTaskHeaderMetrics } from '@/components/tasks/task-header-metrics';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
@@ -190,7 +186,6 @@ export default function Index({
         auth?.user?.roles?.includes('intern') ||
         auth?.user?.roles?.includes('becario');
     const isTutor = auth?.user?.roles?.includes('tutor');
-    const isAdmin = auth?.user?.roles?.includes('admin');
     const [boardFilter, setBoardFilter] = useState<BoardQuickFilter>('all');
     const [lastMoveMessage, setLastMoveMessage] = useState<string | null>(null);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);

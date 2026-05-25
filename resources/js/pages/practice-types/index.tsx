@@ -1,12 +1,10 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Pencil, Plus, Shapes, Search } from 'lucide-react';
-import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { SimpleTable } from '@/components/common/SimpleTable';
-import { Pagination } from '@/components/common/Pagination';
+import { Head, router, usePage } from '@inertiajs/react';
+import { Search, Shapes } from 'lucide-react';
 import { HeaderActionButton } from '@/components/common/HeaderActionButton';
-import DeletePracticeTypeModal from '@/components/practice-types/DeletePracticeTypeModal';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { Pagination } from '@/components/common/Pagination';
+import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -16,7 +14,6 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { cn } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {

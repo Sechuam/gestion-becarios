@@ -4,10 +4,9 @@ import {
     Clock,
     FileText,
     LayoutGrid,
-    UserCircle,
 } from 'lucide-react';
-import { dashboard } from '@/routes';
 import type { SidebarSection } from '@/components/sidebar/sidebar-types';
+import { dashboard } from '@/routes';
 
 export function getInternSidebar(): SidebarSection[] {
     return [

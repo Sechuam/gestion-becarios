@@ -35,7 +35,8 @@ export default function DeleteEvaluationCriterionModal({
             <DialogContent>
                 <DialogTitle>¿Eliminar criterio de evaluacion?</DialogTitle>
                 <DialogDescription>
-                    Esta accion no se puede deshacer. Se eliminara el criterio {criterion.name}.
+                    Esta accion no se puede deshacer. Se eliminara el criterio{' '}
+                    {criterion.name}.
                 </DialogDescription>
                 <DialogFooter className="gap-2">
                     <DialogClose asChild>

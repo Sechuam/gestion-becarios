@@ -11,11 +11,10 @@ import {
     Settings,
     ShieldCheck,
     Star,
-    UserCircle,
     Users,
 } from 'lucide-react';
-import { dashboard } from '@/routes';
 import type { SidebarSection } from '@/components/sidebar/sidebar-types';
+import { dashboard } from '@/routes';
 
 interface BuildSidebarOptions {
     roles: string[];

@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import { Sparkles } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 type Props = {
     title: string;

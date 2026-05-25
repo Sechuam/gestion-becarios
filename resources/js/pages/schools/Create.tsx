@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -12,8 +13,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Centros Educativos', href: '/centros' },
     { title: 'Añadir Centro', href: '/centros/create' },
 ];
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({

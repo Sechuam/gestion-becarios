@@ -1,8 +1,8 @@
 import { CalendarClock, TimerReset } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatHoursDecimal } from './time-format';
 import { SummaryTile } from './SummaryTile';
+import { formatHoursDecimal } from './time-format';
 import { TodayLogsSection } from './TodayLogsSection';
 import type { TodayLog } from './types';
 

@@ -1,5 +1,4 @@
 import { Head, useForm, router } from '@inertiajs/react';
-import { useMemo, useState, useEffect } from 'react';
 import {
     MailPlus,
     Loader2,
@@ -12,24 +11,12 @@ import {
     Check,
     X,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import AppLayout from '@/layouts/app-layout';
+import { useMemo, useState, useEffect } from 'react';
 import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import {
     Dialog,
     DialogContent,
@@ -44,7 +31,18 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useToast } from '@/hooks/use-toast';
+import AppLayout from '@/layouts/app-layout';
 import type { RoleOption } from '@/types';
 
 type UserRow = {
@@ -107,8 +105,6 @@ function UserRowItem({
     isAlternative?: boolean;
 }) {
     const meta = ROLE_META[roleName] ?? ROLE_META.none;
-    const RoleIcon = meta.icon;
-
     return (
         <div
             className={`flex items-center gap-3 px-4 py-2 transition-colors hover:bg-muted/40 ${isAlternative ? 'bg-sidebar/5 dark:bg-sidebar/10' : ''}`}

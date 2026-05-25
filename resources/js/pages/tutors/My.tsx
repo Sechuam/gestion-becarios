@@ -1,15 +1,14 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { GraduationCap, Plus, Search } from 'lucide-react';
+import { GraduationCap, Search } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
-import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { SimpleTable } from '@/components/common/SimpleTable';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {

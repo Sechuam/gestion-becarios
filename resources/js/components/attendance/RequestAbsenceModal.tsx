@@ -1,6 +1,9 @@
-import { useState, useEffect, type FormEvent } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
-import type { PageProps } from '@/types';
+import { CalendarClock, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -8,13 +11,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { HeaderActionButton } from '@/components/common/HeaderActionButton';
-import { CalendarClock, Loader2, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import type { PageProps } from '@/types';
 
 export function RequestAbsenceModal() {
     const [open, setOpen] = useState(false);

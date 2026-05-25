@@ -11,7 +11,6 @@ import {
     Users,
 } from 'lucide-react';
 import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Sheet,
@@ -22,13 +21,8 @@ import {
     SheetTitle,
 } from '@/components/ui/sheet';
 import { formatDateEs } from '@/lib/date-format';
+import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
 import { cn } from '@/lib/utils';
-import {
-    getTaskPriorityLabel,
-    getTaskPriorityTone,
-    getTaskStatusLabel,
-    getTaskStatusTone,
-} from '@/lib/task-labels';
 
 type Props = {
     task: any | null;

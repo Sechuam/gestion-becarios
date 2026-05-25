@@ -1,3 +1,11 @@
+import {
+    ClipboardCheck,
+    Clock,
+    UserX,
+    GraduationCap,
+    ListTodo,
+    BarChart3,
+} from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
     Bar,
@@ -12,14 +20,6 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import {
-    ClipboardCheck,
-    Clock,
-    UserX,
-    GraduationCap,
-    ListTodo,
-    BarChart3,
-} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { DashboardChartPoint, DashboardCurrentLog } from './types';
 
@@ -260,33 +260,29 @@ export function AttendanceChart({
     const liveHours = currentLog ? elapsedSeconds / 3600 : 0;
     const todayLoggedHours = Number(currentLog?.today_logged_hours ?? 0);
     const todayLiveTotalHours = todayLoggedHours + liveHours;
-    const dailyData = useMemo(
-        () => {
-            const visibleDays = range === '7d' ? 7 : data.length;
+    const dailyData = useMemo(() => {
+        const visibleDays = range === '7d' ? 7 : data.length;
 
-            return [...data]
-                .reverse()
-                .slice(0, visibleDays)
-                .map((point, index) => {
-                    const isToday = index === 0;
-                    const closedHours =
-                        isToday && currentLog
-                            ? todayLoggedHours
-                            : Number(point.horas ?? 0);
-                    const currentLiveHours =
-                        isToday && currentLog ? liveHours : 0;
+        return [...data]
+            .reverse()
+            .slice(0, visibleDays)
+            .map((point, index) => {
+                const isToday = index === 0;
+                const closedHours =
+                    isToday && currentLog
+                        ? todayLoggedHours
+                        : Number(point.horas ?? 0);
+                const currentLiveHours = isToday && currentLog ? liveHours : 0;
 
-                    return {
-                        ...point,
-                        day: isToday ? 'Hoy' : point.day,
-                        horas: closedHours,
-                        live_hours: currentLiveHours,
-                        total_hours: closedHours + currentLiveHours,
-                    };
-                });
-        },
-        [currentLog, data, liveHours, range, todayLoggedHours],
-    );
+                return {
+                    ...point,
+                    day: isToday ? 'Hoy' : point.day,
+                    horas: closedHours,
+                    live_hours: currentLiveHours,
+                    total_hours: closedHours + currentLiveHours,
+                };
+            });
+    }, [currentLog, data, liveHours, range, todayLoggedHours]);
     const monthlyData = useMemo(() => groupAttendanceByMonth(data), [data]);
     const isMonthView = range === 'month';
     const chartData = isMonthView ? monthlyData : dailyData;
@@ -305,10 +301,9 @@ export function AttendanceChart({
             Number(item.live_hours ?? 0) > 0,
     ).length;
     const averageHours = activeDays > 0 ? totalHours / activeDays : 0;
-    const chartWidth =
-        !isMonthView
-            ? Math.max(range === '7d' ? 520 : 860, chartData.length * 38)
-            : Math.max(520, chartData.length * 96);
+    const chartWidth = !isMonthView
+        ? Math.max(range === '7d' ? 520 : 860, chartData.length * 38)
+        : Math.max(520, chartData.length * 96);
 
     useLayoutEffect(() => {
         const container = scrollRef.current;
@@ -364,22 +359,24 @@ export function AttendanceChart({
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                     <div className="flex rounded-lg border border-sidebar/15 bg-white p-0.5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        {(Object.keys(attendanceRangeLabels) as AttendanceRange[]).map(
-                            (option) => (
-                                <button
-                                    key={option}
-                                    type="button"
-                                    onClick={() => setRange(option)}
-                                    className={`rounded-md px-2 py-1 text-[10px] font-black uppercase transition-colors ${
-                                        range === option
-                                            ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900'
-                                            : 'text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
-                                    }`}
-                                >
-                                    {attendanceRangeLabels[option]}
-                                </button>
-                            ),
-                        )}
+                        {(
+                            Object.keys(
+                                attendanceRangeLabels,
+                            ) as AttendanceRange[]
+                        ).map((option) => (
+                            <button
+                                key={option}
+                                type="button"
+                                onClick={() => setRange(option)}
+                                className={`rounded-md px-2 py-1 text-[10px] font-black uppercase transition-colors ${
+                                    range === option
+                                        ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900'
+                                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+                                }`}
+                            >
+                                {attendanceRangeLabels[option]}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </CardHeader>
@@ -406,10 +403,7 @@ export function AttendanceChart({
                     ref={scrollRef}
                     className="relative min-h-[320px] min-w-0 overflow-x-auto rounded-lg border border-slate-200 bg-white px-1.5 pt-3 pb-3 shadow-sm dark:border-slate-700 dark:bg-slate-900"
                 >
-                    <div
-                        className="h-[305px]"
-                        style={{ width: chartWidth }}
-                    >
+                    <div className="h-[305px]" style={{ width: chartWidth }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart
                                 data={chartData}
@@ -439,9 +433,7 @@ export function AttendanceChart({
                                 />
                                 <YAxis
                                     tickFormatter={(value) =>
-                                        formatHoursToHoursMinutes(
-                                            Number(value),
-                                        )
+                                        formatHoursToHoursMinutes(Number(value))
                                     }
                                     axisLine={false}
                                     tickLine={false}

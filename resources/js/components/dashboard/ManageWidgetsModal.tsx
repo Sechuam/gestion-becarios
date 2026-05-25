@@ -1,14 +1,3 @@
-import React from 'react';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import {
     Users,
     BarChart3,
@@ -18,6 +7,17 @@ import {
     TrendingUp,
     AlertCircle,
 } from 'lucide-react';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 
 interface WidgetConfig {
     id: string;

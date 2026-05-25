@@ -1,36 +1,34 @@
 import { Transition } from '@headlessui/react';
-import { Form, Head, Link, usePage, useForm } from '@inertiajs/react';
+import { Form, Head, Link, useForm, usePage } from '@inertiajs/react';
+import {
+    Building2,
+    CalendarRange,
+    Camera,
+    Check,
+    Eye,
+    GraduationCap,
+    Loader2,
+    MapPin,
+    Pencil,
+    Phone,
+} from 'lucide-react';
+import { useRef, useState } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
+import ImageCropperModal from '@/components/ImageCropperModal';
 import InputError from '@/components/input-error';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
-import { useRef, useState } from 'react';
-import {
-    User,
-    Building2,
-    CalendarRange,
-    Phone,
-    GraduationCap,
-    MapPin,
-    Mail,
-    Camera,
-    Eye,
-    Pencil,
-    Check,
-    Loader2,
-} from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ImageCropperModal from '@/components/ImageCropperModal';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [

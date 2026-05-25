@@ -1,4 +1,11 @@
 import { Head, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import {
+    TaskFormActions,
+    TaskFormShell,
+    TaskFormTabs,
+    TaskPlanningFields,
+} from '@/components/tasks/TaskFormSections';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -9,15 +16,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import {
-    TaskFormActions,
-    TaskFormShell,
-    TaskFormTabs,
-    TaskPlanningFields,
-} from '@/components/tasks/TaskFormSections';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { useState } from 'react';
 
 type Props = {
     task: any;

@@ -1,6 +1,6 @@
+import { Link } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/react';
 import { cn } from '@/lib/utils';
 
 interface HeaderActionButtonProps {

@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const LEGEND_ITEMS = [

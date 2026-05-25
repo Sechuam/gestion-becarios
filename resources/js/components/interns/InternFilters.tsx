@@ -1,5 +1,7 @@
-import React from 'react';
 import { Search } from 'lucide-react';
+import React from 'react';
+import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -8,8 +10,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { DatePicker } from '@/components/ui/date-picker';
-import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 
 interface InternFiltersProps {
     filters: any;
@@ -42,9 +42,11 @@ export function InternFilters({
                         <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar becario..."
-                            className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground placeholder:text-muted-foreground shadow-sm focus:ring-sidebar/20"
+                            className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
                             value={filters.search || ''}
-                            onChange={(e) => handleFilterInternal('search', e.target.value)}
+                            onChange={(e) =>
+                                handleFilterInternal('search', e.target.value)
+                            }
                         />
                     </div>
 
@@ -57,15 +59,22 @@ export function InternFilters({
                                 <SelectValue>
                                     {filters.center && filters.center !== 'all'
                                         ? education_centers.find(
-                                              (c) => c.id.toString() === filters.center?.toString(),
+                                              (c) =>
+                                                  c.id.toString() ===
+                                                  filters.center?.toString(),
                                           )?.name
                                         : 'Centro'}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
-                                <SelectItem value="all">Todos los centros</SelectItem>
+                                <SelectItem value="all">
+                                    Todos los centros
+                                </SelectItem>
                                 {education_centers.map((center) => (
-                                    <SelectItem key={center.id} value={center.id.toString()}>
+                                    <SelectItem
+                                        key={center.id}
+                                        value={center.id.toString()}
+                                    >
                                         {center.name}
                                     </SelectItem>
                                 ))}
@@ -88,10 +97,16 @@ export function InternFilters({
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
-                                <SelectItem value="all">Todos los estados</SelectItem>
+                                <SelectItem value="all">
+                                    Todos los estados
+                                </SelectItem>
                                 <SelectItem value="active">Activos</SelectItem>
-                                <SelectItem value="completed">Completados</SelectItem>
-                                <SelectItem value="abandoned">Abandonados</SelectItem>
+                                <SelectItem value="completed">
+                                    Completados
+                                </SelectItem>
+                                <SelectItem value="abandoned">
+                                    Abandonados
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -111,7 +126,9 @@ export function InternFilters({
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
-                                <SelectItem value="none">Solo Activos</SelectItem>
+                                <SelectItem value="none">
+                                    Solo Activos
+                                </SelectItem>
                                 <SelectItem value="only">Archivados</SelectItem>
                                 <SelectItem value="with">Ver Todos</SelectItem>
                             </SelectContent>
@@ -121,7 +138,9 @@ export function InternFilters({
                     <div className="min-w-[120px] flex-1">
                         <DatePicker
                             value={filters.start_from || ''}
-                            onChange={(value) => onFilterChange('start_from', value)}
+                            onChange={(value) =>
+                                onFilterChange('start_from', value)
+                            }
                             className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm"
                             placeholder="Desde..."
                         />
@@ -130,7 +149,9 @@ export function InternFilters({
                     <div className="min-w-[120px] flex-1">
                         <DatePicker
                             value={filters.start_to || ''}
-                            onChange={(value) => onFilterChange('start_to', value)}
+                            onChange={(value) =>
+                                onFilterChange('start_to', value)
+                            }
                             className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm"
                             placeholder="Hasta..."
                         />
@@ -140,7 +161,7 @@ export function InternFilters({
 
                     <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
                         <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
-                        <span className="whitespace-nowrap text-[10px] font-bold tabular-nums text-muted-foreground">
+                        <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                             {internsCount} / {totalInterns}
                         </span>
                     </div>

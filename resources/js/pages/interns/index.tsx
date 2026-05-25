@@ -1,19 +1,18 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Users, Plus, Search, FileDown } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { Pagination } from '@/components/common/Pagination';
 import { RowMetaBadges } from '@/components/common/RowMetaBadges';
 import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
-import { Pagination } from '@/components/common/Pagination';
-import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { InternExportDialog } from '@/components/interns/InternExportDialog';
+import { InternFilters } from '@/components/interns/InternFilters';
+import { InternNotesDialog } from '@/components/interns/InternNotesDialog';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DatePicker } from '@/components/ui/date-picker';
 import {
     Tooltip,
     TooltipContent,
@@ -24,9 +23,6 @@ import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
 import { recentLabelFromDate } from '@/lib/recent-label';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { InternFilters } from '@/components/interns/InternFilters';
-import { InternExportDialog } from '@/components/interns/InternExportDialog';
-import { InternNotesDialog } from '@/components/interns/InternNotesDialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },

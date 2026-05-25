@@ -1,7 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useState, type FormEvent } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import { AbsencesCard } from '@/components/attendance/AbsencesCard';
 import { AttendanceCalendarCard } from '@/components/attendance/AttendanceCalendarCard';
 import { AttendanceHeader } from '@/components/attendance/AttendanceHeader';
@@ -20,6 +19,8 @@ import type {
     TodayLog,
 } from '@/components/attendance/types';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },

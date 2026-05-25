@@ -15,7 +15,6 @@ import {
     TrendingUp,
     UserRound,
 } from 'lucide-react';
-import AppLayout from '@/layouts/app-layout';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,9 +26,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
 import { getEvaluationTypeLabel } from '@/lib/evaluation-type-labels';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type EvaluationScore = {

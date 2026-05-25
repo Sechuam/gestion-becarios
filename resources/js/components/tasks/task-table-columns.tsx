@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
-import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
+import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
 import {
     Tooltip,
     TooltipContent,
