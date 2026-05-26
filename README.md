@@ -1,27 +1,34 @@
 # BecaGest
 
-Aplicacion Laravel + Inertia + React para gestionar practicas: centros educativos, becarios, tareas, asistencia, evaluaciones, dashboard y reportes.
+BecaGest is a Laravel, Inertia, and React application for managing internship programs. It covers education centers, interns, tasks, attendance tracking, absences, evaluations, dashboards, and exportable reports.
 
-## Requisitos
+## Requirements
 
 - PHP 8.3
 - Composer 2
-- Node.js 20 LTS y npm
-- PostgreSQL 16 para desarrollo local
-- Mailpit para probar correos en local
+- Node.js 20 LTS and npm
+- PostgreSQL 16 for local development
+- Mailpit or another local mail catcher for email verification testing
 
-El proyecto esta preparado para Laravel Herd en macOS, aunque tambien puede ejecutarse con una instalacion local equivalente.
+The project is prepared to run with Laravel Herd on macOS, but it can also run with an equivalent local PHP, PostgreSQL, and Node.js setup.
 
-## Instalacion
+## Installation
+
+Install PHP and JavaScript dependencies:
 
 ```bash
 composer install
 npm install
+```
+
+Create the local environment file and application key:
+
+```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Configura la base de datos en `.env`. En local con PostgreSQL:
+Configure the database connection in `.env`. A typical local PostgreSQL setup looks like this:
 
 ```dotenv
 DB_CONNECTION=pgsql
@@ -32,7 +39,7 @@ DB_USERNAME=postgres
 DB_PASSWORD=
 ```
 
-Configura Mailpit si quieres probar verificacion de email:
+Configure Mailpit if you want to test registration and email verification locally:
 
 ```dotenv
 MAIL_MAILER=smtp
@@ -42,64 +49,120 @@ MAIL_FROM_ADDRESS="no-reply@becagest.test"
 MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-## Base de datos
+## Database Setup
+
+Run migrations and seeders:
 
 ```bash
 php artisan migrate --seed
 ```
 
-Los seeders crean los roles y permisos base, centros educativos y tutores de prueba.
+The seeders create the base roles and permissions, sample education centers, and tutor data.
 
-Para reiniciar el entorno local:
+To reset the local database from scratch:
 
 ```bash
 php artisan migrate:fresh --seed
 ```
 
-## Desarrollo
+## Development
 
-En una terminal:
+If you are not using Herd, start Laravel with:
 
 ```bash
 php artisan serve
 ```
 
-En otra terminal:
+Start Vite in another terminal:
 
 ```bash
 npm run dev
 ```
 
-Con Herd, basta con dejar Vite activo y abrir el dominio local configurado por Herd.
+When using Herd, open the configured local domain and keep Vite running for frontend assets and HMR.
 
-## Modulos principales
+## Main Modules
 
-- Autenticacion con verificacion de email y doble factor.
-- Roles y permisos: `admin`, `tutor`, `intern`.
-- Centros educativos: CRUD, notas internas, adjuntos y exportacion.
-- Becarios: CRUD, perfil, documentos, auditoria, filtros, soft delete y exportacion.
-- Tareas: CRUD, asignacion, Kanban, comentarios, adjuntos y vista de mis tareas.
-- Control horario: fichaje, registro manual, horarios, ausencias, calendario y PDF.
-- Evaluaciones: criterios, rubricas, autoevaluacion, historial e informe PDF.
-- Dashboard y reportes: KPIs por rol, graficos, plantillas, Excel/PDF y cache basica.
+- Authentication with email verification, password reset, and two-factor support.
+- Role and permission management for `admin`, `tutor`, and `intern`.
+- Education centers with CRUD operations, internal notes, attachments, and exports.
+- Intern management with profiles, documents, auditing, filters, soft deletes, and exports.
+- Task management with assignment, Kanban workflow, comments, attachments, and "my tasks" views.
+- Attendance tracking with clock-in/out, manual entries, schedules, absences, calendar views, and PDF reports.
+- Evaluations with criteria, rubrics, self-evaluations, score history, weighted scores, and PDF reports.
+- Dashboard and reports with role-based KPIs, charts, templates, Excel/PDF exports, and basic caching.
 
-## Calidad
+## Testing and Quality
+
+Run the PHP test suite:
 
 ```bash
 php artisan test
+```
+
+Run frontend checks:
+
+```bash
 npm run types:check
 npm run lint:check
 npm run format:check
 npm run build
 ```
 
-Para cobertura, instala un driver de cobertura compatible con PHP si no esta disponible y ejecuta:
+Run Laravel Pint:
+
+```bash
+./vendor/bin/pint
+```
+
+Code coverage can be generated if the local PHP installation has Xdebug or PCOV enabled:
 
 ```bash
 php artisan test --coverage
 ```
 
-## Seguridad y Git
+If the command reports that no coverage driver is available, install and enable Xdebug or PCOV for the PHP version used by the CLI.
 
-El archivo `.env` y otros archivos sensibles estan ignorados por Git. No subas claves locales, credenciales, dumps de base de datos ni contenido generado en `storage`.
+## Useful Commands
 
+Create a clean seeded database:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Run a specific Pest test file:
+
+```bash
+php artisan test tests/Feature/AttendanceReportTest.php
+```
+
+Build production assets:
+
+```bash
+npm run build
+```
+
+## Security and Git
+
+The `.env` file and other sensitive or generated files are ignored by Git. Do not commit local credentials, database dumps, generated storage files, vendor dependencies, or local IDE metadata.
+
+Important ignored files and directories include:
+
+- `.env`
+- `vendor/`
+- `node_modules/`
+- `storage/*.key`
+- `public/build/`
+- local IDE files
+- generated IDE helper files
+
+## Final Verification Checklist
+
+Before delivery, verify:
+
+- `php artisan test` passes.
+- `php artisan migrate:fresh --seed` completes successfully.
+- Frontend checks pass or any remaining issues are documented.
+- `.env` and sensitive files are not tracked by Git.
+- The GitHub branch contains the latest committed and pushed version of the application.
