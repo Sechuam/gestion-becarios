@@ -1,25 +1,23 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import {
-    DndContext,
-    pointerWithin,
-    DragOverlay,
-    type DragEndEvent,
-    type DragOverEvent,
-    type DragStartEvent,
+import { DndContext, pointerWithin, DragOverlay } from '@dnd-kit/core';
+import type {
+    DragEndEvent,
+    DragOverEvent,
+    DragStartEvent,
 } from '@dnd-kit/core';
 import {
     SortableContext,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { Sparkles, AlertTriangle } from 'lucide-react';
+import React, { useEffect, useMemo, useRef } from 'react';
+import KanbanTaskCard from '@/components/tasks/KanbanTaskCard';
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import KanbanTaskCard from '@/components/tasks/KanbanTaskCard';
-import { DroppableColumn } from './DroppableColumn';
 import { KANBAN_COLUMNS, KANBAN_WIP_LIMIT } from '@/lib/task-constants';
+import { DroppableColumn } from './DroppableColumn';
 
 const KANBAN_SCROLL_STORAGE_KEY = 'tasks-kanban-scroll';
 

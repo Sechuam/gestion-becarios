@@ -1,16 +1,10 @@
-import { FormEvent, useMemo, useState } from 'react';
 import { Head, router } from '@inertiajs/react';
+import type { FormEvent } from 'react';
+import { useMemo, useState } from 'react';
 import { ReportBuilderCard } from '@/components/reports/ReportBuilderCard';
-import { ReportTemplatesCard } from '@/components/reports/ReportTemplatesCard';
 import { ReportsHeader } from '@/components/reports/ReportsHeader';
+import { ReportTemplatesCard } from '@/components/reports/ReportTemplatesCard';
 import { SaveReportTemplateCard } from '@/components/reports/SaveReportTemplateCard';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import type {
     ReportDatasetConfig,
     ReportFormat,
@@ -18,6 +12,13 @@ import type {
     ReportTemplate,
     ReportsSummary,
 } from '@/components/reports/types';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -240,14 +241,14 @@ export default function Index({ datasets, templates, summary }: Props) {
                             nombres.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="max-h-[calc(85vh-112px)] overflow-y-auto p-6"> 
-<ReportTemplatesCard 
-templates={templates} 
-datasets={datasets} 
-onApplyTemplate={applyTemplate} 
-framed={false} 
-/> 
-</div>  
+                    <div className="max-h-[calc(85vh-112px)] overflow-y-auto p-6">
+                        <ReportTemplatesCard
+                            templates={templates}
+                            datasets={datasets}
+                            onApplyTemplate={applyTemplate}
+                            framed={false}
+                        />
+                    </div>
                 </DialogContent>
             </Dialog>
         </AppLayout>

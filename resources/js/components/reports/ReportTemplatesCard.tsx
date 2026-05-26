@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { Check, FileBarChart2, Pencil, Trash2, X } from 'lucide-react';
-import { FormEvent, MouseEvent, useState } from 'react';
+import type { FormEvent, MouseEvent } from 'react';
+import { useState } from 'react';
 import { EmptyState } from '@/components/common/EmptyState';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

@@ -1,9 +1,9 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { Check, Copy, Pencil, Plus, Shield, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { HeaderActionButton } from '@/components/common/HeaderActionButton';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,13 +12,12 @@ import {
     DialogHeader,
     DialogDescription,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { permissionLabel, roleLabel } from '@/lib/roles';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types/navigation';
+import { permissionLabel, roleLabel } from '@/lib/roles';
 import type { Permission, Role } from '@/types';
+import type { BreadcrumbItem } from '@/types/navigation';
 
 type RolePermissions = Record<string, number[]>;
 

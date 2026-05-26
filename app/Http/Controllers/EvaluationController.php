@@ -7,12 +7,12 @@ use App\Models\Evaluation;
 use App\Models\EvaluationCriterion;
 use App\Models\EvaluationScore;
 use App\Models\Intern;
+use App\Services\EvaluationScoreCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
-
 
 class EvaluationController extends Controller
 {
@@ -29,21 +29,21 @@ class EvaluationController extends Controller
 
     protected function canAccessEvaluations(): void
     {
-        if (!Auth::user()?->can('view evaluations')) {
+        if (! Auth::user()?->can('view evaluations')) {
             abort(403);
         }
     }
 
     protected function canManageEvaluations(): void
     {
-        if (!Auth::user()?->can('manage evaluations')) {
+        if (! Auth::user()?->can('manage evaluations')) {
             abort(403);
         }
     }
 
     protected function canDeleteEvaluations(): void
     {
-        if (!Auth::user()?->can('delete evaluations')) {
+        if (! Auth::user()?->can('delete evaluations')) {
             abort(403);
         }
     }
@@ -95,7 +95,7 @@ class EvaluationController extends Controller
             ->whereDate('period_end', $validated['period_end'])
             ->exists();
 
-        if (!$alreadyExists) {
+        if (! $alreadyExists) {
             return;
         }
 
@@ -118,7 +118,7 @@ class EvaluationController extends Controller
         if ($user?->isIntern()) {
             $internId = $user->intern?->id;
 
-            if (!$internId) {
+            if (! $internId) {
                 abort(403);
             }
 
@@ -129,15 +129,15 @@ class EvaluationController extends Controller
             });
         }
 
-        if (!$user?->isIntern() && $request->filled('search')) {
+        if (! $user?->isIntern() && $request->filled('search')) {
             $search = trim((string) $request->search);
 
             $query->whereHas('intern.user', function ($builder) use ($search) {
-                $builder->where('name', 'ilike', '%' . $search . '%');
+                $builder->where('name', 'ilike', '%'.$search.'%');
             });
         }
 
-        if (!$user?->isIntern() && $request->filled('module')) {
+        if (! $user?->isIntern() && $request->filled('module')) {
             $module = trim((string) $request->module);
 
             $query->whereHas('intern', function ($builder) use ($module) {
@@ -153,7 +153,7 @@ class EvaluationController extends Controller
 
         $modules = collect();
 
-        if (!$user?->isIntern()) {
+        if (! $user?->isIntern()) {
             $modulesQuery = Intern::query();
 
             if ($user?->isTutor()) {
@@ -194,7 +194,7 @@ class EvaluationController extends Controller
         $interns = $internsQuery
             ->orderBy('start_date')
             ->get()
-            ->map(fn(Intern $intern) => [
+            ->map(fn (Intern $intern) => [
                 'id' => $intern->id,
                 'name' => $intern->user?->name ?? "Becario #{$intern->id}",
             ]);
@@ -326,7 +326,9 @@ class EvaluationController extends Controller
         $totalScore = 0;
         $weightedScore = 0;
 
-        DB::transaction(function () use ($validated, $criteria, &$totalScore, &$weightedScore) {
+        $calculator = app(EvaluationScoreCalculator::class);
+
+        DB::transaction(function () use ($validated, $criteria, $calculator, &$totalScore, &$weightedScore) {
             $evaluation = Evaluation::create([
                 'intern_id' => $validated['intern_id'],
                 'evaluator_user_id' => Auth::id(),
@@ -343,7 +345,7 @@ class EvaluationController extends Controller
             foreach ($validated['scores'] as $item) {
                 $criterion = $criteria->get($item['criterion_id']);
 
-                if (!$criterion) {
+                if (! $criterion) {
                     continue;
                 }
 
@@ -355,7 +357,11 @@ class EvaluationController extends Controller
                     ]);
                 }
 
-                $itemWeightedScore = round(($score / $criterion->max_score) * $criterion->weight, 2);
+                $itemWeightedScore = $calculator->weightedScore(
+                    $score,
+                    (float) $criterion->max_score,
+                    (float) $criterion->weight,
+                );
 
                 EvaluationScore::create([
                     'evaluation_id' => $evaluation->id,

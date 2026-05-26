@@ -1,19 +1,16 @@
-import {
-    DndContext,
-    PointerSensor,
-    useSensor,
-    useSensors,
-} from '@dnd-kit/core';
-import { cn } from '@/lib/utils';
+import { PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { KanbanSquare, Sparkles } from 'lucide-react';
+import { KanbanSquare } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { MetricPills } from '@/components/common/MetricPills';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { SimpleTable } from '@/components/common/SimpleTable';
 import { Pagination } from '@/components/common/Pagination';
+import { SimpleTable } from '@/components/common/SimpleTable';
+import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
+import { KanbanBoard } from '@/components/tasks/KanbanBoard';
+import { TaskFilters } from '@/components/tasks/TaskFilters';
 import TaskQuickViewSheet from '@/components/tasks/TaskQuickViewSheet';
-import { Badge } from '@/components/ui/badge';
+import { TasksHeaderActions } from '@/components/tasks/TasksHeaderActions';
 import {
     Tooltip,
     TooltipContent,
@@ -22,23 +19,12 @@ import {
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
-import {
-    getTaskPriorityLabel,
-    getTaskPriorityTone,
-    getTaskStatusLabel,
-    getTaskStatusTone,
-} from '@/lib/task-labels';
-import type { BreadcrumbItem } from '@/types/navigation';
-import { TaskFilters } from '@/components/tasks/TaskFilters';
-import { DeliveryLegend } from '@/components/tasks/DeliveryLegend';
-import { KanbanBoard } from '@/components/tasks/KanbanBoard';
-import { TasksHeaderActions } from '@/components/tasks/TasksHeaderActions';
-import {
-    KANBAN_COLUMNS,
-    TaskViewMode,
-    BoardQuickFilter,
-} from '@/lib/task-constants';
+import type { BoardQuickFilter, TaskViewMode } from '@/lib/task-constants';
+import { KANBAN_COLUMNS } from '@/lib/task-constants';
+import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
 import { dueStatus, parseTaskSortableId } from '@/lib/task-utils';
+import { cn } from '@/lib/utils';
+import type { BreadcrumbItem } from '@/types/navigation';
 
 type Props = {
     tasks: any;
@@ -68,7 +54,6 @@ export default function My({
         auth?.user?.roles?.includes('intern') ||
         auth?.user?.roles?.includes('becario');
     const isTutor = auth?.user?.roles?.includes('tutor');
-    const isAdmin = auth?.user?.roles?.includes('admin');
     const [boardFilter, setBoardFilter] = useState<BoardQuickFilter>('all');
     const [lastMoveMessage, setLastMoveMessage] = useState<string | null>(null);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);

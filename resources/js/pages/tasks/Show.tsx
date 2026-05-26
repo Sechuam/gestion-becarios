@@ -22,12 +22,12 @@ import {
     XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { MetricPills } from '@/components/common/MetricPills';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     Dialog,
     DialogContent,
@@ -36,14 +36,14 @@ import {
     DialogTrigger,
     DialogFooter,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
-import { MetricPills } from '@/components/common/MetricPills';
-import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
-import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
 import { dueStatus } from '@/lib/task-utils';
 import { cn } from '@/lib/utils';
-import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type CommentItem = {

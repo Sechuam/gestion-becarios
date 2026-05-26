@@ -1,28 +1,27 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEvent, useState } from 'react';
 import {
     AlertTriangle,
     ArrowLeft,
     Check,
     ChevronsUpDown,
     ClipboardList,
-    History,
     Info,
     ListChecks,
     MessageSquareText,
     Search,
 } from 'lucide-react';
-import AppLayout from '@/layouts/app-layout';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -31,6 +30,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AppLayout from '@/layouts/app-layout';
 import { getEvaluationTypeLabel } from '@/lib/evaluation-type-labels';
 import type { BreadcrumbItem } from '@/types/navigation';
 
@@ -65,7 +65,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Create({ interns, criteria, types, userMode }: Props) {
     const hasCriteria = criteria.length > 0;
     const isIntern = userMode === 'intern';
-    const currentInternId = interns[0] ? String(interns[0].id) : '';
     const [searchTerm, setSearchTerm] = useState('');
 
     const { data, setData, post, processing, errors } = useForm({

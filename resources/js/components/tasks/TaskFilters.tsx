@@ -1,5 +1,7 @@
-import React from 'react';
 import { Search } from 'lucide-react';
+import React from 'react';
+import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -8,8 +10,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { DatePicker } from '@/components/ui/date-picker';
-import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
 
 interface TaskFiltersProps {
     filters: any;

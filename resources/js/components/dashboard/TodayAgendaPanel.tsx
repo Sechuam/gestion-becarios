@@ -1,6 +1,3 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
     Clock,
     Calendar,
@@ -11,6 +8,9 @@ import {
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const AGENDA_ITEMS_PER_PAGE = 4;

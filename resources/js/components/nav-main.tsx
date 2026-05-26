@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react'; // Importamos la flechita
+import type { SidebarSection } from '@/components/sidebar/sidebar-types';
 import {
     Collapsible,
     CollapsibleContent,
@@ -18,7 +19,6 @@ import {
 import { useSidebar } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { NavItem } from '@/types';
-import type { SidebarSection } from '@/components/sidebar/sidebar-types';
 
 // Extendemos el tipo localmente por si acaso
 interface NavMainItem extends NavItem {
@@ -90,9 +90,7 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                             <CollapsibleContent>
                                 <SidebarMenuSub>
                                     {item.items.map((subItem) => (
-                                        <SidebarMenuSubItem
-                                            key={subItem.title}
-                                        >
+                                        <SidebarMenuSubItem key={subItem.title}>
                                             <SidebarMenuSubButton
                                                 asChild
                                                 isActive={isCurrentUrl(
@@ -100,9 +98,7 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                                                 )}
                                             >
                                                 <Link href={subItem.href}>
-                                                    <span>
-                                                        {subItem.title}
-                                                    </span>
+                                                    <span>{subItem.title}</span>
                                                 </Link>
                                             </SidebarMenuSubButton>
                                         </SidebarMenuSubItem>
@@ -134,7 +130,9 @@ export function NavMain({ items = [], sections }: NavMainProps) {
                 ))
             ) : (
                 <SidebarGroup className="py-0 group-data-[collapsible=icon]:px-0">
-                    <SidebarGroupLabel className="px-3 text-[10px] font-semibold tracking-[0.22em] text-sidebar-foreground/55 uppercase">Platform</SidebarGroupLabel>
+                    <SidebarGroupLabel className="px-3 text-[10px] font-semibold tracking-[0.22em] text-sidebar-foreground/55 uppercase">
+                        Platform
+                    </SidebarGroupLabel>
                     {renderItems(items)}
                 </SidebarGroup>
             )}

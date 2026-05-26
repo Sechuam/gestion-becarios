@@ -1,28 +1,26 @@
-import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import {
     ArrowLeft,
     GraduationCap,
     Mail,
-    MapPin,
-    Hash,
     Search,
     User,
     ClipboardList,
     Info,
     Users,
 } from 'lucide-react';
+import { useState } from 'react';
+import { Pagination } from '@/components/common/Pagination';
 import { StatusBadge } from '@/components/interns/StatusBadge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateEs } from '@/lib/date-format';
 import { getTaskStatusLabel, getTaskStatusTone } from '@/lib/task-labels';
-import { Pagination } from '@/components/common/Pagination';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 type Tutor = {

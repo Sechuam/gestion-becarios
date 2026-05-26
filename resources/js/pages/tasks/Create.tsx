@@ -1,4 +1,11 @@
 import { Head, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import {
+    TaskFormActions,
+    TaskFormShell,
+    TaskFormTabs,
+    TaskPlanningFields,
+} from '@/components/tasks/TaskFormSections';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,15 +17,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import {
-    TaskFormActions,
-    TaskFormShell,
-    TaskFormTabs,
-    TaskPlanningFields,
-} from '@/components/tasks/TaskFormSections';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types/navigation';
-import { useState } from 'react';
 
 type Props = {
     practice_types: any[];
@@ -77,15 +77,6 @@ export default function Create({
             .toLowerCase()
             .includes(query);
     });
-
-    const toggleIntern = (id: number) => {
-        setData(
-            'intern_ids',
-            data.intern_ids.includes(id)
-                ? data.intern_ids.filter((i) => i !== id)
-                : [...data.intern_ids, id],
-        );
-    };
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,11 +1,11 @@
+import { Calendar, Umbrella, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Calendar, Umbrella, X } from 'lucide-react';
 
 interface DayClickModalProps {
     open: boolean;

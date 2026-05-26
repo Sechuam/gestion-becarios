@@ -1,5 +1,5 @@
-import type { ComponentPropsWithoutRef } from 'react';
 import { Link } from '@inertiajs/react';
+import type { ComponentPropsWithoutRef } from 'react';
 import {
     SidebarGroup,
     SidebarGroupContent,
@@ -32,9 +32,7 @@ export function NavFooter({
                             href.startsWith('tel:');
                         const content = (
                             <>
-                                {item.icon && (
-                                    <item.icon className="h-5 w-5" />
-                                )}
+                                {item.icon && <item.icon className="h-5 w-5" />}
                                 <span>{item.title}</span>
                             </>
                         );

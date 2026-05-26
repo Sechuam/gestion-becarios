@@ -8,8 +8,8 @@ import {
     LayoutGrid,
     Users,
 } from 'lucide-react';
-import { dashboard } from '@/routes';
 import type { SidebarSection } from '@/components/sidebar/sidebar-types';
+import { dashboard } from '@/routes';
 
 export function getTutorSidebar(): SidebarSection[] {
     return [

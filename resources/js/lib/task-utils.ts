@@ -32,4 +32,3 @@ export const parseColumnDropId = (value: unknown) => {
     if (typeof value !== 'string' || !value.startsWith('column-')) return null;
     return value.slice(7);
 };
-

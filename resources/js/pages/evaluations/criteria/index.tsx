@@ -1,17 +1,11 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
-    ArrowLeft,
-    ClipboardList,
-    Search,
-    SlidersHorizontal,
-} from 'lucide-react';
-import { ModuleHeader } from '@/components/common/ModuleHeader';
-import { SimpleTable } from '@/components/common/SimpleTable';
-import { Pagination } from '@/components/common/Pagination';
+import { Head, router, usePage } from '@inertiajs/react';
+import { ArrowLeft, Search, SlidersHorizontal } from 'lucide-react';
 import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { Pagination } from '@/components/common/Pagination';
+import { SimpleTable } from '@/components/common/SimpleTable';
 import { TableActionMenu } from '@/components/common/TableActionMenu';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
     Select,

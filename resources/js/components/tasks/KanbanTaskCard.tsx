@@ -11,8 +11,6 @@ import {
     Pencil,
 } from 'lucide-react';
 import AssignedInternsStack from '@/components/tasks/AssignedInternsStack';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Tooltip,
@@ -20,12 +18,8 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { formatDateEs } from '@/lib/date-format';
-import {
-    getTaskPriorityLabel,
-    getTaskPriorityTone,
-    getTaskStatusLabel,
-    getTaskStatusTone,
-} from '@/lib/task-labels';
+import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
+import { cn } from '@/lib/utils';
 
 const getTaskSortableId = (taskId: number | string) => `task-${taskId}`;
 
@@ -57,35 +51,6 @@ const dueStatus = (dueDate?: string | null) => {
     if (diffDays < 0) return 'overdue';
     if (diffDays <= 3) return 'soon';
     return 'none';
-};
-
-const getDueBadge = (dueDate?: string | null) => {
-    const status = dueStatus(dueDate);
-    if (!dueDate) {
-        return {
-            label: 'Sin fecha',
-            className: 'border-border bg-muted/40 text-muted-foreground',
-        };
-    }
-
-    if (status === 'overdue') {
-        return {
-            label: 'Atrasada',
-            className: 'border-red-200 bg-red-50 text-red-700',
-        };
-    }
-
-    if (status === 'soon') {
-        return {
-            label: 'Pronto',
-            className: 'border-amber-200 bg-amber-50 text-amber-700',
-        };
-    }
-
-    return {
-        label: formatDateEs(dueDate),
-        className: 'border-border bg-muted/40 text-muted-foreground',
-    };
 };
 
 export default function KanbanTaskCard({
@@ -121,7 +86,6 @@ export default function KanbanTaskCard({
         transition,
     };
 
-    const dueBadge = getDueBadge(task.due_date);
     const commentsCount = Number(task.comments_count ?? 0);
     const attachmentsCount = Number(task.attachments_count ?? 0);
 

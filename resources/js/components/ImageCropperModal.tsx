@@ -1,5 +1,7 @@
+import { Loader2, ZoomIn, ZoomOut } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -7,9 +9,7 @@ import {
     DialogTitle,
     DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { getCroppedImg } from '@/lib/cropImage';
-import { Loader2, ZoomIn, ZoomOut } from 'lucide-react';
 
 interface ImageCropperModalProps {
     image: string | null;
@@ -41,7 +41,7 @@ export default function ImageCropperModal({
         (croppedArea: any, croppedAreaPixels: any) => {
             setCroppedAreaPixels(croppedAreaPixels);
         },
-        []
+        [],
     );
 
     const handleApply = async () => {
@@ -65,12 +65,12 @@ export default function ImageCropperModal({
 
     return (
         <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-            <DialogContent className="sm:max-w-[500px] overflow-hidden p-0 gap-0">
+            <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-[500px]">
                 <DialogHeader className="p-6 pb-2">
                     <DialogTitle>Recortar Foto de Perfil</DialogTitle>
                 </DialogHeader>
 
-                <div className="relative h-[350px] w-full bg-slate-100 dark:bg-slate-900 mt-4">
+                <div className="relative mt-4 h-[350px] w-full bg-slate-100 dark:bg-slate-900">
                     <Cropper
                         image={image}
                         crop={crop}
@@ -84,7 +84,7 @@ export default function ImageCropperModal({
                     />
                 </div>
 
-                <div className="p-6 space-y-4">
+                <div className="space-y-4 p-6">
                     <div className="flex items-center gap-4">
                         <ZoomOut className="h-4 w-4 text-muted-foreground" />
                         <input
@@ -94,7 +94,7 @@ export default function ImageCropperModal({
                             step={0.1}
                             value={zoom}
                             onChange={(e) => setZoom(Number(e.target.value))}
-                            className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
+                            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-lg bg-slate-200 accent-primary dark:bg-slate-800"
                         />
                         <ZoomIn className="h-4 w-4 text-muted-foreground" />
                     </div>
@@ -111,7 +111,7 @@ export default function ImageCropperModal({
                         <Button
                             onClick={handleApply}
                             disabled={isProcessing}
-                            className="rounded-xl gap-2 min-w-[100px]"
+                            className="min-w-[100px] gap-2 rounded-xl"
                         >
                             {isProcessing ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

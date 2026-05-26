@@ -22,9 +22,6 @@ type Props = {
 
 export function DashboardHeader({
     roleLabel,
-    alerts,
-    completedTasks,
-    taskCompletion,
     isEditing,
     setIsEditing,
     onManageWidgets,

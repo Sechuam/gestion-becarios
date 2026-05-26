@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
+import { Loader2, Trash2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Loader2, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import type { PageProps } from '@/types';
 import { EventAttendeesPanel } from './EventAttendeesPanel';
 import { EventDetailsFields } from './EventDetailsFields';
 import type { ManageableIntern } from './types';
-import { useToast } from '@/hooks/use-toast';
 
 interface CreateEventModalProps {
     open: boolean;
@@ -90,7 +90,7 @@ export function CreateEventModal({
             setData('start_date', date);
             setData('end_date', date);
         }
-    }, [event, date, open]);
+    }, [date, event, open, reset, setData]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

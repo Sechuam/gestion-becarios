@@ -1,5 +1,5 @@
-import { Bell } from 'lucide-react';
 import { usePage, Link } from '@inertiajs/react';
+import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,

@@ -13,8 +13,8 @@ import {
     Star,
     Users,
 } from 'lucide-react';
-import { dashboard } from '@/routes';
 import type { SidebarSection } from '@/components/sidebar/sidebar-types';
+import { dashboard } from '@/routes';
 
 export function getAdminSidebar(): SidebarSection[] {
     return [

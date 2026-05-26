@@ -1,36 +1,13 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
-import { Head } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    CalendarClock,
-    ClipboardCheck,
-    KanbanSquare,
-    Users,
-    LayoutDashboard,
-    Save,
-    GripHorizontal,
-} from 'lucide-react';
-import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
-import { InternTaskProgressPanel } from '@/components/dashboard/InternTaskProgressPanel';
-import { TodayAgendaPanel } from '@/components/dashboard/TodayAgendaPanel';
-import { DashboardWidgetWrapper } from '@/components/dashboard/DashboardWidgetWrapper';
-import { ManageWidgetsModal } from '@/components/dashboard/ManageWidgetsModal';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import {
     DndContext,
-    closestCenter,
+    DragOverlay,
     KeyboardSensor,
     PointerSensor,
-    useSensor,
-    useSensors,
-    DragEndEvent,
-    DragStartEvent,
-    DragOverlay,
     defaultDropAnimationSideEffects,
     rectIntersection,
+    useSensor,
+    useSensors,
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -41,6 +18,23 @@ import {
     useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Head } from '@inertiajs/react';
+import {
+    AlertTriangle,
+    CalendarClock,
+    ClipboardCheck,
+    GripHorizontal,
+    KanbanSquare,
+    Users,
+} from 'lucide-react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
+import { DashboardWidgetWrapper } from '@/components/dashboard/DashboardWidgetWrapper';
+import { InternTaskProgressPanel } from '@/components/dashboard/InternTaskProgressPanel';
+import { ManageWidgetsModal } from '@/components/dashboard/ManageWidgetsModal';
+import { TodayAgendaPanel } from '@/components/dashboard/TodayAgendaPanel';
 import type {
     DashboardAgendaItem,
     DashboardAlert,
@@ -52,6 +46,7 @@ import type {
     DashboardTaskProgress,
 } from '@/components/dashboard/types';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 
@@ -369,7 +364,7 @@ export default function Dashboard({
         return !['Tareas abiertas', 'Alertas activas'].includes(metric.label);
     });
 
-    const renderWidget = (id: string, isOverlay = false) => {
+    const renderWidget = (id: string) => {
         switch (id) {
             case 'metrics':
                 return <DashboardMetricCards metrics={metrics} />;
@@ -448,7 +443,7 @@ export default function Dashboard({
                         </DashboardWidgetWrapper>
                     </SortableRow>
                 );
-            case 'row_top_charts':
+            case 'row_top_charts': {
                 const visibleTop = topCharts.filter((id) =>
                     visibleWidgets.includes(id),
                 );
@@ -482,7 +477,8 @@ export default function Dashboard({
                         </SortableContext>
                     </SortableRow>
                 );
-            case 'row_bottom_panels':
+            }
+            case 'row_bottom_panels': {
                 const visibleBottom = bottomPanels.filter((id) =>
                     visibleWidgets.includes(id),
                 );
@@ -512,6 +508,7 @@ export default function Dashboard({
                         </SortableContext>
                     </SortableRow>
                 );
+            }
             case 'row_alerts':
                 if (!visibleWidgets.includes('alerts')) return null;
                 return (
@@ -588,7 +585,7 @@ export default function Dashboard({
                                         Moviendo sección completa...
                                     </div>
                                 ) : (
-                                    renderWidget(activeId, true)
+                                    renderWidget(activeId)
                                 )}
                             </div>
                         ) : null}
