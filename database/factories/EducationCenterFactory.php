@@ -22,6 +22,7 @@ class EducationCenterFactory extends Factory
             'address' => $this->faker->streetAddress(),
             'city' => $this->faker->city(),
             'contact_person' => $this->faker->name(),
+            'contact_email' => $this->faker->unique()->safeEmail(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'web' => $this->faker->url(),
