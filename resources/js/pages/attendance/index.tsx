@@ -16,6 +16,7 @@ import {
 import type {
     Absence,
     ManageableIntern,
+    ManageableTutor,
     NonCompliantIntern,
     TodayLog,
 } from '@/components/attendance/types';
@@ -38,6 +39,7 @@ export default function Index({
     is_intern,
     can_manage_attendance,
     manageable_interns,
+    manageable_tutors,
     non_compliant_interns,
     absences,
 }: {
@@ -47,6 +49,7 @@ export default function Index({
     is_intern: boolean;
     can_manage_attendance: boolean;
     manageable_interns: ManageableIntern[];
+    manageable_tutors: ManageableTutor[];
     non_compliant_interns: NonCompliantIntern[];
     absences: Absence[];
 }) {
@@ -217,6 +220,7 @@ export default function Index({
                                     canManageAttendance={can_manage_attendance}
                                     canRequestAbsence={is_intern}
                                     manageableInterns={manageable_interns}
+                                    manageableTutors={manageable_tutors}
                                 />
                             </TabsContent>
                         </>
@@ -232,6 +236,7 @@ export default function Index({
                                 canManageAttendance={can_manage_attendance}
                                 canRequestAbsence={is_intern}
                                 manageableInterns={manageable_interns}
+                                manageableTutors={manageable_tutors}
                             />
                         </TabsContent>
                     )}

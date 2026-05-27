@@ -16,6 +16,13 @@ export type ManageableIntern = {
     module_name?: string | null;
 };
 
+export type ManageableTutor = {
+    id: number;
+    user_id: number;
+    name: string;
+    email?: string | null;
+};
+
 export type NonCompliantIntern = {
     id: number;
     name: string;

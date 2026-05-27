@@ -79,7 +79,14 @@ class AbsenceController extends Controller
         $this->authorizeAbsenceManagement($request, $absence);
 
         DatabaseNotification::query()
-            ->where('data->absence_id', $absence->id)
+            ->where('type', AbsenceRequested::class)
+            ->where(function ($query) use ($absence) {
+                $query
+                    ->where('data', 'like', '%"absence_id":'.$absence->id.',%')
+                    ->orWhere('data', 'like', '%"absence_id":'.$absence->id.'}%')
+                    ->orWhere('data', 'like', '%"absence_id": '.$absence->id.',%')
+                    ->orWhere('data', 'like', '%"absence_id": '.$absence->id.'}%');
+            })
             ->delete();
 
         $absence->delete();

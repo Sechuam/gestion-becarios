@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CalendarEvent;
 use App\Models\Intern;
 use App\Models\TimeLog;
+use App\Models\User;
 use App\Services\TimeTrackingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -75,6 +76,7 @@ class TimeLogController extends Controller
                 'avatar' => $intern->user->getFirstMediaUrl('avatar'),
                 'education_center' => $intern->educationCenter?->name,
             ])->values(),
+            'manageable_tutors' => $this->manageableTutorsFor($user),
             'non_compliant_interns' => $service->getNonCompliantInternsForUser($user),
             'absences' => $user->absences()->latest('date')->get()->map(fn ($absence) => [
                 'id' => $absence->id,
@@ -338,6 +340,26 @@ class TimeLogController extends Controller
         }
 
         return collect();
+    }
+
+    protected function manageableTutorsFor(User $user)
+    {
+        if (! ($user->isAdmin() || $user->isTutor())) {
+            return collect();
+        }
+
+        return User::query()
+            ->role('tutor')
+            ->whereKeyNot($user->id)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email'])
+            ->map(fn (User $tutor) => [
+                'id' => $tutor->id,
+                'user_id' => $tutor->id,
+                'name' => $tutor->name,
+                'email' => $tutor->email,
+            ])
+            ->values();
     }
 
     protected function attendanceEventTitle(TimeLog $log, $managedInternsByUserId, bool $isConflict): string

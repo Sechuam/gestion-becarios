@@ -30,6 +30,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
@@ -123,6 +131,7 @@ export default function Show({
     const [notesValue, setNotesValue] = useState(visibleNoteContent);
     const [activityPage, setActivityPage] = useState(1);
     const [absencePage, setAbsencePage] = useState(1);
+    const [absenceToDelete, setAbsenceToDelete] = useState<any | null>(null);
     const activitiesPerPage = 3;
     const totalActivityPages = Math.ceil(activities.length / activitiesPerPage);
     const displayedActivities = activities.slice(
@@ -151,6 +160,14 @@ export default function Show({
         (a: any, b: any) =>
             String(b.start_date).localeCompare(String(a.start_date)),
     );
+    const handleDeleteAbsence = () => {
+        if (!absenceToDelete) return;
+
+        router.delete(`/absences/${absenceToDelete.id}`, {
+            preserveScroll: true,
+            onSuccess: () => setAbsenceToDelete(null),
+        });
+    };
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -885,22 +902,11 @@ export default function Show({
                                                                         size="sm"
                                                                         variant="outline"
                                                                         className="h-9 rounded-xl border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
-                                                                        onClick={() => {
-                                                                            if (
-                                                                                !window.confirm(
-                                                                                    '¿Seguro que quieres cancelar esta ausencia?',
-                                                                                )
+                                                                        onClick={() =>
+                                                                            setAbsenceToDelete(
+                                                                                abs,
                                                                             )
-                                                                                return;
-
-                                                                            router.delete(
-                                                                                `/absences/${abs.id}`,
-                                                                                {
-                                                                                    preserveScroll:
-                                                                                        true,
-                                                                                },
-                                                                            );
-                                                                        }}
+                                                                        }
                                                                     >
                                                                         <Trash2 className="h-4 w-4" />
                                                                     </Button>
@@ -1475,6 +1481,53 @@ export default function Show({
                     isOpen={isExportModalOpen}
                     onClose={() => setIsExportModalOpen(false)}
                 />
+
+                <Dialog
+                    open={Boolean(absenceToDelete)}
+                    onOpenChange={(open) => {
+                        if (!open) setAbsenceToDelete(null);
+                    }}
+                >
+                    <DialogContent className="max-w-md rounded-xl border-sidebar/10 shadow-xl">
+                        <DialogHeader>
+                            <DialogTitle>Cancelar ausencia</DialogTitle>
+                            <DialogDescription>
+                                Vas a eliminar esta ausencia del registro del
+                                becario. Esta acción no se puede deshacer.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        {absenceToDelete && (
+                            <div className="rounded-xl border border-rose-100 bg-rose-50 p-4 text-sm text-rose-900">
+                                <p className="font-bold">
+                                    {absenceToDelete.reason}
+                                </p>
+                                <p className="mt-1 text-xs font-medium text-rose-700">
+                                    {formatDateEs(absenceToDelete.date)}
+                                </p>
+                            </div>
+                        )}
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="rounded-xl"
+                                onClick={() => setAbsenceToDelete(null)}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                className="rounded-xl"
+                                onClick={handleDeleteAbsence}
+                            >
+                                Eliminar ausencia
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );
