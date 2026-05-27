@@ -17,7 +17,7 @@ import {
     Trash2,
     User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AbsencesPagination } from '@/components/attendance/AbsencesPagination';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { MetricPills } from '@/components/common/MetricPills';
@@ -37,6 +37,21 @@ import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 const ABSENCES_PER_PAGE = 3;
+const PROFILE_TABS = [
+    'resumen',
+    'personal',
+    'academico',
+    'asistencia',
+    'seguimiento',
+];
+
+function getInitialProfileTab() {
+    if (typeof window === 'undefined') return 'resumen';
+
+    const hash = window.location.hash.replace('#', '');
+
+    return PROFILE_TABS.includes(hash) ? hash : 'resumen';
+}
 
 export default function Show({
     intern,
@@ -58,6 +73,7 @@ export default function Show({
     absences: any[];
 }) {
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(getInitialProfileTab);
 
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage interns');
@@ -148,6 +164,16 @@ export default function Show({
             intern.education_center.name;
     }
 
+    useEffect(() => {
+        const handleHashChange = () => {
+            setActiveTab(getInitialProfileTab());
+        };
+
+        window.addEventListener('hashchange', handleHashChange);
+
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Perfil de ${intern.user.name}`} />
@@ -191,7 +217,18 @@ export default function Show({
                 {/* TABS INTERFACE */}
                 {/* PANEL ÚNICO UNIFICADO */}
                 <Card className="app-panel w-full overflow-hidden border-2 border-sidebar/15 pt-0 pb-0 shadow-xl">
-                    <Tabs defaultValue="resumen" className="w-full">
+                    <Tabs
+                        value={activeTab}
+                        onValueChange={(value) => {
+                            setActiveTab(value);
+                            window.history.replaceState(
+                                null,
+                                '',
+                                `#${value}`,
+                            );
+                        }}
+                        className="w-full"
+                    >
                         {/* NAVEGACIÓN INTEGRADA EN LA CABECERA DEL PANEL */}
                         <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
                             <InternProfileTabsNav />
@@ -844,6 +881,29 @@ export default function Show({
                                                                                 : 'Denegada'}
                                                                         </span>
                                                                     )}
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="outline"
+                                                                        className="h-9 rounded-xl border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                                                                        onClick={() => {
+                                                                            if (
+                                                                                !window.confirm(
+                                                                                    '¿Seguro que quieres cancelar esta ausencia?',
+                                                                                )
+                                                                            )
+                                                                                return;
+
+                                                                            router.delete(
+                                                                                `/absences/${abs.id}`,
+                                                                                {
+                                                                                    preserveScroll:
+                                                                                        true,
+                                                                                },
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                    </Button>
                                                                 </div>
                                                             </div>
                                                         ),

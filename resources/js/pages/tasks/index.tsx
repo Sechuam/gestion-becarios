@@ -42,6 +42,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Tareas', href: '/tareas' },
 ];
 
+const TASK_LIST_PER_PAGE = '10';
+const TASK_BOARD_PER_PAGE = '30';
+
 const applyStoredKanbanOrder = (tasks: any[]) => {
     if (typeof window === 'undefined') return tasks;
 
@@ -209,7 +212,19 @@ export default function Index({
         if (typeof window === 'undefined') return;
 
         window.localStorage.setItem('tasks-index-view-mode', viewMode);
-    }, [viewMode]);
+
+        const nextPerPage =
+            viewMode === 'table' ? TASK_LIST_PER_PAGE : TASK_BOARD_PER_PAGE;
+
+        if (String(filters.per_page ?? TASK_BOARD_PER_PAGE) === nextPerPage)
+            return;
+
+        router.get(
+            '/tareas',
+            { ...filters, per_page: nextPerPage, page: undefined },
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }, [filters, viewMode]);
 
     useEffect(() => {
         if (highlightedTaskId === null) return;

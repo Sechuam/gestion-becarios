@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Absence;
 use App\Notifications\AbsenceRequested;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class AbsenceController extends Controller
 {
@@ -32,7 +35,15 @@ class AbsenceController extends Controller
         }
 
         if (!$isStaff && $user->intern && $user->intern->companyTutor) {
-            $user->intern->companyTutor->notify(new AbsenceRequested($absence));
+            try {
+                $user->intern->companyTutor->notify(new AbsenceRequested($absence));
+            } catch (Throwable $exception) {
+                Log::warning('No se pudo notificar la solicitud de ausencia.', [
+                    'absence_id' => $absence->id,
+                    'tutor_user_id' => $user->intern->companyTutor->id,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
         }
 
         $message = $isStaff
@@ -48,12 +59,7 @@ class AbsenceController extends Controller
             'status' => 'required|in:approved,rejected',
         ]);
 
-        $intern = $absence->user?->intern;
-        $hasPermission = $request->user()->can('validate time logs') || $request->user()->can('manage interns');
-        abort_unless(
-            $hasPermission && ($request->user()->isAdmin() || ($request->user()->isTutor() && $intern && $intern->company_tutor_user_id === $request->user()->id)),
-            403
-        );
+        $this->authorizeAbsenceManagement($request, $absence);
 
         $absence->update([
             'status' => $validated['status'],
@@ -66,6 +72,19 @@ class AbsenceController extends Controller
 
 
         return back()->with('success', 'Estado de la ausencia actualizado.');
+    }
+
+    public function destroy(Request $request, Absence $absence)
+    {
+        $this->authorizeAbsenceManagement($request, $absence);
+
+        DatabaseNotification::query()
+            ->where('data->absence_id', $absence->id)
+            ->delete();
+
+        $absence->delete();
+
+        return back()->with('success', 'Ausencia cancelada correctamente.');
     }
 
     public function uploadJustification(Request $request, Absence $absence)
@@ -83,5 +102,19 @@ class AbsenceController extends Controller
         }
 
         return back()->with('success', 'Justificante subido correctamente.');
+    }
+
+    protected function authorizeAbsenceManagement(Request $request, Absence $absence): void
+    {
+        $intern = $absence->user?->intern;
+        $hasPermission = $request->user()->can('validate time logs') || $request->user()->can('manage interns');
+        $isAssignedTutor = $request->user()->isTutor()
+            && $intern
+            && (int) $intern->company_tutor_user_id === (int) $request->user()->id;
+
+        abort_unless(
+            ($hasPermission && $request->user()->isAdmin()) || $isAssignedTutor,
+            403
+        );
     }
 }

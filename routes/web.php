@@ -82,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas de Ausencias
     Route::post('/absences', [AbsenceController::class, 'store'])->name('absences.store');
     Route::patch('/absences/{absence}/status', [AbsenceController::class, 'updateStatus'])->name('absences.updateStatus');
+    Route::delete('/absences/{absence}', [AbsenceController::class, 'destroy'])->name('absences.destroy');
     Route::post('/absences/{absence}/justification', [AbsenceController::class, 'uploadJustification'])->name('absences.uploadJustification');
     Route::get('/interns/{intern}/report', [AttendanceReportController::class, 'download'])->name('interns.report');
     Route::get('interns/complete-profile', [InternController::class, 'completeProfile'])
