@@ -22,7 +22,8 @@
         "spatie/laravel-activitylog": "^4.12",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-pdf": "^2.2",
-        "spatie/laravel-permission": "^7.2"
+        "spatie/laravel-permission": "^7.2",
+        "ext-pdo_pgsql": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
