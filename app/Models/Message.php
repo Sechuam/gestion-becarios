@@ -15,12 +15,14 @@ class Message extends Model
         'sender_user_id',
         'body',
         'read_at',
+        'edited_at',
     ];
 
     protected function casts(): array
     {
         return [
             'read_at' => 'datetime',
+            'edited_at' => 'datetime',
         ];
     }
 
