@@ -20,19 +20,19 @@ class InternFactory extends Factory
             'user_id' => \App\Models\User::factory(),
             'education_center_id' => \App\Models\EducationCenter::inRandomOrder()->first()->id,
 
-            'dni' => $this->faker->unique()->bothify('#########?'),
-            'birth_date' => $this->faker->date('Y-m-d', '-18 years'),
-            'phone' => $this->faker->phoneNumber(),
-            'address' => $this->faker->address(),
-            'city' => $this->faker->city(),
+            'dni' => fake()->unique()->bothify('#########?'),
+            'birth_date' => fake()->date('Y-m-d', '-18 years'),
+            'phone' => fake()->phoneNumber(),
+            'address' => fake()->address(),
+            'city' => fake()->city(),
 
-            'academic_degree' => $this->faker->randomElement(['DAM', 'DAW', 'ADE', 'Derecho', 'Magisterio']),
+            'academic_degree' => fake()->randomElement(['DAM', 'DAW', 'ADE', 'Derecho', 'Magisterio']),
             'academic_year' => '2024-2025',
 
             'start_date' => now()->addDays(rand(1, 30)),
             'end_date' => now()->addMonths(rand(3, 6)),
-            'status' => $this->faker->randomElement(['active', 'completed', 'abandoned']),
-            'tutor_name' => $this->faker->name(),
+            'status' => fake()->randomElement(['active', 'completed', 'abandoned']),
+            'tutor_name' => fake()->name(),
         ];
     }
 }
