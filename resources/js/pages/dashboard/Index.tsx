@@ -28,6 +28,11 @@ import {
     Users,
 } from 'lucide-react';
 import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { CreateEventModal } from '@/components/attendance/CreateEventModal';
+import type {
+    ManageableIntern,
+    ManageableTutor,
+} from '@/components/attendance/types';
 import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
@@ -139,6 +144,8 @@ interface DashboardProps {
     alerts: DashboardAlert[];
     today_agenda: DashboardAgendaItem[];
     current_log: DashboardCurrentLog | null;
+    manageable_interns?: ManageableIntern[];
+    manageable_tutors?: ManageableTutor[];
 }
 
 // Componente para las filas móviles
@@ -200,6 +207,8 @@ export default function Dashboard({
     alerts,
     today_agenda,
     current_log,
+    manageable_interns = [],
+    manageable_tutors = [],
 }: DashboardProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [isManageModalOpen, setIsManageModalOpen] = useState(false);
@@ -216,6 +225,8 @@ export default function Dashboard({
         getDefaultVisibleWidgets(role),
     );
     const [activeId, setActiveId] = useState<string | null>(null);
+    const [isCreateEventModalOpen, setIsCreateEventModalOpen] =
+        useState(false);
 
     useEffect(() => {
         const saved =
@@ -424,6 +435,11 @@ export default function Dashboard({
                         todayAgenda={today_agenda}
                         currentLog={current_log}
                         showWorkStatus={!isStaffDashboard}
+                        onCreateEvent={
+                            isStaffDashboard
+                                ? () => setIsCreateEventModalOpen(true)
+                                : undefined
+                        }
                     />
                 );
             case 'progress':
@@ -577,6 +593,16 @@ export default function Dashboard({
                     supportedWidgets={supportedWidgets}
                     onToggleWidget={toggleWidget}
                 />
+
+                {isStaffDashboard && (
+                    <CreateEventModal
+                        open={isCreateEventModalOpen}
+                        onOpenChange={setIsCreateEventModalOpen}
+                        date={new Date().toISOString().split('T')[0]}
+                        manageableInterns={manageable_interns}
+                        manageableTutors={manageable_tutors}
+                    />
+                )}
 
                 <DndContext
                     sensors={sensors}

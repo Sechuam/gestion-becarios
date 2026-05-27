@@ -141,6 +141,12 @@ class DashboardController extends Controller
                 ->sum('total_hours'),
             'elapsed_seconds' => Carbon::parse($currentLog->clock_in)->diffInSeconds(now())
         ] : null;
+        $data['manageable_interns'] = $role === 'admin' || $role === 'tutor'
+            ? $this->eventManageableInterns($user, $role)
+            : [];
+        $data['manageable_tutors'] = $role === 'admin' || $role === 'tutor'
+            ? $this->eventManageableTutors($user)
+            : [];
 
         return Inertia::render('dashboard/Index', $data);
     }
@@ -160,6 +166,40 @@ class DashboardController extends Controller
         }
 
         return (clone $internQuery)->distinct('education_center_id')->count('education_center_id');
+    }
+
+    protected function eventManageableInterns(User $user, string $role): array
+    {
+        return $this->scopedInternQuery($user, $role)
+            ->where('status', 'active')
+            ->orderBy('start_date')
+            ->get()
+            ->map(fn(Intern $intern) => [
+                'id' => $intern->id,
+                'user_id' => $intern->user_id,
+                'name' => $intern->user->name,
+                'avatar' => $intern->user->getFirstMediaUrl('avatar'),
+                'education_center' => $intern->educationCenter?->name,
+            ])
+            ->values()
+            ->all();
+    }
+
+    protected function eventManageableTutors(User $user): array
+    {
+        return User::query()
+            ->role('tutor')
+            ->whereKeyNot($user->id)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email'])
+            ->map(fn(User $tutor) => [
+                'id' => $tutor->id,
+                'user_id' => $tutor->id,
+                'name' => $tutor->name,
+                'email' => $tutor->email,
+            ])
+            ->values()
+            ->all();
     }
 
     protected function internsByCenter(Builder $internQuery): array

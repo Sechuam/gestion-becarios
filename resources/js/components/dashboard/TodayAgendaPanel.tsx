@@ -7,6 +7,7 @@ import {
     ClipboardCheck,
     ChevronLeft,
     ChevronRight,
+    CalendarPlus,
 } from 'lucide-react';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ interface TodayAgendaPanelProps {
         elapsed_seconds: number;
     } | null;
     showWorkStatus?: boolean;
+    onCreateEvent?: () => void;
 }
 
 export function TodayAgendaPanel({
@@ -38,6 +40,7 @@ export function TodayAgendaPanel({
     todayAgenda,
     currentLog,
     showWorkStatus = true,
+    onCreateEvent,
 }: TodayAgendaPanelProps) {
     const [seconds, setSeconds] = useState(currentLog?.elapsed_seconds || 0);
     const [agendaPage, setAgendaPage] = useState(1);
@@ -160,6 +163,17 @@ export function TodayAgendaPanel({
                         <p className="text-[10px] font-black tracking-widest text-sidebar uppercase">
                             Eventos y Ausencias
                         </p>
+                        {onCreateEvent && (
+                            <Button
+                                type="button"
+                                size="sm"
+                                onClick={onCreateEvent}
+                                className="h-7 rounded-lg bg-sidebar px-2.5 text-[10px] font-black tracking-widest text-white uppercase shadow-sm hover:bg-sidebar/90"
+                            >
+                                <CalendarPlus className="mr-1.5 h-3.5 w-3.5" />
+                                Nuevo
+                            </Button>
+                        )}
                     </div>
 
                     {todayAgenda.length > 0 ? (
