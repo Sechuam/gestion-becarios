@@ -39,6 +39,7 @@ export function AttendanceCalendarCard({
     canRequestAbsence?: boolean;
     manageableInterns?: ManageableIntern[];
 }) {
+    const canShowJornadas = !canManageAttendance;
     const [showJornadas, setShowJornadas] = useState(true);
     const [showAbsences, setShowAbsences] = useState(true);
     const [showPersonalEvents, setShowPersonalEvents] = useState(true);
@@ -75,6 +76,7 @@ export function AttendanceCalendarCard({
                     showJornadas={showJornadas}
                     showAbsences={showAbsences}
                     showPersonalEvents={showPersonalEvents}
+                    canShowJornadas={canShowJornadas}
                     onShowJornadasChange={setShowJornadas}
                     onShowAbsencesChange={setShowAbsences}
                     onShowPersonalEventsChange={setShowPersonalEvents}

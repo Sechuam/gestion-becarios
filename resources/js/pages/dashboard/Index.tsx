@@ -362,7 +362,7 @@ export default function Dashboard({
         {
             label: 'Próximas finalizaciones',
             value: stats.upcoming_endings,
-            hint: 'Prácticas que terminan en 30 días',
+            hint: 'Prácticas que terminan esta semana',
             icon: CalendarClock,
         },
         {

@@ -191,11 +191,13 @@ class TimeLogController extends Controller
         $managedUserIds = $managedInterns->pluck('user_id');
         $managedInternsByUserId = $managedInterns->keyBy('user_id');
         $showManagedAttendance = ! $user->isIntern() && $managedUserIds->isNotEmpty();
+        $showTimeLogs = $user->isIntern();
 
-        // Obtenemos Fichajes Y Ausencias
-        $logs = TimeLog::query()
-            ->whereIn('user_id', $showManagedAttendance ? $managedUserIds : [$user->id])
-            ->get();
+        $logs = $showTimeLogs
+            ? TimeLog::query()
+                ->where('user_id', $user->id)
+                ->get()
+            : collect();
         $absences = \App\Models\Absence::query()
             ->whereIn('user_id', $showManagedAttendance ? $managedUserIds : [$user->id])
             ->get();

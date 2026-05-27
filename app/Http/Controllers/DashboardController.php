@@ -344,7 +344,7 @@ class DashboardController extends Controller
     {
         return (clone $internQuery)
             ->where('status', 'active')
-            ->whereBetween('end_date', [Carbon::today(), Carbon::today()->addDays(30)])
+            ->whereBetween('end_date', [Carbon::today(), Carbon::today()->addDays(7)])
             ->count();
     }
 
