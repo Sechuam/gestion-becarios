@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, InteractsWithMedia, LogsActivity, Notifiable, TwoFactorAuthenticatable;
 
     /**
@@ -107,6 +108,21 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function createdTasks(): HasMany
     {
         return $this->hasMany(Task::class, 'created_by');
+    }
+
+    public function internMessageConversations(): HasMany
+    {
+        return $this->hasMany(MessageConversation::class, 'intern_user_id');
+    }
+
+    public function tutorMessageConversations(): HasMany
+    {
+        return $this->hasMany(MessageConversation::class, 'tutor_user_id');
+    }
+
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_user_id');
     }
 
     public function isAdmin(): bool

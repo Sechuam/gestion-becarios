@@ -8,6 +8,7 @@ import {
     Kanban,
     LayoutGrid,
     ListChecks,
+    MessageSquare,
     Settings,
     ShieldCheck,
     Star,
@@ -175,6 +176,14 @@ export function buildDynamicSidebar({
         href: '/asistencia',
         icon: Clock,
     });
+
+    if (isAdmin || isTutor || isIntern) {
+        operacionItems.push({
+            title: 'Mensajes',
+            href: '/mensajes',
+            icon: MessageSquare,
+        });
+    }
 
     if (operacionItems.length > 0) {
         sections.push({ label: 'Operación', items: operacionItems });

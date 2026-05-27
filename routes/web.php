@@ -10,6 +10,7 @@ use App\Http\Controllers\EvaluationCriterionController;
 use App\Http\Controllers\EvaluationReportController;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PracticeTypeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RolesController;
@@ -51,6 +52,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('mis-becarios', [TutorController::class, 'mine'])
         ->name('tutors.mine')
         ->middleware('tutor');
+    Route::get('mensajes', [MessageController::class, 'index'])->name('messages.index');
+    Route::post('mensajes', [MessageController::class, 'store'])->name('messages.store');
     Route::get('tareas/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
     Route::get('tareas/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::post('tareas', [TaskController::class, 'store'])
