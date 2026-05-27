@@ -32,9 +32,11 @@ const normalizeEventClasses = (classNames: string[] | string | undefined) => {
 
 export function AttendanceCalendarCard({
     canManageAttendance = false,
+    canRequestAbsence = true,
     manageableInterns = [],
 }: {
     canManageAttendance?: boolean;
+    canRequestAbsence?: boolean;
     manageableInterns?: ManageableIntern[];
 }) {
     const [showJornadas, setShowJornadas] = useState(true);
@@ -451,6 +453,7 @@ export function AttendanceCalendarCard({
                     onOpenChange={setIsDayClickModalOpen}
                     onSelectOption={handleOptionSelect}
                     date={selectedDate}
+                    canRequestAbsence={canRequestAbsence}
                 />
 
                 <CreateEventModal

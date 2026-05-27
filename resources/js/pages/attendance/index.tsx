@@ -1,4 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
+import { Clock3 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { AbsencesCard } from '@/components/attendance/AbsencesCard';
@@ -18,6 +19,7 @@ import type {
     NonCompliantIntern,
     TodayLog,
 } from '@/components/attendance/types';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -33,6 +35,7 @@ export default function Index({
     today_logs,
     current_log,
     today_total_hours,
+    is_intern,
     can_manage_attendance,
     manageable_interns,
     non_compliant_interns,
@@ -41,6 +44,7 @@ export default function Index({
     today_logs: TodayLog[];
     current_log: TodayLog | null;
     today_total_hours: number;
+    is_intern: boolean;
     can_manage_attendance: boolean;
     manageable_interns: ManageableIntern[];
     non_compliant_interns: NonCompliantIntern[];
@@ -135,67 +139,102 @@ export default function Index({
             <Head title="Control Horario" />
 
             <div className="flex h-full flex-1 flex-col gap-3">
-                <AttendanceHeader
-                    todayLogs={today_logs}
-                    currentLog={current_log}
-                    todayTotalHours={today_total_hours}
-                    onClockIn={handleClockIn}
-                    onClockOut={handleClockOut}
-                />
+                {is_intern ? (
+                    <AttendanceHeader
+                        todayLogs={today_logs}
+                        currentLog={current_log}
+                        todayTotalHours={today_total_hours}
+                        onClockIn={handleClockIn}
+                        onClockOut={handleClockOut}
+                    />
+                ) : (
+                    <ModuleHeader
+                        title="Control horario"
+                        description="Gestiona registros manuales, revisa incidencias y consulta el calendario horario de los becarios."
+                        icon={<Clock3 className="h-5 w-5" />}
+                    />
+                )}
 
-                <Tabs defaultValue="registro" className="space-y-3">
-                    <AttendanceTabsNav />
+                <Tabs
+                    defaultValue={is_intern ? 'registro' : 'gestion'}
+                    className="space-y-3"
+                >
+                    <AttendanceTabsNav isIntern={is_intern} />
 
-                    <TabsContent value="registro" className="mt-0 space-y-3">
-                        <DailyRegisterCard
-                            todayLogs={today_logs}
-                            currentLog={current_log}
-                            todayTotalHours={today_total_hours}
-                            liveElapsed={liveElapsed}
-                            todayLogsOpen={todayLogsOpen}
-                            onTodayLogsOpenChange={setTodayLogsOpen}
-                        />
+                    {is_intern ? (
+                        <>
+                            <TabsContent
+                                value="registro"
+                                className="mt-0 space-y-3"
+                            >
+                                <DailyRegisterCard
+                                    todayLogs={today_logs}
+                                    currentLog={current_log}
+                                    todayTotalHours={today_total_hours}
+                                    liveElapsed={liveElapsed}
+                                    todayLogsOpen={todayLogsOpen}
+                                    onTodayLogsOpenChange={setTodayLogsOpen}
+                                />
 
-                        {can_manage_attendance && (
-                            <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                                <ManualLogCard
-                                    form={manualForm}
+                                {can_manage_attendance && (
+                                    <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+                                        <ManualLogCard
+                                            form={manualForm}
+                                            manageableInterns={
+                                                manageable_interns
+                                            }
+                                            onSubmit={submitManualLog}
+                                        />
+
+                                        <NonComplianceCard
+                                            interns={non_compliant_interns}
+                                        />
+                                    </div>
+                                )}
+                            </TabsContent>
+
+                            {/* SECCIÓN MIS AUSENCIAS PARA EL BECARIO */}
+                            <TabsContent value="ausencias" className="mt-0">
+                                {absences && Array.isArray(absences) && (
+                                    <AbsencesCard
+                                        absences={absences}
+                                        paginatedAbsences={paginatedAbsences}
+                                        absencePage={absencePage}
+                                        totalAbsencePages={totalAbsencePages}
+                                        absenceRangeStart={absenceRangeStart}
+                                        absenceRangeEnd={absenceRangeEnd}
+                                        absencesPerPage={ABSENCES_PER_PAGE}
+                                        onPageChange={setAbsencePage}
+                                        onUploadJustification={
+                                            handleUploadJustification
+                                        }
+                                    />
+                                )}
+                            </TabsContent>
+
+                            <TabsContent value="calendario" className="mt-0">
+                                <AttendanceCalendarCard
+                                    canManageAttendance={can_manage_attendance}
+                                    canRequestAbsence={is_intern}
                                     manageableInterns={manageable_interns}
-                                    onSubmit={submitManualLog}
                                 />
-
-                                <NonComplianceCard
-                                    interns={non_compliant_interns}
-                                />
-                            </div>
-                        )}
-                    </TabsContent>
-
-                    {/* SECCIÓN MIS AUSENCIAS PARA EL BECARIO */}
-                    <TabsContent value="ausencias" className="mt-0">
-                        {absences && Array.isArray(absences) && (
-                            <AbsencesCard
-                                absences={absences}
-                                paginatedAbsences={paginatedAbsences}
-                                absencePage={absencePage}
-                                totalAbsencePages={totalAbsencePages}
-                                absenceRangeStart={absenceRangeStart}
-                                absenceRangeEnd={absenceRangeEnd}
-                                absencesPerPage={ABSENCES_PER_PAGE}
-                                onPageChange={setAbsencePage}
-                                onUploadJustification={
-                                    handleUploadJustification
-                                }
+                            </TabsContent>
+                        </>
+                    ) : (
+                        <TabsContent value="gestion" className="mt-0 space-y-3">
+                            <ManualLogCard
+                                form={manualForm}
+                                manageableInterns={manageable_interns}
+                                onSubmit={submitManualLog}
                             />
-                        )}
-                    </TabsContent>
 
-                    <TabsContent value="calendario" className="mt-0">
-                        <AttendanceCalendarCard
-                            canManageAttendance={can_manage_attendance}
-                            manageableInterns={manageable_interns}
-                        />
-                    </TabsContent>
+                            <AttendanceCalendarCard
+                                canManageAttendance={can_manage_attendance}
+                                canRequestAbsence={is_intern}
+                                manageableInterns={manageable_interns}
+                            />
+                        </TabsContent>
+                    )}
                 </Tabs>
             </div>
         </AppLayout>

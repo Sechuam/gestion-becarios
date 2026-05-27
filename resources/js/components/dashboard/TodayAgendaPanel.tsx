@@ -30,12 +30,14 @@ interface TodayAgendaPanelProps {
         clock_in: string;
         elapsed_seconds: number;
     } | null;
+    showWorkStatus?: boolean;
 }
 
 export function TodayAgendaPanel({
     className,
     todayAgenda,
     currentLog,
+    showWorkStatus = true,
 }: TodayAgendaPanelProps) {
     const [seconds, setSeconds] = useState(currentLog?.elapsed_seconds || 0);
     const [agendaPage, setAgendaPage] = useState(1);
@@ -106,51 +108,51 @@ export function TodayAgendaPanel({
             </CardHeader>
 
             <div className="flex flex-1 flex-col gap-2.5 bg-slate-50/60 px-4 pt-3 pb-4 dark:bg-slate-950/20">
-                {/* Estado de Jornada */}
-                <div className="relative overflow-hidden rounded-xl border border-l-2 border-slate-300 border-l-sidebar bg-white p-3.5 text-slate-900 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900 dark:text-white">
-                    <div className="relative z-10 flex items-center justify-between">
-                        <div className="space-y-0.5">
-                            <p className="text-[10px] font-black tracking-[0.2em] text-sidebar uppercase dark:text-teal-100">
-                                Estado de Jornada
-                            </p>
-                            {currentLog ? (
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-2xl font-black">
-                                        {formatElapsed(seconds)}
-                                    </span>
-                                    <span className="text-xs font-medium text-slate-500">
-                                        trabajando
-                                    </span>
-                                </div>
-                            ) : (
-                                <p className="text-xl font-black">
-                                    Fuera de servicio
+                {showWorkStatus && (
+                    <div className="relative overflow-hidden rounded-xl border border-l-2 border-slate-300 border-l-sidebar bg-white p-3.5 text-slate-900 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900 dark:text-white">
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <p className="text-[10px] font-black tracking-[0.2em] text-sidebar uppercase dark:text-teal-100">
+                                    Estado de Jornada
                                 </p>
-                            )}
+                                {currentLog ? (
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-2xl font-black">
+                                            {formatElapsed(seconds)}
+                                        </span>
+                                        <span className="text-xs font-medium text-slate-500">
+                                            trabajando
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <p className="text-xl font-black">
+                                        Fuera de servicio
+                                    </p>
+                                )}
+                            </div>
+                            <div
+                                className={cn(
+                                    'flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar text-white shadow-sm',
+                                    currentLog && 'animate-pulse',
+                                )}
+                            >
+                                {currentLog ? (
+                                    <Timer className="h-5 w-5" />
+                                ) : (
+                                    <PlayCircle className="h-5 w-5" />
+                                )}
+                            </div>
                         </div>
-                        <div
-                            className={cn(
-                                'flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar text-white shadow-sm',
-                                currentLog && 'animate-pulse',
-                            )}
-                        >
-                            {currentLog ? (
-                                <Timer className="h-5 w-5" />
-                            ) : (
-                                <PlayCircle className="h-5 w-5" />
-                            )}
-                        </div>
+                        {currentLog && (
+                            <div className="relative z-10 mt-2 flex items-center gap-2 rounded-lg border border-sidebar/10 bg-white px-2.5 py-1.5 text-[11px] font-bold text-sidebar dark:bg-slate-900 dark:text-teal-100">
+                                <Clock className="h-3.5 w-3.5" />
+                                Entrada registrada a las{' '}
+                                {currentLog.clock_in.substring(0, 5)}
+                            </div>
+                        )}
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-sidebar/5" />
                     </div>
-                    {currentLog && (
-                        <div className="relative z-10 mt-2 flex items-center gap-2 rounded-lg border border-sidebar/10 bg-white px-2.5 py-1.5 text-[11px] font-bold text-sidebar dark:bg-slate-900 dark:text-teal-100">
-                            <Clock className="h-3.5 w-3.5" />
-                            Entrada registrada a las{' '}
-                            {currentLog.clock_in.substring(0, 5)}
-                        </div>
-                    )}
-                    {/* Decoración fondo */}
-                    <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-sidebar/5" />
-                </div>
+                )}
 
                 {/* Lista de Tareas/Eventos */}
                 <div className="flex flex-1 flex-col gap-2 overflow-hidden">
@@ -162,7 +164,14 @@ export function TodayAgendaPanel({
 
                     {todayAgenda.length > 0 ? (
                         <>
-                            <div className="min-h-[204px] space-y-2.5 overflow-hidden pr-1">
+                            <div
+                                className={cn(
+                                    'space-y-2.5 overflow-hidden pr-1',
+                                    showWorkStatus
+                                        ? 'min-h-[204px]'
+                                        : 'min-h-[338px]',
+                                )}
+                            >
                                 {visibleAgenda.map((item, idx) => (
                                     <div
                                         key={`${currentAgendaPage}-${idx}`}

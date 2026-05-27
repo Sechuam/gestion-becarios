@@ -81,7 +81,7 @@ class DashboardController extends Controller
                     'average_task_resolution_days' => $this->averageTaskResolutionDays($taskQuery),
                 ],
                 'interns_by_center' => $this->internsByCenter($internQuery),
-                'attendance_chart' => $this->attendanceChart($userIds),
+                'attendance_chart' => $role === 'intern' ? $this->attendanceChart($userIds) : [],
                 'task_status_chart' => $this->taskStatusChart($taskQuery),
                 'task_progress' => $this->taskProgress($internQuery),
                 'alerts' => [
@@ -96,11 +96,13 @@ class DashboardController extends Controller
         $today = Carbon::today();
         
         // 1. Jornada activa hoy
-        $currentLog = TimeLog::where('user_id', $user->id)
-            ->whereDate('date', $today)
-            ->whereNotNull('clock_in')
-            ->whereNull('clock_out')
-            ->first();
+        $currentLog = $role === 'intern'
+            ? TimeLog::where('user_id', $user->id)
+                ->whereDate('date', $today)
+                ->whereNotNull('clock_in')
+                ->whereNull('clock_out')
+                ->first()
+            : null;
 
         // 2. Eventos y Ausencias para hoy (Propios e Invitaciones)
         $todayEvents = CalendarEvent::with(['user', 'attendees'])
@@ -377,7 +379,6 @@ class DashboardController extends Controller
             ])
             ->with(['user', 'educationCenter'])
             ->orderByDesc('updated_at')
-            ->limit(8)
             ->get();
 
         $userIds = $interns->pluck('user_id');

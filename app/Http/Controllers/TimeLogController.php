@@ -16,10 +16,13 @@ class TimeLogController extends Controller
     {
         $user = $request->user();
         $today = Carbon::today();
-        $todayLogs = $user->timeLogs()
-            ->whereDate('date', '=', $today->toDateString())
-            ->orderBy('clock_in')
-            ->get();
+        $isIntern = $user->isIntern();
+        $todayLogs = $isIntern
+            ? $user->timeLogs()
+                ->whereDate('date', '=', $today->toDateString())
+                ->orderBy('clock_in')
+                ->get()
+            : collect();
 
         $currentLog = $todayLogs->firstWhere('clock_out', null);
         $todayTotalHours = $todayLogs->sum(function ($log) {
@@ -63,6 +66,7 @@ class TimeLogController extends Controller
                 'notes' => $currentLog->notes,
             ] : null,
             'today_total_hours' => round($todayTotalHours, 2),
+            'is_intern' => $isIntern,
             'can_manage_attendance' => $user->can('manage interns') || $user->isTutor() || $user->can('edit time logs') || $user->can('validate time logs'),
             'manageable_interns' => $manageableInterns->map(fn (Intern $intern) => [
                 'id' => $intern->id,
@@ -85,6 +89,8 @@ class TimeLogController extends Controller
     public function clockIn(Request $request)
     {
         $user = $request->user();
+        abort_unless($user->isIntern(), 403);
+
         $today = Carbon::today();
         $openLog = TimeLog::where('user_id', $user->id)
             ->whereDate('date', '=', $today->toDateString())
@@ -107,6 +113,8 @@ class TimeLogController extends Controller
     public function clockOut(Request $request)
     {
         $user = $request->user();
+        abort_unless($user->isIntern(), 403);
+
         $today = Carbon::today();
         $log = TimeLog::where('user_id', $user->id)
             ->whereDate('date', '=', $today->toDateString())
@@ -179,10 +187,18 @@ class TimeLogController extends Controller
     public function getEvents(Request $request)
     {
         $user = $request->user();
+        $managedInterns = $this->manageableInternsFor($user);
+        $managedUserIds = $managedInterns->pluck('user_id');
+        $managedInternsByUserId = $managedInterns->keyBy('user_id');
+        $showManagedAttendance = ! $user->isIntern() && $managedUserIds->isNotEmpty();
 
         // Obtenemos Fichajes Y Ausencias
-        $logs = TimeLog::where('user_id', $user->id)->get();
-        $absences = \App\Models\Absence::where('user_id', $user->id)->get();
+        $logs = TimeLog::query()
+            ->whereIn('user_id', $showManagedAttendance ? $managedUserIds : [$user->id])
+            ->get();
+        $absences = \App\Models\Absence::query()
+            ->whereIn('user_id', $showManagedAttendance ? $managedUserIds : [$user->id])
+            ->get();
 
         $events = [];
 
@@ -208,7 +224,7 @@ class TimeLogController extends Controller
 
                 $events[] = [
                     'id' => 'log_'.$log->id,
-                    'title' => $isConflict ? 'Jornada (Conflicto)' : 'Jornada',
+                    'title' => $this->attendanceEventTitle($log, $managedInternsByUserId, $isConflict),
                     'start' => $start,
                     'end' => $end,
                     'className' => $className,
@@ -218,15 +234,16 @@ class TimeLogController extends Controller
 
         foreach ($absences as $abs) {
             $color = '#f59e0b';
-            $title = "Ausencia ({$abs->reason}) - Pendiente";
+            $internName = $managedInternsByUserId->get($abs->user_id)?->user?->name;
+            $title = trim(($internName ? "{$internName}: " : '')."Ausencia ({$abs->reason}) - Pendiente");
             $className = 'is-absence';
 
             if ($abs->status === 'approved') {
                 $color = '#10b981';
-                $title = "Ausencia ({$abs->reason}) - Aprobada";
+                $title = trim(($internName ? "{$internName}: " : '')."Ausencia ({$abs->reason}) - Aprobada");
             } elseif ($abs->status === 'rejected') {
                 $color = '#ef4444';
-                $title = "Ausencia ({$abs->reason}) - Denegada";
+                $title = trim(($internName ? "{$internName}: " : '')."Ausencia ({$abs->reason}) - Denegada");
             }
 
             $events[] = [
@@ -298,6 +315,35 @@ class TimeLogController extends Controller
         }
 
         return response()->json($events);
+    }
+
+    protected function manageableInternsFor($user)
+    {
+        if ($user->can('manage interns')) {
+            return Intern::query()
+                ->with(['user', 'educationCenter'])
+                ->where('status', 'active')
+                ->orderBy('start_date')
+                ->get();
+        }
+
+        if ($user->isTutor() || $user->can('edit time logs') || $user->can('validate time logs')) {
+            return $user->assignedInterns()
+                ->with(['user', 'educationCenter'])
+                ->where('status', 'active')
+                ->orderBy('start_date')
+                ->get();
+        }
+
+        return collect();
+    }
+
+    protected function attendanceEventTitle(TimeLog $log, $managedInternsByUserId, bool $isConflict): string
+    {
+        $internName = $managedInternsByUserId->get($log->user_id)?->user?->name;
+        $title = $isConflict ? 'Jornada (Conflicto)' : 'Jornada';
+
+        return $internName ? "{$internName}: {$title}" : $title;
     }
 
     protected function authorizeAttendanceManagement($user, Intern $intern): void

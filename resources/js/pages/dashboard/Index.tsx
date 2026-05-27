@@ -90,14 +90,22 @@ const DEFAULT_SECTIONS = [
 ];
 const DEFAULT_TOP_CHARTS = ['interns_chart', 'task_chart'];
 const DEFAULT_BOTTOM_PANELS = ['attendance', 'agenda', 'progress'];
+const STAFF_BOTTOM_PANELS = ['progress', 'agenda'];
 const DEFAULT_VISIBLE_WIDGETS = DEFAULT_TOP_CHARTS.concat(
     DEFAULT_BOTTOM_PANELS,
 ).concat(['metrics', 'alerts']);
 const INTERN_VISIBLE_WIDGETS = ['metrics', 'attendance', 'agenda', 'progress'];
+const STAFF_VISIBLE_WIDGETS = DEFAULT_VISIBLE_WIDGETS.filter(
+    (widget) => widget !== 'attendance',
+);
 
 function getSupportedWidgets(role: DashboardRole) {
     if (role === 'intern') {
         return INTERN_VISIBLE_WIDGETS;
+    }
+
+    if (role === 'admin' || role === 'tutor') {
+        return STAFF_VISIBLE_WIDGETS;
     }
 
     return DEFAULT_VISIBLE_WIDGETS;
@@ -105,6 +113,12 @@ function getSupportedWidgets(role: DashboardRole) {
 
 function getDefaultTopCharts(role: DashboardRole) {
     return role === 'intern' ? [] : DEFAULT_TOP_CHARTS;
+}
+
+function getDefaultBottomPanels(role: DashboardRole) {
+    return role === 'admin' || role === 'tutor'
+        ? STAFF_BOTTOM_PANELS
+        : DEFAULT_BOTTOM_PANELS;
 }
 
 function getDefaultVisibleWidgets(role: DashboardRole) {
@@ -196,7 +210,7 @@ export default function Dashboard({
         getDefaultTopCharts(role),
     );
     const [bottomPanels, setBottomPanels] = useState<string[]>(
-        DEFAULT_BOTTOM_PANELS,
+        getDefaultBottomPanels(role),
     );
     const [visibleWidgets, setVisibleWidgets] = useState<string[]>(
         getDefaultVisibleWidgets(role),
@@ -321,6 +335,7 @@ export default function Dashboard({
         stats.total_tasks > 0
             ? Math.round((stats.completed_tasks / stats.total_tasks) * 100)
             : 0;
+    const isStaffDashboard = role === 'admin' || role === 'tutor';
 
     const metrics: DashboardMetric[] = [
         {
@@ -408,6 +423,7 @@ export default function Dashboard({
                         className="h-full"
                         todayAgenda={today_agenda}
                         currentLog={current_log}
+                        showWorkStatus={!isStaffDashboard}
                     />
                 );
             case 'progress':
@@ -489,7 +505,14 @@ export default function Dashboard({
                             items={visibleBottom}
                             strategy={rectSortingStrategy}
                         >
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                            <div
+                                className={cn(
+                                    'grid grid-cols-1 gap-4',
+                                    isStaffDashboard
+                                        ? 'md:grid-cols-12'
+                                        : 'md:grid-cols-3',
+                                )}
+                            >
                                 {bottomPanels.map((id) => {
                                     if (!visibleWidgets.includes(id))
                                         return null;
@@ -498,7 +521,13 @@ export default function Dashboard({
                                             key={id}
                                             id={id}
                                             isEditing={isEditing}
-                                            className="col-span-1"
+                                            className={
+                                                isStaffDashboard
+                                                    ? id === 'progress'
+                                                        ? 'md:col-span-8'
+                                                        : 'md:col-span-4'
+                                                    : 'col-span-1'
+                                            }
                                         >
                                             {renderWidget(id)}
                                         </DashboardWidgetWrapper>
