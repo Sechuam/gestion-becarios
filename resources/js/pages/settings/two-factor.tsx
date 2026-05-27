@@ -1,7 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
 import { ShieldBan, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
-import Heading from '@/components/heading';
 import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
 import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +18,7 @@ type Props = {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Two-factor authentication',
+        title: 'Mi cuenta',
         href: show(),
     },
 ];
@@ -42,25 +41,23 @@ export default function TwoFactor({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Two-factor authentication" />
+            <Head title="Autenticación de doble factor" />
 
-            <h1 className="sr-only">Two-factor authentication settings</h1>
+            <h1 className="sr-only">
+                Ajustes de autenticación de doble factor
+            </h1>
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Two-factor authentication"
-                        description="Manage your two-factor authentication settings"
-                    />
                     {twoFactorEnabled ? (
                         <div className="flex flex-col items-start justify-start space-y-4">
-                            <Badge variant="default">Enabled</Badge>
+                            <Badge variant="default">Habilitada</Badge>
                             <p className="text-muted-foreground">
-                                With two-factor authentication enabled, you will
-                                be prompted for a secure, random pin during
-                                login, which you can retrieve from the
-                                TOTP-supported application on your phone.
+                                Con la autenticación de doble factores activada,
+                                se te solicitará un PIN seguro y aleatorio
+                                durante el inicio de sesión, que podrás obtener
+                                desde la aplicación compatible con TOTP en tu
+                                teléfono.
                             </p>
 
                             <TwoFactorRecoveryCodes
@@ -77,7 +74,7 @@ export default function TwoFactor({
                                             type="submit"
                                             disabled={processing}
                                         >
-                                            <ShieldBan /> Disable 2FA
+                                            <ShieldBan /> Deshabilitar 2FA
                                         </Button>
                                     )}
                                 </Form>
@@ -85,12 +82,12 @@ export default function TwoFactor({
                         </div>
                     ) : (
                         <div className="flex flex-col items-start justify-start space-y-4">
-                            <Badge variant="destructive">Disabled</Badge>
+                            <Badge variant="destructive">Deshabilitada</Badge>
                             <p className="text-muted-foreground">
-                                When you enable two-factor authentication, you
-                                will be prompted for a secure pin during login.
-                                This pin can be retrieved from a TOTP-supported
-                                application on your phone.
+                                Cuando actives la autenticación de doble factor,
+                                se te pedirá un PIN seguro durante el inicio de
+                                sesión. Este PIN podrás recibirlo en la
+                                aplicación compatible con TOTP en tu teléfono.
                             </p>
 
                             <div>

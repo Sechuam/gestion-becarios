@@ -1,0 +1,255 @@
+import { Head, router, usePage } from '@inertiajs/react';
+import { Search, Shapes } from 'lucide-react';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { Pagination } from '@/components/common/Pagination';
+import { SimpleTable } from '@/components/common/SimpleTable';
+import { TableActionMenu } from '@/components/common/TableActionMenu';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types/navigation';
+
+type Props = {
+    practice_types: any;
+    filters: any;
+};
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Tipos de práctica', href: '/tipos-practica' },
+];
+
+export default function Index({ practice_types, filters = {} }: Props) {
+    const { auth } = usePage().props as any;
+    const isAdmin = auth?.user?.roles?.includes('admin');
+
+    const handleFilter = (key: string, value: string) => {
+        const newFilters = { ...filters, [key]: value };
+        if (value === '' || value === 'all') {
+            delete newFilters[key];
+        }
+        router.get('/tipos-practica', newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const handleSort = (key: string) => {
+        const currentKey = filters.sort;
+        const currentDir = filters.direction || 'asc';
+        const nextDir =
+            currentKey === key && currentDir === 'asc' ? 'desc' : 'asc';
+        router.get(
+            '/tipos-practica',
+            { ...filters, sort: key, direction: nextDir },
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    };
+
+    const columns = [
+        {
+            key: 'name',
+            label: 'Nombre',
+            cellClassName: 'text-foreground',
+            sortKey: 'name',
+        },
+        { key: 'description', label: 'Descripción', sortKey: 'description' },
+        {
+            key: 'priority',
+            label: 'Prioridad',
+            sortKey: 'priority',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
+            render: (row: any) => (
+                <div className="flex justify-center">
+                    <span className="inline-block w-20 rounded-lg border border-white/10 bg-linear-to-r from-sidebar to-sidebar-accent py-1 text-center text-[10px] font-black tracking-widest text-white uppercase shadow-md">
+                        {row.priority || '—'}
+                    </span>
+                </div>
+            ),
+        },
+        {
+            key: 'color',
+            label: 'Identificador',
+            sortKey: 'color',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
+            render: (row: any) =>
+                row.color ? (
+                    <div className="flex items-center justify-center gap-2">
+                        <div
+                            className="h-4 w-4 rounded-full border-2 border-white shadow-sm transition-transform hover:scale-110"
+                            style={{
+                                backgroundColor: row.color,
+                                boxShadow: `0 0 10px ${row.color}50`,
+                            }}
+                            title={`Color identificativo: ${row.color}`}
+                        />
+                    </div>
+                ) : (
+                    <span className="text-slate-300">—</span>
+                ),
+        },
+        {
+            key: 'is_active',
+            label: 'Estado',
+            sortKey: 'is_active',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
+            render: (row: any) => (
+                <div className="flex justify-center">
+                    <span
+                        className={`inline-flex w-24 items-center justify-center rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase shadow-sm transition-all ${
+                            row.is_active
+                                ? 'border border-white/10 bg-linear-to-r from-sidebar to-sidebar-accent text-white shadow-md'
+                                : 'border border-sidebar/20 bg-white text-sidebar'
+                        }`}
+                    >
+                        {row.is_active ? 'Activo' : 'Inactivo'}
+                    </span>
+                </div>
+            ),
+        },
+        {
+            key: 'actions',
+            label: 'Acciones',
+            headClassName: 'text-center',
+            cellClassName: 'text-center',
+            render: (row: any) => (
+                <div className="flex justify-center">
+                    <TableActionMenu
+                        actions={[
+                            {
+                                label: 'Editar',
+                                icon: 'edit',
+                                href: `/tipos-practica/${row.id}/edit`,
+                            },
+                            {
+                                label: row.is_active ? 'Desactivar' : 'Activar',
+                                onClick: () =>
+                                    router.patch(
+                                        `/tipos-practica/${row.id}/toggle`,
+                                    ),
+                            },
+                            {
+                                label: 'Eliminar',
+                                icon: 'delete',
+                                variant: 'destructive',
+                                onClick: () => {
+                                    if (
+                                        confirm(
+                                            `¿Seguro que quieres eliminar "${row.name}"?`,
+                                        )
+                                    ) {
+                                        router.delete(
+                                            `/tipos-practica/${row.id}`,
+                                        );
+                                    }
+                                },
+                            },
+                        ]}
+                    />
+                </div>
+            ),
+        },
+    ];
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Tipos de práctica" />
+
+            <div className="flex flex-col gap-6">
+                <ModuleHeader
+                    title="Tipos de Práctica"
+                    description="Gestiona las categorías y clasificaciones de las tareas para organizar mejor el seguimiento de los becarios."
+                    icon={<Shapes className="h-6 w-6" />}
+                    actions={
+                        isAdmin ? (
+                            <HeaderActionButton
+                                label="Nuevo tipo"
+                                href="/tipos-practica/create"
+                            />
+                        ) : undefined
+                    }
+                />
+
+                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="relative flex-1">
+                            <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                                placeholder="Buscar por nombre..."
+                                className="h-8 w-full rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
+                                defaultValue={filters.search}
+                                onChange={(e) =>
+                                    handleFilter('search', e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <div className="flex-1">
+                            <Select
+                                value={filters.status || 'all'}
+                                onValueChange={(v) => handleFilter('status', v)}
+                            >
+                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                                    <SelectValue>
+                                        {{
+                                            active: 'Activos',
+                                            inactive: 'Inactivos',
+                                        }[filters.status as string] || 'Todos'}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent className="rounded-lg border-sidebar/20">
+                                    <SelectItem value="all">Todos</SelectItem>
+                                    <SelectItem value="active">
+                                        Activos
+                                    </SelectItem>
+                                    <SelectItem value="inactive">
+                                        Inactivos
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-3 py-1 dark:bg-slate-800">
+                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                            <span className="text-[10px] font-bold tracking-widest whitespace-nowrap text-muted-foreground uppercase tabular-nums">
+                                {practice_types.data.length} /{' '}
+                                {practice_types.total} TIPOS
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <SimpleTable
+                    columns={columns}
+                    rows={practice_types.data}
+                    rowKey={(row) => row.id}
+                    sortKey={filters.sort}
+                    sortDirection={filters.direction}
+                    onSort={handleSort}
+                    striped={true}
+                />
+
+                <div className="mt-6 w-full">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                        <span className="text-sm font-medium whitespace-nowrap text-muted-foreground">
+                            Página {practice_types.current_page} de{' '}
+                            {practice_types.last_page}
+                        </span>
+                        <Pagination links={practice_types.links} />
+                    </div>
+                </div>
+            </div>
+        </AppLayout>
+    );
+}

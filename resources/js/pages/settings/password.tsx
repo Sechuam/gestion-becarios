@@ -2,7 +2,6 @@ import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
 import { useRef } from 'react';
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
-import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +13,7 @@ import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Password settings',
+        title: 'Mi cuenta',
         href: edit(),
     },
 ];
@@ -25,18 +24,12 @@ export default function Password() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Password settings" />
+            <Head title="Ajustes de contraseña" />
 
-            <h1 className="sr-only">Password settings</h1>
+            <h1 className="sr-only">Ajustes de contraseña</h1>
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Update password"
-                        description="Ensure your account is using a long, random password to stay secure"
-                    />
-
                     <Form
                         {...PasswordController.update.form()}
                         options={{
@@ -63,7 +56,7 @@ export default function Password() {
                             <>
                                 <div className="grid gap-2">
                                     <Label htmlFor="current_password">
-                                        Current password
+                                        Contraseña actual
                                     </Label>
 
                                     <Input
@@ -73,7 +66,7 @@ export default function Password() {
                                         type="password"
                                         className="mt-1 block w-full"
                                         autoComplete="current-password"
-                                        placeholder="Current password"
+                                        placeholder="Introduce tu contraseña actual"
                                     />
 
                                     <InputError
@@ -83,7 +76,7 @@ export default function Password() {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="password">
-                                        New password
+                                        Nueva contraseña
                                     </Label>
 
                                     <Input
@@ -93,7 +86,7 @@ export default function Password() {
                                         type="password"
                                         className="mt-1 block w-full"
                                         autoComplete="new-password"
-                                        placeholder="New password"
+                                        placeholder="Introduce la nueva contraseña"
                                     />
 
                                     <InputError message={errors.password} />
@@ -101,7 +94,7 @@ export default function Password() {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="password_confirmation">
-                                        Confirm password
+                                        Confirmar contraseña
                                     </Label>
 
                                     <Input
@@ -110,7 +103,7 @@ export default function Password() {
                                         type="password"
                                         className="mt-1 block w-full"
                                         autoComplete="new-password"
-                                        placeholder="Confirm password"
+                                        placeholder="Repite la nueva contraseña"
                                     />
 
                                     <InputError
@@ -123,7 +116,7 @@ export default function Password() {
                                         disabled={processing}
                                         data-test="update-password-button"
                                     >
-                                        Save password
+                                        Guardar cambios
                                     </Button>
 
                                     <Transition
@@ -134,7 +127,7 @@ export default function Password() {
                                         leaveTo="opacity-0"
                                     >
                                         <p className="text-sm text-neutral-600">
-                                            Saved
+                                            Guardada
                                         </p>
                                     </Transition>
                                 </div>

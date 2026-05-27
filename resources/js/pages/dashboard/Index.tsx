@@ -1,0 +1,597 @@
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import {
+    DndContext,
+    DragOverlay,
+    KeyboardSensor,
+    PointerSensor,
+    defaultDropAnimationSideEffects,
+    rectIntersection,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    rectSortingStrategy,
+    verticalListSortingStrategy,
+    useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Head } from '@inertiajs/react';
+import {
+    AlertTriangle,
+    CalendarClock,
+    ClipboardCheck,
+    GripHorizontal,
+    KanbanSquare,
+    Users,
+} from 'lucide-react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
+import { DashboardWidgetWrapper } from '@/components/dashboard/DashboardWidgetWrapper';
+import { InternTaskProgressPanel } from '@/components/dashboard/InternTaskProgressPanel';
+import { ManageWidgetsModal } from '@/components/dashboard/ManageWidgetsModal';
+import { TodayAgendaPanel } from '@/components/dashboard/TodayAgendaPanel';
+import type {
+    DashboardAgendaItem,
+    DashboardAlert,
+    DashboardChartPoint,
+    DashboardCurrentLog,
+    DashboardMetric,
+    DashboardRole,
+    DashboardStats,
+    DashboardTaskProgress,
+} from '@/components/dashboard/types';
+import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
+import { dashboard } from '@/routes';
+import type { BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: dashboard().url },
+];
+
+const InternsByCenterChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.InternsByCenterChart,
+    })),
+);
+const TaskStatusChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.TaskStatusChart,
+    })),
+);
+const AttendanceChart = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.AttendanceChart,
+    })),
+);
+const AttendanceStatsCard = lazy(() =>
+    import('@/components/dashboard/DashboardCharts').then((module) => ({
+        default: module.AttendanceStatsCard,
+    })),
+);
+
+function ChartFallback() {
+    return (
+        <div className="min-h-[220px] rounded-xl border border-slate-200 bg-white/75 shadow-xs dark:border-slate-800 dark:bg-slate-900/75" />
+    );
+}
+
+// Estructura inicial del puzzle
+const DEFAULT_SECTIONS = [
+    'row_metrics',
+    'row_top_charts',
+    'row_bottom_panels',
+    'row_alerts',
+];
+const DEFAULT_TOP_CHARTS = ['interns_chart', 'task_chart'];
+const DEFAULT_BOTTOM_PANELS = ['attendance', 'agenda', 'progress'];
+const DEFAULT_VISIBLE_WIDGETS = DEFAULT_TOP_CHARTS.concat(
+    DEFAULT_BOTTOM_PANELS,
+).concat(['metrics', 'alerts']);
+const INTERN_VISIBLE_WIDGETS = ['metrics', 'attendance', 'agenda', 'progress'];
+
+function getSupportedWidgets(role: DashboardRole) {
+    if (role === 'intern') {
+        return INTERN_VISIBLE_WIDGETS;
+    }
+
+    return DEFAULT_VISIBLE_WIDGETS;
+}
+
+function getDefaultTopCharts(role: DashboardRole) {
+    return role === 'intern' ? [] : DEFAULT_TOP_CHARTS;
+}
+
+function getDefaultVisibleWidgets(role: DashboardRole) {
+    return getSupportedWidgets(role);
+}
+
+function filterSupported(items: string[], supported: string[]) {
+    return items.filter((item) => supported.includes(item));
+}
+
+interface DashboardProps {
+    role: DashboardRole;
+    stats: DashboardStats;
+    interns_by_center: DashboardChartPoint[];
+    attendance_chart: DashboardChartPoint[];
+    task_status_chart: DashboardChartPoint[];
+    task_progress: DashboardTaskProgress[];
+    alerts: DashboardAlert[];
+    today_agenda: DashboardAgendaItem[];
+    current_log: DashboardCurrentLog | null;
+}
+
+// Componente para las filas móviles
+function SortableRow({
+    id,
+    children,
+    isEditing,
+}: {
+    id: string;
+    children: React.ReactNode;
+    isEditing: boolean;
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 40 : 'auto',
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={cn(
+                'relative transition-all duration-300',
+                isDragging && 'opacity-30',
+                isEditing && 'pl-10',
+            )}
+        >
+            {isEditing && (
+                <div
+                    {...attributes}
+                    {...listeners}
+                    className="group absolute top-0 bottom-0 left-0 flex w-8 cursor-grab items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50 text-slate-400 transition-all hover:bg-slate-100 hover:text-sidebar"
+                    title="Arrastrar fila"
+                >
+                    <GripHorizontal className="h-4 w-4 rotate-90 opacity-40 group-hover:opacity-100" />
+                </div>
+            )}
+            {children}
+        </div>
+    );
+}
+
+export default function Dashboard({
+    role,
+    stats,
+    interns_by_center,
+    attendance_chart,
+    task_status_chart,
+    task_progress,
+    alerts,
+    today_agenda,
+    current_log,
+}: DashboardProps) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+    const [sections, setSections] = useState<string[]>(DEFAULT_SECTIONS);
+    const supportedWidgets = getSupportedWidgets(role);
+    const layoutStorageKey = `dashboard-puzzle-${role}`;
+    const [topCharts, setTopCharts] = useState<string[]>(
+        getDefaultTopCharts(role),
+    );
+    const [bottomPanels, setBottomPanels] = useState<string[]>(
+        DEFAULT_BOTTOM_PANELS,
+    );
+    const [visibleWidgets, setVisibleWidgets] = useState<string[]>(
+        getDefaultVisibleWidgets(role),
+    );
+    const [activeId, setActiveId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const saved =
+            localStorage.getItem(layoutStorageKey) ??
+            localStorage.getItem('dashboard-puzzle');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.sections) setSections(parsed.sections);
+                if (parsed.topCharts)
+                    setTopCharts(
+                        filterSupported(parsed.topCharts, supportedWidgets),
+                    );
+                if (parsed.bottomPanels)
+                    setBottomPanels(
+                        filterSupported(parsed.bottomPanels, supportedWidgets),
+                    );
+                if (parsed.visibleWidgets)
+                    setVisibleWidgets(
+                        filterSupported(
+                            parsed.visibleWidgets,
+                            supportedWidgets,
+                        ),
+                    );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }, [layoutStorageKey, supportedWidgets]);
+
+    const saveLayout = (
+        newSections: string[],
+        newTop: string[],
+        newBottom: string[],
+        newVisible: string[],
+    ) => {
+        const filteredTop = filterSupported(newTop, supportedWidgets);
+        const filteredBottom = filterSupported(newBottom, supportedWidgets);
+        const filteredVisible = filterSupported(newVisible, supportedWidgets);
+
+        localStorage.setItem(
+            layoutStorageKey,
+            JSON.stringify({
+                sections: newSections,
+                topCharts: filteredTop,
+                bottomPanels: filteredBottom,
+                visibleWidgets: filteredVisible,
+            }),
+        );
+    };
+
+    const toggleWidget = (id: string) => {
+        if (!supportedWidgets.includes(id)) return;
+
+        const newVisible = visibleWidgets.includes(id)
+            ? visibleWidgets.filter((w) => w !== id)
+            : [...visibleWidgets, id];
+        setVisibleWidgets(newVisible);
+        saveLayout(sections, topCharts, bottomPanels, newVisible);
+    };
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
+    );
+
+    const handleDragStart = (event: DragStartEvent) =>
+        setActiveId(event.active.id as string);
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) {
+            setActiveId(null);
+            return;
+        }
+
+        const activeId = active.id as string;
+        const overId = over.id as string;
+
+        // Si es una fila principal
+        if (sections.includes(activeId)) {
+            const oldIndex = sections.indexOf(activeId);
+            const newIndex = sections.indexOf(overId);
+            const newSections = arrayMove(sections, oldIndex, newIndex);
+            setSections(newSections);
+            saveLayout(newSections, topCharts, bottomPanels, visibleWidgets);
+        }
+        // Si es un gráfico superior
+        else if (topCharts.includes(activeId)) {
+            const oldIndex = topCharts.indexOf(activeId);
+            const newIndex = topCharts.indexOf(overId);
+            const newTop = arrayMove(topCharts, oldIndex, newIndex);
+            setTopCharts(newTop);
+            saveLayout(sections, newTop, bottomPanels, visibleWidgets);
+        }
+        // Si es un panel inferior
+        else if (bottomPanels.includes(activeId)) {
+            const oldIndex = bottomPanels.indexOf(activeId);
+            const newIndex = bottomPanels.indexOf(overId);
+            const newBottom = arrayMove(bottomPanels, oldIndex, newIndex);
+            setBottomPanels(newBottom);
+            saveLayout(sections, topCharts, newBottom, visibleWidgets);
+        }
+
+        setActiveId(null);
+    };
+
+    const roleLabel =
+        role === 'admin'
+            ? 'Administración'
+            : role === 'tutor'
+              ? 'Tutoría'
+              : 'Becario';
+    const taskCompletion =
+        stats.total_tasks > 0
+            ? Math.round((stats.completed_tasks / stats.total_tasks) * 100)
+            : 0;
+
+    const metrics: DashboardMetric[] = [
+        {
+            label: role === 'intern' ? 'Mi práctica' : 'Becarios activos',
+            value: stats.active_interns,
+            hint:
+                role === 'admin'
+                    ? 'En todos los centros'
+                    : 'Dentro de tu alcance',
+            icon: Users,
+        },
+        {
+            label: 'Tareas abiertas',
+            value: stats.active_tasks,
+            hint: 'Pendientes, activas o en revisión',
+            icon: KanbanSquare,
+        },
+        {
+            label: 'Evaluaciones pendientes',
+            value: stats.pending_evaluations,
+            hint: 'Sin evaluación registrada este mes',
+            icon: ClipboardCheck,
+        },
+        {
+            label: 'Próximas finalizaciones',
+            value: stats.upcoming_endings,
+            hint: 'Prácticas que terminan en 30 días',
+            icon: CalendarClock,
+        },
+        {
+            label: 'Alertas activas',
+            value: stats.alerts,
+            hint: 'Ausencias y jornadas por revisar',
+            icon: AlertTriangle,
+        },
+    ].filter((metric) => {
+        if (role === 'intern') {
+            return !['Mi práctica', 'Alertas activas'].includes(metric.label);
+        }
+
+        return !['Tareas abiertas', 'Alertas activas'].includes(metric.label);
+    });
+
+    const renderWidget = (id: string) => {
+        switch (id) {
+            case 'metrics':
+                return <DashboardMetricCards metrics={metrics} />;
+            case 'interns_chart':
+                return (
+                    <Suspense fallback={<ChartFallback />}>
+                        <InternsByCenterChart data={interns_by_center} />
+                    </Suspense>
+                );
+            case 'task_chart':
+                return (
+                    <Suspense fallback={<ChartFallback />}>
+                        <TaskStatusChart data={task_status_chart} />
+                    </Suspense>
+                );
+            case 'attendance':
+                return (
+                    <div className="flex h-full flex-col gap-2.5">
+                        <Suspense fallback={<ChartFallback />}>
+                            <AttendanceChart
+                                className="min-h-[380px] flex-[1_1_0]"
+                                data={attendance_chart}
+                                currentLog={current_log}
+                            />
+                            <AttendanceStatsCard
+                                className="shrink-0"
+                                completeAttendanceRate={
+                                    stats.complete_attendance_rate
+                                }
+                                averageDelayMinutes={
+                                    stats.average_delay_minutes
+                                }
+                                absenceRate={stats.absence_rate}
+                            />
+                        </Suspense>
+                    </div>
+                );
+            case 'agenda':
+                return (
+                    <TodayAgendaPanel
+                        className="h-full"
+                        todayAgenda={today_agenda}
+                        currentLog={current_log}
+                    />
+                );
+            case 'progress':
+                return (
+                    <InternTaskProgressPanel
+                        className="h-full"
+                        role={role}
+                        taskProgress={task_progress}
+                        averageResolutionDays={
+                            stats.average_task_resolution_days
+                        }
+                    />
+                );
+            case 'alerts':
+                return <DashboardAlertCards alerts={alerts} />;
+            default:
+                return null;
+        }
+    };
+
+    const renderSection = (rowId: string) => {
+        switch (rowId) {
+            case 'row_metrics':
+                if (!visibleWidgets.includes('metrics')) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <DashboardWidgetWrapper
+                            id="metrics"
+                            isEditing={isEditing}
+                            className="w-full"
+                        >
+                            {renderWidget('metrics')}
+                        </DashboardWidgetWrapper>
+                    </SortableRow>
+                );
+            case 'row_top_charts': {
+                const visibleTop = topCharts.filter((id) =>
+                    visibleWidgets.includes(id),
+                );
+                if (visibleTop.length === 0) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <SortableContext
+                            items={visibleTop}
+                            strategy={rectSortingStrategy}
+                        >
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+                                {topCharts.map((id) => {
+                                    if (!visibleWidgets.includes(id))
+                                        return null;
+                                    return (
+                                        <DashboardWidgetWrapper
+                                            key={id}
+                                            id={id}
+                                            isEditing={isEditing}
+                                            className={
+                                                id === 'interns_chart'
+                                                    ? 'md:col-span-7'
+                                                    : 'md:col-span-5'
+                                            }
+                                        >
+                                            {renderWidget(id)}
+                                        </DashboardWidgetWrapper>
+                                    );
+                                })}
+                            </div>
+                        </SortableContext>
+                    </SortableRow>
+                );
+            }
+            case 'row_bottom_panels': {
+                const visibleBottom = bottomPanels.filter((id) =>
+                    visibleWidgets.includes(id),
+                );
+                if (visibleBottom.length === 0) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <SortableContext
+                            items={visibleBottom}
+                            strategy={rectSortingStrategy}
+                        >
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                {bottomPanels.map((id) => {
+                                    if (!visibleWidgets.includes(id))
+                                        return null;
+                                    return (
+                                        <DashboardWidgetWrapper
+                                            key={id}
+                                            id={id}
+                                            isEditing={isEditing}
+                                            className="col-span-1"
+                                        >
+                                            {renderWidget(id)}
+                                        </DashboardWidgetWrapper>
+                                    );
+                                })}
+                            </div>
+                        </SortableContext>
+                    </SortableRow>
+                );
+            }
+            case 'row_alerts':
+                if (!visibleWidgets.includes('alerts')) return null;
+                return (
+                    <SortableRow key={rowId} id={rowId} isEditing={isEditing}>
+                        <DashboardWidgetWrapper
+                            id="alerts"
+                            isEditing={isEditing}
+                            className="w-full"
+                        >
+                            {renderWidget('alerts')}
+                        </DashboardWidgetWrapper>
+                    </SortableRow>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Dashboard" />
+            <div className="space-y-4">
+                <DashboardHeader
+                    roleLabel={roleLabel}
+                    alerts={stats.alerts}
+                    completedTasks={stats.completed_tasks}
+                    taskCompletion={taskCompletion}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                    onManageWidgets={() => setIsManageModalOpen(true)}
+                />
+
+                <ManageWidgetsModal
+                    open={isManageModalOpen}
+                    onOpenChange={setIsManageModalOpen}
+                    visibleWidgets={visibleWidgets}
+                    supportedWidgets={supportedWidgets}
+                    onToggleWidget={toggleWidget}
+                />
+
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={rectIntersection}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    onDragCancel={() => setActiveId(null)}
+                >
+                    <SortableContext
+                        items={sections}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        <div
+                            className={cn(
+                                '-m-4 flex flex-col gap-6 rounded-xl p-4 transition-all duration-500',
+                                isEditing &&
+                                    'bg-slate-100/50 bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:24px_24px] shadow-inner ring-1 ring-slate-200/60 dark:bg-slate-950/20 dark:ring-slate-800/60',
+                            )}
+                        >
+                            {sections.map((rowId) => renderSection(rowId))}
+                        </div>
+                    </SortableContext>
+
+                    <DragOverlay
+                        dropAnimation={{
+                            sideEffects: defaultDropAnimationSideEffects({
+                                styles: { active: { opacity: '0.4' } },
+                            }),
+                        }}
+                    >
+                        {activeId ? (
+                            <div className="pointer-events-none scale-[1.02] opacity-90 shadow-xl transition-transform">
+                                {sections.includes(activeId) ? (
+                                    <div className="rounded-xl border-2 border-dashed border-sidebar/20 bg-white/50 p-4 backdrop-blur-sm">
+                                        Moviendo sección completa...
+                                    </div>
+                                ) : (
+                                    renderWidget(activeId)
+                                )}
+                            </div>
+                        ) : null}
+                    </DragOverlay>
+                </DndContext>
+            </div>
+        </AppLayout>
+    );
+}

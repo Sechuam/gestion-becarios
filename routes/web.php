@@ -1,69 +1,266 @@
 <?php
 
-use App\Exports\UsersExport;
-use Illuminate\Http\Request;
+use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\CalendarEventController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EducationCenterController;
+use App\Http\Controllers\EvaluationController;
+use App\Http\Controllers\EvaluationCriterionController;
+use App\Http\Controllers\EvaluationReportController;
+use App\Http\Controllers\InternController;
+use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\PracticeTypeController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RolesController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TimeLogController;
+use App\Http\Controllers\TutorController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
-use Maatwebsite\Excel\Facades\Excel;
-use Spatie\LaravelPdf\Facades\Pdf;
-use Inertia\Inertia;
 
 // Ruta de bienvenida
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-// --- RUTAS PROTEGIDAS (Requieren Login) ---
+// Rutas protegidas que requieren login y verificación de email
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Dashboard principal
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    // Rutas para el área personal del becario (Redirigidas a Ajustes)
+    Route::get('mi-perfil', fn () => redirect()->route('profile.edit'))
+        ->name('interns.my-profile')
+        ->middleware('role:intern|becario');
+    Route::post('mi-perfil/avatar', fn () => redirect()->route('profile.avatar', [], 307))
+        ->name('interns.update-avatar')
+        ->middleware('role:intern|becario');
 
-    // Módulo de Usuarios (Coincidiendo con tu Sidebar)
+    // Ruta para que el centro concreto del becario en cuestion
+    Route::get('mi-centro', [EducationCenterController::class, 'myCenter'])
+        ->name('schools.my');
+
+    // Rutas para tareas
+    Route::get('tareas', [TaskController::class, 'index'])->name('tasks.index');
+    Route::get('tareas/create', [TaskController::class, 'create'])
+        ->name('tasks.create')
+        ->middleware('tutor');
+    Route::get('tareas/mis', [TaskController::class, 'myTasks'])->name('tasks.mine');
+    Route::patch('tareas/board-order', [TaskController::class, 'updateBoardOrder'])
+        ->name('tasks.board-order');
+    Route::get('mis-becarios', [TutorController::class, 'mine'])
+        ->name('tutors.mine')
+        ->middleware('tutor');
+    Route::get('tareas/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
+    Route::get('tareas/{task}', [TaskController::class, 'show'])->name('tasks.show');
+    Route::post('tareas', [TaskController::class, 'store'])
+        ->name('tasks.store')
+        ->middleware('tutor');
+    Route::patch('tareas/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('tareas/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::patch('tareas/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.status');
+    Route::post('tareas/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
+    Route::post('tareas/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.comments.store');
+    Route::patch('tareas/{task}/comments/{comment}', [TaskController::class, 'updateComment'])->name('tasks.comments.update');
+    Route::delete('tareas/{task}/comments/{comment}', [TaskController::class, 'destroyComment'])->name('tasks.comments.destroy');
+    Route::post('tareas/{task}/attachments', [TaskController::class, 'addAttachment'])->name('tasks.attachments.store');
+    Route::get('/asistencia', [TimeLogController::class, 'index'])->name('attendance.index');
+    Route::post('/time-logs/clock-in', [TimeLogController::class, 'clockIn'])->name('time-logs.clock-in');
+    Route::post('/time-logs/clock-out', [TimeLogController::class, 'clockOut'])->name('time-logs.clock-out');
+    Route::post('/time-logs/manual', [TimeLogController::class, 'storeManual'])->name('time-logs.manual');
+    Route::patch('/time-logs/{timeLog}', [TimeLogController::class, 'updateEvent'])->name('time-logs.updateEvent');
+    Route::get('/time-logs/events', [TimeLogController::class, 'getEvents'])->name('time-logs.events');
+
+    // Rutas de Eventos de Calendario
+    Route::post('/calendar-events', [CalendarEventController::class, 'store'])->name('calendar-events.store');
+    Route::patch('/calendar-events/{calendarEvent}', [CalendarEventController::class, 'update'])->name('calendar-events.update');
+    Route::delete('/calendar-events/{calendarEvent}', [CalendarEventController::class, 'destroy'])->name('calendar-events.destroy');
+
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
+    Route::patch('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+    Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+    // Rutas de Ausencias
+    Route::post('/absences', [AbsenceController::class, 'store'])->name('absences.store');
+    Route::patch('/absences/{absence}/status', [AbsenceController::class, 'updateStatus'])->name('absences.updateStatus');
+    Route::post('/absences/{absence}/justification', [AbsenceController::class, 'uploadJustification'])->name('absences.uploadJustification');
+    Route::get('/interns/{intern}/report', [AttendanceReportController::class, 'download'])->name('interns.report');
+    Route::get('interns/complete-profile', [InternController::class, 'completeProfile'])
+        ->name('interns.complete-profile');
+    Route::patch('interns/complete-profile', [InternController::class, 'storeCompleteProfile'])
+        ->name('interns.complete-profile.store');
+
+    // Catálogo de tipos de práctica (solo admin)
+    Route::get('tipos-practica', [PracticeTypeController::class, 'index'])
+        ->name('practice-types.index')
+        ->middleware('admin');
+    Route::get('tipos-practica/create', [PracticeTypeController::class, 'create'])
+        ->name('practice-types.create')
+        ->middleware('admin');
+    Route::post('tipos-practica', [PracticeTypeController::class, 'store'])
+        ->name('practice-types.store')
+        ->middleware('admin');
+    Route::get('tipos-practica/{practiceType}/edit', [PracticeTypeController::class, 'edit'])
+        ->name('practice-types.edit')
+        ->middleware('admin');
+    Route::patch('tipos-practica/{practiceType}', [PracticeTypeController::class, 'update'])
+        ->name('practice-types.update')
+        ->middleware('admin');
+    Route::delete('tipos-practica/{practiceType}', [PracticeTypeController::class, 'destroy'])
+        ->name('practice-types.destroy')
+        ->middleware('admin');
+    Route::patch('tipos-practica/{practiceType}/toggle', [PracticeTypeController::class, 'toggle'])
+        ->name('practice-types.toggle')
+        ->middleware('admin');
+
+    // Dashboard principal
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->middleware(['auth', 'verified'])
+        ->name('dashboard');
+
+    // Módulo de Usuarios
     // Nota: El primer parámetro es la URL, el segundo es la carpeta en Pages
-    Route::inertia('becarios', 'interns/index')->name('becarios.index');
-    Route::inertia('tutores', 'tutors/index')->name('tutores.index');
+    Route::get('becarios', [InternController::class, 'index'])
+        ->name('becarios.index')
+        ->middleware('staff');
+    Route::get('tutores', [TutorController::class, 'index'])
+        ->name('tutores.index')
+        ->middleware('can:manage tutors');
+    Route::get('tutores/{user}', [TutorController::class, 'show'])
+        ->name('tutores.show')
+        ->middleware('staff');
     Route::inertia('administrador', 'admin/index')->name('admin.index');
     // Ruta para la pestaña Usuarios
-    Route::inertia('usuarios', 'users/index')->name('users.index');
+    Route::get('usuarios', [UsersController::class, 'index'])
+        ->name('users.index')
+        ->middleware('can:manage users');
+    Route::patch('usuarios/{user}/role', [UsersController::class, 'updateRole'])
+        ->name('users.role')
+        ->middleware('can:manage users');
+
+    // Ruta para que el Admin envíe la invitación
+    Route::post('invitaciones', [InvitationController::class, 'store'])
+        ->name('invitations.store')
+        ->middleware('can:manage users');
+
     // Ruta para los centros educativos
-    Route::inertia('schools', 'schools/index')->name('schools.index');
-    //Ruta para tareas
-    Route::inertia('/tareas', 'tasks/index')->name('tasks.index');
-    // Ruta para evaluaciones
-    Route::inertia('/evaluaciones', 'evaluations/index')->name('evaluations.index');
-    // Ruta para asistencia
-    Route::inertia('/asistencia', 'attendance/index')->name('attendance.index');
-    // Ruta para reportes
-    Route::inertia('/reportes', 'reports/index')->name('reports.index');
+    Route::get('centros', [EducationCenterController::class, 'index'])
+        ->name('schools.index')
+        ->middleware('staff');
+    Route::get('centros/export', [EducationCenterController::class, 'exportIndex'])
+        ->name('schools.export.index')
+        ->middleware('admin');
+    Route::get('centros/{school}', [EducationCenterController::class, 'show'])
+        ->whereNumber('school')
+        ->name('schools.show')
+        ->middleware('staff');
+    Route::get('centros/{school}/export', [EducationCenterController::class, 'export'])
+        ->whereNumber('school')
+        ->name('schools.export')
+        ->middleware('admin');
 
-    // Gestión de Media / Archivos
-    Route::view('/media-test-form', 'media-test');
-    Route::post('/media-test', function (Request $request) {
-        $request->validate([
-            'file' => ['required', 'file'],
-        ]);
+    Route::get('/interns/export', [InternController::class, 'export'])
+        ->name('becarios.export')
+        ->middleware('staff');
 
-        $user = $request->user();
-        $user->addMediaFromRequest('file')->toMediaCollection('avatars');
-
-        return 'OK';
+    Route::middleware('can:manage interns')->group(function () {
+        Route::resource('interns', InternController::class)->except(['index', 'show']);
+        Route::post('interns/{intern}/restore', [InternController::class, 'restore'])->name('interns.restore');
+        Route::delete('interns/{intern}/force', [InternController::class, 'forceDelete'])->name('interns.forceDelete');
     });
 
-    // Exportación de Usuarios
-    Route::get('/users-export', function () {
-        return Excel::download(new UsersExport, 'users.xlsx');
-    })->name('users.export');
+    // Notas de Becarios (Accesibles para personal de staff: Admins y Tutores)
+    Route::patch('interns/{intern}/notes', [InternController::class, 'updateNotes'])->name('interns.notes');
+    Route::post('interns/{intern}/notes/thread', [InternController::class, 'storeInternalNote'])->name('interns.notes.store');
+    Route::patch('interns/{intern}/notes/{note}', [InternController::class, 'updateInternalNote'])->name('interns.notes.update');
+    Route::delete('interns/{intern}/notes/{note}', [InternController::class, 'destroyInternalNote'])->name('interns.notes.destroy');
+
+    // Notas de Centros (Accesibles para personal de staff: Admins y Tutores)
+    Route::patch('centros/{school}/notes', [EducationCenterController::class, 'updateNotes'])->name('schools.notes');
+    Route::post('centros/{school}/notes/thread', [EducationCenterController::class, 'storeInternalNote'])->name('schools.notes.store');
+    Route::patch('centros/{school}/notes/{note}', [EducationCenterController::class, 'updateInternalNote'])->name('schools.notes.update');
+    Route::delete('centros/{school}/notes/{note}', [EducationCenterController::class, 'destroyInternalNote'])->name('schools.notes.destroy');
+
+    Route::get('interns/{intern}', [InternController::class, 'show'])
+        ->name('interns.show')
+        ->middleware('staff');
+
+    // Rutas protegidas para administración de centros
+    Route::middleware('can:manage schools')->group(function () {
+        Route::resource('centros', EducationCenterController::class)
+            ->parameters(['centros' => 'school'])
+            ->except(['index', 'show']);
+        Route::post('centros/{school}/restore', [EducationCenterController::class, 'restore'])->name('schools.restore');
+        Route::delete('centros/{school}/force', [EducationCenterController::class, 'forceDelete'])->name('schools.forceDelete');
+    });
+
+    // Ruta para evaluaciones
+    Route::get('/evaluaciones', [EvaluationController::class, 'index'])
+        ->name('evaluations.index');
+    Route::get('/evaluaciones/create', [EvaluationController::class, 'create'])
+        ->name('evaluations.create');
+    Route::post('/evaluaciones', [EvaluationController::class, 'store'])
+        ->name('evaluations.store');
+    Route::get('/evaluaciones/criterios', [EvaluationCriterionController::class, 'index'])
+        ->name('evaluation-criteria.index')
+        ->middleware('admin');
+    Route::get('/evaluaciones/criterios/create', [EvaluationCriterionController::class, 'create'])
+        ->name('evaluation-criteria.create')
+        ->middleware('admin');
+    Route::post('/evaluaciones/criterios', [EvaluationCriterionController::class, 'store'])
+        ->name('evaluation-criteria.store')
+        ->middleware('admin');
+    Route::get('/evaluaciones/criterios/{criterion}/edit', [EvaluationCriterionController::class, 'edit'])
+        ->name('evaluation-criteria.edit')
+        ->middleware('admin');
+    Route::patch('/evaluaciones/criterios/{criterion}', [EvaluationCriterionController::class, 'update'])
+        ->name('evaluation-criteria.update')
+        ->middleware('admin');
+    Route::delete('/evaluaciones/criterios/{criterion}', [EvaluationCriterionController::class, 'destroy'])
+        ->name('evaluation-criteria.destroy')
+        ->middleware('admin');
+    Route::patch('/evaluaciones/criterios/{criterion}/toggle', [EvaluationCriterionController::class, 'toggle'])
+        ->name('evaluation-criteria.toggle')
+        ->middleware('admin');
+    Route::get('/evaluaciones/{evaluation}', [EvaluationController::class, 'show'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.show');
+    Route::delete('/evaluaciones/{evaluation}', [EvaluationController::class, 'destroy'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.destroy');
+    Route::get('/evaluaciones/{evaluation}/pdf', [EvaluationReportController::class, 'download'])
+        ->whereNumber('evaluation')
+        ->name('evaluations.pdf');
+    // Ruta para reportes
+    Route::get('/reportes', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reportes/plantillas', [ReportController::class, 'storeTemplate'])->name('reports.templates.store');
+    Route::patch('/reportes/plantillas/{template}', [ReportController::class, 'updateTemplate'])->name('reports.templates.update');
+    Route::delete('/reportes/plantillas/{template}', [ReportController::class, 'destroyTemplate'])->name('reports.templates.destroy');
+    Route::get('/reportes/preview', [ReportController::class, 'preview'])->name('reports.preview');
+    Route::get('/reportes/export', [ReportController::class, 'export'])->name('reports.export');
+    // Roles y permisos (admin)
+    Route::get('/roles', [RolesController::class, 'index'])
+        ->name('roles.index')
+        ->middleware('can:manage users');
+    Route::post('/roles', [RolesController::class, 'store'])
+        ->name('roles.store')
+        ->middleware('can:manage users');
+    Route::patch('/roles/{role}', [RolesController::class, 'update'])
+        ->name('roles.update')
+        ->middleware('can:manage users');
+    Route::delete('/roles/{role}', [RolesController::class, 'destroy'])
+        ->name('roles.destroy')
+        ->middleware('can:manage users');
+    Route::post('/roles/{role}/permissions/{permission}', [RolesController::class, 'togglePermission'])
+        ->name('roles.permissions.toggle')
+        ->middleware('can:manage users');
+
 });
 
-// --- RUTAS PÚBLICAS O ESPECIALES ---
+// Rutas Públicas (para invitados que aún no se han logueado)
+Route::middleware('guest')->group(function () {
+    Route::get('registro/invitacion/{token}', [InvitationController::class, 'accept'])->name('register.invitation');
+    Route::post('registro/invitacion/registrar', [InvitationController::class, 'register'])->name('register.invitation.store');
+});
 
+// rutas públicas o especiales
 require __DIR__.'/settings.php';
-
-// Generación de PDF
-Route::get('/pdf-ejemplo', function () {
-    $user = auth()->user();
-    return Pdf::view('example', ['user' => $user])
-        ->download('ejemplo.pdf');
-});
-

@@ -12,15 +12,15 @@ export default function AppearanceToggleTab({
     const { appearance, updateAppearance } = useAppearance();
 
     const tabs: { value: Appearance; icon: LucideIcon; label: string }[] = [
-        { value: 'light', icon: Sun, label: 'Light' },
-        { value: 'dark', icon: Moon, label: 'Dark' },
-        { value: 'system', icon: Monitor, label: 'System' },
+        { value: 'light', icon: Sun, label: 'Claro' },
+        { value: 'dark', icon: Moon, label: 'Oscuro' },
+        { value: 'system', icon: Monitor, label: 'Sistema' },
     ];
 
     return (
         <div
             className={cn(
-                'inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800',
+                'grid w-full grid-cols-1 gap-2 rounded-xl border border-sidebar/10 bg-slate-50/80 p-1.5 shadow-sm sm:grid-cols-3 dark:border-slate-700 dark:bg-slate-900/60',
                 className,
             )}
             {...props}
@@ -30,14 +30,14 @@ export default function AppearanceToggleTab({
                     key={value}
                     onClick={() => updateAppearance(value)}
                     className={cn(
-                        'flex items-center rounded-md px-3.5 py-1.5 transition-colors',
+                        'flex h-10 items-center justify-center rounded-lg px-3.5 text-[10px] font-black tracking-widest uppercase transition-all',
                         appearance === value
-                            ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
-                            : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
+                            ? 'border border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white'
+                            : 'text-slate-500 hover:bg-white hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white',
                     )}
                 >
-                    <Icon className="-ml-1 h-4 w-4" />
-                    <span className="ml-1.5 text-sm">{label}</span>
+                    <Icon className="mr-2 h-4 w-4" />
+                    <span>{label}</span>
                 </button>
             ))}
         </div>

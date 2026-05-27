@@ -1,6 +1,12 @@
 import { Head } from '@inertiajs/react';
 import AppearanceTabs from '@/components/appearance-tabs';
-import Heading from '@/components/heading';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit as editAppearance } from '@/routes/appearance';
@@ -8,7 +14,7 @@ import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Appearance settings',
+        title: 'Mi cuenta',
         href: editAppearance(),
     },
 ];
@@ -16,19 +22,30 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Appearance() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Appearance settings" />
+            <Head title="Ajustes de apariencia" />
 
-            <h1 className="sr-only">Appearance settings</h1>
+            <h1 className="sr-only">Ajustes de apariencia</h1>
 
             <SettingsLayout>
-                <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Appearance settings"
-                        description="Update your account's appearance settings"
-                    />
-                    <AppearanceTabs />
-                </div>
+                <Card className="pt-0 pb-0">
+                    <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
+                    <CardHeader className="border-b border-slate-400 bg-slate-200 py-3 dark:border-slate-800 dark:bg-slate-800/70">
+                        <CardTitle className="text-slate-800 dark:text-slate-100">
+                            Apariencia
+                        </CardTitle>
+                        <CardDescription>
+                            Elige cómo quieres visualizar la interfaz en este
+                            dispositivo.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 py-5">
+                        <AppearanceTabs />
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                            El modo sistema seguirá automáticamente la
+                            preferencia de apariencia configurada en tu equipo.
+                        </p>
+                    </CardContent>
+                </Card>
             </SettingsLayout>
         </AppLayout>
     );

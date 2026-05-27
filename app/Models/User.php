@@ -4,16 +4,22 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, InteractsWithMedia, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, HasRoles, InteractsWithMedia, LogsActivity, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +44,15 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'remember_token',
     ];
 
+    protected $appends = [
+        'avatar',
+    ];
+
+    public function getAvatarAttribute()
+    {
+        return $this->getFirstMediaUrl('avatar');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -50,5 +65,86 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function intern(): HasOne
+    {
+        return $this->hasOne(Intern::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function absences()
+    {
+        return $this->hasMany(Absence::class);
+    }
+
+    public function timeLogs()
+    {
+        return $this->hasMany(TimeLog::class);
+    }
+
+    public function evaluationsGiven(): HasMany
+    {
+        return $this->hasMany(Evaluation::class, 'evaluator_user_id');
+    }
+
+    public function assignedInterns(): HasMany
+    {
+        return $this->hasMany(Intern::class, 'company_tutor_user_id');
+    }
+
+    public function createdTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'created_by');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->normalizedRoleNames()
+            ->intersect(['admin'])
+            ->isNotEmpty();
+    }
+
+    public function isTutor(): bool
+    {
+        return $this->normalizedRoleNames()
+            ->intersect(['tutor'])
+            ->isNotEmpty();
+    }
+
+    public function isIntern(): bool
+    {
+        return $this->normalizedRoleNames()
+            ->intersect(['intern', 'becario'])
+            ->isNotEmpty();
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->isAdmin() || $this->isTutor();
+    }
+
+    protected function normalizedRoleNames(): Collection
+    {
+        return $this->getRoleNames()->map(fn (string $role) => strtolower($role));
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

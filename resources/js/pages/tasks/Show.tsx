@@ -1,0 +1,1471 @@
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import {
+    AlertTriangle,
+    ArrowLeft,
+    CheckCircle2,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    Clock,
+    Download,
+    FilePlus,
+    GraduationCap,
+    History,
+    LayoutGrid,
+    MessageSquare,
+    MessageSquareReply,
+    Paperclip,
+    Pencil,
+    Plus,
+    Trash2,
+    User,
+    XCircle,
+} from 'lucide-react';
+import { useState } from 'react';
+import { HeaderActionButton } from '@/components/common/HeaderActionButton';
+import { MetricPills } from '@/components/common/MetricPills';
+import { ModuleHeader } from '@/components/common/ModuleHeader';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AppLayout from '@/layouts/app-layout';
+import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
+import { getTaskPriorityLabel, getTaskStatusLabel } from '@/lib/task-labels';
+import { dueStatus } from '@/lib/task-utils';
+import { cn } from '@/lib/utils';
+import type { BreadcrumbItem } from '@/types/navigation';
+
+type CommentItem = {
+    id: number;
+    comment: string;
+    created_at?: string | null;
+    edited_at?: string | null;
+    user?: {
+        id: number;
+        name: string;
+        avatar?: string | null;
+    } | null;
+    replies: Array<{
+        id: number;
+        comment: string;
+        created_at?: string | null;
+        edited_at?: string | null;
+        user?: {
+            id: number;
+            name: string;
+            avatar?: string | null;
+        } | null;
+    }>;
+};
+
+type StatusLogItem = {
+    id: number;
+    from_status?: string | null;
+    to_status: string;
+    reason?: string | null;
+    changed_at?: string | null;
+    user?: {
+        id: number;
+        name: string;
+        avatar?: string | null;
+    } | null;
+};
+
+type Props = {
+    task: any;
+    attachments: any[];
+    is_assigned: boolean;
+    comments: CommentItem[];
+    status_logs: StatusLogItem[];
+};
+
+export default function Show({
+    task,
+    attachments = [],
+    is_assigned,
+    comments = [],
+    status_logs = [],
+}: Props) {
+    const { auth } = usePage().props as any;
+    const [isTeamExpanded, setIsTeamExpanded] = useState(true);
+    const userId = Number(auth?.user?.id);
+    const commentForm = useForm({
+        comment: '',
+        parent_id: null as number | null,
+    });
+    const attachmentForm = useForm({ attachments: [] as File[] });
+    const completeForm = useForm({});
+    const rejectForm = useForm({ status: 'rejected', reject_reason: '' });
+    const isTutor = auth?.user?.roles?.includes('tutor');
+    const isIntern = auth?.user?.roles?.includes('intern');
+    const canReject =
+        !isIntern &&
+        ['pending', 'in_progress', 'in_review'].includes(String(task.status));
+    const canSubmitTask =
+        is_assigned && ['pending', 'in_progress'].includes(String(task.status));
+    const canTutorComplete = isTutor && String(task.status) === 'in_review';
+    const [replyTo, setReplyTo] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<number | null>(null);
+    const [editingValue, setEditingValue] = useState('');
+    const [showRejectForm, setShowRejectForm] = useState(false);
+    const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+    const [logPage, setLogPage] = useState(1);
+    const logsPerPage = 3;
+    const totalLogPages = Math.ceil(status_logs.length / logsPerPage);
+    const displayedLogs = status_logs.slice(
+        (logPage - 1) * logsPerPage,
+        logPage * logsPerPage,
+    );
+    const headerMetrics = [
+        {
+            label: 'Prioridad',
+            value: getTaskPriorityLabel(task.priority),
+            hint: task.priority === 'high' ? 'Atención urgente' : 'Normal',
+        },
+        {
+            label: 'Vencimiento',
+            value: formatDateEs(task.due_date),
+            hint:
+                dueStatus(task.due_date) === 'overdue'
+                    ? '¡Atrasada!'
+                    : 'Plazo vigente',
+        },
+        {
+            label: 'Estado',
+            value: getTaskStatusLabel(task.status),
+            hint: 'Actualizado recientemente',
+        },
+    ];
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Tareas', href: '/tareas' },
+        { title: task.title, href: `/tareas/${task.id}` },
+    ];
+
+    const submitComment = (e: React.FormEvent) => {
+        e.preventDefault();
+        commentForm.post(`/tareas/${task.id}/comments`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                commentForm.reset();
+                setReplyTo(null);
+                setIsCommentModalOpen(false);
+            },
+        });
+    };
+
+    const submitAttachments = (e: React.FormEvent) => {
+        e.preventDefault();
+        attachmentForm.post(`/tareas/${task.id}/attachments`, {
+            preserveScroll: true,
+            forceFormData: true,
+            onSuccess: () => attachmentForm.reset(),
+        });
+    };
+
+    const submitTask = () => {
+        completeForm.post(`/tareas/${task.id}/complete`, {
+            preserveScroll: true,
+        });
+    };
+
+    const submitReject = (e: React.FormEvent) => {
+        e.preventDefault();
+        rejectForm.patch(`/tareas/${task.id}/status`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setShowRejectForm(false);
+                rejectForm.reset('reject_reason');
+            },
+        });
+    };
+
+    const startReply = (commentId: number) => {
+        setEditingId(null);
+        setReplyTo(commentId);
+        commentForm.setData({
+            comment: '',
+            parent_id: commentId,
+        });
+    };
+
+    const cancelReply = () => {
+        setReplyTo(null);
+        commentForm.setData({
+            comment: '',
+            parent_id: null,
+        });
+    };
+
+    const startEdit = (commentId: number, value: string) => {
+        setReplyTo(null);
+        setEditingId(commentId);
+        setEditingValue(value);
+    };
+
+    const saveEdit = (commentId: number) => {
+        router.patch(
+            `/tareas/${task.id}/comments/${commentId}`,
+            { comment: editingValue },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setEditingId(null);
+                    setEditingValue('');
+                },
+            },
+        );
+    };
+
+    const deleteComment = (commentId: number) => {
+        if (!confirm('¿Seguro que quieres eliminar este comentario?')) return;
+
+        router.delete(`/tareas/${task.id}/comments/${commentId}`, {
+            preserveScroll: true,
+        });
+    };
+
+    const renderCommentActions = (
+        comment: { id: number; comment: string; user?: { id: number } | null },
+        darkTheme: boolean = false,
+    ) => {
+        if (Number(comment.user?.id) !== userId) {
+            return null;
+        }
+
+        const buttonClasses = cn(
+            'flex h-7 items-center gap-1.5 rounded-lg px-3 text-[9px] font-black tracking-widest uppercase shadow-sm transition-all',
+            darkTheme
+                ? 'border-none bg-white text-sidebar hover:bg-white/90'
+                : 'border-none bg-gradient-to-r from-sidebar to-sidebar-accent text-white hover:opacity-90',
+        );
+
+        return (
+            <div className="flex items-center gap-1.5">
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className={buttonClasses}
+                    onClick={() => startEdit(comment.id, comment.comment)}
+                >
+                    <Pencil className="h-3 w-3" />
+                    Editar
+                </Button>
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className={buttonClasses}
+                    onClick={() => deleteComment(comment.id)}
+                >
+                    <Trash2 className="h-3 w-3" />
+                    Eliminar
+                </Button>
+            </div>
+        );
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title={`Tarea: ${task.title}`} />
+
+            <div className="w-full space-y-3">
+                <div className="flex items-center justify-between px-2 pb-2">
+                    <Button
+                        variant="default"
+                        className="rounded-xl border-0 bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-bold tracking-widest text-white uppercase shadow-sm hover:opacity-95"
+                        asChild
+                    >
+                        <Link href="/tareas">
+                            <ArrowLeft className="mr-2 h-4 w-4" /> Volver al
+                            listado
+                        </Link>
+                    </Button>
+                </div>
+
+                {/* HERO INTEGRADO CON GRADIENTE */}
+                <ModuleHeader
+                    title={task.title}
+                    description={`Tarea asignada a ${task.interns?.length || 0} becarios. Estado actual: ${getTaskStatusLabel(task.status)}.`}
+                    icon={<LayoutGrid className="h-6 w-6" />}
+                    actions={
+                        <div className="flex gap-3">
+                            {(canSubmitTask || canTutorComplete) && (
+                                <HeaderActionButton
+                                    label={
+                                        canTutorComplete
+                                            ? 'Completar'
+                                            : 'Entregar'
+                                    }
+                                    onClick={submitTask}
+                                    icon={
+                                        <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
+                                    }
+                                />
+                            )}
+                            {canReject && (
+                                <HeaderActionButton
+                                    label="Rechazar"
+                                    onClick={() =>
+                                        setShowRejectForm((current) => !current)
+                                    }
+                                    icon={
+                                        <XCircle className="mr-1.5 h-3.5 w-3.5 text-rose-500" />
+                                    }
+                                />
+                            )}
+                        </div>
+                    }
+                />
+                <MetricPills metrics={headerMetrics} />
+
+                {/* Reject Form Contextual */}
+                {showRejectForm && (
+                    <Card className="animate-in border-red-200 bg-red-50/50 shadow-sm duration-300 fade-in slide-in-from-top-4">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="flex items-center gap-2 text-base text-red-800">
+                                <AlertTriangle className="h-5 w-5" />
+                                Motivo del Rechazo
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <textarea
+                                id="reject_reason"
+                                value={rejectForm.data.reject_reason}
+                                onChange={(e) =>
+                                    rejectForm.setData(
+                                        'reject_reason',
+                                        e.target.value,
+                                    )
+                                }
+                                className="min-h-[100px] w-full rounded-xl border border-red-200 bg-white px-4 py-3 text-sm shadow-inner outline-none focus:ring-2 focus:ring-red-500/20"
+                                placeholder="Indica qué debe corregirse o el motivo por el cual no se acepta la tarea..."
+                            />
+                            <div className="flex justify-end gap-2">
+                                <Button
+                                    variant="ghost"
+                                    className="rounded-lg"
+                                    onClick={() => setShowRejectForm(false)}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={submitReject}
+                                    disabled={rejectForm.processing}
+                                    variant="destructive"
+                                    className="rounded-lg px-6"
+                                >
+                                    Confirmar Rechazo
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* Main Content with Tabs */}
+                <div className="app-panel w-full overflow-hidden border-2 border-sidebar/15 shadow-xl">
+                    <Tabs defaultValue="summary" className="w-full">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                            <TabsList className="grid h-10 w-full grid-cols-4 gap-2 bg-transparent p-0">
+                                <TabsTrigger
+                                    value="summary"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                >
+                                    <LayoutGrid className="mr-2 h-4 w-4" />
+                                    Resumen
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="resources"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                >
+                                    <Paperclip className="mr-2 h-4 w-4" />
+                                    Recursos
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="comments"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                >
+                                    <MessageSquare className="mr-2 h-4 w-4" />
+                                    Conversación
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="history"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                >
+                                    <History className="mr-2 h-4 w-4" />
+                                    Seguimiento
+                                </TabsTrigger>
+                            </TabsList>
+                        </div>
+
+                        <div className="p-6">
+                            {/* Summary Tab */}
+                            <TabsContent
+                                value="summary"
+                                className="mt-0 space-y-8 outline-none"
+                            >
+                                <div className="grid gap-5 md:grid-cols-2">
+                                    {/* Task Details */}
+                                    <div className="space-y-6">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 dark:bg-slate-800 dark:text-slate-400">
+                                                <LayoutGrid className="h-4 w-4" />
+                                            </div>
+                                            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                                Planificación
+                                            </h2>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {[
+                                                {
+                                                    label: 'Prioridad',
+                                                    value: getTaskPriorityLabel(
+                                                        task.priority,
+                                                    ),
+                                                    icon: (
+                                                        <div
+                                                            className={cn(
+                                                                'h-2 w-2 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.5)]',
+                                                                {
+                                                                    'bg-white': true,
+                                                                },
+                                                            )}
+                                                        />
+                                                    ),
+                                                    primary: true,
+                                                },
+                                                {
+                                                    label: 'Tipo',
+                                                    value:
+                                                        task.practice_type
+                                                            ?.name || '—',
+                                                    icon: (
+                                                        <Paperclip className="h-4 w-4 text-sidebar" />
+                                                    ),
+                                                },
+                                                {
+                                                    label: 'Creada por',
+                                                    value:
+                                                        task.creator?.name ||
+                                                        '—',
+                                                    icon: (
+                                                        <User className="h-4 w-4 text-sidebar" />
+                                                    ),
+                                                },
+                                                {
+                                                    label: 'Vencimiento',
+                                                    value: formatDateEs(
+                                                        task.due_date,
+                                                    ),
+                                                    icon: (
+                                                        <Clock className="h-4 w-4 text-white" />
+                                                    ),
+                                                    primary: true,
+                                                },
+                                            ].map((item, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className={cn(
+                                                        'metric-tile p-5 transition-all duration-300 hover:scale-[1.02]',
+                                                        item.primary
+                                                            ? 'border-none bg-gradient-to-br from-sidebar to-sidebar-accent shadow-xl shadow-sidebar/20'
+                                                            : 'border border-stone-100 bg-white',
+                                                    )}
+                                                >
+                                                    <div className="mb-3 flex items-center gap-2">
+                                                        {item.icon}
+                                                        <span
+                                                            className={cn(
+                                                                'text-[10px] font-black tracking-widest uppercase',
+                                                                item.primary
+                                                                    ? 'text-white/60'
+                                                                    : 'text-slate-400',
+                                                            )}
+                                                        >
+                                                            {item.label}
+                                                        </span>
+                                                    </div>
+                                                    <p
+                                                        className={cn(
+                                                            'text-base font-black tracking-tight',
+                                                            item.primary
+                                                                ? 'text-white'
+                                                                : 'text-slate-700',
+                                                        )}
+                                                    >
+                                                        {item.value}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="task-surface-soft rounded-xl border p-6">
+                                            <h3 className="mb-3 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase">
+                                                Descripción del Trabajo
+                                            </h3>
+                                            <p className="text-sm leading-relaxed text-slate-600 italic dark:text-slate-300">
+                                                {task.description ||
+                                                    'No se ha proporcionado una descripción detallada para esta tarea.'}
+                                            </p>
+                                        </div>
+
+                                        {String(task.status) === 'rejected' &&
+                                            task.reject_reason && (
+                                                <div className="rounded-xl border-2 border-red-200 bg-red-50 p-4 text-red-800 shadow-sm">
+                                                    <div className="mb-2 flex items-center gap-2 text-xs font-black uppercase">
+                                                        <AlertTriangle className="h-4 w-4" />
+                                                        Motivo de Corrección
+                                                        Necesaria
+                                                    </div>
+                                                    <p className="text-sm italic">
+                                                        {task.reject_reason}
+                                                    </p>
+                                                </div>
+                                            )}
+                                    </div>
+
+                                    {/* Assigned Interns */}
+                                    <div className="space-y-6">
+                                        <div
+                                            className="group flex cursor-pointer items-center justify-between"
+                                            onClick={() =>
+                                                setIsTeamExpanded(
+                                                    !isTeamExpanded,
+                                                )
+                                            }
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 dark:bg-slate-800 dark:text-slate-400">
+                                                    <GraduationCap className="h-4 w-4" />
+                                                </div>
+                                                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                                    Equipo Asignado
+                                                </h2>
+                                            </div>
+                                            <div
+                                                className={`transition-transform duration-300 ${isTeamExpanded ? 'rotate-180' : ''}`}
+                                            >
+                                                <ChevronDown className="h-5 w-5 text-slate-400 group-hover:text-primary" />
+                                            </div>
+                                        </div>
+
+                                        {isTeamExpanded && (
+                                            <div className="grid animate-in gap-3 duration-300 fade-in slide-in-from-top-2">
+                                                {task.interns?.length ? (
+                                                    task.interns.map(
+                                                        (intern: any) => (
+                                                            <div
+                                                                key={intern.id}
+                                                                className="task-surface-soft flex items-center justify-between rounded-xl border p-4 transition-all hover:border-sidebar hover:shadow-lg"
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    <Avatar className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-sidebar bg-stone-50 font-bold text-stone-600">
+                                                                        <AvatarImage
+                                                                            src={
+                                                                                intern
+                                                                                    .user
+                                                                                    ?.avatar ||
+                                                                                ''
+                                                                            }
+                                                                            alt={
+                                                                                intern
+                                                                                    .user
+                                                                                    ?.name ||
+                                                                                ''
+                                                                            }
+                                                                        />
+                                                                        <AvatarFallback className="bg-transparent text-sm">
+                                                                            {intern.user?.name?.charAt(
+                                                                                0,
+                                                                            ) ||
+                                                                                'B'}
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
+                                                                    <div>
+                                                                        <p className="text-sm font-black text-slate-800">
+                                                                            {intern
+                                                                                .user
+                                                                                ?.name ||
+                                                                                `Becario #${intern.id}`}
+                                                                        </p>
+                                                                        <p className="text-[10px] font-medium tracking-wide text-slate-400 uppercase">
+                                                                            {intern
+                                                                                .education_center
+                                                                                ?.name ||
+                                                                                'Sin centro'}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    asChild
+                                                                    className="rounded-xl text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-stone-100"
+                                                                >
+                                                                    <Link
+                                                                        href={`/interns/${intern.id}`}
+                                                                    >
+                                                                        Ver
+                                                                        Perfil
+                                                                    </Link>
+                                                                </Button>
+                                                            </div>
+                                                        ),
+                                                    )
+                                                ) : (
+                                                    <div className="flex flex-col items-center justify-center py-8 text-center text-slate-400">
+                                                        <div className="mb-2 rounded-full bg-stone-50 p-4 dark:bg-slate-800">
+                                                            <User className="h-8 w-8 opacity-20" />
+                                                        </div>
+                                                        <p className="text-sm font-medium">
+                                                            No hay becarios
+                                                            asignados a esta
+                                                            tarea.
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            {/* Resources Tab */}
+                            <TabsContent
+                                value="resources"
+                                className="mt-0 outline-none"
+                            >
+                                <div className="grid gap-5 md:grid-cols-3">
+                                    <div className="space-y-6 md:col-span-2">
+                                        <div className="flex items-center justify-between">
+                                            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                                Documentos y Archivos
+                                            </h2>
+                                            <span className="text-xs font-bold text-slate-400 uppercase">
+                                                {attachments.length} Archivos
+                                            </span>
+                                        </div>
+
+                                        <div className="grid gap-3">
+                                            {attachments.length ? (
+                                                attachments.map((file) => (
+                                                    <div
+                                                        key={file.id}
+                                                        className="group task-surface-soft flex items-center justify-between rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent p-5 shadow-lg shadow-sidebar/10 transition-all hover:scale-[1.01] hover:shadow-xl"
+                                                    >
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="flex h-10 w-12 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm">
+                                                                <Paperclip className="h-6 w-6" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-black text-white">
+                                                                    {file.name}
+                                                                </p>
+                                                                <p className="text-[10px] font-bold tracking-widest text-white/50 uppercase">
+                                                                    {
+                                                                        file.mime_type
+                                                                    }{' '}
+                                                                    •{' '}
+                                                                    {formatDateTimeEs(
+                                                                        file.created_at,
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            asChild
+                                                            className="rounded-full border border-white/10 bg-white/10 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-white/20"
+                                                        >
+                                                            <a
+                                                                href={file.url}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                            >
+                                                                <Download className="h-5 w-5" />
+                                                            </a>
+                                                        </Button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="rounded-xl border-2 border-dashed border-sidebar py-8 text-center">
+                                                    <Paperclip className="mx-auto h-10 w-12 text-slate-200" />
+                                                    <p className="mt-4 text-sm font-medium text-slate-400">
+                                                        No se han subido
+                                                        archivos adjuntos para
+                                                        esta tarea.
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 rounded-xl bg-stone-50/50 p-6 dark:bg-slate-800/30">
+                                        <h3 className="text-sm font-black tracking-widest text-sidebar uppercase">
+                                            Gestionar Entregas
+                                        </h3>
+                                        <p className="text-xs leading-relaxed text-slate-400">
+                                            Sube archivos complementarios,
+                                            capturas de pantalla o reportes
+                                            finales de la tarea.
+                                        </p>
+
+                                        <form
+                                            onSubmit={submitAttachments}
+                                            className="space-y-4 pt-2"
+                                        >
+                                            <div className="group relative cursor-pointer rounded-xl border-2 border-dashed border-stone-200 bg-white p-4 transition-colors hover:border-sidebar/50 dark:bg-slate-800">
+                                                <Input
+                                                    id="attachments"
+                                                    type="file"
+                                                    multiple
+                                                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                                    onChange={(e) =>
+                                                        attachmentForm.setData(
+                                                            'attachments',
+                                                            Array.from(
+                                                                e.target
+                                                                    .files ||
+                                                                    [],
+                                                            ),
+                                                        )
+                                                    }
+                                                />
+                                                <div className="flex flex-col items-center text-center">
+                                                    <FilePlus className="mb-2 h-8 w-8 text-sidebar/40 group-hover:text-sidebar" />
+                                                    <p className="text-sm font-bold text-slate-600">
+                                                        Seleccionar archivos
+                                                    </p>
+                                                    <span className="text-[10px] tracking-tighter text-slate-400 uppercase">
+                                                        PDF, PNG, JPG, ZIP
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {attachmentForm.errors
+                                                .attachments && (
+                                                <p className="text-xs text-red-500">
+                                                    {
+                                                        attachmentForm.errors
+                                                            .attachments
+                                                    }
+                                                </p>
+                                            )}
+                                            {attachmentForm.data.attachments
+                                                .length > 0 && (
+                                                <div className="rounded-lg border border-sidebar/10 bg-sidebar/5 p-3 text-xs text-sidebar">
+                                                    <p className="font-bold">
+                                                        ✓{' '}
+                                                        {
+                                                            attachmentForm.data
+                                                                .attachments
+                                                                .length
+                                                        }{' '}
+                                                        archivos seleccionados
+                                                    </p>
+                                                </div>
+                                            )}
+                                            <Button
+                                                type="submit"
+                                                disabled={
+                                                    attachmentForm.processing
+                                                }
+                                                className="relative h-11 w-full overflow-hidden rounded-xl border-none bg-gradient-to-r from-sidebar to-sidebar-accent text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-95"
+                                            >
+                                                <div className="pointer-events-none absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-white/10 to-transparent" />
+                                                <Download className="mr-2 h-4 w-4" />
+                                                Subir Ahora
+                                            </Button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            {/* Comments Tab */}
+                            <TabsContent
+                                value="comments"
+                                className="mt-0 outline-none"
+                            >
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between border-b border-stone-50 pb-4">
+                                        <div className="flex items-center gap-4">
+                                            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                                Hilo de Conversación
+                                            </h2>
+                                            <div className="flex h-6 items-center gap-1.5 rounded-full border border-sidebar/10 bg-sidebar/5 px-3 text-[9px] font-black tracking-widest text-sidebar uppercase">
+                                                <MessageSquare className="h-3 w-3" />
+                                                {comments.length}
+                                            </div>
+                                        </div>
+
+                                        <Dialog
+                                            open={isCommentModalOpen}
+                                            onOpenChange={setIsCommentModalOpen}
+                                        >
+                                            <DialogTrigger asChild>
+                                                <Button className="h-9 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-5 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-90">
+                                                    <Plus className="mr-2 h-4 w-4" />
+                                                    Añadir Comentario
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="overflow-hidden rounded-xl border border-sidebar/20 bg-white p-0 shadow-xl ring-1 shadow-sidebar/10 ring-black/5 sm:max-w-[420px]">
+                                                <div className="bg-gradient-to-r from-sidebar to-sidebar-accent p-6 text-white">
+                                                    <DialogHeader>
+                                                        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 backdrop-blur-md">
+                                                            <MessageSquareReply className="h-5 w-5" />
+                                                        </div>
+                                                        <DialogTitle className="text-xl leading-tight font-black tracking-widest uppercase">
+                                                            Nuevo Comentario
+                                                        </DialogTitle>
+                                                    </DialogHeader>
+                                                </div>
+                                                <div className="p-6">
+                                                    <form
+                                                        onSubmit={submitComment}
+                                                        className="space-y-4"
+                                                    >
+                                                        <div className="space-y-2">
+                                                            <Label
+                                                                htmlFor="comment"
+                                                                className="ml-1 text-[9px] font-black tracking-widest text-slate-400 uppercase"
+                                                            >
+                                                                Tu Mensaje
+                                                            </Label>
+                                                            <textarea
+                                                                id="comment"
+                                                                value={
+                                                                    commentForm
+                                                                        .data
+                                                                        .comment
+                                                                }
+                                                                onChange={(e) =>
+                                                                    commentForm.setData(
+                                                                        'comment',
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
+                                                                className="min-h-[120px] w-full rounded-xl border-stone-100 bg-stone-50 p-4 text-sm shadow-inner transition-all outline-none placeholder:text-slate-300 focus:ring-2 focus:ring-sidebar/20"
+                                                                placeholder="Escribe algo importante..."
+                                                                autoFocus
+                                                            />
+                                                            {commentForm.errors
+                                                                .comment && (
+                                                                <p className="animate-in text-xs text-red-500 fade-in slide-in-from-top-1">
+                                                                    {
+                                                                        commentForm
+                                                                            .errors
+                                                                            .comment
+                                                                    }
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        <DialogFooter className="flex gap-2 pt-2">
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                onClick={() =>
+                                                                    setIsCommentModalOpen(
+                                                                        false,
+                                                                    )
+                                                                }
+                                                                className="h-10 rounded-xl px-4 text-[9px] font-black tracking-widest text-slate-400 uppercase hover:text-slate-600"
+                                                            >
+                                                                Cancelar
+                                                            </Button>
+                                                            <Button
+                                                                type="submit"
+                                                                disabled={
+                                                                    commentForm.processing
+                                                                }
+                                                                className="h-10 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-6 text-[9px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/20 transition-all hover:opacity-90"
+                                                            >
+                                                                Publicar
+                                                            </Button>
+                                                        </DialogFooter>
+                                                    </form>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+
+                                    <div className="space-y-4 pt-2">
+                                        {comments.length ? (
+                                            comments.map((comment) => {
+                                                return (
+                                                    <div
+                                                        key={comment.id}
+                                                        className="group rounded-xl border border-stone-100 bg-white p-4 text-slate-600 shadow-sm transition-all hover:shadow-md"
+                                                    >
+                                                        <div className="mb-3 flex items-start justify-between">
+                                                            <div className="flex items-center gap-2.5">
+                                                                <Avatar className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-sidebar bg-sidebar/10 font-bold text-sidebar">
+                                                                    <AvatarImage
+                                                                        src={
+                                                                            comment
+                                                                                .user
+                                                                                ?.avatar ||
+                                                                            ''
+                                                                        }
+                                                                        alt={
+                                                                            comment
+                                                                                .user
+                                                                                ?.name ||
+                                                                            ''
+                                                                        }
+                                                                    />
+                                                                    <AvatarFallback className="bg-transparent text-xs">
+                                                                        {comment.user?.name?.charAt(
+                                                                            0,
+                                                                        ) ||
+                                                                            'U'}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                                <div>
+                                                                    <p className="text-sm font-bold text-slate-800">
+                                                                        {comment
+                                                                            .user
+                                                                            ?.name ||
+                                                                            'Usuario'}
+                                                                    </p>
+                                                                    <p className="text-[9px] font-medium tracking-widest text-slate-400 uppercase">
+                                                                        {formatDateTimeEs(
+                                                                            comment.created_at,
+                                                                        )}
+                                                                        {comment.edited_at && (
+                                                                            <span className="ml-1 text-sidebar italic">
+                                                                                {' '}
+                                                                                •
+                                                                                Editado
+                                                                            </span>
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="opacity-0 transition-opacity group-hover:opacity-100">
+                                                                {renderCommentActions(
+                                                                    comment,
+                                                                    false,
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        {editingId ===
+                                                        comment.id ? (
+                                                            <div className="space-y-3">
+                                                                <textarea
+                                                                    value={
+                                                                        editingValue
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        setEditingValue(
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                        )
+                                                                    }
+                                                                    className="min-h-[80px] w-full rounded-xl border border-sidebar/20 bg-stone-50 p-3 text-xs text-slate-800 shadow-inner outline-none"
+                                                                />
+                                                                <div className="flex gap-2">
+                                                                    <Button
+                                                                        size="sm"
+                                                                        className="h-8 text-[10px] font-black uppercase"
+                                                                        onClick={() =>
+                                                                            saveEdit(
+                                                                                comment.id,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Guardar
+                                                                    </Button>
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="ghost"
+                                                                        className="h-8 text-[10px] font-black uppercase"
+                                                                        onClick={() =>
+                                                                            setEditingId(
+                                                                                null,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Descartar
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <p className="ml-0.5 text-sm leading-relaxed text-slate-600">
+                                                                {
+                                                                    comment.comment
+                                                                }
+                                                            </p>
+                                                        )}
+
+                                                        <div className="mt-3 flex items-center gap-3">
+                                                            {!replyTo && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="h-7 rounded-lg text-[9px] font-black tracking-widest text-sidebar uppercase hover:bg-sidebar/5"
+                                                                    onClick={() =>
+                                                                        startReply(
+                                                                            comment.id,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <MessageSquareReply className="mr-1.5 h-3.5 w-3.5" />
+                                                                    Responder
+                                                                </Button>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Replies Section */}
+                                                        {comment.replies
+                                                            .length > 0 && (
+                                                            <div className="mt-4 space-y-3 border-l-2 border-stone-50 pl-4">
+                                                                {comment.replies.map(
+                                                                    (reply) => {
+                                                                        return (
+                                                                            <div
+                                                                                key={
+                                                                                    reply.id
+                                                                                }
+                                                                                className="group relative rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-3.5 text-white shadow-lg shadow-sidebar/5"
+                                                                            >
+                                                                                <div className="mb-2 flex items-center justify-between">
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <Avatar className="h-6 w-6 shrink-0 overflow-hidden rounded-full border border-white/20 bg-white/10 font-bold text-white">
+                                                                                            <AvatarImage
+                                                                                                src={
+                                                                                                    reply
+                                                                                                        .user
+                                                                                                        ?.avatar ||
+                                                                                                    ''
+                                                                                                }
+                                                                                                alt={
+                                                                                                    reply
+                                                                                                        .user
+                                                                                                        ?.name ||
+                                                                                                    ''
+                                                                                                }
+                                                                                            />
+                                                                                            <AvatarFallback className="bg-transparent text-[8px]">
+                                                                                                {reply.user?.name?.charAt(
+                                                                                                    0,
+                                                                                                ) ||
+                                                                                                    'U'}
+                                                                                            </AvatarFallback>
+                                                                                        </Avatar>
+                                                                                        <p className="text-xs font-bold">
+                                                                                            {reply
+                                                                                                .user
+                                                                                                ?.name ||
+                                                                                                'Usuario'}
+                                                                                        </p>
+                                                                                        <span className="text-[8px] tracking-widest text-white/50 uppercase">
+                                                                                            {formatDateTimeEs(
+                                                                                                reply.created_at,
+                                                                                            )}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className="origin-right scale-75 opacity-0 transition-opacity group-hover:opacity-100">
+                                                                                        {renderCommentActions(
+                                                                                            reply,
+                                                                                            true,
+                                                                                        )}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <p className="text-xs leading-relaxed text-white/90">
+                                                                                    {
+                                                                                        reply.comment
+                                                                                    }
+                                                                                </p>
+                                                                            </div>
+                                                                        );
+                                                                    },
+                                                                )}
+                                                            </div>
+                                                        )}
+
+                                                        {replyTo ===
+                                                            comment.id && (
+                                                            <form
+                                                                onSubmit={
+                                                                    submitComment
+                                                                }
+                                                                className="mt-3 animate-in space-y-3 rounded-xl border border-sidebar/10 bg-sidebar/5 p-3 duration-300 fade-in"
+                                                            >
+                                                                <div className="mb-2 flex items-center gap-2">
+                                                                    <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar" />
+                                                                    <span className="text-[9px] font-black tracking-widest text-sidebar uppercase">
+                                                                        Respondiendo
+                                                                        a{' '}
+                                                                        {
+                                                                            comment
+                                                                                .user
+                                                                                ?.name
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                                <textarea
+                                                                    value={
+                                                                        commentForm
+                                                                            .data
+                                                                            .comment
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        commentForm.setData(
+                                                                            'comment',
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                        )
+                                                                    }
+                                                                    className="min-h-[70px] w-full rounded-xl border-none bg-white p-3 text-xs shadow-sm outline-none"
+                                                                    placeholder="Escribe tu respuesta aquí..."
+                                                                    autoFocus
+                                                                />
+                                                                <div className="flex gap-2">
+                                                                    <Button
+                                                                        size="sm"
+                                                                        disabled={
+                                                                            commentForm.processing
+                                                                        }
+                                                                        className="h-8 rounded-lg bg-sidebar text-[9px] font-black text-white uppercase hover:bg-sidebar/90"
+                                                                    >
+                                                                        Enviar
+                                                                        Respuesta
+                                                                    </Button>
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="ghost"
+                                                                        className="h-8 rounded-lg text-[9px] font-black uppercase"
+                                                                        onClick={
+                                                                            cancelReply
+                                                                        }
+                                                                    >
+                                                                        Cancelar
+                                                                    </Button>
+                                                                </div>
+                                                            </form>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className="rounded-xl border-2 border-dashed border-sidebar py-16 text-center">
+                                                <MessageSquare className="mx-auto h-10 w-12 text-slate-200" />
+                                                <p className="mt-4 text-sm font-medium text-slate-400">
+                                                    ¿Tienes alguna duda o
+                                                    actualización? Inicia la
+                                                    conversación.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            {/* History Tab */}
+                            <TabsContent
+                                value="history"
+                                className="mt-0 outline-none"
+                            >
+                                <div className="grid grid-cols-1 gap-12 py-4 md:grid-cols-2">
+                                    {/* Columna Izquierda: Información y Paginación */}
+                                    <div className="flex min-h-[400px] flex-col justify-between">
+                                        <div className="space-y-6">
+                                            <div className="task-surface-soft rounded-xl border border-sidebar/10 bg-white/50 p-5">
+                                                <div className="mb-6 flex h-10 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-lg shadow-sidebar/20">
+                                                    <History className="h-6 w-6" />
+                                                </div>
+                                                <h2 className="text-2xl leading-tight font-black tracking-widest text-slate-800 uppercase">
+                                                    Historial de
+                                                    <br />
+                                                    Estados
+                                                </h2>
+                                                <div className="mt-4 h-1 w-12 rounded-full bg-gradient-to-r from-sidebar to-sidebar-accent" />
+                                                <p className="mt-8 text-sm leading-relaxed font-medium text-slate-400 italic">
+                                                    "Cada cambio cuenta una
+                                                    historia sobre el progreso
+                                                    de este proyecto."
+                                                </p>
+                                                <p className="mt-4 text-xs leading-relaxed text-slate-400">
+                                                    Aquí puedes ver quién,
+                                                    cuándo y por qué se cambió
+                                                    el estado de la tarea. Las
+                                                    correcciones y aprobaciones
+                                                    quedan registradas para
+                                                    asegurar la transparencia
+                                                    del proceso.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {totalLogPages > 1 && (
+                                            <div className="pt-12">
+                                                <div className="flex flex-col gap-4">
+                                                    <div className="flex items-center gap-2">
+                                                        {[
+                                                            ...Array(
+                                                                totalLogPages,
+                                                            ),
+                                                        ].map((_, i) => (
+                                                            <button
+                                                                key={i}
+                                                                onClick={() =>
+                                                                    setLogPage(
+                                                                        i + 1,
+                                                                    )
+                                                                }
+                                                                className={`h-1.5 rounded-full transition-all ${
+                                                                    logPage ===
+                                                                    i + 1
+                                                                        ? 'w-12 bg-gradient-to-r from-sidebar to-sidebar-accent shadow-sm'
+                                                                        : 'w-2 bg-stone-200'
+                                                                }`}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            disabled={
+                                                                logPage === 1
+                                                            }
+                                                            onClick={() =>
+                                                                setLogPage(
+                                                                    (p) =>
+                                                                        p - 1,
+                                                                )
+                                                            }
+                                                            className="h-10 rounded-xl border-sidebar/10 bg-gradient-to-r from-sidebar to-sidebar-accent px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/10 hover:opacity-90 disabled:bg-stone-100 disabled:text-slate-400 disabled:opacity-30"
+                                                        >
+                                                            <ChevronLeft className="mr-2 h-4 w-4" />
+                                                            Anterior
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            disabled={
+                                                                logPage ===
+                                                                totalLogPages
+                                                            }
+                                                            onClick={() =>
+                                                                setLogPage(
+                                                                    (p) =>
+                                                                        p + 1,
+                                                                )
+                                                            }
+                                                            className="h-10 rounded-xl border-sidebar/10 bg-gradient-to-r from-sidebar to-sidebar-accent px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-sidebar/10 hover:opacity-90 disabled:bg-stone-100 disabled:text-slate-400 disabled:opacity-30"
+                                                        >
+                                                            Siguiente
+                                                            <ChevronRight className="ml-2 h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Columna Derecha: Registro de Actividad (Timeline) */}
+                                    <div className="space-y-6">
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <h3 className="text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase">
+                                                Registro de Actividad
+                                            </h3>
+                                            <div className="mx-4 h-[1px] flex-1 bg-stone-100" />
+                                        </div>
+
+                                        {displayedLogs.length > 0 ? (
+                                            <div className="space-y-4">
+                                                {displayedLogs.map(
+                                                    (log, idx) => {
+                                                        const isPrimaryLog =
+                                                            idx % 2 === 0;
+                                                        return (
+                                                            <div
+                                                                key={log.id}
+                                                                className={cn(
+                                                                    'task-surface-soft group relative flex flex-col gap-4 rounded-xl border p-6 shadow-sm transition-all',
+                                                                    isPrimaryLog
+                                                                        ? 'border-none bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-lg shadow-sidebar/20'
+                                                                        : 'border-sidebar/5 bg-white/40 hover:border-sidebar/20 hover:shadow-xl hover:shadow-sidebar/5',
+                                                                )}
+                                                            >
+                                                                {/* Avatar and User Info */}
+                                                                <div className="flex flex-wrap items-center justify-between gap-4">
+                                                                    <div className="flex items-center gap-4">
+                                                                        <div
+                                                                            className={cn(
+                                                                                'flex h-10 w-12 shrink-0 items-center justify-center rounded-full border-2 text-white shadow-sm',
+                                                                                isPrimaryLog
+                                                                                    ? 'border-white/20 bg-white/10'
+                                                                                    : 'border-white bg-sidebar shadow-sidebar/20',
+                                                                            )}
+                                                                        >
+                                                                            <Avatar className="h-full w-full">
+                                                                                <AvatarImage
+                                                                                    src={
+                                                                                        log
+                                                                                            .user
+                                                                                            ?.avatar ||
+                                                                                        ''
+                                                                                    }
+                                                                                    className="object-cover"
+                                                                                />
+                                                                                <AvatarFallback className="bg-transparent text-xs font-black">
+                                                                                    {log.user?.name?.charAt(
+                                                                                        0,
+                                                                                    ) ||
+                                                                                        'S'}
+                                                                                </AvatarFallback>
+                                                                            </Avatar>
+                                                                        </div>
+                                                                        <div>
+                                                                            <p
+                                                                                className={cn(
+                                                                                    'text-sm font-black',
+                                                                                    isPrimaryLog
+                                                                                        ? 'text-white'
+                                                                                        : 'text-slate-800',
+                                                                                )}
+                                                                            >
+                                                                                {log
+                                                                                    .user
+                                                                                    ?.name ||
+                                                                                    'Sistema'}
+                                                                            </p>
+                                                                            <p
+                                                                                className={cn(
+                                                                                    'text-[10px] font-bold tracking-widest uppercase',
+                                                                                    isPrimaryLog
+                                                                                        ? 'text-white/50'
+                                                                                        : 'text-slate-400',
+                                                                                )}
+                                                                            >
+                                                                                {formatDateTimeEs(
+                                                                                    log.changed_at,
+                                                                                )}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div
+                                                                        className={cn(
+                                                                            'flex items-center gap-2 text-[9px] font-black tracking-widest uppercase',
+                                                                            isPrimaryLog
+                                                                                ? 'text-white'
+                                                                                : '',
+                                                                        )}
+                                                                    >
+                                                                        {log.from_status ? (
+                                                                            <div className="flex items-center gap-2">
+                                                                                <span
+                                                                                    className={cn(
+                                                                                        'rounded-lg px-3 py-1.5 line-through',
+                                                                                        isPrimaryLog
+                                                                                            ? 'bg-white/10 text-white/50'
+                                                                                            : 'bg-stone-100 text-slate-400',
+                                                                                    )}
+                                                                                >
+                                                                                    {getTaskStatusLabel(
+                                                                                        log.from_status,
+                                                                                    )}
+                                                                                </span>
+                                                                                <ChevronRight className="h-3 w-3 text-slate-200" />
+                                                                                <span
+                                                                                    className={cn(
+                                                                                        'rounded-lg border px-3 py-1.5 shadow-sm',
+                                                                                        String(
+                                                                                            log.to_status,
+                                                                                        ) ===
+                                                                                            'completed'
+                                                                                            ? 'border-sidebar/10 bg-sidebar/5 text-sidebar'
+                                                                                            : String(
+                                                                                                    log.to_status,
+                                                                                                ) ===
+                                                                                                'pending'
+                                                                                              ? 'border-amber-100 bg-amber-50 text-amber-600'
+                                                                                              : String(
+                                                                                                      log.to_status,
+                                                                                                  ) ===
+                                                                                                  'rejected'
+                                                                                                ? 'border-rose-100 bg-rose-50 text-rose-600'
+                                                                                                : 'border-stone-100 bg-stone-50 text-slate-600',
+                                                                                    )}
+                                                                                >
+                                                                                    {getTaskStatusLabel(
+                                                                                        log.to_status,
+                                                                                    )}
+                                                                                </span>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="flex items-center gap-2">
+                                                                                <span className="text-slate-300">
+                                                                                    Iniciada
+                                                                                </span>
+                                                                                <ChevronRight className="h-3 w-3 text-slate-200" />
+                                                                                <span className="rounded-lg border border-sidebar/5 bg-stone-50 px-3 py-1.5 text-slate-600">
+                                                                                    {getTaskStatusLabel(
+                                                                                        log.to_status,
+                                                                                    )}
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+
+                                                                {log.reason && (
+                                                                    <div className="relative overflow-hidden rounded-xl border border-rose-100 bg-rose-50/40 p-4 text-xs leading-relaxed text-rose-800/80 italic shadow-inner">
+                                                                        <div className="absolute top-0 left-0 h-full w-1 bg-rose-400" />
+                                                                        "
+                                                                        {
+                                                                            log.reason
+                                                                        }
+                                                                        "
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    },
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="rounded-xl border-2 border-dashed border-sidebar/10 bg-stone-50/30 py-12 text-center">
+                                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl border border-sidebar/5 bg-white shadow-sm">
+                                                    <History className="h-8 w-8 text-slate-200" />
+                                                </div>
+                                                <p className="text-sm font-black tracking-widest text-slate-400 uppercase">
+                                                    Sin registros aún
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </div>
+                    </Tabs>
+                </div>
+            </div>
+        </AppLayout>
+    );
+}
