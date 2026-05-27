@@ -70,7 +70,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
             cellClassName: 'text-center',
             render: (row: any) => (
                 <div className="flex justify-center">
-                    <span className="inline-block w-20 rounded-lg border border-white/10 bg-gradient-to-r from-sidebar to-sidebar-accent py-1 text-center text-[10px] font-black tracking-widest text-white uppercase shadow-md">
+                    <span className="inline-block w-20 rounded-lg border border-white/10 bg-linear-to-r from-sidebar to-sidebar-accent py-1 text-center text-[10px] font-black tracking-widest text-white uppercase shadow-md">
                         {row.priority || '—'}
                     </span>
                 </div>
@@ -109,7 +109,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     <span
                         className={`inline-flex w-24 items-center justify-center rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase shadow-sm transition-all ${
                             row.is_active
-                                ? 'border border-white/10 bg-gradient-to-r from-sidebar to-sidebar-accent text-white shadow-md'
+                                ? 'border border-white/10 bg-linear-to-r from-sidebar to-sidebar-accent text-white shadow-md'
                                 : 'border border-sidebar/20 bg-white text-sidebar'
                         }`}
                     >
