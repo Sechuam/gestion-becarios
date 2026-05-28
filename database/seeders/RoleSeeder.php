@@ -5,6 +5,7 @@ namespace Database\Seeders; // Le dice a Laravel donde está guardado el archivo
 use Illuminate\Database\Seeder; // Importa herramientas básicas
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role; // dice que estamos usando el modelo Role de Spatie
+use Spatie\Permission\PermissionRegistrar;
 
 class RoleSeeder extends Seeder
 {
@@ -30,10 +31,13 @@ class RoleSeeder extends Seeder
 
         // Creamos los tres roles definidos en la fase 1
         $admin = Role::firstOrCreate(['name' => 'admin']);
-        Role::firstOrCreate(['name' => 'tutor']);
+        $tutor = Role::firstOrCreate(['name' => 'tutor']);
         Role::firstOrCreate(['name' => 'intern']);
 
         // Asignar permisos
         $admin->syncPermissions($permissions);
+        $tutor->syncPermissions(['manage tasks']);
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

@@ -4,12 +4,15 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class TutorSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->syncUserIdSequence();
+
         $tutors = [
             ['name' => 'Laura Morales', 'email' => 'laura.morales@acme.com'],
             ['name' => 'Carlos Dominguez', 'email' => 'carlos.dominguez@acme.com'],
@@ -35,5 +38,20 @@ class TutorSeeder extends Seeder
 
             $user->assignRole('tutor');
         }
+    }
+
+    private function syncUserIdSequence(): void
+    {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
+        DB::statement(<<<'SQL'
+            SELECT setval(
+                pg_get_serial_sequence('users', 'id'),
+                COALESCE((SELECT MAX(id) FROM users), 1),
+                (SELECT MAX(id) IS NOT NULL FROM users)
+            )
+        SQL);
     }
 }
