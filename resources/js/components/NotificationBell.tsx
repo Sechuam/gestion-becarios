@@ -1,5 +1,6 @@
-import { usePage, Link } from '@inertiajs/react';
-import { Bell } from 'lucide-react';
+import { router, usePage } from '@inertiajs/react';
+import { Bell, Mail, MessageSquare, UserRoundCheck } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -17,10 +18,44 @@ type NotificationBellProps = {
 
 export function NotificationBell({ triggerClassName }: NotificationBellProps) {
     const { auth } = usePage().props as any;
-    const notifications = auth?.user?.unreadNotifications || [];
+    const [open, setOpen] = useState(false);
+    const notifications: any[] = auth?.user?.unreadNotifications || [];
+
+    const handleRead = (notification: any) => {
+        setOpen(false);
+        router.post(`/notificaciones/${notification.id}/read`);
+    };
+
+    const handleReadAll = () => {
+        setOpen(false);
+        router.post('/notificaciones/read-all');
+    };
+
+    const notificationIcon = (type?: string) => {
+        switch (type) {
+            case 'new_message':
+                return (
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400">
+                        <MessageSquare className="h-3.5 w-3.5" />
+                    </div>
+                );
+            case 'absence_request':
+                return (
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
+                        <UserRoundCheck className="h-3.5 w-3.5" />
+                    </div>
+                );
+            default:
+                return (
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                        <Bell className="h-3.5 w-3.5" />
+                    </div>
+                );
+        }
+    };
 
     return (
-        <DropdownMenu>
+        <DropdownMenu open={open} onOpenChange={setOpen}>
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
@@ -44,37 +79,65 @@ export function NotificationBell({ triggerClassName }: NotificationBellProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notificaciones</DropdownMenuLabel>
+                <div className="flex items-center justify-between px-2">
+                    <DropdownMenuLabel>Notificaciones</DropdownMenuLabel>
+                    {notifications.length > 0 && (
+                        <button
+                            type="button"
+                            onClick={handleReadAll}
+                            className="rounded px-2 py-0.5 text-[11px] font-medium text-indigo-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-400"
+                        >
+                            Leer todo
+                        </button>
+                    )}
+                </div>
                 <DropdownMenuSeparator />
 
                 {notifications.length === 0 ? (
-                    <div className="p-4 text-center text-sm text-slate-500">
+                    <div className="flex flex-col items-center gap-2 p-6 text-center text-sm text-slate-500">
+                        <Mail className="h-8 w-8 text-slate-300 dark:text-slate-600" />
                         No tienes notificaciones nuevas
                     </div>
                 ) : (
-                    notifications.map((notification: any) => (
-                        <DropdownMenuItem
-                            key={notification.id}
-                            className="flex cursor-pointer flex-col items-start gap-1 p-3"
-                        >
-                            <span className="text-sm font-semibold">
-                                {notification.data.intern_name}
-                            </span>
-                            <span className="line-clamp-2 text-xs text-slate-500">
-                                {notification.data.message}
-                            </span>
-                            <Link
-                                href={
-                                    notification.data.intern_id
-                                        ? `/interns/${notification.data.intern_id}#asistencia`
-                                        : '/becarios'
-                                }
-                                className="mt-1 text-xs text-indigo-500 hover:underline"
+                    notifications.map((notification: any) => {
+                        const data = notification.data || {};
+                        const type = data.type ?? '';
+                        const isMessage = type === 'new_message';
+                        const isAbsence = type === 'absence_request';
+
+                        return (
+                            <DropdownMenuItem
+                                key={notification.id}
+                                onClick={() => handleRead(notification)}
+                                className="flex cursor-pointer items-start gap-3 p-3 focus:bg-slate-50 dark:focus:bg-slate-800/60"
                             >
-                                Ir a gestionar ausencias
-                            </Link>
-                        </DropdownMenuItem>
-                    ))
+                                {notificationIcon(type)}
+                                <div className="min-w-0 flex-1">
+                                    <span className="block text-sm leading-tight font-semibold">
+                                        {isMessage
+                                            ? (data.sender_name ??
+                                              'Nuevo mensaje')
+                                            : isAbsence
+                                              ? (data.intern_name ?? 'Ausencia')
+                                              : 'Notificación'}
+                                    </span>
+                                    <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-slate-500 dark:text-slate-400">
+                                        {data.message ?? ''}
+                                    </span>
+                                    {isMessage && (
+                                        <span className="mt-1 inline-block rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
+                                            Mensaje
+                                        </span>
+                                    )}
+                                    {isAbsence && (
+                                        <span className="mt-1 inline-block rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
+                                            Ausencia
+                                        </span>
+                                    )}
+                                </div>
+                            </DropdownMenuItem>
+                        );
+                    })
                 )}
             </DropdownMenuContent>
         </DropdownMenu>
