@@ -56,7 +56,7 @@ export default function CompleteProfile({
     education_centers: any[];
     tutors: any[];
 }) {
-    const { data, setData, patch, processing, errors } = useForm<FormData>({
+    const { data, setData, post, processing, errors } = useForm<FormData>({
         name: user?.name || '',
         email: user?.email || '',
         education_center_id: intern?.education_center_id?.toString() || '',
@@ -87,7 +87,7 @@ export default function CompleteProfile({
         e?.preventDefault();
         if (processing || submitLock.current) return;
         submitLock.current = true;
-        patch('/interns/complete-profile', {
+        post('/interns/complete-profile', {
             forceFormData: true,
             onFinish: () => {
                 submitLock.current = false;
