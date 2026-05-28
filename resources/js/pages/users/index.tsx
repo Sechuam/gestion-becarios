@@ -547,12 +547,12 @@ export default function UsersIndex({
                                         <SelectValue placeholder="Selecciona un rol" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {roles.map((r) => (
+                                        {roleOptions.map((r) => (
                                             <SelectItem
                                                 key={r.name}
                                                 value={r.name}
                                             >
-                                                {r.display_name}
+                                                {r.display_name || r.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

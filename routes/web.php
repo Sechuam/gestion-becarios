@@ -54,6 +54,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('tutor');
     Route::get('mensajes', [MessageController::class, 'index'])->name('messages.index');
     Route::post('mensajes', [MessageController::class, 'store'])->name('messages.store');
+    Route::patch('mensajes/{message}', [MessageController::class, 'update'])->name('messages.update');
+    Route::delete('mensajes/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+    Route::delete('mensajes/conversacion/{conversation}', [MessageController::class, 'destroyConversation'])->name('messages.destroy-conversation');
     Route::get('tareas/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
     Route::get('tareas/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::post('tareas', [TaskController::class, 'store'])
@@ -257,6 +260,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/roles/{role}/permissions/{permission}', [RolesController::class, 'togglePermission'])
         ->name('roles.permissions.toggle')
         ->middleware('can:manage users');
+
+    // Notificaciones
+    Route::post('/notificaciones/{id}/read', [App\Http\Controllers\NotificationController::class, 'read'])
+        ->name('notifications.read');
+    Route::post('/notificaciones/read-all', [App\Http\Controllers\NotificationController::class, 'readAll'])
+        ->name('notifications.read-all');
 
 });
 
