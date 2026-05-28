@@ -181,18 +181,18 @@ class MessageController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // Verificar que el usuario sea participante
-        $isParticipant = $conversation->participants()
-            ->where('user_id', $user->id)
-            ->exists();
+        $isParticipant = $this->conversationParticipantIds($conversation)
+            ->contains((int) $user->id);
 
         abort_unless($isParticipant, 403, 'No eres participante de esta conversación.');
 
-        // Eliminar al usuario de la conversación (no eliminar toda la conversación)
+        $hadParticipantRow = $conversation->participants()
+            ->where('user_id', $user->id)
+            ->exists();
+
         $conversation->participants()->detach($user->id);
 
-        // Si no quedan participantes, eliminar la conversación
-        if ($conversation->participants()->count() === 0) {
+        if (! $hadParticipantRow || $conversation->participants()->count() === 0 || $this->conversationParticipantIds($conversation)->count() <= 1) {
             $conversation->delete();
         }
 
@@ -306,15 +306,31 @@ class MessageController extends Controller
             return false;
         }
 
-        $participantIds = $conversation->participants()
-            ->pluck('users.id')
-            ->map(fn ($id) => (int) $id)
-            ->sort()
-            ->values();
+        $participantIds = $this->conversationParticipantIds($conversation);
 
         return $participantIds->count() === 2
             && $participantIds->contains((int) $user->id)
             && $participantIds->contains((int) $intern->company_tutor_user_id);
+    }
+
+    private function conversationParticipantIds(MessageConversation $conversation)
+    {
+        $participantIds = $conversation->participants()
+            ->pluck('users.id')
+            ->map(fn ($id) => (int) $id);
+
+        return $participantIds
+            ->merge([
+                $conversation->intern_user_id,
+                $conversation->tutor_user_id,
+                $conversation->user_id_a,
+                $conversation->user_id_b,
+            ])
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->sort()
+            ->values();
     }
 
     private function conversationPayload(MessageConversation $conversation, User $user, bool $withMessages = false): array
