@@ -96,8 +96,12 @@ class MessageController extends Controller
                 ->whereKey($validated['conversation_id'])
                 ->firstOrFail();
 
+            abort_unless($this->canReplyToConversation($user, $conversation), 403, 'No puedes responder a esta conversación.');
+
             // Añadir nuevos participantes si viene con recipient_ids
             if ($recipientIds->isNotEmpty()) {
+                $this->authorizeRecipients($user, $recipientIds);
+
                 $existingIds = $conversation->participants()->pluck('users.id');
                 $newIds = $recipientIds->reject(fn ($id) => $existingIds->contains($id));
                 foreach ($newIds as $newId) {
@@ -106,6 +110,7 @@ class MessageController extends Controller
             }
         } else {
             abort_unless($recipientIds->isNotEmpty(), 422, 'Debes seleccionar al menos un destinatario.');
+            $this->authorizeRecipients($user, $recipientIds);
 
             // Siempre crear nueva conversación (no reutilizar)
             $conversation = MessageConversation::create([
@@ -230,13 +235,11 @@ class MessageController extends Controller
 
     private function availableContacts(User $user): array
     {
-        // Intern: tutor + compañeros de práctica + compañeros de tareas
+        // Intern: solo su tutor asignado.
         if ($user->isIntern()) {
             $intern = $user->intern()->with('companyTutor')->first();
             $contacts = [];
-            $addedUserIds = collect([(int) $user->id]);
 
-            // Su tutor asignado
             if ($intern?->companyTutor) {
                 $contacts[] = [
                     'id' => $intern->companyTutor->id,
@@ -246,65 +249,14 @@ class MessageController extends Controller
                     'role' => 'Tutor',
                     'group' => 'Mi tutor',
                 ];
-                $addedUserIds->push((int) $intern->companyTutor->id);
-            }
-
-            // Compañeros de práctica (mismo centro)
-            $centerPeers = Intern::query()
-                ->with('user')
-                ->where('id', '!=', $intern?->id)
-                ->when($intern->education_center_id, fn ($q) => $q->where('education_center_id', $intern->education_center_id))
-                ->whereHas('user', fn ($q) => $q->whereNotNull('id'))
-                ->get();
-
-            foreach ($centerPeers as $peer) {
-                if ($peer->user && ! $addedUserIds->contains((int) $peer->user->id)) {
-                    $contacts[] = [
-                        'id' => $peer->user->id,
-                        'name' => $peer->user->name,
-                        'email' => $peer->user->email,
-                        'avatar' => $peer->user->avatar,
-                        'role' => 'Becario',
-                        'group' => 'Compañeros de centro',
-                    ];
-                    $addedUserIds->push((int) $peer->user->id);
-                }
-            }
-
-            // Compañeros de tareas (otros becarios en las mismas tareas)
-            if ($intern) {
-                $taskIds = $intern->tasks()->pluck('tasks.id');
-                if ($taskIds->isNotEmpty()) {
-                    $taskPeers = Intern::query()
-                        ->with('user')
-                        ->where('id', '!=', $intern->id)
-                        ->whereHas('tasks', fn ($q) => $q->whereIn('tasks.id', $taskIds))
-                        ->whereHas('user', fn ($q) => $q->whereNotNull('id'))
-                        ->get();
-
-                    foreach ($taskPeers as $peer) {
-                        if ($peer->user && ! $addedUserIds->contains((int) $peer->user->id)) {
-                            $contacts[] = [
-                                'id' => $peer->user->id,
-                                'name' => $peer->user->name,
-                                'email' => $peer->user->email,
-                                'avatar' => $peer->user->avatar,
-                                'role' => 'Becario',
-                                'group' => 'Compañeros de tareas',
-                            ];
-                            $addedUserIds->push((int) $peer->user->id);
-                        }
-                    }
-                }
             }
 
             return $contacts;
         }
 
-        // Admin/Tutor: todos los interns + admins + tutores
+        // Admin/Tutor: becarios. El tutor ve solo sus becarios asignados.
         $contacts = [];
 
-        // Becarios
         $interns = Intern::query()
             ->with('user')
             ->when(
@@ -327,28 +279,42 @@ class MessageController extends Controller
             $contacts[] = $intern;
         }
 
-        // Otros tutores/admins
-        if ($user->isAdmin()) {
-            $staffUsers = User::where('id', '!=', $user->id)
-                ->where(function ($q) {
-                    $q->role('tutor')->orWhere->role('admin');
-                })
-                ->get()
-                ->map(fn (User $u) => [
-                    'id' => $u->id,
-                    'name' => $u->name,
-                    'email' => $u->email,
-                    'avatar' => $u->avatar,
-                    'role' => $u->isAdmin() ? 'Admin' : 'Tutor',
-                    'group' => $u->isAdmin() ? 'Administradores' : 'Tutores',
-                ]);
+        return $contacts;
+    }
 
-            foreach ($staffUsers as $staff) {
-                $contacts[] = $staff;
-            }
+    private function authorizeRecipients(User $user, $recipientIds): void
+    {
+        $allowedIds = collect($this->availableContacts($user))
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id);
+
+        $invalid = collect($recipientIds)
+            ->map(fn ($id) => (int) $id)
+            ->reject(fn ($id) => $allowedIds->contains($id));
+
+        abort_unless($invalid->isEmpty(), 403, 'No puedes enviar mensajes a esos destinatarios.');
+    }
+
+    private function canReplyToConversation(User $user, MessageConversation $conversation): bool
+    {
+        if (! $user->isIntern()) {
+            return true;
         }
 
-        return $contacts;
+        $intern = $user->intern()->first();
+        if (! $intern?->company_tutor_user_id) {
+            return false;
+        }
+
+        $participantIds = $conversation->participants()
+            ->pluck('users.id')
+            ->map(fn ($id) => (int) $id)
+            ->sort()
+            ->values();
+
+        return $participantIds->count() === 2
+            && $participantIds->contains((int) $user->id)
+            && $participantIds->contains((int) $intern->company_tutor_user_id);
     }
 
     private function conversationPayload(MessageConversation $conversation, User $user, bool $withMessages = false): array
@@ -387,6 +353,7 @@ class MessageController extends Controller
             'subject' => $conversation->subject,
             'last_message_at' => $conversation->last_message_at,
             'unread_count' => $conversation->unread_count ?? 0,
+            'can_reply' => $this->canReplyToConversation($user, $conversation),
             'latest_message' => $latest ? [
                 'body' => $latest->body,
                 'sender_name' => $latest->sender?->name,

@@ -56,6 +56,7 @@ type Conversation = {
     subject?: string | null;
     last_message_at?: string | null;
     unread_count: number;
+    can_reply?: boolean;
     latest_message?: {
         body: string;
         sender_name?: string | null;
@@ -346,6 +347,7 @@ export default function Messages({
     const conversationSubject = selected_conversation?.subject;
     const conversationPracticeType = selected_conversation?.practice_type;
     const isGroupConv = selected_conversation?.is_group;
+    const canReply = selected_conversation?.can_reply ?? true;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -356,8 +358,8 @@ export default function Messages({
                     title="Mensajes"
                     description={
                         isIntern
-                            ? 'Conversaciones con tu tutor y compañeros.'
-                            : 'Conversaciones entre becarios, tutores y administradores.'
+                            ? 'Conversaciones con tu tutor asignado.'
+                            : 'Conversaciones con uno o varios becarios.'
                     }
                     icon={<MessageSquare className="h-4 w-4" />}
                     actions={
@@ -1155,54 +1157,64 @@ export default function Messages({
                                     </div>
 
                                     {/* Input de mensaje */}
-                                    <form
-                                        onSubmit={submit}
-                                        className="border-t border-white/10 bg-card p-4"
-                                    >
-                                        {data.conversation_id && (
-                                            <input
-                                                type="hidden"
-                                                value={data.conversation_id}
-                                            />
-                                        )}
-                                        <div className="flex gap-3">
-                                            <Textarea
-                                                value={data.body}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        'body',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder={
-                                                    selectedGroupIds.length > 0
-                                                        ? 'Escribe un mensaje para el grupo...'
-                                                        : 'Escribe tu mensaje...'
-                                                }
-                                                className="min-h-12 resize-none rounded-xl border-border/80 bg-background"
-                                            />
-                                            <Button
-                                                type="submit"
-                                                disabled={
-                                                    processing ||
-                                                    !data.body.trim() ||
-                                                    (!data.conversation_id &&
-                                                        !data.recipient_user_id &&
-                                                        selectedGroupIds.length ===
-                                                            0)
-                                                }
-                                                className="h-12 shrink-0 gap-2 rounded-xl px-5 shadow-md"
-                                            >
-                                                <Send className="h-4 w-4" />
-                                                Enviar
-                                            </Button>
+                                    {canReply ? (
+                                        <form
+                                            onSubmit={submit}
+                                            className="border-t border-white/10 bg-card p-4"
+                                        >
+                                            {data.conversation_id && (
+                                                <input
+                                                    type="hidden"
+                                                    value={data.conversation_id}
+                                                />
+                                            )}
+                                            <div className="flex gap-3">
+                                                <Textarea
+                                                    value={data.body}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'body',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder={
+                                                        selectedGroupIds.length >
+                                                        0
+                                                            ? 'Escribe un mensaje para el grupo...'
+                                                            : 'Escribe tu mensaje...'
+                                                    }
+                                                    className="min-h-12 resize-none rounded-xl border-border/80 bg-background"
+                                                />
+                                                <Button
+                                                    type="submit"
+                                                    disabled={
+                                                        processing ||
+                                                        !data.body.trim() ||
+                                                        (!data.conversation_id &&
+                                                            !data.recipient_user_id &&
+                                                            selectedGroupIds.length ===
+                                                                0)
+                                                    }
+                                                    className="h-12 shrink-0 gap-2 rounded-xl px-5 shadow-md"
+                                                >
+                                                    <Send className="h-4 w-4" />
+                                                    Enviar
+                                                </Button>
+                                            </div>
+                                            {errors.body && (
+                                                <p className="mt-2 text-sm text-destructive">
+                                                    {errors.body}
+                                                </p>
+                                            )}
+                                        </form>
+                                    ) : (
+                                        <div className="border-t border-white/10 bg-card p-4 text-sm text-muted-foreground">
+                                            Esta conversación es informativa. Los
+                                            becarios solo pueden responder a su
+                                            tutor asignado en conversaciones
+                                            individuales.
                                         </div>
-                                        {errors.body && (
-                                            <p className="mt-2 text-sm text-destructive">
-                                                {errors.body}
-                                            </p>
-                                        )}
-                                    </form>
+                                    )}
                                 </>
                             ) : (
                                 <div className="empty-state mx-6 my-12 flex-1">
