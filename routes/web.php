@@ -93,7 +93,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/interns/{intern}/report', [AttendanceReportController::class, 'download'])->name('interns.report');
     Route::get('interns/complete-profile', [InternController::class, 'completeProfile'])
         ->name('interns.complete-profile');
-    Route::patch('interns/complete-profile', [InternController::class, 'storeCompleteProfile'])
+    Route::post('interns/complete-profile', [InternController::class, 'storeCompleteProfile'])
         ->name('interns.complete-profile.store');
 
     // Catálogo de tipos de práctica (solo admin)
