@@ -21,13 +21,15 @@ class UpdateInternRequest extends FormRequest
      */
     public function rules(): array
     {
-        $intern = $this->route('intern');
+        $intern = $this->route('intern') ?? $this->user()?->intern;
+        $userId = $intern?->user_id ?? $this->user()?->id;
+        $internId = $intern?->id;
 
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$intern->user_id,
+            'email' => 'required|email|unique:users,email,'.$userId,
             'education_center_id' => 'required|exists:education_centers,id',
-            'dni' => 'required|string|regex:/^[XYZ]?\d{7,8}[A-Z]$/i|unique:interns,dni,'.$intern->id,
+            'dni' => 'required|string|regex:/^[XYZ]?\d{7,8}[A-Z]$/i|unique:interns,dni,'.$internId,
             'birth_date' => 'required|date',
             'phone' => 'required|string',
             'address' => 'required|string',
