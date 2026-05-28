@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use Faker\Factory as FakerFactory;
-use Faker\Generator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,8 +9,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EducationCenterFactory extends Factory
 {
-    private static ?Generator $generator = null;
-
     /**
      * Define the model's default state.
      *
@@ -20,19 +16,35 @@ class EducationCenterFactory extends Factory
      */
     public function definition(): array
     {
-        $faker = self::$generator ??= FakerFactory::create(config('app.faker_locale', 'en_US'));
+        $token = self::token();
 
         return [
-            'name' => $faker->company().' School ',
-            'code' => 'EC-'.$faker->unique()->numberBetween(1000, 9999),
-            'address' => $faker->streetAddress(),
-            'city' => $faker->city(),
-            'contact_person' => $faker->name(),
-            'contact_email' => $faker->unique()->safeEmail(),
-            'email' => $faker->unique()->safeEmail(),
-            'phone' => $faker->phoneNumber(),
-            'web' => $faker->url(),
-            'contact_position' => $faker->jobTitle(),
+            'name' => 'Centro Educativo '.$token,
+            'code' => 'EC-'.$token,
+            'address' => random_int(1, 250).' Calle '.self::pick(['Mayor', 'Real', 'Norte', 'Sur', 'Central']),
+            'city' => self::pick(['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Bilbao']),
+            'contact_person' => self::pick(['Ana Garcia', 'Carlos Lopez', 'Marta Sanchez', 'Luis Martin']),
+            'contact_email' => 'contacto-'.$token.'@example.test',
+            'email' => 'centro-'.$token.'@example.test',
+            'phone' => '+34 600 '.random_int(100, 999).' '.random_int(100, 999),
+            'web' => 'https://centro-'.$token.'.example.test',
+            'contact_position' => self::pick(['Direccion', 'Coordinacion', 'Secretaria', 'Jefatura de estudios']),
         ];
+    }
+
+    private static function token(): string
+    {
+        return strtoupper(bin2hex(random_bytes(4)));
+    }
+
+    /**
+     * @template T
+     *
+     * @param  array<int, T>  $items
+     * @return T
+     */
+    private static function pick(array $items): mixed
+    {
+        return $items[array_rand($items)];
     }
 }

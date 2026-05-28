@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use Faker\Factory as FakerFactory;
-use Faker\Generator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,8 +9,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class InternFactory extends Factory
 {
-    private static ?Generator $generator = null;
-
     /**
      * Define the model's default state.
      *
@@ -20,25 +16,41 @@ class InternFactory extends Factory
      */
     public function definition(): array
     {
-        $faker = self::$generator ??= FakerFactory::create(config('app.faker_locale', 'en_US'));
+        $token = self::token();
 
         return [
             'user_id' => \App\Models\User::factory(),
             'education_center_id' => \App\Models\EducationCenter::inRandomOrder()->first()->id,
 
-            'dni' => $faker->unique()->bothify('#########?'),
-            'birth_date' => $faker->date('Y-m-d', '-18 years'),
-            'phone' => $faker->phoneNumber(),
-            'address' => $faker->address(),
-            'city' => $faker->city(),
+            'dni' => 'DNI'.$token,
+            'birth_date' => now()->subYears(random_int(18, 30))->subDays(random_int(0, 365))->toDateString(),
+            'phone' => '+34 600 '.random_int(100, 999).' '.random_int(100, 999),
+            'address' => random_int(1, 250).' Calle '.self::pick(['Mayor', 'Real', 'Norte', 'Sur', 'Central']),
+            'city' => self::pick(['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Bilbao']),
 
-            'academic_degree' => $faker->randomElement(['DAM', 'DAW', 'ADE', 'Derecho', 'Magisterio']),
+            'academic_degree' => self::pick(['DAM', 'DAW', 'ADE', 'Derecho', 'Magisterio']),
             'academic_year' => '2024-2025',
 
             'start_date' => now()->addDays(rand(1, 30)),
             'end_date' => now()->addMonths(rand(3, 6)),
-            'status' => $faker->randomElement(['active', 'completed', 'abandoned']),
-            'tutor_name' => $faker->name(),
+            'status' => self::pick(['active', 'completed', 'abandoned']),
+            'tutor_name' => self::pick(['Ana Garcia', 'Carlos Lopez', 'Marta Sanchez', 'Luis Martin']),
         ];
+    }
+
+    private static function token(): string
+    {
+        return strtoupper(bin2hex(random_bytes(4)));
+    }
+
+    /**
+     * @template T
+     *
+     * @param  array<int, T>  $items
+     * @return T
+     */
+    private static function pick(array $items): mixed
+    {
+        return $items[array_rand($items)];
     }
 }
