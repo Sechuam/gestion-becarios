@@ -17,7 +17,7 @@ import {
     Trash2,
     User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AbsencesPagination } from '@/components/attendance/AbsencesPagination';
 import { ConfirmNavigationButton } from '@/components/common/ConfirmNavigationButton';
 import { MetricPills } from '@/components/common/MetricPills';
@@ -30,6 +30,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
@@ -37,6 +45,21 @@ import { formatDateEs, formatDateTimeEs } from '@/lib/date-format';
 import type { BreadcrumbItem } from '@/types/navigation';
 
 const ABSENCES_PER_PAGE = 3;
+const PROFILE_TABS = [
+    'resumen',
+    'personal',
+    'academico',
+    'asistencia',
+    'seguimiento',
+];
+
+function getInitialProfileTab() {
+    if (typeof window === 'undefined') return 'resumen';
+
+    const hash = window.location.hash.replace('#', '');
+
+    return PROFILE_TABS.includes(hash) ? hash : 'resumen';
+}
 
 export default function Show({
     intern,
@@ -58,6 +81,7 @@ export default function Show({
     absences: any[];
 }) {
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(getInitialProfileTab);
 
     const { auth } = usePage().props as any;
     const canManage = auth.user?.permissions?.includes('manage interns');
@@ -107,6 +131,7 @@ export default function Show({
     const [notesValue, setNotesValue] = useState(visibleNoteContent);
     const [activityPage, setActivityPage] = useState(1);
     const [absencePage, setAbsencePage] = useState(1);
+    const [absenceToDelete, setAbsenceToDelete] = useState<any | null>(null);
     const activitiesPerPage = 3;
     const totalActivityPages = Math.ceil(activities.length / activitiesPerPage);
     const displayedActivities = activities.slice(
@@ -135,6 +160,14 @@ export default function Show({
         (a: any, b: any) =>
             String(b.start_date).localeCompare(String(a.start_date)),
     );
+    const handleDeleteAbsence = () => {
+        if (!absenceToDelete) return;
+
+        router.delete(`/absences/${absenceToDelete.id}`, {
+            preserveScroll: true,
+            onSuccess: () => setAbsenceToDelete(null),
+        });
+    };
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -147,6 +180,16 @@ export default function Show({
         centersById[String(intern.education_center.id)] =
             intern.education_center.name;
     }
+
+    useEffect(() => {
+        const handleHashChange = () => {
+            setActiveTab(getInitialProfileTab());
+        };
+
+        window.addEventListener('hashchange', handleHashChange);
+
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -191,7 +234,18 @@ export default function Show({
                 {/* TABS INTERFACE */}
                 {/* PANEL ÚNICO UNIFICADO */}
                 <Card className="app-panel w-full overflow-hidden border-2 border-sidebar/15 pt-0 pb-0 shadow-xl">
-                    <Tabs defaultValue="resumen" className="w-full">
+                    <Tabs
+                        value={activeTab}
+                        onValueChange={(value) => {
+                            setActiveTab(value);
+                            window.history.replaceState(
+                                null,
+                                '',
+                                `#${value}`,
+                            );
+                        }}
+                        className="w-full"
+                    >
                         {/* NAVEGACIÓN INTEGRADA EN LA CABECERA DEL PANEL */}
                         <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
                             <InternProfileTabsNav />
@@ -844,6 +898,18 @@ export default function Show({
                                                                                 : 'Denegada'}
                                                                         </span>
                                                                     )}
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="outline"
+                                                                        className="h-9 rounded-xl border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                                                                        onClick={() =>
+                                                                            setAbsenceToDelete(
+                                                                                abs,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                    </Button>
                                                                 </div>
                                                             </div>
                                                         ),
@@ -1415,6 +1481,53 @@ export default function Show({
                     isOpen={isExportModalOpen}
                     onClose={() => setIsExportModalOpen(false)}
                 />
+
+                <Dialog
+                    open={Boolean(absenceToDelete)}
+                    onOpenChange={(open) => {
+                        if (!open) setAbsenceToDelete(null);
+                    }}
+                >
+                    <DialogContent className="max-w-md rounded-xl border-sidebar/10 shadow-xl">
+                        <DialogHeader>
+                            <DialogTitle>Cancelar ausencia</DialogTitle>
+                            <DialogDescription>
+                                Vas a eliminar esta ausencia del registro del
+                                becario. Esta acción no se puede deshacer.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        {absenceToDelete && (
+                            <div className="rounded-xl border border-rose-100 bg-rose-50 p-4 text-sm text-rose-900">
+                                <p className="font-bold">
+                                    {absenceToDelete.reason}
+                                </p>
+                                <p className="mt-1 text-xs font-medium text-rose-700">
+                                    {formatDateEs(absenceToDelete.date)}
+                                </p>
+                            </div>
+                        )}
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="rounded-xl"
+                                onClick={() => setAbsenceToDelete(null)}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                className="rounded-xl"
+                                onClick={handleDeleteAbsence}
+                            >
+                                Eliminar ausencia
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );

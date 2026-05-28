@@ -10,6 +10,7 @@ use App\Http\Controllers\EvaluationCriterionController;
 use App\Http\Controllers\EvaluationReportController;
 use App\Http\Controllers\InternController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PracticeTypeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RolesController;
@@ -51,6 +52,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('mis-becarios', [TutorController::class, 'mine'])
         ->name('tutors.mine')
         ->middleware('tutor');
+    Route::get('mensajes', [MessageController::class, 'index'])->name('messages.index');
+    Route::post('mensajes', [MessageController::class, 'store'])->name('messages.store');
     Route::get('tareas/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
     Route::get('tareas/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::post('tareas', [TaskController::class, 'store'])
@@ -82,6 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas de Ausencias
     Route::post('/absences', [AbsenceController::class, 'store'])->name('absences.store');
     Route::patch('/absences/{absence}/status', [AbsenceController::class, 'updateStatus'])->name('absences.updateStatus');
+    Route::delete('/absences/{absence}', [AbsenceController::class, 'destroy'])->name('absences.destroy');
     Route::post('/absences/{absence}/justification', [AbsenceController::class, 'uploadJustification'])->name('absences.uploadJustification');
     Route::get('/interns/{intern}/report', [AttendanceReportController::class, 'download'])->name('interns.report');
     Route::get('interns/complete-profile', [InternController::class, 'completeProfile'])

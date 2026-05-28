@@ -14,7 +14,6 @@ import {
     Cell,
     Pie,
     PieChart,
-    ReferenceLine,
     ResponsiveContainer,
     Tooltip,
     XAxis,
@@ -42,6 +41,17 @@ function formatHoursToHoursMinutes(hours: number) {
     const minutes = totalMinutes % 60;
 
     return `${wholeHours}h ${minutes}m`;
+}
+
+function formatHoursTick(hours: number) {
+    return `${Math.round(hours)}h`;
+}
+
+function buildHourTicks(maxHours: number, step = 1) {
+    return Array.from(
+        { length: Math.floor(maxHours / step) + 1 },
+        (_, index) => index * step,
+    );
 }
 
 type AttendanceRange = '7d' | '30d' | 'month';
@@ -304,6 +314,20 @@ export function AttendanceChart({
     const chartWidth = !isMonthView
         ? Math.max(range === '7d' ? 520 : 860, chartData.length * 38)
         : Math.max(520, chartData.length * 96);
+    const maxChartHours = Math.max(
+        ...chartData.map((item) =>
+            Number(
+                item.total_hours ??
+                    Number(item.horas ?? 0) + Number(item.live_hours ?? 0),
+            ),
+        ),
+        todayLiveTotalHours,
+        0,
+    );
+    const yAxisMax = isMonthView
+        ? Math.max(8, Math.ceil(maxChartHours / 8) * 8)
+        : Math.max(8, Math.ceil(maxChartHours));
+    const yAxisTicks = buildHourTicks(yAxisMax, isMonthView ? 8 : 1);
 
     useLayoutEffect(() => {
         const container = scrollRef.current;
@@ -432,30 +456,17 @@ export function AttendanceChart({
                                     interval={0}
                                 />
                                 <YAxis
+                                    domain={[0, yAxisMax]}
+                                    ticks={yAxisTicks}
                                     tickFormatter={(value) =>
-                                        formatHoursToHoursMinutes(Number(value))
+                                        formatHoursTick(Number(value))
                                     }
                                     axisLine={false}
                                     tickLine={false}
                                     tick={{ fontSize: 10, fill: '#475569' }}
-                                    width={52}
+                                    width={38}
                                 />
                                 <Tooltip content={<AttendanceTooltip />} />
-                                {!isMonthView && currentLog && (
-                                    <ReferenceLine
-                                        y={todayLiveTotalHours}
-                                        stroke="#ef4444"
-                                        strokeDasharray="4 4"
-                                        strokeWidth={2}
-                                        label={{
-                                            value: `Ahora ${formatHoursToHoursMinutes(todayLiveTotalHours)}`,
-                                            position: 'insideTopLeft',
-                                            fill: '#ef4444',
-                                            fontSize: 10,
-                                            fontWeight: 800,
-                                        }}
-                                    />
-                                )}
                                 <Bar
                                     dataKey="horas"
                                     fill="#65b84d"

@@ -66,7 +66,7 @@ export function NotificationBell({ triggerClassName }: NotificationBellProps) {
                             <Link
                                 href={
                                     notification.data.intern_id
-                                        ? `/interns/${notification.data.intern_id}`
+                                        ? `/interns/${notification.data.intern_id}#asistencia`
                                         : '/becarios'
                                 }
                                 className="mt-1 text-xs text-indigo-500 hover:underline"

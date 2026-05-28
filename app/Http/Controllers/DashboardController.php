@@ -81,7 +81,7 @@ class DashboardController extends Controller
                     'average_task_resolution_days' => $this->averageTaskResolutionDays($taskQuery),
                 ],
                 'interns_by_center' => $this->internsByCenter($internQuery),
-                'attendance_chart' => $this->attendanceChart($userIds),
+                'attendance_chart' => $role === 'intern' ? $this->attendanceChart($userIds) : [],
                 'task_status_chart' => $this->taskStatusChart($taskQuery),
                 'task_progress' => $this->taskProgress($internQuery),
                 'alerts' => [
@@ -96,11 +96,13 @@ class DashboardController extends Controller
         $today = Carbon::today();
         
         // 1. Jornada activa hoy
-        $currentLog = TimeLog::where('user_id', $user->id)
-            ->whereDate('date', $today)
-            ->whereNotNull('clock_in')
-            ->whereNull('clock_out')
-            ->first();
+        $currentLog = $role === 'intern'
+            ? TimeLog::where('user_id', $user->id)
+                ->whereDate('date', $today)
+                ->whereNotNull('clock_in')
+                ->whereNull('clock_out')
+                ->first()
+            : null;
 
         // 2. Eventos y Ausencias para hoy (Propios e Invitaciones)
         $todayEvents = CalendarEvent::with(['user', 'attendees'])
@@ -139,6 +141,12 @@ class DashboardController extends Controller
                 ->sum('total_hours'),
             'elapsed_seconds' => Carbon::parse($currentLog->clock_in)->diffInSeconds(now())
         ] : null;
+        $data['manageable_interns'] = $role === 'admin' || $role === 'tutor'
+            ? $this->eventManageableInterns($user, $role)
+            : [];
+        $data['manageable_tutors'] = $role === 'admin' || $role === 'tutor'
+            ? $this->eventManageableTutors($user)
+            : [];
 
         return Inertia::render('dashboard/Index', $data);
     }
@@ -158,6 +166,40 @@ class DashboardController extends Controller
         }
 
         return (clone $internQuery)->distinct('education_center_id')->count('education_center_id');
+    }
+
+    protected function eventManageableInterns(User $user, string $role): array
+    {
+        return $this->scopedInternQuery($user, $role)
+            ->where('status', 'active')
+            ->orderBy('start_date')
+            ->get()
+            ->map(fn(Intern $intern) => [
+                'id' => $intern->id,
+                'user_id' => $intern->user_id,
+                'name' => $intern->user->name,
+                'avatar' => $intern->user->getFirstMediaUrl('avatar'),
+                'education_center' => $intern->educationCenter?->name,
+            ])
+            ->values()
+            ->all();
+    }
+
+    protected function eventManageableTutors(User $user): array
+    {
+        return User::query()
+            ->role('tutor')
+            ->whereKeyNot($user->id)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email'])
+            ->map(fn(User $tutor) => [
+                'id' => $tutor->id,
+                'user_id' => $tutor->id,
+                'name' => $tutor->name,
+                'email' => $tutor->email,
+            ])
+            ->values()
+            ->all();
     }
 
     protected function internsByCenter(Builder $internQuery): array
@@ -342,7 +384,7 @@ class DashboardController extends Controller
     {
         return (clone $internQuery)
             ->where('status', 'active')
-            ->whereBetween('end_date', [Carbon::today(), Carbon::today()->addDays(30)])
+            ->whereBetween('end_date', [Carbon::today(), Carbon::today()->addDays(7)])
             ->count();
     }
 
@@ -377,7 +419,6 @@ class DashboardController extends Controller
             ])
             ->with(['user', 'educationCenter'])
             ->orderByDesc('updated_at')
-            ->limit(8)
             ->get();
 
         $userIds = $interns->pluck('user_id');

@@ -29,21 +29,23 @@ class EvaluationController extends Controller
 
     protected function canAccessEvaluations(): void
     {
-        if (! Auth::user()?->can('view evaluations')) {
+        $user = Auth::user();
+
+        if (! ($user?->isAdmin() || $user?->isTutor() || $user?->isIntern() || $user?->can('view evaluations'))) {
             abort(403);
         }
     }
 
     protected function canManageEvaluations(): void
     {
-        if (! Auth::user()?->can('manage evaluations')) {
+        if (! (Auth::user()?->isAdmin() || Auth::user()?->can('manage evaluations'))) {
             abort(403);
         }
     }
 
     protected function canDeleteEvaluations(): void
     {
-        if (! Auth::user()?->can('delete evaluations')) {
+        if (! (Auth::user()?->isAdmin() || Auth::user()?->can('delete evaluations'))) {
             abort(403);
         }
     }

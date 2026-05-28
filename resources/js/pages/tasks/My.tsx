@@ -37,6 +37,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Mis tareas', href: '/tareas/mis' },
 ];
 
+const TASK_LIST_PER_PAGE = '10';
+const TASK_BOARD_PER_PAGE = '30';
+
 export default function My({
     tasks,
     filters = {},
@@ -74,7 +77,19 @@ export default function My({
         if (typeof window === 'undefined') return;
 
         window.localStorage.setItem('tasks-my-view-mode', viewMode);
-    }, [viewMode]);
+
+        const nextPerPage =
+            viewMode === 'table' ? TASK_LIST_PER_PAGE : TASK_BOARD_PER_PAGE;
+
+        if (String(filters.per_page ?? TASK_BOARD_PER_PAGE) === nextPerPage)
+            return;
+
+        router.get(
+            '/tareas/mis',
+            { ...filters, per_page: nextPerPage, page: undefined },
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }, [filters, viewMode]);
 
     useEffect(() => {
         if (highlightedTaskId === null) return;
