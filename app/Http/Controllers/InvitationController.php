@@ -7,9 +7,11 @@ use App\Models\User;
 use App\Notifications\UserInvited;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Throwable;
 use Illuminate\Validation\Rules\Password;
 
 class InvitationController extends Controller
@@ -31,7 +33,21 @@ class InvitationController extends Controller
             'role' => $request->role,
             'expires_at' => now()->addHours(48),
         ]);
-        Notification::route('mail', $request->email)->notify(new UserInvited($invitation));
+
+        try {
+            Notification::route('mail', $request->email)->notify(new UserInvited($invitation));
+        } catch (Throwable $exception) {
+            $invitation->delete();
+
+            Log::error('No se pudo enviar la invitación.', [
+                'email' => $request->email,
+                'error' => $exception->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'No se pudo enviar la invitación. Revisa la configuración SMTP en Railway/Brevo.');
+        }
 
         return back()->with('success', 'Invitación enviada correctamente al correo.');
     }
