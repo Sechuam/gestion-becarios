@@ -47,16 +47,18 @@ type FormData = {
 
 export default function CompleteProfile({
     intern,
+    user,
     education_centers,
     tutors,
 }: {
     intern: any;
+    user: { name: string; email: string };
     education_centers: any[];
     tutors: any[];
 }) {
     const { data, setData, patch, processing, errors } = useForm<FormData>({
-        name: '',
-        email: '',
+        name: user?.name || '',
+        email: user?.email || '',
         education_center_id: intern?.education_center_id?.toString() || '',
         dni: intern?.dni || '',
         birth_date: intern?.birth_date || '',

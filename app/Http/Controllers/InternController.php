@@ -383,10 +383,11 @@ class InternController extends Controller
 
     public function completeProfile() {
         $user = Auth::user();
-        $intern = $user->intern;
+        $intern = $user->intern()->firstOrCreate([]);
 
         return Inertia::render('interns/CompleteProfile', [
             'intern' => $intern,
+            'user' => $user->only(['name', 'email']),
             'education_centers' => EducationCenter::all(['id', 'name']),
             'tutors' => User::role('tutor')->get(['id', 'name', 'email']),
         ]);
@@ -394,9 +395,15 @@ class InternController extends Controller
 
     public function storeCompleteProfile(UpdateInternRequest $request) {
         $user = Auth::user();
-        $intern = $user->intern;
+        $intern = $user->intern()->firstOrCreate([]);
+        $validated = $request->validated();
 
-        $intern->update($request->validated());
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        $intern->update(collect($validated)->except(['name', 'email'])->all());
         $this->syncInternMedia($intern, $request);
 
         return redirect()->route('dashboard')->with('success', 'Perfil completado correctamente');
