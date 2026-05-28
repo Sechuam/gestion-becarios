@@ -129,7 +129,7 @@ class TaskController extends Controller
 
         return Inertia::render('tasks/index', [
             'tasks' => $tasks,
-            'filters' => $request->only(['status', 'practice_type', 'intern_id', 'due_from', 'due_to', 'search', 'sort', 'direction', 'delivery_status']),
+            'filters' => $request->only(['status', 'practice_type', 'intern_id', 'due_from', 'due_to', 'search', 'sort', 'direction', 'delivery_status', 'per_page']),
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
             'interns' => Intern::query()
                 ->with('user:id,name')
@@ -229,7 +229,7 @@ class TaskController extends Controller
 
         return Inertia::render('tasks/My', [
             'tasks' => $tasks,
-            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search', 'sort', 'direction', 'delivery_status']),
+            'filters' => $request->only(['status', 'practice_type', 'due_from', 'due_to', 'search', 'sort', 'direction', 'delivery_status', 'per_page']),
             'practice_types' => PracticeType::where('is_active', true)->get(['id', 'name']),
         ]);
     }

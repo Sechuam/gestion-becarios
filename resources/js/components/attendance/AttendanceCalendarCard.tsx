@@ -12,7 +12,7 @@ import { CalendarEventContent } from './CalendarEventContent';
 import { CalendarVisibilityFilters } from './CalendarVisibilityFilters';
 import { CreateEventModal } from './CreateEventModal';
 import { DayClickModal } from './DayClickModal';
-import type { ManageableIntern } from './types';
+import type { ManageableIntern, ManageableTutor } from './types';
 
 const renderCalendarEvent = (eventInfo: EventContentArg) => (
     <CalendarEventContent eventInfo={eventInfo} />
@@ -32,11 +32,16 @@ const normalizeEventClasses = (classNames: string[] | string | undefined) => {
 
 export function AttendanceCalendarCard({
     canManageAttendance = false,
+    canRequestAbsence = true,
     manageableInterns = [],
+    manageableTutors = [],
 }: {
     canManageAttendance?: boolean;
+    canRequestAbsence?: boolean;
     manageableInterns?: ManageableIntern[];
+    manageableTutors?: ManageableTutor[];
 }) {
+    const canShowJornadas = !canManageAttendance;
     const [showJornadas, setShowJornadas] = useState(true);
     const [showAbsences, setShowAbsences] = useState(true);
     const [showPersonalEvents, setShowPersonalEvents] = useState(true);
@@ -73,6 +78,7 @@ export function AttendanceCalendarCard({
                     showJornadas={showJornadas}
                     showAbsences={showAbsences}
                     showPersonalEvents={showPersonalEvents}
+                    canShowJornadas={canShowJornadas}
                     onShowJornadasChange={setShowJornadas}
                     onShowAbsencesChange={setShowAbsences}
                     onShowPersonalEventsChange={setShowPersonalEvents}
@@ -451,6 +457,7 @@ export function AttendanceCalendarCard({
                     onOpenChange={setIsDayClickModalOpen}
                     onSelectOption={handleOptionSelect}
                     date={selectedDate}
+                    canRequestAbsence={canRequestAbsence}
                 />
 
                 <CreateEventModal
@@ -460,6 +467,7 @@ export function AttendanceCalendarCard({
                     event={selectedEvent}
                     onCreated={handleEventCreated}
                     manageableInterns={manageableInterns}
+                    manageableTutors={manageableTutors}
                 />
             </CardContent>
         </Card>

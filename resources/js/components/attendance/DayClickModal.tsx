@@ -12,6 +12,7 @@ interface DayClickModalProps {
     onOpenChange: (open: boolean) => void;
     onSelectOption: (option: 'event' | 'absence') => void;
     date: string;
+    canRequestAbsence?: boolean;
 }
 
 export function DayClickModal({
@@ -19,6 +20,7 @@ export function DayClickModal({
     onOpenChange,
     onSelectOption,
     date,
+    canRequestAbsence = true,
 }: DayClickModalProps) {
     const formattedDate = new Date(date).toLocaleDateString('es-ES', {
         weekday: 'long',
@@ -58,23 +60,25 @@ export function DayClickModal({
                         </div>
                     </button>
 
-                    <button
-                        onClick={() => onSelectOption('absence')}
-                        className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-sidebar hover:ring-4 hover:ring-slate-100 dark:bg-slate-800/50 dark:hover:bg-sidebar"
-                    >
-                        <div className="flex h-10 w-12 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar transition-all group-hover:bg-sidebar group-hover:text-white">
-                            <Umbrella className="h-6 w-6" />
-                        </div>
-                        <div className="flex-1">
-                            <p className="font-black text-slate-900 transition-colors">
-                                Registrar Ausencia
-                            </p>
-                            <p className="mt-0.5 text-[11px] leading-tight font-medium text-slate-500">
-                                Informa de una falta al trabajo o solicita un
-                                permiso.
-                            </p>
-                        </div>
-                    </button>
+                    {canRequestAbsence && (
+                        <button
+                            onClick={() => onSelectOption('absence')}
+                            className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-sidebar hover:ring-4 hover:ring-slate-100 dark:bg-slate-800/50 dark:hover:bg-sidebar"
+                        >
+                            <div className="flex h-10 w-12 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar transition-all group-hover:bg-sidebar group-hover:text-white">
+                                <Umbrella className="h-6 w-6" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-black text-slate-900 transition-colors">
+                                    Registrar Ausencia
+                                </p>
+                                <p className="mt-0.5 text-[11px] leading-tight font-medium text-slate-500">
+                                    Informa de una falta al trabajo o solicita
+                                    un permiso.
+                                </p>
+                            </div>
+                        </button>
+                    )}
 
                     <Button
                         type="button"

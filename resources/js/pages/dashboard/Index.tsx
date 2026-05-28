@@ -28,6 +28,11 @@ import {
     Users,
 } from 'lucide-react';
 import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { CreateEventModal } from '@/components/attendance/CreateEventModal';
+import type {
+    ManageableIntern,
+    ManageableTutor,
+} from '@/components/attendance/types';
 import { DashboardAlertCards } from '@/components/dashboard/DashboardAlertCards';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DashboardMetricCards } from '@/components/dashboard/DashboardMetricCards';
@@ -90,14 +95,22 @@ const DEFAULT_SECTIONS = [
 ];
 const DEFAULT_TOP_CHARTS = ['interns_chart', 'task_chart'];
 const DEFAULT_BOTTOM_PANELS = ['attendance', 'agenda', 'progress'];
+const STAFF_BOTTOM_PANELS = ['progress', 'agenda'];
 const DEFAULT_VISIBLE_WIDGETS = DEFAULT_TOP_CHARTS.concat(
     DEFAULT_BOTTOM_PANELS,
 ).concat(['metrics', 'alerts']);
 const INTERN_VISIBLE_WIDGETS = ['metrics', 'attendance', 'agenda', 'progress'];
+const STAFF_VISIBLE_WIDGETS = DEFAULT_VISIBLE_WIDGETS.filter(
+    (widget) => widget !== 'attendance',
+);
 
 function getSupportedWidgets(role: DashboardRole) {
     if (role === 'intern') {
         return INTERN_VISIBLE_WIDGETS;
+    }
+
+    if (role === 'admin' || role === 'tutor') {
+        return STAFF_VISIBLE_WIDGETS;
     }
 
     return DEFAULT_VISIBLE_WIDGETS;
@@ -105,6 +118,12 @@ function getSupportedWidgets(role: DashboardRole) {
 
 function getDefaultTopCharts(role: DashboardRole) {
     return role === 'intern' ? [] : DEFAULT_TOP_CHARTS;
+}
+
+function getDefaultBottomPanels(role: DashboardRole) {
+    return role === 'admin' || role === 'tutor'
+        ? STAFF_BOTTOM_PANELS
+        : DEFAULT_BOTTOM_PANELS;
 }
 
 function getDefaultVisibleWidgets(role: DashboardRole) {
@@ -125,6 +144,8 @@ interface DashboardProps {
     alerts: DashboardAlert[];
     today_agenda: DashboardAgendaItem[];
     current_log: DashboardCurrentLog | null;
+    manageable_interns?: ManageableIntern[];
+    manageable_tutors?: ManageableTutor[];
 }
 
 // Componente para las filas móviles
@@ -186,6 +207,8 @@ export default function Dashboard({
     alerts,
     today_agenda,
     current_log,
+    manageable_interns = [],
+    manageable_tutors = [],
 }: DashboardProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [isManageModalOpen, setIsManageModalOpen] = useState(false);
@@ -196,12 +219,14 @@ export default function Dashboard({
         getDefaultTopCharts(role),
     );
     const [bottomPanels, setBottomPanels] = useState<string[]>(
-        DEFAULT_BOTTOM_PANELS,
+        getDefaultBottomPanels(role),
     );
     const [visibleWidgets, setVisibleWidgets] = useState<string[]>(
         getDefaultVisibleWidgets(role),
     );
     const [activeId, setActiveId] = useState<string | null>(null);
+    const [isCreateEventModalOpen, setIsCreateEventModalOpen] =
+        useState(false);
 
     useEffect(() => {
         const saved =
@@ -321,6 +346,7 @@ export default function Dashboard({
         stats.total_tasks > 0
             ? Math.round((stats.completed_tasks / stats.total_tasks) * 100)
             : 0;
+    const isStaffDashboard = role === 'admin' || role === 'tutor';
 
     const metrics: DashboardMetric[] = [
         {
@@ -347,7 +373,7 @@ export default function Dashboard({
         {
             label: 'Próximas finalizaciones',
             value: stats.upcoming_endings,
-            hint: 'Prácticas que terminan en 30 días',
+            hint: 'Prácticas que terminan esta semana',
             icon: CalendarClock,
         },
         {
@@ -408,6 +434,12 @@ export default function Dashboard({
                         className="h-full"
                         todayAgenda={today_agenda}
                         currentLog={current_log}
+                        showWorkStatus={!isStaffDashboard}
+                        onCreateEvent={
+                            isStaffDashboard
+                                ? () => setIsCreateEventModalOpen(true)
+                                : undefined
+                        }
                     />
                 );
             case 'progress':
@@ -489,7 +521,14 @@ export default function Dashboard({
                             items={visibleBottom}
                             strategy={rectSortingStrategy}
                         >
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                            <div
+                                className={cn(
+                                    'grid grid-cols-1 gap-4',
+                                    isStaffDashboard
+                                        ? 'md:grid-cols-12'
+                                        : 'md:grid-cols-3',
+                                )}
+                            >
                                 {bottomPanels.map((id) => {
                                     if (!visibleWidgets.includes(id))
                                         return null;
@@ -498,7 +537,13 @@ export default function Dashboard({
                                             key={id}
                                             id={id}
                                             isEditing={isEditing}
-                                            className="col-span-1"
+                                            className={
+                                                isStaffDashboard
+                                                    ? id === 'progress'
+                                                        ? 'md:col-span-8'
+                                                        : 'md:col-span-4'
+                                                    : 'col-span-1'
+                                            }
                                         >
                                             {renderWidget(id)}
                                         </DashboardWidgetWrapper>
@@ -548,6 +593,16 @@ export default function Dashboard({
                     supportedWidgets={supportedWidgets}
                     onToggleWidget={toggleWidget}
                 />
+
+                {isStaffDashboard && (
+                    <CreateEventModal
+                        open={isCreateEventModalOpen}
+                        onOpenChange={setIsCreateEventModalOpen}
+                        date={new Date().toISOString().split('T')[0]}
+                        manageableInterns={manageable_interns}
+                        manageableTutors={manageable_tutors}
+                    />
+                )}
 
                 <DndContext
                     sensors={sensors}

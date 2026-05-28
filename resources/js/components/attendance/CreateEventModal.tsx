@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { PageProps } from '@/types';
 import { EventAttendeesPanel } from './EventAttendeesPanel';
 import { EventDetailsFields } from './EventDetailsFields';
-import type { ManageableIntern } from './types';
+import type { ManageableIntern, ManageableTutor } from './types';
 
 interface CreateEventModalProps {
     open: boolean;
@@ -21,6 +21,7 @@ interface CreateEventModalProps {
     event?: any;
     onCreated?: () => void;
     manageableInterns?: ManageableIntern[];
+    manageableTutors?: ManageableTutor[];
 }
 
 const COLORS = [
@@ -40,6 +41,7 @@ export function CreateEventModal({
     event,
     onCreated,
     manageableInterns = [],
+    manageableTutors = [],
 }: CreateEventModalProps) {
     const { auth } = usePage<PageProps>().props;
     const { toast } = useToast();
@@ -185,9 +187,11 @@ export function CreateEventModal({
                             <EventAttendeesPanel
                                 available={
                                     Boolean(isTutorOrAdmin) &&
-                                    manageableInterns.length > 0
+                                    (manageableInterns.length > 0 ||
+                                        manageableTutors.length > 0)
                                 }
                                 manageableInterns={manageableInterns}
+                                manageableTutors={manageableTutors}
                                 selectedAttendeeIds={data.attendee_ids}
                                 onToggleAttendee={toggleAttendee}
                             />
