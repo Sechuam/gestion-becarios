@@ -7,9 +7,11 @@ use App\Models\User;
 use App\Notifications\UserInvited;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Inertia\Inertia;
 use Throwable;
 use Illuminate\Validation\Rules\Password;
@@ -35,7 +37,7 @@ class InvitationController extends Controller
         ]);
 
         try {
-            Notification::route('mail', $request->email)->notify(new UserInvited($invitation));
+            $this->sendInvitation($request->email, $invitation);
         } catch (Throwable $exception) {
             $invitation->delete();
 
@@ -46,13 +48,51 @@ class InvitationController extends Controller
 
             return back()
                 ->withInput()
-                ->with('error', 'No se pudo enviar la invitación. Revisa la configuración SMTP en Railway/Brevo.');
+                ->with('error', 'No se pudo enviar la invitación. Revisa la configuración de Brevo en Railway.');
         }
 
         return back()->with('success', 'Invitación enviada correctamente al correo.');
     }
 
+    private function sendInvitation(string $email, Invitation $invitation): void
+    {
+        if (config('services.brevo.key')) {
+            $this->sendInvitationWithBrevoApi($email, $invitation);
 
+            return;
+        }
+
+        Notification::route('mail', $email)->notify(new UserInvited($invitation));
+    }
+
+    private function sendInvitationWithBrevoApi(string $email, Invitation $invitation): void
+    {
+        $url = route('register.invitation', ['token' => $invitation->token]);
+        $fromEmail = config('mail.from.address');
+        $fromName = config('mail.from.name');
+
+        $response = Http::withHeaders([
+            'api-key' => config('services.brevo.key'),
+            'accept' => 'application/json',
+        ])->post('https://api.brevo.com/v3/smtp/email', [
+            'sender' => [
+                'name' => $fromName,
+                'email' => $fromEmail,
+            ],
+            'to' => [[
+                'email' => $email,
+            ]],
+            'subject' => 'Has sido invitado a BecaGest',
+            'htmlContent' => view('emails.user-invited', [
+                'url' => $url,
+            ])->render(),
+            'textContent' => "Has sido invitado a BecaGest.\n\nAcepta la invitación aquí: {$url}\n\nEste enlace expirará en 48 horas.",
+        ]);
+
+        if ($response->failed()) {
+            throw new RuntimeException('Brevo API error: '.$response->status().' '.$response->body());
+        }
+    }
 
     public function accept(Request $request, $token)
     {
