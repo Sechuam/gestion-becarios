@@ -1,6 +1,7 @@
 import { PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { Head, router, usePage } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { KanbanSquare } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { MetricPills } from '@/components/common/MetricPills';
@@ -44,6 +45,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const TASK_LIST_PER_PAGE = '10';
 const TASK_BOARD_PER_PAGE = '30';
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0 },
+};
 
 const applyStoredKanbanOrder = (tasks: any[]) => {
     if (typeof window === 'undefined') return tasks;
@@ -462,119 +468,169 @@ export default function Index({
             <Head title="Tareas" />
 
             <div className="flex flex-col gap-3">
-                <ModuleHeader
-                    title="Tareas"
-                    description="Sigue el trabajo por estado, detecta entregas sensibles y cambia entre kanban y tabla según el momento."
-                    icon={<KanbanSquare className="h-6 w-6" />}
-                    actions={
-                        <TasksHeaderActions
-                            isTutor={isTutor}
-                            viewMode={viewMode}
-                            onViewModeChange={setViewMode}
-                            boardFilter={boardFilter}
-                            boardQuickFilters={boardQuickFilters}
-                            onBoardFilterChange={setBoardFilter}
-                        />
-                    }
-                />
-                <MetricPills metrics={headerMetrics} />
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                >
+                    <ModuleHeader
+                        title="Tareas"
+                        description="Sigue el trabajo por estado, detecta entregas sensibles y cambia entre kanban y tabla según el momento."
+                        icon={<KanbanSquare className="h-6 w-6" />}
+                        actions={
+                            <TasksHeaderActions
+                                isTutor={isTutor}
+                                viewMode={viewMode}
+                                onViewModeChange={setViewMode}
+                                boardFilter={boardFilter}
+                                boardQuickFilters={boardQuickFilters}
+                                onBoardFilterChange={setBoardFilter}
+                            />
+                        }
+                    />
+                </motion.div>
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{
+                        duration: 0.45,
+                        delay: 0.05,
+                        ease: 'easeOut',
+                    }}
+                >
+                    <MetricPills metrics={headerMetrics} />
+                </motion.div>
 
-                <TaskFilters
-                    filters={filters}
-                    practice_types={practice_types}
-                    interns={interns}
-                    tasksCount={tasks.data.length}
-                    totalTasks={tasks.total}
-                    onFilterChange={handleFilter}
-                    onClearFilter={clearFilter}
-                    onClearAll={clearAllFilters}
-                    activeFilterChips={activeFilterChips}
-                    rightSlot={<DeliveryLegend />}
-                />
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 0.45, delay: 0.1, ease: 'easeOut' }}
+                >
+                    <TaskFilters
+                        filters={filters}
+                        practice_types={practice_types}
+                        interns={interns}
+                        tasksCount={tasks.data.length}
+                        totalTasks={tasks.total}
+                        onFilterChange={handleFilter}
+                        onClearFilter={clearFilter}
+                        onClearAll={clearAllFilters}
+                        activeFilterChips={activeFilterChips}
+                        rightSlot={<DeliveryLegend />}
+                    />
+                </motion.div>
 
                 {viewMode === 'kanban' ? (
-                    <KanbanBoard
-                        boardTasks={boardTasks}
-                        tasksByStatus={tasksByStatus}
-                        sensors={sensors}
-                        activeDragTask={activeDragTask}
-                        lastMoveMessage={lastMoveMessage}
-                        highlightedTaskId={highlightedTaskId}
-                        isIntern={isIntern}
-                        isTutor={isTutor}
-                        onDragStart={({ active }) => {
-                            const taskId = parseTaskSortableId(active.id);
-                            if (taskId)
-                                setActiveDragTask(
-                                    boardTasks.find((t) => t.id === taskId) ||
-                                        null,
-                                );
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{
+                            duration: 0.45,
+                            delay: 0.15,
+                            ease: 'easeOut',
                         }}
-                        onDragOver={(event) => {
-                            const activeTaskId = parseTaskSortableId(
-                                event.active.id,
-                            );
-                            if (activeTaskId && event.over) {
-                                setBoardTasks((prev) =>
-                                    reorderBoardTasks(
-                                        prev,
-                                        activeTaskId,
-                                        String(event.over?.id),
-                                    ),
-                                );
-                            }
-                        }}
-                        onDragEnd={(event) => {
-                            const activeTaskId = parseTaskSortableId(
-                                event.active.id,
-                            );
-                            if (activeTaskId && event.over) {
-                                const originalTask = boardTasks.find(
-                                    (t) => Number(t.id) === activeTaskId,
-                                );
-                                setBoardTasks((prev) => {
-                                    const newTasks = reorderBoardTasks(
-                                        prev,
-                                        activeTaskId,
-                                        String(event.over?.id),
+                    >
+                        <KanbanBoard
+                            boardTasks={boardTasks}
+                            tasksByStatus={tasksByStatus}
+                            sensors={sensors}
+                            activeDragTask={activeDragTask}
+                            lastMoveMessage={lastMoveMessage}
+                            highlightedTaskId={highlightedTaskId}
+                            isIntern={isIntern}
+                            isTutor={isTutor}
+                            onDragStart={({ active }) => {
+                                const taskId = parseTaskSortableId(active.id);
+                                if (taskId)
+                                    setActiveDragTask(
+                                        boardTasks.find(
+                                            (t) => t.id === taskId,
+                                        ) || null,
                                     );
-                                    const movedTask = newTasks.find(
-                                        (t) => t.id === activeTaskId,
+                            }}
+                            onDragOver={(event) => {
+                                const activeTaskId = parseTaskSortableId(
+                                    event.active.id,
+                                );
+                                if (activeTaskId && event.over) {
+                                    setBoardTasks((prev) =>
+                                        reorderBoardTasks(
+                                            prev,
+                                            activeTaskId,
+                                            String(event.over?.id),
+                                        ),
                                     );
-                                    if (movedTask && originalTask)
-                                        updateTaskStatus(
-                                            originalTask,
-                                            movedTask.status,
+                                }
+                            }}
+                            onDragEnd={(event) => {
+                                const activeTaskId = parseTaskSortableId(
+                                    event.active.id,
+                                );
+                                if (activeTaskId && event.over) {
+                                    const originalTask = boardTasks.find(
+                                        (t) => Number(t.id) === activeTaskId,
+                                    );
+                                    setBoardTasks((prev) => {
+                                        const newTasks = reorderBoardTasks(
+                                            prev,
+                                            activeTaskId,
+                                            String(event.over?.id),
                                         );
-                                    persistBoardOrder(newTasks);
-                                    return newTasks;
-                                });
-                            }
-                            setActiveDragTask(null);
-                        }}
-                        onDragCancel={() => {
-                            setHoveredColumn(null);
-                            setActiveDragTask(null);
-                            setBoardTasks(applyStoredKanbanOrder(tasks.data));
-                        }}
-                        onComplete={completeTask}
-                        onOpenDetails={setSelectedTask}
-                        hoveredColumn={hoveredColumn}
-                        getTaskSortableId={getTaskSortableId}
-                        getColumnDropId={getColumnDropId}
-                    />
+                                        const movedTask = newTasks.find(
+                                            (t) => t.id === activeTaskId,
+                                        );
+                                        if (movedTask && originalTask)
+                                            updateTaskStatus(
+                                                originalTask,
+                                                movedTask.status,
+                                            );
+                                        persistBoardOrder(newTasks);
+                                        return newTasks;
+                                    });
+                                }
+                                setActiveDragTask(null);
+                            }}
+                            onDragCancel={() => {
+                                setHoveredColumn(null);
+                                setActiveDragTask(null);
+                                setBoardTasks(
+                                    applyStoredKanbanOrder(tasks.data),
+                                );
+                            }}
+                            onComplete={completeTask}
+                            onOpenDetails={setSelectedTask}
+                            hoveredColumn={hoveredColumn}
+                            getTaskSortableId={getTaskSortableId}
+                            getColumnDropId={getColumnDropId}
+                        />
+                    </motion.div>
                 ) : (
-                    <SimpleTable
-                        columns={columns}
-                        rows={tasks.data}
-                        rowKey={(row) => row.id}
-                        sortKey={filters.sort}
-                        sortDirection={filters.direction}
-                        onSort={handleSort}
-                        emptyTitle="No hay tareas en esta vista"
-                        emptyDescription="Ajusta los filtros, cambia a otra vista o crea una nueva tarea para empezar a mover el tablero."
-                        striped={true}
-                    />
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{
+                            duration: 0.45,
+                            delay: 0.15,
+                            ease: 'easeOut',
+                        }}
+                    >
+                        <SimpleTable
+                            columns={columns}
+                            rows={tasks.data}
+                            rowKey={(row) => row.id}
+                            sortKey={filters.sort}
+                            sortDirection={filters.direction}
+                            onSort={handleSort}
+                            emptyTitle="No hay tareas en esta vista"
+                            emptyDescription="Ajusta los filtros, cambia a otra vista o crea una nueva tarea para empezar a mover el tablero."
+                            striped={true}
+                        />
+                    </motion.div>
                 )}
 
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-4">

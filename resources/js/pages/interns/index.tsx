@@ -1,4 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HeaderActionButton } from '@/components/common/HeaderActionButton';
@@ -28,6 +29,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Becarios', href: '/becarios' },
 ];
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0 },
+};
 
 export default function Index({
     interns,
@@ -292,7 +298,7 @@ export default function Index({
                 <div className="flex items-center gap-2">
                     <div className="h-2 w-24 overflow-hidden rounded bg-muted">
                         <div
-                            className={`h-2 ${intern.is_delayed ? 'bg-red-500' : 'bg-blue-500'}`}
+                            className={`h-2 ${intern.is_delayed ? 'bg-red-500' : 'bg-[#4e7f78]'}`}
                             style={{ width: `${intern.progress ?? 0}%` }}
                         />
                     </div>
@@ -476,54 +482,91 @@ export default function Index({
             <Head title="Gestión de Becarios" />
 
             <div className="flex flex-col gap-3">
-                <ModuleHeader
-                    title="Gestión de Becarios"
-                    description="Administra los becarios, sus centros y estados de prácticas con una vista rápida de carga y seguimiento."
-                    icon={<Users className="h-6 w-6" />}
-                    actions={
-                        canManage ? (
-                            <HeaderActionButton
-                                label="Añadir Becario"
-                                href="/interns/create"
-                            />
-                        ) : undefined
-                    }
-                />
-                <MetricPills metrics={headerMetrics} />
-
-                <InternFilters
-                    filters={filters}
-                    education_centers={education_centers}
-                    internsCount={interns.data.length}
-                    totalInterns={interns.total}
-                    onFilterChange={handleFilter}
-                    onClearFilter={clearFilter}
-                    onClearAll={clearAllFilters}
-                    activeFilterChips={activeFilterChips}
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
                 >
-                    {canManage && (
-                        <InternExportDialog
-                            open={exportOpen}
-                            onOpenChange={setExportOpen}
-                            exportColumns={exportColumns}
-                            selectedColumns={selectedColumns}
-                            onSelectedColumnsChange={setSelectedColumns}
-                            onExport={handleExport}
-                        />
-                    )}
-                </InternFilters>
+                    <ModuleHeader
+                        title="Gestión de Becarios"
+                        description="Administra los becarios, sus centros y estados de prácticas con una vista rápida de carga y seguimiento."
+                        icon={<Users className="h-6 w-6" />}
+                        actions={
+                            canManage ? (
+                                <HeaderActionButton
+                                    label="Añadir Becario"
+                                    href="/interns/create"
+                                />
+                            ) : undefined
+                        }
+                    />
+                </motion.div>
 
-                <SimpleTable
-                    columns={columns}
-                    rows={interns.data}
-                    rowKey={(row) => row.id}
-                    sortKey={filters.sort}
-                    sortDirection={filters.direction}
-                    onSort={handleSort}
-                    emptyTitle="No hay becarios que mostrar"
-                    emptyDescription="Prueba con otros filtros o registra un nuevo becario para empezar a poblar el módulo."
-                    striped={true}
-                />
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{
+                        duration: 0.45,
+                        delay: 0.05,
+                        ease: 'easeOut',
+                    }}
+                >
+                    <MetricPills metrics={headerMetrics} />
+                </motion.div>
+
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 0.45, delay: 0.1, ease: 'easeOut' }}
+                >
+                    <InternFilters
+                        filters={filters}
+                        education_centers={education_centers}
+                        internsCount={interns.data.length}
+                        totalInterns={interns.total}
+                        onFilterChange={handleFilter}
+                        onClearFilter={clearFilter}
+                        onClearAll={clearAllFilters}
+                        activeFilterChips={activeFilterChips}
+                    >
+                        {canManage && (
+                            <InternExportDialog
+                                open={exportOpen}
+                                onOpenChange={setExportOpen}
+                                exportColumns={exportColumns}
+                                selectedColumns={selectedColumns}
+                                onSelectedColumnsChange={setSelectedColumns}
+                                onExport={handleExport}
+                            />
+                        )}
+                    </InternFilters>
+                </motion.div>
+
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{
+                        duration: 0.45,
+                        delay: 0.15,
+                        ease: 'easeOut',
+                    }}
+                >
+                    <SimpleTable
+                        columns={columns}
+                        rows={interns.data}
+                        rowKey={(row) => row.id}
+                        sortKey={filters.sort}
+                        sortDirection={filters.direction}
+                        onSort={handleSort}
+                        emptyTitle="No hay becarios que mostrar"
+                        emptyDescription="Prueba con otros filtros o registra un nuevo becario para empezar a poblar el módulo."
+                        striped={true}
+                    />
+                </motion.div>
 
                 {/* PAGINACIÓN */}
                 <div className="mt-4 w-full">

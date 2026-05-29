@@ -36,13 +36,13 @@ export function InternFilters({
 }: InternFiltersProps) {
     return (
         <div className="space-y-2">
-            <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+            <div className="rounded-xl border border-[#d9e1d6] bg-white/88 p-2 shadow-lg shadow-slate-900/6 backdrop-blur transition-all dark:bg-slate-900/60">
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="relative w-full flex-none sm:w-64">
                         <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar becario..."
-                            className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
+                            className="h-8 rounded-lg border-[#d6dfd3] bg-[#fbfcf9] pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-[#4e7f78]/20"
                             value={filters.search || ''}
                             onChange={(e) =>
                                 handleFilterInternal('search', e.target.value)
@@ -55,7 +55,7 @@ export function InternFilters({
                             value={filters.center || 'all'}
                             onValueChange={(v) => onFilterChange('center', v)}
                         >
-                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white">
                                 <SelectValue>
                                     {filters.center && filters.center !== 'all'
                                         ? education_centers.find(
@@ -87,7 +87,7 @@ export function InternFilters({
                             value={filters.status || 'all'}
                             onValueChange={(v) => onFilterChange('status', v)}
                         >
-                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white">
                                 <SelectValue>
                                     {{
                                         active: 'Activos',
@@ -116,7 +116,7 @@ export function InternFilters({
                             value={filters.trashed || 'none'}
                             onValueChange={(v) => onFilterChange('trashed', v)}
                         >
-                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white">
                                 <SelectValue>
                                     {{
                                         none: 'Solo Activos',
@@ -141,7 +141,7 @@ export function InternFilters({
                             onChange={(value) =>
                                 onFilterChange('start_from', value)
                             }
-                            className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm"
+                            className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm"
                             placeholder="Desde..."
                         />
                     </div>
@@ -152,15 +152,15 @@ export function InternFilters({
                             onChange={(value) =>
                                 onFilterChange('start_to', value)
                             }
-                            className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm"
+                            className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm"
                             placeholder="Hasta..."
                         />
                     </div>
 
                     {children}
 
-                    <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
-                        <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                    <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-[#d6dfd3] bg-[#eef3ed] px-2 py-1 dark:bg-slate-800">
+                        <span className="flex h-1 w-1 animate-pulse rounded-full bg-[#4e7f78]" />
                         <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                             {internsCount} / {totalInterns}
                         </span>

@@ -37,7 +37,7 @@ export function TaskFilters({
     rightSlot,
 }: TaskFiltersProps) {
     return (
-        <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-sm transition-all dark:bg-slate-900/60">
+        <div className="rounded-xl border border-[#d9e1d6] bg-white/88 p-2 shadow-lg shadow-slate-900/6 backdrop-blur transition-all dark:bg-slate-900/60">
             <div className="flex flex-wrap items-center gap-2">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                     {/* Búsqueda principal */}
@@ -45,7 +45,7 @@ export function TaskFilters({
                         <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Buscar por título..."
-                            className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
+                            className="h-8 rounded-lg border-[#d6dfd3] bg-[#fbfcf9] pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-[#4e7f78]/20"
                             value={filters.search || ''}
                             onChange={(e) =>
                                 onFilterChange('search', e.target.value)
@@ -59,7 +59,7 @@ export function TaskFilters({
                             value={filters.status || 'all'}
                             onValueChange={(v) => onFilterChange('status', v)}
                         >
-                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white">
                                 <SelectValue placeholder="Estado" />
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
@@ -92,7 +92,7 @@ export function TaskFilters({
                                 onFilterChange('delivery_status', v)
                             }
                         >
-                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white">
                                 <SelectValue placeholder="Entrega" />
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
@@ -118,7 +118,7 @@ export function TaskFilters({
                                 onFilterChange('practice_type', v)
                             }
                         >
-                            <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50 [&>span]:truncate">
+                            <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white [&>span]:truncate">
                                 <SelectValue placeholder="Categoría" />
                             </SelectTrigger>
                             <SelectContent className="rounded-lg border-sidebar/20">
@@ -145,7 +145,7 @@ export function TaskFilters({
                                     onFilterChange('intern_id', v)
                                 }
                             >
-                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50 [&>span]:truncate">
+                                <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white [&>span]:truncate">
                                     <SelectValue placeholder="Asignado a" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-lg border-sidebar/20">
@@ -172,7 +172,7 @@ export function TaskFilters({
                             onChange={(value) =>
                                 onFilterChange('due_from', value)
                             }
-                            className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[10px] text-foreground shadow-sm"
+                            className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[10px] text-foreground shadow-sm"
                             placeholder="Desde..."
                         />
                     </div>
@@ -182,14 +182,14 @@ export function TaskFilters({
                             onChange={(value) =>
                                 onFilterChange('due_to', value)
                             }
-                            className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[10px] text-foreground shadow-sm"
+                            className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[10px] text-foreground shadow-sm"
                             placeholder="Hasta..."
                         />
                     </div>
 
                     {/* Contador discreto */}
-                    <div className="flex flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
-                        <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                    <div className="flex flex-none items-center gap-1.5 rounded-lg border border-[#d6dfd3] bg-[#eef3ed] px-2 py-1 dark:bg-slate-800">
+                        <span className="flex h-1 w-1 animate-pulse rounded-full bg-[#4e7f78]" />
                         <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                             {tasksCount} / {totalTasks}
                         </span>

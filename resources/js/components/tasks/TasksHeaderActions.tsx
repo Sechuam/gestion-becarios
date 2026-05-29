@@ -41,11 +41,11 @@ export function TasksHeaderActions({
                     onValueChange={(value) => {
                         if (value) onViewModeChange(value as TaskViewMode);
                     }}
-                    className="rounded-xl border border-white/80 bg-white p-1 shadow-sm"
+                    className="rounded-xl border border-white/70 bg-white/92 p-1 shadow-sm"
                 >
                     <ToggleGroupItem
                         value="kanban"
-                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 data-[state=on]:shadow-sm dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
+                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-[#d9e9e4] data-[state=on]:text-[#315d58] data-[state=on]:shadow-sm dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                         aria-label="Vista kanban"
                     >
                         <LayoutGrid className="mr-2 h-4 w-4" />
@@ -55,7 +55,7 @@ export function TasksHeaderActions({
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value="table"
-                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 data-[state=on]:shadow-sm dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
+                        className="h-8 min-w-[9rem] rounded-lg px-3 text-sidebar/65 transition-all data-[state=on]:bg-[#d9e9e4] data-[state=on]:text-[#315d58] data-[state=on]:shadow-sm dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                         aria-label="Vista tabla"
                     >
                         <List className="mr-2 h-4 w-4" />

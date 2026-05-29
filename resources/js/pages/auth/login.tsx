@@ -30,8 +30,8 @@ export default function Login({
 
     return (
         <AuthLayout
-            title="Inicia sesión"
-            description="Accede para gestionar tus becarios y tareas"
+            title="Bienvenido de nuevo"
+            description="Entra para continuar gestionando becarios, tareas, asistencia e informes."
         >
             <Head title="Iniciar sesión" />
 
@@ -44,12 +44,21 @@ export default function Login({
                 <Form
                     {...store.form()}
                     resetOnSuccess={['password']}
-                    className="flex flex-col gap-6"
+                    className="flex flex-col gap-5"
                 >
                     {({ processing, errors }) => (
                         <>
+                            {status && (
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="rounded-xl border border-[#b9c8be] bg-[#edf5ef] px-4 py-3 text-center text-sm font-semibold text-[#315d58]"
+                                >
+                                    {status}
+                                </motion.div>
+                            )}
+
                             <motion.div
-                                className="grid gap-6"
+                                className="grid gap-5"
                                 initial="initial"
                                 animate="animate"
                                 variants={{
@@ -68,7 +77,7 @@ export default function Login({
                                         Correo electrónico
                                     </Label>
                                     <div className="relative">
-                                        <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#7a8697]" />
                                         <Input
                                             id="email"
                                             type="email"
@@ -78,7 +87,7 @@ export default function Login({
                                             tabIndex={1}
                                             autoComplete="email"
                                             placeholder="correo@ejemplo.com"
-                                            className="pl-10"
+                                            className="h-11 border-[#d6dfd3] bg-[#fbfcf9] pl-10 shadow-sm focus-visible:ring-[#4e7f78]/30"
                                         />
                                     </div>
                                     <InputError message={errors.email} />
@@ -104,7 +113,7 @@ export default function Login({
                                     </div>
 
                                     <div className="relative">
-                                        <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#7a8697]" />
                                         <Input
                                             id="password"
                                             type={
@@ -117,7 +126,7 @@ export default function Login({
                                             tabIndex={2}
                                             autoComplete="current-password"
                                             placeholder="Contraseña"
-                                            className="pr-10 pl-10"
+                                            className="h-11 border-[#d6dfd3] bg-[#fbfcf9] pr-10 pl-10 shadow-sm focus-visible:ring-[#4e7f78]/30"
                                         />
 
                                         <button
@@ -125,7 +134,12 @@ export default function Login({
                                             onClick={() =>
                                                 setShowPassword(!showPassword)
                                             }
-                                            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md p-1 text-[#7a8697] transition hover:bg-[#eef3ed] hover:text-[#172033]"
+                                            aria-label={
+                                                showPassword
+                                                    ? 'Ocultar contraseña'
+                                                    : 'Mostrar contraseña'
+                                            }
                                         >
                                             {showPassword ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -140,7 +154,7 @@ export default function Login({
 
                                 <motion.div
                                     variants={fadeInUp}
-                                    className="flex items-center space-x-3"
+                                    className="flex items-center space-x-3 rounded-xl border border-[#e0e7dd] bg-[#fbfcf9] px-3 py-2.5"
                                 >
                                     <Checkbox
                                         id="remember"
@@ -153,7 +167,7 @@ export default function Login({
                                 <motion.div variants={fadeInUp}>
                                     <Button
                                         type="submit"
-                                        className="mt-4 h-11 w-full"
+                                        className="mt-2 h-11 w-full bg-[#2b3036] text-white shadow-lg shadow-slate-900/12 hover:bg-[#3b424b]"
                                         tabIndex={4}
                                         disabled={processing}
                                     >
@@ -166,7 +180,7 @@ export default function Login({
                             {canRegister && (
                                 <motion.div
                                     variants={fadeInUp}
-                                    className="text-center text-sm text-muted-foreground"
+                                    className="rounded-xl border border-[#e0e7dd] bg-[#fbfcf9] px-4 py-3 text-center text-sm text-[#5a657c]"
                                 >
                                     ¿No tienes cuenta?{' '}
                                     <TextLink href={register()} tabIndex={5}>
@@ -177,21 +191,15 @@ export default function Login({
 
                             <motion.div
                                 variants={fadeInUp}
-                                className="flex items-center justify-center gap-2 text-xs text-slate-500"
+                                className="flex items-center justify-center gap-2 text-xs font-semibold text-[#6a7687]"
                             >
                                 <ShieldCheck className="h-3.5 w-3.5" />
-                                Tus datos están seguros
+                                Acceso protegido por roles y verificación
                             </motion.div>
                         </>
                     )}
                 </Form>
             </motion.div>
-
-            {status && (
-                <div className="mb-4 rounded-lg border border-slate-300 bg-slate-100 px-3 py-2 text-center text-sm font-medium text-slate-700">
-                    {status}
-                </div>
-            )}
         </AuthLayout>
     );
 }
