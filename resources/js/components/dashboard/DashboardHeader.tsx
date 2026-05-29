@@ -37,7 +37,7 @@ export function DashboardHeader({
                     <div className="flex gap-2">
                         <Button
                             asChild
-                            className="h-9 flex-1 rounded-lg border border-slate-100 bg-white text-sidebar shadow-sm hover:bg-white/90"
+                            className="h-9 flex-1 rounded-lg border border-white/20 bg-white text-sidebar shadow-sm hover:bg-white/90"
                         >
                             <Link href="/reportes">
                                 <FileDown className="mr-2 h-4 w-4" />
@@ -48,7 +48,7 @@ export function DashboardHeader({
                             variant="outline"
                             onClick={onManageWidgets}
                             aria-label="Gestionar widgets del dashboard"
-                            className="h-9 w-9 rounded-lg border-slate-200 bg-white p-0 text-slate-600 shadow-sm hover:bg-slate-50"
+                            className="h-9 w-9 rounded-lg border-white/20 bg-white p-0 text-sidebar shadow-sm hover:bg-slate-50"
                             title="Gestionar Widgets"
                         >
                             <Settings2 className="h-4 w-4" />
@@ -59,8 +59,8 @@ export function DashboardHeader({
                         className={cn(
                             'h-9 rounded-lg border px-4 font-bold shadow-sm transition-all active:scale-95',
                             isEditing
-                                ? 'border-transparent bg-sidebar text-white hover:bg-sidebar/90'
-                                : 'border-slate-100 bg-white text-sidebar hover:bg-white/90',
+                                ? 'border-white/15 bg-[#4e7f78] text-white hover:bg-[#426f68]'
+                                : 'border-white/20 bg-white text-sidebar hover:bg-white/90',
                         )}
                     >
                         {isEditing ? (

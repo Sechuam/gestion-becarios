@@ -1,4 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { Clock3 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
@@ -31,6 +32,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const ABSENCES_PER_PAGE = 5;
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0 },
+};
 
 export default function Index({
     today_logs,
@@ -142,102 +148,171 @@ export default function Index({
             <Head title="Control Horario" />
 
             <div className="flex h-full flex-1 flex-col gap-3">
-                {is_intern ? (
-                    <AttendanceHeader
-                        todayLogs={today_logs}
-                        currentLog={current_log}
-                        todayTotalHours={today_total_hours}
-                        onClockIn={handleClockIn}
-                        onClockOut={handleClockOut}
-                    />
-                ) : (
-                    <ModuleHeader
-                        title="Control horario"
-                        description="Gestiona registros manuales, revisa incidencias y consulta el calendario horario de los becarios."
-                        icon={<Clock3 className="h-5 w-5" />}
-                    />
-                )}
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                >
+                    {is_intern ? (
+                        <AttendanceHeader
+                            todayLogs={today_logs}
+                            currentLog={current_log}
+                            todayTotalHours={today_total_hours}
+                            onClockIn={handleClockIn}
+                            onClockOut={handleClockOut}
+                        />
+                    ) : (
+                        <ModuleHeader
+                            title="Control horario"
+                            description="Gestiona registros manuales, revisa incidencias y consulta el calendario horario de los becarios."
+                            icon={<Clock3 className="h-5 w-5" />}
+                        />
+                    )}
+                </motion.div>
 
                 <Tabs
                     defaultValue={is_intern ? 'registro' : 'gestion'}
                     className="space-y-3"
                 >
-                    <AttendanceTabsNav isIntern={is_intern} />
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{
+                            duration: 0.45,
+                            delay: 0.08,
+                            ease: 'easeOut',
+                        }}
+                    >
+                        <AttendanceTabsNav isIntern={is_intern} />
+                    </motion.div>
 
                     {is_intern ? (
                         <>
-                            <TabsContent
-                                value="registro"
-                                className="mt-0 space-y-3"
-                            >
-                                <DailyRegisterCard
-                                    todayLogs={today_logs}
-                                    currentLog={current_log}
-                                    todayTotalHours={today_total_hours}
-                                    liveElapsed={liveElapsed}
-                                    todayLogsOpen={todayLogsOpen}
-                                    onTodayLogsOpenChange={setTodayLogsOpen}
-                                />
+                            <TabsContent value="registro" className="mt-0">
+                                <motion.div
+                                    variants={fadeUp}
+                                    initial="hidden"
+                                    animate="visible"
+                                    transition={{
+                                        duration: 0.45,
+                                        delay: 0.14,
+                                        ease: 'easeOut',
+                                    }}
+                                    className="space-y-3"
+                                >
+                                    <DailyRegisterCard
+                                        todayLogs={today_logs}
+                                        currentLog={current_log}
+                                        todayTotalHours={today_total_hours}
+                                        liveElapsed={liveElapsed}
+                                        todayLogsOpen={todayLogsOpen}
+                                        onTodayLogsOpenChange={setTodayLogsOpen}
+                                    />
 
-                                {can_manage_attendance && (
-                                    <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                                        <ManualLogCard
-                                            form={manualForm}
-                                            manageableInterns={
-                                                manageable_interns
-                                            }
-                                            onSubmit={submitManualLog}
-                                        />
+                                    {can_manage_attendance && (
+                                        <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+                                            <ManualLogCard
+                                                form={manualForm}
+                                                manageableInterns={
+                                                    manageable_interns
+                                                }
+                                                onSubmit={submitManualLog}
+                                            />
 
-                                        <NonComplianceCard
-                                            interns={non_compliant_interns}
-                                        />
-                                    </div>
-                                )}
+                                            <NonComplianceCard
+                                                interns={non_compliant_interns}
+                                            />
+                                        </div>
+                                    )}
+                                </motion.div>
                             </TabsContent>
 
                             {/* SECCIÓN MIS AUSENCIAS PARA EL BECARIO */}
                             <TabsContent value="ausencias" className="mt-0">
-                                {absences && Array.isArray(absences) && (
-                                    <AbsencesCard
-                                        absences={absences}
-                                        paginatedAbsences={paginatedAbsences}
-                                        absencePage={absencePage}
-                                        totalAbsencePages={totalAbsencePages}
-                                        absenceRangeStart={absenceRangeStart}
-                                        absenceRangeEnd={absenceRangeEnd}
-                                        absencesPerPage={ABSENCES_PER_PAGE}
-                                        onPageChange={setAbsencePage}
-                                        onUploadJustification={
-                                            handleUploadJustification
-                                        }
-                                    />
-                                )}
+                                <motion.div
+                                    variants={fadeUp}
+                                    initial="hidden"
+                                    animate="visible"
+                                    transition={{
+                                        duration: 0.45,
+                                        delay: 0.14,
+                                        ease: 'easeOut',
+                                    }}
+                                >
+                                    {absences && Array.isArray(absences) && (
+                                        <AbsencesCard
+                                            absences={absences}
+                                            paginatedAbsences={
+                                                paginatedAbsences
+                                            }
+                                            absencePage={absencePage}
+                                            totalAbsencePages={
+                                                totalAbsencePages
+                                            }
+                                            absenceRangeStart={
+                                                absenceRangeStart
+                                            }
+                                            absenceRangeEnd={absenceRangeEnd}
+                                            absencesPerPage={ABSENCES_PER_PAGE}
+                                            onPageChange={setAbsencePage}
+                                            onUploadJustification={
+                                                handleUploadJustification
+                                            }
+                                        />
+                                    )}
+                                </motion.div>
                             </TabsContent>
 
                             <TabsContent value="calendario" className="mt-0">
+                                <motion.div
+                                    variants={fadeUp}
+                                    initial="hidden"
+                                    animate="visible"
+                                    transition={{
+                                        duration: 0.45,
+                                        delay: 0.14,
+                                        ease: 'easeOut',
+                                    }}
+                                >
+                                    <AttendanceCalendarCard
+                                        canManageAttendance={
+                                            can_manage_attendance
+                                        }
+                                        canRequestAbsence={is_intern}
+                                        manageableInterns={manageable_interns}
+                                        manageableTutors={manageable_tutors}
+                                    />
+                                </motion.div>
+                            </TabsContent>
+                        </>
+                    ) : (
+                        <TabsContent value="gestion" className="mt-0">
+                            <motion.div
+                                variants={fadeUp}
+                                initial="hidden"
+                                animate="visible"
+                                transition={{
+                                    duration: 0.45,
+                                    delay: 0.14,
+                                    ease: 'easeOut',
+                                }}
+                                className="space-y-3"
+                            >
+                                <ManualLogCard
+                                    form={manualForm}
+                                    manageableInterns={manageable_interns}
+                                    onSubmit={submitManualLog}
+                                />
+
                                 <AttendanceCalendarCard
                                     canManageAttendance={can_manage_attendance}
                                     canRequestAbsence={is_intern}
                                     manageableInterns={manageable_interns}
                                     manageableTutors={manageable_tutors}
                                 />
-                            </TabsContent>
-                        </>
-                    ) : (
-                        <TabsContent value="gestion" className="mt-0 space-y-3">
-                            <ManualLogCard
-                                form={manualForm}
-                                manageableInterns={manageable_interns}
-                                onSubmit={submitManualLog}
-                            />
-
-                            <AttendanceCalendarCard
-                                canManageAttendance={can_manage_attendance}
-                                canRequestAbsence={is_intern}
-                                manageableInterns={manageable_interns}
-                                manageableTutors={manageable_tutors}
-                            />
+                            </motion.div>
                         </TabsContent>
                     )}
                 </Tabs>

@@ -21,7 +21,10 @@ export function AppShell({ children, variant = 'header' }: Props) {
     }
 
     return (
-        <SidebarProvider defaultOpen={isOpen}>
+        <SidebarProvider
+            defaultOpen={isOpen}
+            className="bg-[#f6f7f2] bg-[radial-gradient(58rem_38rem_at_0%_-10%,rgba(132,183,175,0.18),transparent_60%),radial-gradient(48rem_30rem_at_105%_0%,rgba(78,127,120,0.1),transparent_55%)]"
+        >
             {children}
             <FlashToaster />
         </SidebarProvider>

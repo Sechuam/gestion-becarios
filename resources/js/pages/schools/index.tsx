@@ -1,4 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { Building2, FileDown, Search } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActiveFilterChips } from '@/components/common/ActiveFilterChips';
@@ -42,6 +43,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Centros Educativos', href: '/centros' },
 ];
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0 },
+};
 
 export default function Index({
     schools,
@@ -432,29 +438,53 @@ export default function Index({
             <Head title="Centros Educativos" />
 
             <div className="flex flex-col gap-3">
-                <ModuleHeader
-                    title="Centros Educativos"
-                    description="Gestiona instituciones, universidades y centros de formación con una visión rápida del estado de tu red de convenios."
-                    icon={<Building2 className="h-6 w-6" />}
-                    actions={
-                        canManage ? (
-                            <HeaderActionButton
-                                label="Añadir Centro"
-                                href="/centros/create"
-                            />
-                        ) : undefined
-                    }
-                />
-                <MetricPills metrics={headerMetrics} />
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                >
+                    <ModuleHeader
+                        title="Centros Educativos"
+                        description="Gestiona instituciones, universidades y centros de formación con una visión rápida del estado de tu red de convenios."
+                        icon={<Building2 className="h-6 w-6" />}
+                        actions={
+                            canManage ? (
+                                <HeaderActionButton
+                                    label="Añadir Centro"
+                                    href="/centros/create"
+                                />
+                            ) : undefined
+                        }
+                    />
+                </motion.div>
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{
+                        duration: 0.45,
+                        delay: 0.05,
+                        ease: 'easeOut',
+                    }}
+                >
+                    <MetricPills metrics={headerMetrics} />
+                </motion.div>
 
                 {/* FILTROS */}
-                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 0.45, delay: 0.1, ease: 'easeOut' }}
+                    className="rounded-xl border border-[#d9e1d6] bg-white/88 p-2 shadow-lg shadow-slate-900/6 backdrop-blur transition-all dark:bg-slate-900/60"
+                >
                     <div className="flex flex-wrap items-center gap-2">
                         <div className="relative w-full flex-none sm:w-64">
                             <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Buscar centro..."
-                                className="h-8 rounded-lg border-sidebar/10 bg-slate-50/50 pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-sidebar/20"
+                                className="h-8 rounded-lg border-[#d6dfd3] bg-[#fbfcf9] pl-9 text-[11px] text-foreground shadow-sm placeholder:text-muted-foreground focus:ring-[#4e7f78]/20"
                                 value={filters.search || ''}
                                 onChange={(e) =>
                                     handleFilter('search', e.target.value)
@@ -469,7 +499,7 @@ export default function Index({
                                     handleFilter('trashed', v)
                                 }
                             >
-                                <SelectTrigger className="h-8 w-full rounded-lg border-sidebar/10 bg-card text-[11px] text-foreground shadow-sm transition-colors hover:bg-slate-50">
+                                <SelectTrigger className="h-8 w-full rounded-lg border-[#d6dfd3] bg-[#fbfcf9] text-[11px] text-foreground shadow-sm transition-colors hover:bg-white">
                                     <SelectValue>
                                         {{
                                             none: 'Solo Activos',
@@ -500,7 +530,7 @@ export default function Index({
                                 <DialogTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="h-8 rounded-lg border-sidebar/20 bg-card px-4 text-[10px] font-black tracking-widest text-sidebar uppercase shadow-sm transition-all hover:bg-sidebar hover:text-white"
+                                        className="h-8 rounded-lg border-[#b9c8be] bg-white px-4 text-[10px] font-black tracking-widest text-sidebar uppercase shadow-sm transition-all hover:bg-sidebar hover:text-white"
                                     >
                                         <FileDown className="mr-2 h-4 w-4" />
                                         Exportar Excel
@@ -582,32 +612,54 @@ export default function Index({
                             </Dialog>
                         )}
 
-                        <div className="ml-auto flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2 py-1 dark:bg-slate-800">
-                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
+                        <div className="ml-auto flex h-8 flex-none items-center gap-1.5 rounded-lg border border-[#d6dfd3] bg-[#eef3ed] px-2 py-1 dark:bg-slate-800">
+                            <span className="flex h-1 w-1 animate-pulse rounded-full bg-[#4e7f78]" />
                             <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                                 {schools.data.length} / {schools.total} centros
                             </span>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
-                <ActiveFilterChips
-                    chips={activeFilterChips}
-                    onRemove={clearFilter}
-                    onClearAll={clearAllFilters}
-                />
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{
+                        duration: 0.45,
+                        delay: 0.12,
+                        ease: 'easeOut',
+                    }}
+                >
+                    <ActiveFilterChips
+                        chips={activeFilterChips}
+                        onRemove={clearFilter}
+                        onClearAll={clearAllFilters}
+                    />
+                </motion.div>
 
-                <SimpleTable
-                    columns={columns}
-                    rows={schools.data}
-                    rowKey={(row) => row.id}
-                    sortKey={filters.sort}
-                    sortDirection={filters.direction}
-                    onSort={handleSort}
-                    emptyTitle="No hay centros en esta vista"
-                    emptyDescription="Cambia la vista o crea un nuevo centro educativo para empezar a construir la red."
-                    striped={true}
-                />
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{
+                        duration: 0.45,
+                        delay: 0.15,
+                        ease: 'easeOut',
+                    }}
+                >
+                    <SimpleTable
+                        columns={columns}
+                        rows={schools.data}
+                        rowKey={(row) => row.id}
+                        sortKey={filters.sort}
+                        sortDirection={filters.direction}
+                        onSort={handleSort}
+                        emptyTitle="No hay centros en esta vista"
+                        emptyDescription="Cambia la vista o crea un nuevo centro educativo para empezar a construir la red."
+                        striped={true}
+                    />
+                </motion.div>
 
                 {/* PAGINACIÓN */}
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
