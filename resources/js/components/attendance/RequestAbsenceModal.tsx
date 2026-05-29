@@ -117,6 +117,8 @@ export function RequestAbsenceModal() {
                         </Label>
                         <div className="relative">
                             <select
+                                id="absence-reason"
+                                name="absence_reason"
                                 className="input-white-bg flex h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 shadow-sm transition-all focus:ring-4 focus:ring-slate-100 focus:outline-none"
                                 value={data.reason}
                                 onChange={(e) =>

@@ -33,15 +33,18 @@ export function DashboardHeader({
             icon={<BarChart3 className="h-6 w-6" />}
             variant="sidebar"
             actions={
-                <div className="flex flex-col gap-2">
+                <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:min-w-[18rem]">
                     <div className="flex gap-2">
                         <Button
                             asChild
-                            className="h-9 flex-1 rounded-lg border border-white/20 bg-white text-sidebar shadow-sm hover:bg-white/90"
+                            className="h-9 min-w-0 flex-1 rounded-lg border border-white/20 bg-white px-3 text-sidebar shadow-sm hover:bg-white/90"
                         >
                             <Link href="/reportes">
-                                <FileDown className="mr-2 h-4 w-4" />
-                                Reportes
+                                <FileDown className="h-4 w-4 sm:mr-2" />
+                                <span className="hidden sm:inline">
+                                    Reportes
+                                </span>
+                                <span className="sm:hidden">Informes</span>
                             </Link>
                         </Button>
                         <Button
@@ -57,7 +60,7 @@ export function DashboardHeader({
                     <Button
                         onClick={() => setIsEditing(!isEditing)}
                         className={cn(
-                            'h-9 rounded-lg border px-4 font-bold shadow-sm transition-all active:scale-95',
+                            'h-9 rounded-lg border px-3 text-xs font-bold shadow-sm transition-all active:scale-95 sm:px-4 sm:text-sm',
                             isEditing
                                 ? 'border-white/15 bg-[#4e7f78] text-white hover:bg-[#426f68]'
                                 : 'border-white/20 bg-white text-sidebar hover:bg-white/90',

@@ -49,8 +49,8 @@ export function ModuleHeader({
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0)_100%)]" />
             )}
 
-            <div className="relative flex flex-wrap items-center justify-between gap-4">
-                <div className="min-w-[16rem] flex-1 space-y-1.5">
+            <div className="relative flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+                <div className="min-w-0 flex-1 space-y-1.5 sm:min-w-[16rem]">
                     <p
                         className={cn(
                             'inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-black tracking-widest uppercase backdrop-blur-md',
@@ -112,7 +112,7 @@ export function ModuleHeader({
                         </div>
                         <p
                             className={cn(
-                                'ml-11 line-clamp-2 max-w-4xl text-[11px] leading-tight font-medium italic sm:line-clamp-1',
+                                'ml-0 line-clamp-3 max-w-4xl text-[11px] leading-tight font-medium italic sm:ml-11 sm:line-clamp-1',
                                 variant === 'dark' ||
                                     variant === 'sidebar' ||
                                     variant === 'primary'
@@ -126,7 +126,7 @@ export function ModuleHeader({
                 </div>
 
                 {actions && (
-                    <div className="flex min-w-0 shrink-0 items-center">
+                    <div className="flex w-full min-w-0 shrink-0 items-center sm:w-auto sm:max-w-full">
                         {actions}
                     </div>
                 )}

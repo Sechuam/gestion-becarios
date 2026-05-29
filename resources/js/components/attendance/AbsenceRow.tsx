@@ -79,6 +79,8 @@ export function AbsenceRow({ absence, onUploadJustification }: Props) {
                 ) : (
                     <div className="relative">
                         <input
+                            id={`absence-justification-${absence.id}`}
+                            name={`absence_justification_${absence.id}`}
                             type="file"
                             className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                             onChange={(event) => {

@@ -101,6 +101,7 @@ export function EventDetailsFields({ data, errors, colors, setData }: Props) {
                 <div className="flex items-center gap-2">
                     <input
                         id="all_day_toggle"
+                        name="all_day_toggle"
                         type="checkbox"
                         checked={data.all_day}
                         onChange={(event: FormEvent<HTMLInputElement>) =>
