@@ -19,6 +19,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Head } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import {
     AlertTriangle,
     CalendarClock,
@@ -225,8 +226,7 @@ export default function Dashboard({
         getDefaultVisibleWidgets(role),
     );
     const [activeId, setActiveId] = useState<string | null>(null);
-    const [isCreateEventModalOpen, setIsCreateEventModalOpen] =
-        useState(false);
+    const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
 
     useEffect(() => {
         const saved =
@@ -576,15 +576,21 @@ export default function Dashboard({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="space-y-4">
-                <DashboardHeader
-                    roleLabel={roleLabel}
-                    alerts={stats.alerts}
-                    completedTasks={stats.completed_tasks}
-                    taskCompletion={taskCompletion}
-                    isEditing={isEditing}
-                    setIsEditing={setIsEditing}
-                    onManageWidgets={() => setIsManageModalOpen(true)}
-                />
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                >
+                    <DashboardHeader
+                        roleLabel={roleLabel}
+                        alerts={stats.alerts}
+                        completedTasks={stats.completed_tasks}
+                        taskCompletion={taskCompletion}
+                        isEditing={isEditing}
+                        setIsEditing={setIsEditing}
+                        onManageWidgets={() => setIsManageModalOpen(true)}
+                    />
+                </motion.div>
 
                 <ManageWidgetsModal
                     open={isManageModalOpen}
@@ -615,7 +621,14 @@ export default function Dashboard({
                         items={sections}
                         strategy={verticalListSortingStrategy}
                     >
-                        <div
+                        <motion.div
+                            initial={{ opacity: 0, y: 18 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.5,
+                                delay: 0.08,
+                                ease: 'easeOut',
+                            }}
                             className={cn(
                                 '-m-4 flex flex-col gap-6 rounded-xl p-4 transition-all duration-500',
                                 isEditing &&
@@ -623,7 +636,7 @@ export default function Dashboard({
                             )}
                         >
                             {sections.map((rowId) => renderSection(rowId))}
-                        </div>
+                        </motion.div>
                     </SortableContext>
 
                     <DragOverlay
