@@ -117,11 +117,13 @@ export default function Welcome({
                             className="flex items-center gap-3"
                             aria-label="BecaGest"
                         >
-                            <img
-                                src="/images/becagest-logo-small.png"
-                                alt=""
-                                className="size-10 rounded-lg bg-white object-contain p-1 shadow-sm"
-                            />
+                            <span className="flex size-10 overflow-hidden rounded-lg bg-white shadow-sm">
+                                <img
+                                    src="/images/becagest-logo-small.png"
+                                    alt=""
+                                    className="h-full w-full scale-125 object-cover object-center"
+                                />
+                            </span>
                             <span className="text-lg font-black tracking-tight">
                                 BecaGest
                             </span>
