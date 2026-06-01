@@ -104,8 +104,10 @@ export function DatePicker({
                 leaveTo="opacity-0 translate-y-1"
             >
                 <Popover.Panel
+                    anchor={{ to: 'bottom start', gap: 8, padding: 12 }}
+                    portal
                     className={cn(
-                        'absolute z-50 mt-2 w-auto rounded-xl border border-border bg-card p-0 shadow-lg',
+                        'z-[90] w-auto rounded-xl border border-border bg-card p-0 shadow-lg',
                         panelClassName,
                     )}
                 >
@@ -125,7 +127,7 @@ export function DatePicker({
                             <SelectTrigger className="h-9 min-w-32 border-border bg-card text-foreground">
                                 <SelectValue placeholder="Mes" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="z-[110]">
                                 {monthOptions.map((month) => (
                                     <SelectItem key={month.value} value={month.value}>
                                         {month.label}
@@ -145,7 +147,7 @@ export function DatePicker({
                             <SelectTrigger className="h-9 min-w-24 border-border bg-card text-foreground">
                                 <SelectValue placeholder="Año" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="z-[110]">
                                 {yearOptions.map((year) => (
                                     <SelectItem key={year} value={year}>
                                         {year}

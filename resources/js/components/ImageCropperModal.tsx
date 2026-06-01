@@ -88,6 +88,8 @@ export default function ImageCropperModal({
                     <div className="flex items-center gap-4">
                         <ZoomOut className="h-4 w-4 text-muted-foreground" />
                         <input
+                            id="image-cropper-zoom"
+                            name="image_cropper_zoom"
                             type="range"
                             min={1}
                             max={3}
