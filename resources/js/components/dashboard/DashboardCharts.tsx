@@ -158,8 +158,13 @@ export function InternsByCenterChart({ data }: ChartProps) {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="h-44 px-2.5 pb-2">
-                <ResponsiveContainer width="100%" height="100%">
+            <CardContent className="h-[220px] min-h-[220px] min-w-0 px-2.5 pb-2">
+                <ResponsiveContainer
+                    width="100%"
+                    height="100%"
+                    minWidth={1}
+                    minHeight={1}
+                >
                     <BarChart
                         data={data}
                         margin={{ left: 0, right: 4, top: 4, bottom: 0 }}
@@ -206,9 +211,14 @@ export function TaskStatusChart({ data }: ChartProps) {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="grid h-44 grid-cols-[minmax(0,1fr)_112px] items-center gap-2 px-2.5 pb-2">
-                <div className="min-h-0 min-w-0 self-stretch">
-                    <ResponsiveContainer width="100%" height="100%">
+            <CardContent className="grid h-[220px] min-h-[220px] min-w-0 grid-cols-[minmax(0,1fr)_112px] items-center gap-2 px-2.5 pb-2">
+                <div className="min-h-[180px] min-w-0 self-stretch">
+                    <ResponsiveContainer
+                        width="100%"
+                        height="100%"
+                        minWidth={1}
+                        minHeight={1}
+                    >
                         <PieChart>
                             <Pie
                                 data={data}
@@ -428,7 +438,12 @@ export function AttendanceChart({
                     className="relative min-h-[320px] min-w-0 overflow-x-auto rounded-lg border border-slate-200 bg-white px-1.5 pt-3 pb-3 shadow-sm dark:border-slate-700 dark:bg-slate-900"
                 >
                     <div className="h-[305px]" style={{ width: chartWidth }}>
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer
+                            width="100%"
+                            height="100%"
+                            minWidth={1}
+                            minHeight={1}
+                        >
                             <BarChart
                                 data={chartData}
                                 margin={{

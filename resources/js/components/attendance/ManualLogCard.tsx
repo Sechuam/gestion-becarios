@@ -179,7 +179,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                             </Label>
                             <DatePicker
                                 className="h-11 rounded-xl border-sidebar/20 bg-card text-foreground shadow-sm"
-                                panelClassName="right-0 z-[80]"
+                                panelClassName="z-[90]"
                                 value={form.data.date}
                                 onChange={(value) =>
                                     form.setData('date', value)

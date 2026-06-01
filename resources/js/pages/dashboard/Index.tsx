@@ -408,10 +408,10 @@ export default function Dashboard({
                 );
             case 'attendance':
                 return (
-                    <div className="flex h-full flex-col gap-2.5">
+                    <div className="flex min-h-0 min-w-0 flex-col gap-2.5 lg:h-full">
                         <Suspense fallback={<ChartFallback />}>
                             <AttendanceChart
-                                className="min-h-[380px] flex-[1_1_0]"
+                                className="min-h-[420px] lg:flex-[1_1_0]"
                                 data={attendance_chart}
                                 currentLog={current_log}
                             />

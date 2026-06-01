@@ -44,10 +44,10 @@ function Calendar({
                 day: 'size-9 p-0 text-center text-sm',
                 day_button: cn(
                     buttonVariants({ variant: 'ghost' }),
-                    'size-9 p-0 font-normal aria-selected:opacity-100',
+                    'size-9 p-0 font-normal aria-selected:text-primary-foreground aria-selected:opacity-100 hover:aria-selected:text-primary-foreground focus:aria-selected:text-primary-foreground',
                 ),
                 selected:
-                    'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+                    'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground [&_button]:text-primary-foreground [&_button:hover]:text-primary-foreground [&_button:focus]:text-primary-foreground',
                 today: 'bg-accent text-accent-foreground',
                 outside:
                     'text-muted-foreground opacity-60 aria-selected:bg-accent/50 aria-selected:text-muted-foreground',

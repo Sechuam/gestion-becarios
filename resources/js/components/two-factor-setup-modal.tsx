@@ -117,6 +117,8 @@ function TwoFactorSetupStep({
                             ) : (
                                 <>
                                     <input
+                                        id="two-factor-manual-setup-key"
+                                        name="two_factor_manual_setup_key"
                                         type="text"
                                         readOnly
                                         value={manualSetupKey}

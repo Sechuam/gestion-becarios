@@ -22,6 +22,8 @@ export function CalendarVisibilityFilters({
             {canShowJornadas && (
                 <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
                     <input
+                        id="calendar-filter-jornadas"
+                        name="calendar_filter_jornadas"
                         type="checkbox"
                         checked={showJornadas}
                         onChange={(event) =>
@@ -34,6 +36,8 @@ export function CalendarVisibilityFilters({
             )}
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
                 <input
+                    id="calendar-filter-absences"
+                    name="calendar_filter_absences"
                     type="checkbox"
                     checked={showAbsences}
                     onChange={(event) =>
@@ -45,6 +49,8 @@ export function CalendarVisibilityFilters({
             </label>
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
                 <input
+                    id="calendar-filter-personal-events"
+                    name="calendar_filter_personal_events"
                     type="checkbox"
                     checked={showPersonalEvents}
                     onChange={(event) =>
