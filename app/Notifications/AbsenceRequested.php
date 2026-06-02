@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Absence;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -19,21 +20,21 @@ class AbsenceRequested extends Notification implements ShouldQueue
         $this->absence = $absence;
     }
 
-    // Usaremos correo y base de datos ("campanita" web)
+    // El aviso web se guarda con AppAlert; esta notificación mantiene el correo.
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        return ['mail'];
     }
 
     // La plantilla del correo electrónico
     public function toMail(object $notifiable): MailMessage
     {
         $nombreBecario = $this->absence->user->name;
-        $fecha = \Carbon\Carbon::parse($this->absence->date)->format('d/m/Y');
+        $fecha = Carbon::parse($this->absence->date)->format('d/m/Y');
 
         return (new MailMessage)
             ->subject("Nueva solicitud de ausencia: {$nombreBecario}")
-            ->greeting("¡Hola!")
+            ->greeting('¡Hola!')
             ->line("El becario **{$nombreBecario}** ha solicitado una ausencia para el día **{$fecha}**.")
             ->line("Motivo indicado: {$this->absence->reason}")
             ->action('Revisar Solicitud', url('/dashboard'))
@@ -50,7 +51,7 @@ class AbsenceRequested extends Notification implements ShouldQueue
             'date' => $this->absence->date,
             'reason' => $this->absence->reason,
             'type' => 'absence_request',
-            'message' => "{$this->absence->user->name} ha solicitado el día " . \Carbon\Carbon::parse($this->absence->date)->format('d/m/Y') . " libre."
+            'message' => "{$this->absence->user->name} ha solicitado el día ".Carbon::parse($this->absence->date)->format('d/m/Y').' libre.',
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Absence;
 use App\Notifications\AbsenceRequested;
+use App\Notifications\AppAlert;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Log;
@@ -34,7 +35,19 @@ class AbsenceController extends Controller
             $absence->addMediaFromRequest('justification_file')->toMediaCollection('justifications');
         }
 
-        if (!$isStaff && $user->intern && $user->intern->companyTutor) {
+        if (! $isStaff && $user->intern && $user->intern->companyTutor) {
+            $user->intern->companyTutor->notify(new AppAlert(
+                'absence_request',
+                'Nueva solicitud de ausencia',
+                "{$user->name} ha solicitado un día libre.",
+                route('interns.show', $user->intern, false).'#asistencia',
+                [
+                    'absence_id' => $absence->id,
+                    'intern_id' => $user->intern->id,
+                    'intern_name' => $user->name,
+                ],
+            ));
+
             try {
                 $user->intern->companyTutor->notify(new AbsenceRequested($absence));
             } catch (Throwable $exception) {
@@ -66,10 +79,18 @@ class AbsenceController extends Controller
             'approved_by' => $request->user()->id,
         ]);
 
+        $statusLabel = $validated['status'] === 'approved' ? 'aprobada' : 'rechazada';
+        $absence->user?->notify(new AppAlert(
+            'absence_status_changed',
+            'Solicitud de ausencia actualizada',
+            "Tu solicitud de ausencia ha sido {$statusLabel}.",
+            route('dashboard', absolute: false),
+            ['absence_id' => $absence->id],
+        ));
+
         $request->user()->unreadNotifications
             ->where('data.absence_id', $absence->id)
             ->markAsRead();
-
 
         return back()->with('success', 'Estado de la ausencia actualizado.');
     }
