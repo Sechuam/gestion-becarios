@@ -81,6 +81,20 @@ npm run dev
 
 When using Herd, open the configured local domain and keep Vite running for frontend assets and HMR.
 
+For realtime updates, Reverb must run alongside Laravel and Vite. The Composer dev script starts the HTTP server, queue listener, Reverb, logs, and Vite together:
+
+```bash
+composer run dev
+```
+
+If you prefer separate terminals, start Reverb manually:
+
+```bash
+php artisan reverb:start --host=0.0.0.0 --port=8080
+```
+
+The websocket client reads `VITE_REVERB_*` variables from `.env`; copy the values from `.env.example` or run `php artisan reverb:install` to generate local app credentials.
+
 ## Main Modules
 
 - Authentication with email verification, password reset, and two-factor support.

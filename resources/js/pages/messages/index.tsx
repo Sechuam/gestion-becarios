@@ -162,12 +162,7 @@ export default function Messages({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLDivElement>(null);
 
-    const availableContacts = useMemo(() => {
-        const activeIds = new Set(
-            conversations.map((c) => c.other_user?.id).filter(Boolean),
-        );
-        return contacts.filter((contact) => !activeIds.has(contact.id));
-    }, [contacts, conversations]);
+    const availableContacts = contacts;
 
     const filteredContacts = useMemo(() => {
         if (!searchQuery.trim()) return [];
@@ -243,6 +238,8 @@ export default function Messages({
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
+        const isCreatingGroup =
+            showNewGroupPanel && selectedGroupIds.length > 0;
 
         // Construir payload manualmente
         const payload: Record<string, any> = {
@@ -253,12 +250,12 @@ export default function Messages({
             payload.practice_type_id = data.practice_type_id;
         if (data.subject) payload.subject = data.subject;
 
-        if (data.conversation_id) {
+        if (data.conversation_id && !isCreatingGroup) {
             payload.conversation_id = data.conversation_id;
             if (selectedGroupIds.length > 0) {
                 payload.recipient_ids = selectedGroupIds;
             }
-        } else if (selectedGroupIds.length > 0) {
+        } else if (isCreatingGroup) {
             payload.recipient_ids = selectedGroupIds;
         } else if (data.recipient_user_id) {
             payload.recipient_user_id = data.recipient_user_id;
@@ -280,6 +277,12 @@ export default function Messages({
     };
 
     const openConversation = (conversationId: number) => {
+        setShowNewGroupPanel(false);
+        setSelectedGroupIds([]);
+        setData('recipient_user_id', '');
+        setData('practice_type_id', '');
+        setData('subject', '');
+
         router.get(
             '/mensajes',
             { conversation: conversationId },
@@ -560,6 +563,11 @@ export default function Messages({
                                                 onClick={() => {
                                                     setShowNewGroupPanel(false);
                                                     setSelectedGroupIds([]);
+                                                    setData(
+                                                        'conversation_id',
+                                                        selected_conversation?.id ??
+                                                            '',
+                                                    );
                                                 }}
                                                 className="rounded p-0.5 text-muted-foreground hover:text-foreground"
                                             >
@@ -741,9 +749,14 @@ export default function Messages({
                                     <div className="border-b border-white/10 p-3">
                                         <button
                                             type="button"
-                                            onClick={() =>
-                                                setShowNewGroupPanel(true)
-                                            }
+                                            onClick={() => {
+                                                setShowNewGroupPanel(true);
+                                                setData('conversation_id', '');
+                                                setData(
+                                                    'recipient_user_id',
+                                                    '',
+                                                );
+                                            }}
                                             className="flex w-full items-center gap-2 rounded-lg border border-dashed border-border/60 px-3 py-2 text-sm font-medium text-muted-foreground transition hover:border-primary/40 hover:bg-accent/30 hover:text-foreground"
                                         >
                                             <Plus className="h-4 w-4" />
@@ -781,7 +794,7 @@ export default function Messages({
                                                         conversation.id,
                                                     )
                                                 }
-                                                className="flex min-w-0 flex-1 gap-3 p-3 text-left"
+                                                className="flex min-w-0 flex-1 gap-3 p-3 pr-2 text-left"
                                             >
                                                 {conversation.is_group ? (
                                                     <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400">
@@ -807,7 +820,7 @@ export default function Messages({
                                                     </Avatar>
                                                 )}
                                                 <span className="min-w-0 flex-1">
-                                                    <span className="flex items-center justify-between gap-2">
+                                                    <span className="flex items-center gap-2">
                                                         <span className="truncate text-sm font-semibold text-foreground">
                                                             {conversation.is_group
                                                                 ? conversation.subject ||
@@ -816,11 +829,6 @@ export default function Messages({
                                                                       .other_user
                                                                       ?.name ??
                                                                   'Usuario')}
-                                                        </span>
-                                                        <span className="shrink-0 text-[11px] text-muted-foreground">
-                                                            {formatDateShort(
-                                                                conversation.last_message_at,
-                                                            )}
                                                         </span>
                                                     </span>
                                                     {conversation.is_group && (
@@ -860,18 +868,26 @@ export default function Messages({
                                                     </span>
                                                 </span>
                                             </button>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    handleDeleteConversation(
-                                                        conversation,
-                                                    )
-                                                }
-                                                className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded opacity-0 transition group-hover:opacity-100 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30"
-                                                title="Salir de la conversación"
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </button>
+                                            <div className="flex shrink-0 flex-col items-end justify-between py-3 pr-3">
+                                                <span className="text-[11px] text-muted-foreground">
+                                                    {formatDateShort(
+                                                        conversation.last_message_at,
+                                                    )}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleDeleteConversation(
+                                                            conversation,
+                                                        )
+                                                    }
+                                                    className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 opacity-0 transition group-hover:opacity-100 hover:bg-red-100 hover:text-red-600 focus:opacity-100 dark:hover:bg-red-900/30"
+                                                    title="Salir de la conversación"
+                                                    aria-label="Salir de la conversación"
+                                                >
+                                                    <LogOut className="h-3.5 w-3.5" />
+                                                </button>
+                                            </div>
                                         </div>
                                     ))
                                 )}
