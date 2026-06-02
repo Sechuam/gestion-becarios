@@ -63,11 +63,5 @@ RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 8080
 
-# En arranque: migrar, cachear config/rutas/vistas y servir.
-CMD php artisan migrate --force \
-    && php artisan db:seed --force \
-    && php artisan storage:link --force \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan serve --host 0.0.0.0 --port ${PORT:-8080}
+# En arranque: iniciar web o Reverb segun APP_PROCESS.
+CMD ["sh", "scripts/start.sh"]
