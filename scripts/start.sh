@@ -6,7 +6,7 @@ if [ "${APP_PROCESS:-web}" = "reverb" ]; then
 fi
 
 php artisan migrate --force
-php artisan db:seed --force
+BROADCAST_CONNECTION=log php artisan db:seed --force
 php artisan storage:link --force
 php artisan config:cache
 php artisan route:cache
