@@ -48,15 +48,15 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-# Crear .env mínimo para los artisan que se ejecutan en build.
-# Las variables reales las inyecta Railway en runtime.
-RUN cp .env.example .env || true
-
 # Instalar dependencias PHP (sin dev) y compilar assets.
 RUN composer install --no-dev --optimize-autoloader --no-interaction \
     && npm ci \
     && npm run build \
     && rm -rf node_modules
+
+# Crear .env mínimo para los artisan que se ejecutan en runtime.
+# Las variables reales las inyecta Railway en runtime.
+RUN cp .env.example .env || true
 
 # Permisos sobre storage y bootstrap/cache.
 RUN chmod -R 775 storage bootstrap/cache
