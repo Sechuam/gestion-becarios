@@ -21,8 +21,8 @@ class CalendarEvent extends Model
 
     protected $casts = [
         'start_date' => 'date',
-        'end_date'   => 'date',
-        'all_day'    => 'boolean',
+        'end_date' => 'date',
+        'all_day' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -32,6 +32,8 @@ class CalendarEvent extends Model
 
     public function attendees()
     {
-        return $this->belongsToMany(User::class, 'calendar_event_user');
+        return $this->belongsToMany(User::class, 'calendar_event_user')
+            ->withPivot('attendance_status')
+            ->withTimestamps();
     }
 }

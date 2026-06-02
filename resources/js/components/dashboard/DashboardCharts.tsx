@@ -6,6 +6,7 @@ import {
     ListTodo,
     BarChart3,
 } from 'lucide-react';
+import { router } from '@inertiajs/react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
     Bar,
@@ -139,6 +140,12 @@ type ChartProps = {
 };
 
 export function InternsByCenterChart({ data }: ChartProps) {
+    const openCenter = (point?: DashboardChartPoint) => {
+        if (point?.id) {
+            router.visit(`/centros/${point.id}`);
+        }
+    };
+
     return (
         <Card className="group gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
@@ -184,6 +191,10 @@ export function InternsByCenterChart({ data }: ChartProps) {
                             dataKey="becarios"
                             radius={[6, 6, 0, 0]}
                             fill="#64748b"
+                            cursor="pointer"
+                            onClick={(point) =>
+                                openCenter(point as DashboardChartPoint)
+                            }
                         />
                     </BarChart>
                 </ResponsiveContainer>
@@ -193,6 +204,12 @@ export function InternsByCenterChart({ data }: ChartProps) {
 }
 
 export function TaskStatusChart({ data }: ChartProps) {
+    const openTaskStatus = (point?: DashboardChartPoint) => {
+        if (point?.status) {
+            router.visit(`/tareas?status=${point.status}`);
+        }
+    };
+
     return (
         <Card className="group gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
@@ -227,6 +244,12 @@ export function TaskStatusChart({ data }: ChartProps) {
                                 innerRadius={34}
                                 outerRadius={60}
                                 paddingAngle={3}
+                                cursor="pointer"
+                                onClick={(point) =>
+                                    openTaskStatus(
+                                        point as DashboardChartPoint,
+                                    )
+                                }
                             >
                                 {data.map((entry, index) => (
                                     <Cell
@@ -241,9 +264,11 @@ export function TaskStatusChart({ data }: ChartProps) {
                 </div>
                 <div className="space-y-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
                     {data.map((entry) => (
-                        <div
+                        <button
+                            type="button"
                             key={entry.name}
-                            className="flex min-w-0 items-center gap-1.5"
+                            onClick={() => openTaskStatus(entry)}
+                            className="flex min-w-0 items-center gap-1.5 text-left transition-colors hover:text-sidebar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar/30"
                         >
                             <span
                                 className="h-2 w-2 shrink-0 rounded-full"
@@ -256,7 +281,7 @@ export function TaskStatusChart({ data }: ChartProps) {
                             <span className="truncate">
                                 {entry.name}: {entry.value}
                             </span>
-                        </div>
+                        </button>
                     ))}
                 </div>
             </CardContent>
