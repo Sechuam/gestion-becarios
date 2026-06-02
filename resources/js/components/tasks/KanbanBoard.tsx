@@ -3,13 +3,14 @@ import type {
     DragEndEvent,
     DragOverEvent,
     DragStartEvent,
+    Modifier,
 } from '@dnd-kit/core';
 import {
     SortableContext,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { Sparkles, AlertTriangle } from 'lucide-react';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import KanbanTaskCard from '@/components/tasks/KanbanTaskCard';
 import {
     Tooltip,
@@ -49,6 +50,51 @@ const writeKanbanScrollState = (state: KanbanScrollState) => {
     } catch {
         // Scroll memory is a UX enhancement; storage can fail in restricted contexts.
     }
+};
+
+const getActivatorCoordinates = (event: Event) => {
+    if ('clientX' in event && 'clientY' in event) {
+        return {
+            x: Number(event.clientX),
+            y: Number(event.clientY),
+        };
+    }
+
+    const touchEvent = event as TouchEvent;
+
+    if ('touches' in event && touchEvent.touches.length > 0) {
+        return {
+            x: touchEvent.touches[0].clientX,
+            y: touchEvent.touches[0].clientY,
+        };
+    }
+
+    return null;
+};
+
+const snapDragOverlayToCursor: Modifier = ({
+    activatorEvent,
+    draggingNodeRect,
+    transform,
+}) => {
+    if (!activatorEvent || !draggingNodeRect) {
+        return transform;
+    }
+
+    const coordinates = getActivatorCoordinates(activatorEvent);
+
+    if (!coordinates) {
+        return transform;
+    }
+
+    const offsetX = coordinates.x - draggingNodeRect.left;
+    const offsetY = coordinates.y - draggingNodeRect.top;
+
+    return {
+        ...transform,
+        x: transform.x + offsetX - draggingNodeRect.width / 2,
+        y: transform.y + offsetY - draggingNodeRect.height / 2,
+    };
 };
 
 interface KanbanBoardProps {
@@ -91,6 +137,9 @@ export function KanbanBoard({
 }: KanbanBoardProps) {
     const boardScrollRef = useRef<HTMLDivElement | null>(null);
     const columnScrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
+    const [dragOverlaySize, setDragOverlaySize] = useState<{
+        width: number;
+    } | null>(null);
     const columnCountsKey = useMemo(
         () =>
             KANBAN_COLUMNS.map(
@@ -152,10 +201,23 @@ export function KanbanBoard({
             <DndContext
                 sensors={sensors}
                 collisionDetection={pointerWithin}
-                onDragStart={onDragStart}
+                onDragStart={(event) => {
+                    const initialRect = event.active.rect.current.initial;
+
+                    setDragOverlaySize(
+                        initialRect ? { width: initialRect.width } : null,
+                    );
+                    onDragStart(event);
+                }}
                 onDragOver={onDragOver}
-                onDragEnd={onDragEnd}
-                onDragCancel={onDragCancel}
+                onDragEnd={(event) => {
+                    setDragOverlaySize(null);
+                    onDragEnd(event);
+                }}
+                onDragCancel={() => {
+                    setDragOverlaySize(null);
+                    onDragCancel();
+                }}
             >
                 <div
                     ref={boardScrollRef}
@@ -281,9 +343,21 @@ export function KanbanBoard({
                         ))}
                     </div>
                 </div>
-                <DragOverlay>
+                <DragOverlay
+                    adjustScale={false}
+                    modifiers={[snapDragOverlayToCursor]}
+                >
                     {activeDragTask ? (
-                        <KanbanTaskCard task={activeDragTask} canDrag={false} />
+                        <div
+                            style={{
+                                width: dragOverlaySize?.width,
+                            }}
+                        >
+                            <KanbanTaskCard
+                                task={activeDragTask}
+                                canDrag={false}
+                            />
+                        </div>
                     ) : null}
                 </DragOverlay>
             </DndContext>

@@ -16,8 +16,10 @@ class EnsureTutor
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::user()?->isTutor()) {
-            return back()->with('error', 'Solo los tutores pueden crear tareas');
+        $user = Auth::user();
+
+        if (! ($user?->isTutor() || $user?->isAdmin() || $user?->can('manage tasks'))) {
+            return back()->with('error', 'No tienes permisos para crear tareas');
         }
 
         return $next($request);
