@@ -33,15 +33,15 @@ class DashboardController extends Controller
             $userIds = (clone $internQuery)->pluck('interns.user_id');
 
             $taskQuery = Task::query()
-                ->when(!$user->isAdmin(), function (Builder $query) use ($internIds, $user) {
+                ->when(! $user->isAdmin(), function (Builder $query) use ($internIds, $user) {
                     if ($user->isTutor()) {
                         $query->where('created_by', $user->id)
-                            ->orWhereHas('interns', fn(Builder $interns) => $interns->whereIn('interns.id', $internIds));
+                            ->orWhereHas('interns', fn (Builder $interns) => $interns->whereIn('interns.id', $internIds));
 
                         return;
                     }
 
-                    $query->whereHas('interns', fn(Builder $interns) => $interns->whereIn('interns.id', $internIds));
+                    $query->whereHas('interns', fn (Builder $interns) => $interns->whereIn('interns.id', $internIds));
                 });
 
             $activeInterns = (clone $internQuery)->where('status', 'active')->count();
@@ -94,7 +94,7 @@ class DashboardController extends Controller
 
         // Datos en tiempo real para la agenda de hoy
         $today = Carbon::today();
-        
+
         // 1. Jornada activa hoy
         $currentLog = $role === 'intern'
             ? TimeLog::where('user_id', $user->id)
@@ -106,30 +106,70 @@ class DashboardController extends Controller
 
         // 2. Eventos y Ausencias para hoy (Propios e Invitaciones)
         $todayEvents = CalendarEvent::with(['user', 'attendees'])
-            ->where(function($query) use ($user) {
+            ->where(function ($query) use ($user) {
                 $query->where('user_id', $user->id)
-                      ->orWhereHas('attendees', fn($q) => $q->where('users.id', $user->id));
+                    ->orWhereHas('attendees', fn ($q) => $q->where('users.id', $user->id));
             })
             ->whereDate('start_date', '<=', $today)
             ->whereDate('end_date', '>=', $today)
             ->get()
-            ->map(fn($e) => [
-                'type' => 'event',
-                'title' => $e->title,
-                'creator' => $e->user_id !== $user->id ? $e->user->name : null,
-                'time' => $e->all_day ? 'Todo el día' : ($e->start_time . ($e->end_time ? ' - ' . $e->end_time : '')),
-                'color' => $e->color ?? '#3b82f6'
-            ]);
+            ->map(function ($e) use ($user) {
+                $currentAttendee = $e->attendees->firstWhere('id', $user->id);
+                $statusLabels = [
+                    'pending' => 'Pendiente de confirmación',
+                    'accepted' => 'Asistencia confirmada',
+                    'rejected' => 'Asistencia rechazada',
+                ];
+
+                return [
+                    'id' => $e->id,
+                    'type' => 'event',
+                    'title' => $e->title,
+                    'description' => $e->description,
+                    'creator' => $e->user?->name,
+                    'creator_id' => $e->user_id,
+                    'time' => $e->all_day ? 'Todo el día' : ($e->start_time.($e->end_time ? ' - '.$e->end_time : '')),
+                    'start_time' => $e->start_time,
+                    'end_time' => $e->end_time,
+                    'start_date' => $e->start_date?->format('Y-m-d'),
+                    'end_date' => $e->end_date?->format('Y-m-d'),
+                    'all_day' => $e->all_day,
+                    'color' => $e->color ?? '#3b82f6',
+                    'can_respond' => (int) $e->user_id !== (int) $user->id && (bool) $currentAttendee,
+                    'attendance_status' => (int) $e->user_id === (int) $user->id
+                        ? 'Organizador'
+                        : ($statusLabels[$currentAttendee?->pivot?->attendance_status ?? 'pending'] ?? 'Pendiente de confirmación'),
+                    'attendance_status_value' => $currentAttendee?->pivot?->attendance_status ?? null,
+                    'attendees' => $e->attendees
+                        ->map(fn (User $attendee) => [
+                            'id' => $attendee->id,
+                            'name' => $attendee->name,
+                            'email' => $attendee->email,
+                            'avatar' => $attendee->getFirstMediaUrl('avatar'),
+                            'attendance_status' => $statusLabels[$attendee->pivot?->attendance_status ?? 'pending'] ?? 'Pendiente de confirmación',
+                            'attendance_status_value' => $attendee->pivot?->attendance_status ?? 'pending',
+                        ])
+                        ->values()
+                        ->all(),
+                ];
+            });
 
         $todayAbsences = Absence::where('user_id', $user->id)
             ->whereDate('date', $today)
             ->where('status', 'approved')
             ->get()
-            ->map(fn($a) => [
+            ->map(fn ($a) => [
+                'id' => $a->id,
                 'type' => 'absence',
-                'title' => 'Ausencia: ' . $a->reason,
+                'title' => 'Ausencia: '.$a->reason,
+                'description' => $a->reason,
                 'time' => 'Todo el día',
-                'color' => '#f59e0b'
+                'start_date' => $a->date?->format('Y-m-d'),
+                'end_date' => $a->date?->format('Y-m-d'),
+                'all_day' => true,
+                'color' => '#f59e0b',
+                'attendance_status' => 'Ausencia aprobada',
+                'attendees' => [],
             ]);
 
         $data['today_agenda'] = $todayEvents->concat($todayAbsences);
@@ -139,7 +179,7 @@ class DashboardController extends Controller
                 ->whereDate('date', $today)
                 ->whereNotNull('clock_out')
                 ->sum('total_hours'),
-            'elapsed_seconds' => Carbon::parse($currentLog->clock_in)->diffInSeconds(now())
+            'elapsed_seconds' => Carbon::parse($currentLog->clock_in)->diffInSeconds(now()),
         ] : null;
         $data['manageable_interns'] = $role === 'admin' || $role === 'tutor'
             ? $this->eventManageableInterns($user, $role)
@@ -155,8 +195,8 @@ class DashboardController extends Controller
     {
         return Intern::query()
             ->with(['user', 'educationCenter'])
-            ->when($role === 'tutor' || $user->isTutor(), fn(Builder $query) => $query->where('company_tutor_user_id', $user->id))
-            ->when($role === 'intern' || $user->isIntern(), fn(Builder $query) => $query->where('user_id', $user->id));
+            ->when($role === 'tutor' || $user->isTutor(), fn (Builder $query) => $query->where('company_tutor_user_id', $user->id))
+            ->when($role === 'intern' || $user->isIntern(), fn (Builder $query) => $query->where('user_id', $user->id));
     }
 
     protected function activeCentersCount(Builder $internQuery, User $user): int
@@ -174,7 +214,7 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->orderBy('start_date')
             ->get()
-            ->map(fn(Intern $intern) => [
+            ->map(fn (Intern $intern) => [
                 'id' => $intern->id,
                 'user_id' => $intern->user_id,
                 'name' => $intern->user->name,
@@ -192,7 +232,7 @@ class DashboardController extends Controller
             ->whereKeyNot($user->id)
             ->orderBy('name')
             ->get(['id', 'name', 'email'])
-            ->map(fn(User $tutor) => [
+            ->map(fn (User $tutor) => [
                 'id' => $tutor->id,
                 'user_id' => $tutor->id,
                 'name' => $tutor->name,
@@ -205,13 +245,17 @@ class DashboardController extends Controller
     protected function internsByCenter(Builder $internQuery): array
     {
         return (clone $internQuery)
-            ->selectRaw("COALESCE(education_centers.name, 'Sin centro') as center, COUNT(*) as total")
+            ->selectRaw("education_centers.id as center_id, COALESCE(education_centers.name, 'Sin centro') as center, COUNT(*) as total")
             ->leftJoin('education_centers', 'education_centers.id', '=', 'interns.education_center_id')
-            ->groupBy('education_centers.name')
+            ->groupBy('education_centers.id', 'education_centers.name')
             ->orderByDesc('total')
             ->limit(8)
             ->get()
-            ->map(fn($row) => ['name' => $row->center, 'becarios' => (int) $row->total])
+            ->map(fn ($row) => [
+                'id' => $row->center_id ? (int) $row->center_id : null,
+                'name' => $row->center,
+                'becarios' => (int) $row->total,
+            ])
             ->values()
             ->all();
     }
@@ -270,7 +314,7 @@ class DashboardController extends Controller
         $schedules = Schedule::query()
             ->whereIn('user_id', $userIds)
             ->whereDate('start_date', '<=', $end)
-            ->where(fn(Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', $start))
+            ->where(fn (Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', $start))
             ->orderByDesc('start_date')
             ->get()
             ->groupBy('user_id');
@@ -279,8 +323,8 @@ class DashboardController extends Controller
             ->whereIn('user_id', $userIds)
             ->whereBetween('date', [$start, $end])
             ->get(['user_id', 'date', 'total_hours', 'clock_in'])
-            ->groupBy(fn(TimeLog $log) => $log->user_id . '|' . $log->date->format('Y-m-d'));
-        $workedHours = $timeLogsByDay->map(fn(Collection $logs) => (float) $logs->sum('total_hours'));
+            ->groupBy(fn (TimeLog $log) => $log->user_id.'|'.$log->date->format('Y-m-d'));
+        $workedHours = $timeLogsByDay->map(fn (Collection $logs) => (float) $logs->sum('total_hours'));
 
         $expectedDays = 0;
         $completeDays = 0;
@@ -290,10 +334,10 @@ class DashboardController extends Controller
             for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                 $schedule = ($schedules[$userId] ?? collect())->first(function (Schedule $schedule) use ($date) {
                     return $schedule->start_date->lte($date)
-                        && (!$schedule->end_date || $schedule->end_date->gte($date));
+                        && (! $schedule->end_date || $schedule->end_date->gte($date));
                 });
 
-                if (!$schedule) {
+                if (! $schedule) {
                     continue;
                 }
 
@@ -302,12 +346,12 @@ class DashboardController extends Controller
                 $expectedEntryTime = $schedule->$entryField;
 
                 if ($expectedEntryTime) {
-                    $logsToday = $timeLogsByDay[$userId . '|' . $date->format('Y-m-d')] ?? collect();
+                    $logsToday = $timeLogsByDay[$userId.'|'.$date->format('Y-m-d')] ?? collect();
                     $firstClockIn = $logsToday->whereNotNull('clock_in')->sortBy('clock_in')->first()?->clock_in;
 
                     if ($firstClockIn) {
-                        $actual = Carbon::parse($date->format('Y-m-d') . ' ' . $firstClockIn);
-                        $scheduled = Carbon::parse($date->format('Y-m-d') . ' ' . $expectedEntryTime);
+                        $actual = Carbon::parse($date->format('Y-m-d').' '.$firstClockIn);
+                        $scheduled = Carbon::parse($date->format('Y-m-d').' '.$expectedEntryTime);
 
                         if ($actual->gt($scheduled)) {
                             $delays[] = $actual->diffInMinutes($scheduled);
@@ -323,7 +367,7 @@ class DashboardController extends Controller
                 }
 
                 $expectedDays++;
-                $worked = $workedHours[$userId . '|' . $date->format('Y-m-d')] ?? 0;
+                $worked = $workedHours[$userId.'|'.$date->format('Y-m-d')] ?? 0;
 
                 if ($worked >= $expectedHours) {
                     $completeDays++;
@@ -358,7 +402,8 @@ class DashboardController extends Controller
             ->select('status', DB::raw('COUNT(*) as total'))
             ->groupBy('status')
             ->get()
-            ->map(fn($row) => [
+            ->map(fn ($row) => [
+                'status' => $row->status,
                 'name' => $labels[$row->status] ?? ucfirst((string) $row->status),
                 'value' => (int) $row->total,
             ])
@@ -373,7 +418,7 @@ class DashboardController extends Controller
         return (clone $internQuery)
             ->where('status', 'active')
             ->whereDoesntHave('evaluations', function (Builder $query) use ($monthStart) {
-                $query->where(fn(Builder $dateQuery) => $dateQuery
+                $query->where(fn (Builder $dateQuery) => $dateQuery
                     ->whereDate('evaluated_at', '>=', $monthStart)
                     ->orWhereDate('created_at', '>=', $monthStart));
             })
@@ -394,7 +439,7 @@ class DashboardController extends Controller
             ->where('status', 'completed')
             ->whereNotNull('completed_at')
             ->get(['created_at', 'completed_at'])
-            ->map(fn(Task $task) => $task->created_at->diffInDays($task->completed_at));
+            ->map(fn (Task $task) => $task->created_at->diffInDays($task->completed_at));
 
         if ($durations->isEmpty()) {
             return null;
@@ -415,7 +460,7 @@ class DashboardController extends Controller
             ->withCount([
                 'evaluations',
                 'tasks',
-                'tasks as completed_tasks' => fn(Builder $query) => $query->where('status', 'completed'),
+                'tasks as completed_tasks' => fn (Builder $query) => $query->where('status', 'completed'),
             ])
             ->with(['user', 'educationCenter'])
             ->orderByDesc('updated_at')
@@ -428,7 +473,7 @@ class DashboardController extends Controller
         $schedules = Schedule::query()
             ->whereIn('user_id', $userIds)
             ->whereDate('start_date', '<=', $end)
-            ->where(fn(Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', $start))
+            ->where(fn (Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', $start))
             ->get()
             ->groupBy('user_id');
 
@@ -446,15 +491,16 @@ class DashboardController extends Controller
             // Calcular retraso medio para este becario específico
             $userDelays = [];
             $userSchedules = $schedules[$intern->user_id] ?? collect();
-            $userLogs = ($timeLogs[$intern->user_id] ?? collect())->groupBy(fn($log) => $log->date->format('Y-m-d'));
+            $userLogs = ($timeLogs[$intern->user_id] ?? collect())->groupBy(fn ($log) => $log->date->format('Y-m-d'));
 
             for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                 $schedule = $userSchedules->first(function (Schedule $s) use ($date) {
-                    return $s->start_date->lte($date) && (!$s->end_date || $s->end_date->gte($date));
+                    return $s->start_date->lte($date) && (! $s->end_date || $s->end_date->gte($date));
                 });
 
-                if (!$schedule)
+                if (! $schedule) {
                     continue;
+                }
 
                 $dayName = strtolower($date->format('l'));
                 $entryTime = $schedule->{"{$dayName}_entry_time"};
@@ -462,8 +508,8 @@ class DashboardController extends Controller
                 if ($entryTime) {
                     $log = ($userLogs[$date->format('Y-m-d')] ?? collect())->sortBy('clock_in')->first();
                     if ($log && $log->clock_in) {
-                        $actual = Carbon::parse($date->format('Y-m-d') . ' ' . $log->clock_in);
-                        $scheduled = Carbon::parse($date->format('Y-m-d') . ' ' . $entryTime);
+                        $actual = Carbon::parse($date->format('Y-m-d').' '.$log->clock_in);
+                        $scheduled = Carbon::parse($date->format('Y-m-d').' '.$entryTime);
                         $userDelays[] = $actual->gt($scheduled) ? $actual->diffInMinutes($scheduled) : 0;
                     }
                 }
@@ -471,6 +517,7 @@ class DashboardController extends Controller
 
             return [
                 'id' => $intern->id,
+                'url' => route('interns.show', $intern, false),
                 'name' => $intern->user?->name ?? 'Sin usuario',
                 'center' => $intern->educationCenter?->name ?? 'Sin centro',
                 'completed' => $completedTasks,

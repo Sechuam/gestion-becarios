@@ -5,6 +5,7 @@ import {
     TrendingUp,
     Users,
 } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -143,8 +144,12 @@ export function InternTaskProgressPanel({
                                         }
 
                                         return (
-                                            <div
+                                            <Link
                                                 key={intern.id}
+                                                href={
+                                                    intern.url ??
+                                                    `/becarios/${intern.id}`
+                                                }
                                                 className="min-h-[76px] rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-1.5 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
                                             >
                                                 <div className="flex items-center justify-between gap-2">
@@ -196,7 +201,7 @@ export function InternTaskProgressPanel({
                                                     {intern.total} tareas
                                                     completadas
                                                 </p>
-                                            </div>
+                                            </Link>
                                         );
                                     })}
                                 </div>
