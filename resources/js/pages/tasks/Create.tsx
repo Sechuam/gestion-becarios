@@ -57,6 +57,7 @@ export default function Create({
     const [selectedCenter, setSelectedCenter] = useState<string>('');
     const [centerQuery, setCenterQuery] = useState<string>('');
     const [internQuery, setInternQuery] = useState<string>('');
+    const formErrors = Object.values(errors).filter(Boolean);
 
     const assignableInterns = (
         assignmentType === 'user'
@@ -80,7 +81,9 @@ export default function Create({
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/tareas');
+        post('/tareas', {
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -93,6 +96,12 @@ export default function Create({
                 subtitle="Planificación y asignación de actividades"
             >
                 <form onSubmit={submit} className="space-y-6" noValidate>
+                    {formErrors.length > 0 && (
+                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                            Revisa los campos marcados antes de crear la tarea.
+                        </div>
+                    )}
+
                     <TaskFormTabs
                         infoLabel="Información"
                         info={
@@ -142,6 +151,11 @@ export default function Create({
                                                 ))}
                                             </SelectContent>
                                         </Select>
+                                        {errors.practice_type_id && (
+                                            <p className="text-xs text-red-500">
+                                                {errors.practice_type_id}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -161,20 +175,43 @@ export default function Create({
                             </>
                         }
                         planning={
-                            <TaskPlanningFields
-                                status={data.status}
-                                priority={data.priority}
-                                dueDate={data.due_date}
-                                onStatusChange={(value) =>
-                                    setData('status', value)
-                                }
-                                onPriorityChange={(value) =>
-                                    setData('priority', value)
-                                }
-                                onDueDateChange={(value) =>
-                                    setData('due_date', value)
-                                }
-                            />
+                            <>
+                                <TaskPlanningFields
+                                    status={data.status}
+                                    priority={data.priority}
+                                    dueDate={data.due_date}
+                                    onStatusChange={(value) =>
+                                        setData('status', value)
+                                    }
+                                    onPriorityChange={(value) =>
+                                        setData('priority', value)
+                                    }
+                                    onDueDateChange={(value) =>
+                                        setData('due_date', value)
+                                    }
+                                />
+                                {(errors.status ||
+                                    errors.priority ||
+                                    errors.due_date) && (
+                                    <div className="space-y-1">
+                                        {errors.status && (
+                                            <p className="text-xs text-red-500">
+                                                {errors.status}
+                                            </p>
+                                        )}
+                                        {errors.priority && (
+                                            <p className="text-xs text-red-500">
+                                                {errors.priority}
+                                            </p>
+                                        )}
+                                        {errors.due_date && (
+                                            <p className="text-xs text-red-500">
+                                                {errors.due_date}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </>
                         }
                         assignment={
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -204,6 +241,11 @@ export default function Create({
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        {errors.assignment_type && (
+                                            <p className="text-xs text-red-500">
+                                                {errors.assignment_type}
+                                            </p>
+                                        )}
                                     </div>
 
                                     {assignmentType === 'module' && (
@@ -231,6 +273,11 @@ export default function Create({
                                                     </SelectItem>
                                                 </SelectContent>
                                             </Select>
+                                            {errors.module_id && (
+                                                <p className="text-xs text-red-500">
+                                                    {errors.module_id}
+                                                </p>
+                                            )}
                                         </div>
                                     )}
 
@@ -291,6 +338,13 @@ export default function Create({
                                                         ))}
                                                 </SelectContent>
                                             </Select>
+                                            {errors.education_center_id && (
+                                                <p className="text-xs text-red-500">
+                                                    {
+                                                        errors.education_center_id
+                                                    }
+                                                </p>
+                                            )}
                                         </div>
                                     )}
                                 </div>

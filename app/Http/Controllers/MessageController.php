@@ -186,13 +186,9 @@ class MessageController extends Controller
 
         abort_unless($isParticipant, 403, 'No eres participante de esta conversación.');
 
-        $hadParticipantRow = $conversation->participants()
-            ->where('user_id', $user->id)
-            ->exists();
-
         $conversation->participants()->detach($user->id);
 
-        if (! $hadParticipantRow || $conversation->participants()->count() === 0 || $this->conversationParticipantIds($conversation)->count() <= 1) {
+        if ($conversation->participants()->count() === 0) {
             $conversation->delete();
         }
 
@@ -307,6 +303,10 @@ class MessageController extends Controller
         }
 
         $participantIds = $this->conversationParticipantIds($conversation);
+
+        if ($participantIds->count() > 2) {
+            return $participantIds->contains((int) $user->id);
+        }
 
         return $participantIds->count() === 2
             && $participantIds->contains((int) $user->id)

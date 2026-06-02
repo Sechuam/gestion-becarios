@@ -239,7 +239,7 @@ class TaskController extends Controller
         /** @var User|null $user */
         $user = Auth::user();
 
-        if (! $user || ! $user->can('manage tasks')) {
+        if (! $this->canCreateTasks($user)) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
         $validated = $request->validated();
@@ -295,7 +295,7 @@ class TaskController extends Controller
         /** @var User|null $user */
         $user = Auth::user();
 
-        if (! $user || ! $user->can('manage tasks')) {
+        if (! $this->canCreateTasks($user)) {
             return back()->with('error', 'Solo los tutores o administradores pueden crear tareas.');
         }
 
@@ -767,6 +767,11 @@ class TaskController extends Controller
         }
 
         return false;
+    }
+
+    protected function canCreateTasks(?User $user): bool
+    {
+        return (bool) ($user?->isTutor() || $user?->isAdmin() || $user?->can('manage tasks'));
     }
 
     protected function nextKanbanPosition(): int

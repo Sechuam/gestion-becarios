@@ -5,7 +5,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import type { BoardQuickFilter, TaskViewMode } from '@/lib/task-constants';
 
 type TasksHeaderActionsProps = {
-    isTutor: boolean;
+    canCreateTasks: boolean;
     viewMode: TaskViewMode;
     onViewModeChange: (viewMode: TaskViewMode) => void;
     boardFilter: BoardQuickFilter;
@@ -19,7 +19,7 @@ type TasksHeaderActionsProps = {
 };
 
 export function TasksHeaderActions({
-    isTutor,
+    canCreateTasks,
     viewMode,
     onViewModeChange,
     boardFilter,
@@ -29,7 +29,7 @@ export function TasksHeaderActions({
     return (
         <div className="flex min-w-[18rem] flex-col gap-2">
             <div className="flex items-center gap-2">
-                {isTutor && (
+                {canCreateTasks && (
                     <HeaderActionButton
                         label="Nueva tarea"
                         href="/tareas/create"
