@@ -195,6 +195,11 @@ export default function Index({
         auth?.user?.roles?.includes('intern') ||
         auth?.user?.roles?.includes('becario');
     const isTutor = auth?.user?.roles?.includes('tutor');
+    const isAdmin = auth?.user?.roles?.includes('admin');
+    const canCreateTasks =
+        isTutor ||
+        isAdmin ||
+        auth?.user?.permissions?.includes('manage tasks');
     const [boardFilter, setBoardFilter] = useState<BoardQuickFilter>('all');
     const [lastMoveMessage, setLastMoveMessage] = useState<string | null>(null);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
@@ -480,7 +485,7 @@ export default function Index({
                         icon={<KanbanSquare className="h-6 w-6" />}
                         actions={
                             <TasksHeaderActions
-                                isTutor={isTutor}
+                                canCreateTasks={canCreateTasks}
                                 viewMode={viewMode}
                                 onViewModeChange={setViewMode}
                                 boardFilter={boardFilter}
