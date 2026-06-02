@@ -37,7 +37,11 @@ class CalendarEventController extends Controller
         ]);
 
         if (! empty($validated['attendee_ids'])) {
-            $event->attendees()->sync($validated['attendee_ids']);
+            $event->attendees()->sync(
+                collect($validated['attendee_ids'])
+                    ->mapWithKeys(fn ($id) => [$id => ['attendance_status' => 'pending']])
+                    ->all()
+            );
         }
 
         $this->notifyEventAttendees($event, 'calendar_event_created', 'Nuevo evento', "Te han incluido en el evento \"{$event->title}\".", $request->user());
@@ -73,7 +77,16 @@ class CalendarEventController extends Controller
             'color' => $validated['color'],
         ]);
 
-        $calendarEvent->attendees()->sync($validated['attendee_ids'] ?? []);
+        $currentStatuses = $calendarEvent->attendees()
+            ->pluck('calendar_event_user.attendance_status', 'users.id');
+
+        $calendarEvent->attendees()->sync(
+            collect($validated['attendee_ids'] ?? [])
+                ->mapWithKeys(fn ($id) => [
+                    $id => ['attendance_status' => $currentStatuses[$id] ?? 'pending'],
+                ])
+                ->all()
+        );
 
         $this->notifyEventAttendees($calendarEvent, 'calendar_event_updated', 'Evento actualizado', "Se ha actualizado el evento \"{$calendarEvent->title}\".", $request->user());
 
@@ -87,6 +100,31 @@ class CalendarEventController extends Controller
         $calendarEvent->delete();
 
         return back();
+    }
+
+    public function updateAttendance(Request $request, CalendarEvent $calendarEvent)
+    {
+        $validated = $request->validate([
+            'attendance_status' => 'required|in:accepted,rejected',
+        ]);
+
+        $userId = $request->user()->id;
+        $isAttendee = $calendarEvent->attendees()
+            ->where('users.id', $userId)
+            ->exists();
+
+        abort_unless($isAttendee, 403);
+
+        $calendarEvent->attendees()->updateExistingPivot($userId, [
+            'attendance_status' => $validated['attendance_status'],
+        ]);
+
+        return back()->with(
+            'success',
+            $validated['attendance_status'] === 'accepted'
+                ? 'Has confirmado tu asistencia.'
+                : 'Has rechazado la asistencia al evento.'
+        );
     }
 
     protected function notifyEventAttendees(CalendarEvent $event, string $type, string $title, string $message, User $actor): void

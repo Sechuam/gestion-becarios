@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas de Eventos de Calendario
     Route::post('/calendar-events', [CalendarEventController::class, 'store'])->name('calendar-events.store');
     Route::patch('/calendar-events/{calendarEvent}', [CalendarEventController::class, 'update'])->name('calendar-events.update');
+    Route::patch('/calendar-events/{calendarEvent}/attendance', [CalendarEventController::class, 'updateAttendance'])->name('calendar-events.attendance');
     Route::delete('/calendar-events/{calendarEvent}', [CalendarEventController::class, 'destroy'])->name('calendar-events.destroy');
 
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
