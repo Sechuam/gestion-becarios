@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskStatusLog;
 use App\Models\User;
+use App\Notifications\AppAlert;
 use App\Support\DashboardCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -287,6 +288,8 @@ class TaskController extends Controller
             'changed_at' => now(),
         ]);
 
+        $this->notifyAssignedInterns($task, 'task_created', 'Nueva tarea asignada', "Se te ha asignado la tarea \"{$task->title}\".");
+
         return to_route('tasks.index')->with('success', 'Tarea creada correctamente.');
     }
 
@@ -357,6 +360,8 @@ class TaskController extends Controller
                 'changed_by' => Auth::id(),
                 'changed_at' => now(),
             ]);
+
+            $this->notifyTaskStatusChanged($task, $fromStatus, $task->status, $user);
         }
 
         return to_route('tasks.index')->with('success', 'Tarea actualizada.');
@@ -413,6 +418,8 @@ class TaskController extends Controller
             'changed_by' => Auth::id(),
             'changed_at' => now(),
         ]);
+
+        $this->notifyTaskStatusChanged($task, $fromStatus, $task->status, $user);
 
         return back()->with('success', 'Estado actualizado.');
     }
@@ -533,6 +540,8 @@ class TaskController extends Controller
                 'changed_at' => now(),
             ]);
 
+            $this->notifyTaskSubmitted($task, $user);
+
             return back()->with('success', 'Tarea entregada y enviada a revisión.');
         }
 
@@ -551,6 +560,8 @@ class TaskController extends Controller
             'changed_by' => $user->id,
             'changed_at' => now(),
         ]);
+
+        $this->notifyTaskStatusChanged($task, $fromStatus, $task->status, $user);
 
         return back()->with('success', 'Tarea marcada como completada.');
     }
@@ -663,18 +674,39 @@ class TaskController extends Controller
             abort_unless($allowedCount === $taskIds->count(), 403);
         }
 
-        DB::transaction(function () use ($validated) {
+        $statusChanges = DB::transaction(function () use ($validated, $user) {
+            $changes = [];
+
             foreach ($validated['items'] as $item) {
                 $task = Task::find($item['id']);
                 if ($task) {
+                    $fromStatus = $task->status;
                     $task->update([
                         'status' => $item['status'],
                         'kanban_position' => $item['position'],
                         'completed_at' => $item['status'] === 'completed' ? ($task->completed_at ?? now()) : null,
                     ]);
+
+                    if ($fromStatus !== $task->status) {
+                        TaskStatusLog::create([
+                            'task_id' => $task->id,
+                            'from_status' => $fromStatus,
+                            'to_status' => $task->status,
+                            'changed_by' => $user?->id,
+                            'changed_at' => now(),
+                        ]);
+
+                        $changes[] = [$task->fresh(['interns.user', 'creator']), $fromStatus, $task->status];
+                    }
                 }
             }
+
+            return $changes;
         });
+
+        foreach ($statusChanges as [$task, $fromStatus, $toStatus]) {
+            $this->notifyTaskStatusChanged($task, $fromStatus, $toStatus, $user);
+        }
 
         return back()->with('success', 'Orden del tablero actualizado.');
     }
@@ -777,5 +809,70 @@ class TaskController extends Controller
     protected function nextKanbanPosition(): int
     {
         return (int) Task::max('kanban_position') + 1;
+    }
+
+    protected function notifyAssignedInterns(Task $task, string $type, string $title, string $message): void
+    {
+        $task->loadMissing('interns.user');
+
+        foreach ($task->interns as $intern) {
+            $intern->user?->notify(new AppAlert(
+                $type,
+                $title,
+                $message,
+                route('tasks.show', $task, false),
+                ['task_id' => $task->id],
+            ));
+        }
+    }
+
+    protected function notifyTaskStatusChanged(Task $task, ?string $fromStatus, string $toStatus, ?User $actor): void
+    {
+        if ($actor?->isIntern()) {
+            $this->notifyTaskSubmitted($task, $actor);
+
+            return;
+        }
+
+        $labels = [
+            'pending' => 'pendiente',
+            'in_progress' => 'en progreso',
+            'in_review' => 'en revisión',
+            'completed' => 'completada',
+            'rejected' => 'rechazada',
+        ];
+
+        $statusLabel = $labels[$toStatus] ?? $toStatus;
+
+        $this->notifyAssignedInterns(
+            $task,
+            'task_status_changed',
+            'Cambio en una tarea',
+            "La tarea \"{$task->title}\" ha pasado a {$statusLabel}.",
+        );
+    }
+
+    protected function notifyTaskSubmitted(Task $task, User $internUser): void
+    {
+        $task->loadMissing('creator', 'interns.companyTutor');
+
+        $recipients = collect([$task->creator])
+            ->merge($task->interns->pluck('companyTutor'))
+            ->filter()
+            ->reject(fn (User $recipient) => (int) $recipient->id === (int) $internUser->id)
+            ->unique('id');
+
+        foreach ($recipients as $recipient) {
+            $recipient->notify(new AppAlert(
+                'task_submitted',
+                'Tarea entregada',
+                "{$internUser->name} ha entregado la tarea \"{$task->title}\".",
+                route('tasks.show', $task, false),
+                [
+                    'task_id' => $task->id,
+                    'intern_user_id' => $internUser->id,
+                ],
+            ));
+        }
     }
 }
