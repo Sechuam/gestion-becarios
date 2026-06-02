@@ -36,6 +36,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         intl \
         zip \
         bcmath \
+        pcntl \
+        posix \
+        sockets \
         opcache
 
 # --- Composer ---
