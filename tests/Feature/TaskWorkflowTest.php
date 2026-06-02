@@ -90,6 +90,20 @@ it('allows assigned interns to submit tasks for review', function () {
             ->exists())->toBeTrue();
 });
 
+it('notifies tutors when an intern submits a task', function () {
+    [$tutor, $internUser, $intern, $task] = createAssignedTaskScenario('in_progress');
+
+    $this->actingAs($internUser)
+        ->post(route('tasks.complete', $task))
+        ->assertRedirect();
+
+    $notification = $tutor->notifications()->first();
+
+    expect($notification)->not->toBeNull()
+        ->and($notification->data['type'])->toBe('task_submitted')
+        ->and($notification->data['task_id'])->toBe($task->id);
+});
+
 it('allows tutors to complete tasks that are in review', function () {
     [$tutor, $internUser, $intern, $task] = createAssignedTaskScenario('in_review');
 
@@ -108,6 +122,20 @@ it('allows tutors to complete tasks that are in review', function () {
             ->where('to_status', 'completed')
             ->where('changed_by', $tutor->id)
             ->exists())->toBeTrue();
+});
+
+it('notifies interns when a tutor changes a task status', function () {
+    [$tutor, $internUser, $intern, $task] = createAssignedTaskScenario('in_review');
+
+    $this->actingAs($tutor)
+        ->post(route('tasks.complete', $task))
+        ->assertRedirect();
+
+    $notification = $internUser->notifications()->first();
+
+    expect($notification)->not->toBeNull()
+        ->and($notification->data['type'])->toBe('task_status_changed')
+        ->and($notification->data['task_id'])->toBe($task->id);
 });
 
 it('prevents interns from accessing tasks they are not assigned to', function () {

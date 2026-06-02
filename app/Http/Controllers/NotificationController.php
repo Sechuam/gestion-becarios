@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
@@ -25,6 +24,10 @@ class NotificationController extends Controller
 
         $data = $notification->data;
 
+        if (! empty($data['url']) && is_string($data['url']) && str_starts_with($data['url'], '/')) {
+            return redirect($data['url']);
+        }
+
         // Redirigir según el tipo de notificación
         return match ($data['type'] ?? '') {
             'new_message' => redirect()->route('messages.index', [
@@ -32,7 +35,7 @@ class NotificationController extends Controller
             ]),
             'absence_request' => redirect(
                 $data['intern_id'] ?? false
-                    ? route('interns.show', $data['intern_id']) . '#asistencia'
+                    ? route('interns.show', $data['intern_id']).'#asistencia'
                     : route('dashboard')
             ),
             default => redirect()->route('dashboard'),

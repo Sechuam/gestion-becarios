@@ -7,6 +7,7 @@ use App\Models\Evaluation;
 use App\Models\EvaluationCriterion;
 use App\Models\EvaluationScore;
 use App\Models\Intern;
+use App\Notifications\AppAlert;
 use App\Services\EvaluationScoreCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -330,7 +331,7 @@ class EvaluationController extends Controller
 
         $calculator = app(EvaluationScoreCalculator::class);
 
-        DB::transaction(function () use ($validated, $criteria, $calculator, &$totalScore, &$weightedScore) {
+        $evaluation = DB::transaction(function () use ($validated, $criteria, $calculator, &$totalScore, &$weightedScore) {
             $evaluation = Evaluation::create([
                 'intern_id' => $validated['intern_id'],
                 'evaluator_user_id' => Auth::id(),
@@ -381,7 +382,11 @@ class EvaluationController extends Controller
                 'total_score' => round($totalScore, 2),
                 'weighted_score' => round($weightedScore, 2),
             ]);
+
+            return $evaluation;
         });
+
+        $this->notifyEvaluationCreated($evaluation->fresh(['intern.user', 'intern.companyTutor', 'evaluator']));
 
         return to_route('evaluations.index')->with('success', 'Evaluación creada correctamente.');
     }
@@ -393,5 +398,37 @@ class EvaluationController extends Controller
         $evaluation->delete();
 
         return to_route('evaluations.index')->with('success', 'Evaluación eliminada correctamente.');
+    }
+
+    protected function notifyEvaluationCreated(Evaluation $evaluation): void
+    {
+        $internUser = $evaluation->intern?->user;
+        $evaluator = $evaluation->evaluator;
+
+        if ($evaluation->is_self_evaluation) {
+            $tutor = $evaluation->intern?->companyTutor;
+
+            if ($tutor && $internUser) {
+                $tutor->notify(new AppAlert(
+                    'evaluation_created',
+                    'Autoevaluación emitida',
+                    "{$internUser->name} ha emitido una autoevaluación.",
+                    route('evaluations.show', $evaluation, false),
+                    ['evaluation_id' => $evaluation->id, 'intern_id' => $evaluation->intern_id],
+                ));
+            }
+
+            return;
+        }
+
+        if ($internUser && (! $evaluator || (int) $internUser->id !== (int) $evaluator->id)) {
+            $internUser->notify(new AppAlert(
+                'evaluation_created',
+                'Nueva evaluación',
+                'Se ha emitido una evaluación sobre tus prácticas.',
+                route('evaluations.show', $evaluation, false),
+                ['evaluation_id' => $evaluation->id, 'intern_id' => $evaluation->intern_id],
+            ));
+        }
     }
 }

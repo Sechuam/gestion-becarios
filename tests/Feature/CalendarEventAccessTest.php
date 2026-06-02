@@ -67,3 +67,30 @@ it('prevents an intern from deleting calendar events created by staff', function
 
     expect(CalendarEvent::query()->whereKey($event->id)->exists())->toBeTrue();
 });
+
+it('notifies attendees when they are included in a calendar event', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $intern = User::factory()->create();
+    $intern->assignRole('intern');
+
+    $this->actingAs($admin)
+        ->post(route('calendar-events.store'), [
+            'title' => 'Reunión de prácticas',
+            'description' => 'Seguimiento mensual.',
+            'start_date' => now()->toDateString(),
+            'end_date' => now()->toDateString(),
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'all_day' => false,
+            'color' => '#3b82f6',
+            'attendee_ids' => [$intern->id],
+        ])
+        ->assertRedirect();
+
+    $notification = $intern->notifications()->first();
+
+    expect($notification)->not->toBeNull()
+        ->and($notification->data['type'])->toBe('calendar_event_created');
+});

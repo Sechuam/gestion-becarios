@@ -1,5 +1,12 @@
 import { router, usePage } from '@inertiajs/react';
-import { Bell, Mail, MessageSquare, UserRoundCheck } from 'lucide-react';
+import {
+    Bell,
+    CalendarDays,
+    ClipboardCheck,
+    Mail,
+    MessageSquare,
+    UserRoundCheck,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,9 +47,26 @@ export function NotificationBell({ triggerClassName }: NotificationBellProps) {
                     </div>
                 );
             case 'absence_request':
+            case 'absence_status_changed':
                 return (
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
                         <UserRoundCheck className="h-3.5 w-3.5" />
+                    </div>
+                );
+            case 'task_created':
+            case 'task_status_changed':
+            case 'task_submitted':
+            case 'evaluation_created':
+                return (
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
+                        <ClipboardCheck className="h-3.5 w-3.5" />
+                    </div>
+                );
+            case 'calendar_event_created':
+            case 'calendar_event_updated':
+                return (
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400">
+                        <CalendarDays className="h-3.5 w-3.5" />
                     </div>
                 );
             default:
@@ -104,6 +128,11 @@ export function NotificationBell({ triggerClassName }: NotificationBellProps) {
                         const type = data.type ?? '';
                         const isMessage = type === 'new_message';
                         const isAbsence = type === 'absence_request';
+                        const label = data.title ?? (isMessage
+                            ? (data.sender_name ?? 'Nuevo mensaje')
+                            : isAbsence
+                              ? (data.intern_name ?? 'Ausencia')
+                              : 'Notificación');
 
                         return (
                             <DropdownMenuItem
@@ -114,12 +143,7 @@ export function NotificationBell({ triggerClassName }: NotificationBellProps) {
                                 {notificationIcon(type)}
                                 <div className="min-w-0 flex-1">
                                     <span className="block text-sm leading-tight font-semibold">
-                                        {isMessage
-                                            ? (data.sender_name ??
-                                              'Nuevo mensaje')
-                                            : isAbsence
-                                              ? (data.intern_name ?? 'Ausencia')
-                                              : 'Notificación'}
+                                        {label}
                                     </span>
                                     <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-slate-500 dark:text-slate-400">
                                         {data.message ?? ''}
