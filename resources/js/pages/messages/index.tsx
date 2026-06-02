@@ -11,6 +11,7 @@ import {
     Users,
     LogOut,
     Plus,
+    Smile,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
@@ -130,6 +131,33 @@ const formatDateShort = (value?: string | null) => {
     }).format(date);
 };
 
+const EMOJI_OPTIONS = [
+    '😀',
+    '😄',
+    '😂',
+    '😊',
+    '😍',
+    '😎',
+    '🥳',
+    '👍',
+    '👏',
+    '🙌',
+    '💪',
+    '🙏',
+    '❤️',
+    '🔥',
+    '✨',
+    '✅',
+    '👀',
+    '📌',
+    '📚',
+    '💡',
+    '🚀',
+    '🎯',
+    '⏰',
+    '☕',
+];
+
 export default function Messages({
     conversations,
     selected_conversation,
@@ -159,8 +187,10 @@ export default function Messages({
     const [inlineEditBody, setInlineEditBody] = useState('');
     const [showNewGroupPanel, setShowNewGroupPanel] = useState(false);
     const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLDivElement>(null);
+    const messageTextareaRef = useRef<HTMLTextAreaElement>(null);
 
     const availableContacts = contacts;
 
@@ -273,6 +303,26 @@ export default function Messages({
                 setSelectedGroupIds([]);
                 setShowNewGroupPanel(false);
             },
+        });
+    };
+
+    const insertEmoji = (emoji: string) => {
+        const textarea = messageTextareaRef.current;
+        const start = textarea?.selectionStart ?? data.body.length;
+        const end = textarea?.selectionEnd ?? data.body.length;
+        const nextBody =
+            data.body.slice(0, start) + emoji + data.body.slice(end);
+        const nextCursorPosition = start + emoji.length;
+
+        setData('body', nextBody);
+        setShowEmojiPicker(false);
+
+        window.requestAnimationFrame(() => {
+            textarea?.focus();
+            textarea?.setSelectionRange(
+                nextCursorPosition,
+                nextCursorPosition,
+            );
         });
     };
 
@@ -1185,22 +1235,64 @@ export default function Messages({
                                                 />
                                             )}
                                             <div className="flex gap-3">
-                                                <Textarea
-                                                    value={data.body}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            'body',
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder={
-                                                        selectedGroupIds.length >
-                                                        0
-                                                            ? 'Escribe un mensaje para el grupo...'
-                                                            : 'Escribe tu mensaje...'
-                                                    }
-                                                    className="min-h-12 resize-none rounded-xl border-border/80 bg-background"
-                                                />
+                                                <div className="relative flex-1">
+                                                    <Textarea
+                                                        ref={
+                                                            messageTextareaRef
+                                                        }
+                                                        value={data.body}
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                'body',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        placeholder={
+                                                            selectedGroupIds.length >
+                                                            0
+                                                                ? 'Escribe un mensaje para el grupo...'
+                                                                : 'Escribe tu mensaje...'
+                                                        }
+                                                        className="min-h-12 resize-none rounded-xl border-border/80 bg-background pr-12"
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        aria-label="Añadir emoji"
+                                                        onClick={() =>
+                                                            setShowEmojiPicker(
+                                                                (open) =>
+                                                                    !open,
+                                                            )
+                                                        }
+                                                        className="absolute right-2 bottom-2 h-8 w-8 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+                                                    >
+                                                        <Smile className="h-4 w-4" />
+                                                    </Button>
+                                                    {showEmojiPicker && (
+                                                        <div className="absolute right-0 bottom-12 z-20 grid w-64 grid-cols-8 gap-1 rounded-xl border border-border bg-popover p-2 shadow-xl">
+                                                            {EMOJI_OPTIONS.map(
+                                                                (emoji) => (
+                                                                    <button
+                                                                        key={
+                                                                            emoji
+                                                                        }
+                                                                        type="button"
+                                                                        onClick={() =>
+                                                                            insertEmoji(
+                                                                                emoji,
+                                                                            )
+                                                                        }
+                                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-lg transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                                                    >
+                                                                        {emoji}
+                                                                    </button>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 <Button
                                                     type="submit"
                                                     disabled={
