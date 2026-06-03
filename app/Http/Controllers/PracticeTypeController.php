@@ -25,7 +25,9 @@ class PracticeTypeController extends Controller
         $query = PracticeType::query();
 
         if ($request->filled('search')) {
-            $query->where('name', 'ilike', '%'.$request->search.'%');
+            $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+
+            $query->where('name', $operator, '%'.$request->search.'%');
         }
 
         if ($request->filled('status')) {
