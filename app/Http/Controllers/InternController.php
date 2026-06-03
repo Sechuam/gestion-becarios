@@ -160,7 +160,12 @@ class InternController extends Controller
      */
     public function show(Intern $intern, TimeTrackingService $service)
     {
-        auth()->user()->unreadNotifications
+        /** @var User $user */
+        $user = auth()->user();
+
+        $this->authorizeInternAccess($user, $intern);
+
+        $user->unreadNotifications
             ->where('data.intern_id', $intern->id)
             ->markAsRead();
 
@@ -379,6 +384,15 @@ class InternController extends Controller
             'internal_notes_updated_by' => $latestNote?->user_id,
             'internal_notes_updated_at' => $latestNote?->created_at,
         ]);
+    }
+
+    protected function authorizeInternAccess(User $user, Intern $intern): void
+    {
+        abort_unless(
+            $user->isAdmin()
+            || ($user->isTutor() && (int) $intern->company_tutor_user_id === (int) $user->id),
+            403,
+        );
     }
 
     public function completeProfile() {
