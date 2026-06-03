@@ -51,7 +51,7 @@ export default function Login({
                             {status && (
                                 <motion.div
                                     variants={fadeInUp}
-                                    className="rounded-xl border border-[#b9c8be] bg-[#edf5ef] px-4 py-3 text-center text-sm font-semibold text-[#315d58]"
+                                    className="rounded-xl border border-[#b9c8be] bg-[#edf5ef] px-4 py-3 text-center text-sm font-semibold text-[#315d58] dark:border-[#9fc6bf]/30 dark:bg-[#19322f] dark:text-[#c7e4df]"
                                 >
                                     {status}
                                 </motion.div>
@@ -73,11 +73,14 @@ export default function Login({
                                     variants={fadeInUp}
                                     className="grid gap-2"
                                 >
-                                    <Label htmlFor="email">
+                                    <Label
+                                        htmlFor="email"
+                                        className="text-[#2b3036] dark:text-[#dce5ec]"
+                                    >
                                         Correo electrónico
                                     </Label>
                                     <div className="relative">
-                                        <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#7a8697]" />
+                                        <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#7a8697] dark:text-[#9fb0c2]" />
                                         <Input
                                             id="email"
                                             type="email"
@@ -87,7 +90,7 @@ export default function Login({
                                             tabIndex={1}
                                             autoComplete="email"
                                             placeholder="correo@ejemplo.com"
-                                            className="h-11 border-[#d6dfd3] bg-[#fbfcf9] pl-10 shadow-sm focus-visible:ring-[#4e7f78]/30"
+                                            className="h-11 border-[#d6dfd3] bg-[#fbfcf9] pl-10 text-[#172033] shadow-sm placeholder:text-[#8b97a8] focus-visible:ring-[#4e7f78]/30 dark:border-white/12 dark:bg-[#182432] dark:text-[#edf1f5] dark:placeholder:text-[#8fa1b4] dark:focus-visible:ring-[#9fc6bf]/30"
                                         />
                                     </div>
                                     <InputError message={errors.email} />
@@ -98,13 +101,16 @@ export default function Login({
                                     className="grid gap-2"
                                 >
                                     <div className="flex items-center">
-                                        <Label htmlFor="password">
+                                        <Label
+                                            htmlFor="password"
+                                            className="text-[#2b3036] dark:text-[#dce5ec]"
+                                        >
                                             Contraseña
                                         </Label>
                                         {canResetPassword && (
                                             <TextLink
                                                 href={request()}
-                                                className="ml-auto text-sm"
+                                                className="ml-auto text-sm text-[#4e5d73] decoration-[#b7c2cf] hover:text-[#172033] dark:text-[#b9c6d5] dark:decoration-[#5d7185] dark:hover:text-white"
                                                 tabIndex={5}
                                             >
                                                 ¿Olvidaste tu contraseña?
@@ -113,7 +119,7 @@ export default function Login({
                                     </div>
 
                                     <div className="relative">
-                                        <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#7a8697]" />
+                                        <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#7a8697] dark:text-[#9fb0c2]" />
                                         <Input
                                             id="password"
                                             type={
@@ -126,7 +132,7 @@ export default function Login({
                                             tabIndex={2}
                                             autoComplete="current-password"
                                             placeholder="Contraseña"
-                                            className="h-11 border-[#d6dfd3] bg-[#fbfcf9] pr-10 pl-10 shadow-sm focus-visible:ring-[#4e7f78]/30"
+                                            className="h-11 border-[#d6dfd3] bg-[#fbfcf9] pr-10 pl-10 text-[#172033] shadow-sm placeholder:text-[#8b97a8] focus-visible:ring-[#4e7f78]/30 dark:border-white/12 dark:bg-[#182432] dark:text-[#edf1f5] dark:placeholder:text-[#8fa1b4] dark:focus-visible:ring-[#9fc6bf]/30"
                                         />
 
                                         <button
@@ -134,7 +140,7 @@ export default function Login({
                                             onClick={() =>
                                                 setShowPassword(!showPassword)
                                             }
-                                            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md p-1 text-[#7a8697] transition hover:bg-[#eef3ed] hover:text-[#172033]"
+                                            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md p-1 text-[#7a8697] transition hover:bg-[#eef3ed] hover:text-[#172033] dark:text-[#a9b7c8] dark:hover:bg-white/10 dark:hover:text-white"
                                             aria-label={
                                                 showPassword
                                                     ? 'Ocultar contraseña'
@@ -154,20 +160,26 @@ export default function Login({
 
                                 <motion.div
                                     variants={fadeInUp}
-                                    className="flex items-center space-x-3 rounded-xl border border-[#e0e7dd] bg-[#fbfcf9] px-3 py-2.5"
+                                    className="flex items-center space-x-3 px-1"
                                 >
                                     <Checkbox
                                         id="remember"
                                         name="remember"
                                         tabIndex={3}
+                                        className="border-[#c8d5ce] data-[state=checked]:border-[#4e7f78] data-[state=checked]:bg-[#4e7f78] dark:border-[#607488] dark:data-[state=checked]:border-[#9fc6bf] dark:data-[state=checked]:bg-[#9fc6bf] dark:data-[state=checked]:text-[#14202a]"
                                     />
-                                    <Label htmlFor="remember">Recuérdame</Label>
+                                    <Label
+                                        htmlFor="remember"
+                                        className="text-[#4e5d73] dark:text-[#c7d2de]"
+                                    >
+                                        Recuérdame
+                                    </Label>
                                 </motion.div>
 
                                 <motion.div variants={fadeInUp}>
                                     <Button
                                         type="submit"
-                                        className="mt-2 h-11 w-full bg-[#2b3036] text-white shadow-lg shadow-slate-900/12 hover:bg-[#3b424b]"
+                                        className="mt-2 h-11 w-full bg-[#2b3036] text-white shadow-lg shadow-slate-900/12 hover:bg-[#3b424b] dark:bg-[#9fc6bf] dark:text-[#14202a] dark:hover:bg-[#b7d8d2]"
                                         tabIndex={4}
                                         disabled={processing}
                                     >
@@ -180,10 +192,14 @@ export default function Login({
                             {canRegister && (
                                 <motion.div
                                     variants={fadeInUp}
-                                    className="rounded-xl border border-[#e0e7dd] bg-[#fbfcf9] px-4 py-3 text-center text-sm text-[#5a657c]"
+                                    className="rounded-xl border border-[#e0e7dd] bg-[#fbfcf9] px-4 py-3 text-center text-sm text-[#5a657c] dark:border-white/12 dark:bg-[#182432] dark:text-[#b9c6d5]"
                                 >
                                     ¿No tienes cuenta?{' '}
-                                    <TextLink href={register()} tabIndex={5}>
+                                    <TextLink
+                                        href={register()}
+                                        className="text-[#172033] decoration-[#aeb9c7] hover:text-[#315d58] dark:text-[#edf1f5] dark:decoration-[#63778b] dark:hover:text-[#c7e4df]"
+                                        tabIndex={5}
+                                    >
                                         Crear cuenta
                                     </TextLink>
                                 </motion.div>
@@ -191,7 +207,7 @@ export default function Login({
 
                             <motion.div
                                 variants={fadeInUp}
-                                className="flex items-center justify-center gap-2 text-xs font-semibold text-[#6a7687]"
+                                className="flex items-center justify-center gap-2 text-xs font-semibold text-[#6a7687] dark:text-[#aeb9c7]"
                             >
                                 <ShieldCheck className="h-3.5 w-3.5" />
                                 Acceso protegido por roles y verificación
