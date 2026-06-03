@@ -118,12 +118,15 @@ export default function Welcome({
                             className="flex items-center gap-3"
                             aria-label="BecaGest"
                         >
-                            <span className="flex size-10 overflow-hidden rounded-lg bg-white shadow-sm dark:bg-white/10">
-                                <img
-                                    src="/images/becagest-logo-small.png"
-                                    alt=""
-                                    className="h-full w-full scale-125 object-cover object-center"
-                                />
+                            <span className="relative flex size-10 items-center justify-center rounded-full border border-[#d7e2db] bg-white shadow-sm dark:border-white/10 dark:bg-white/10">
+                                <span className="absolute inset-0 rounded-full bg-[#9fc6bf]/18 blur-md dark:bg-[#9fc6bf]/12" />
+                                <span className="relative flex size-9 items-center justify-center overflow-hidden rounded-full bg-[#f6fbfa] p-1 ring-1 ring-[#e0ebe6] dark:bg-[#172432] dark:ring-white/10">
+                                    <img
+                                        src="/images/becagest-logo.png"
+                                        alt=""
+                                        className="h-full w-full -translate-y-0.5 scale-[2.35] object-contain object-center"
+                                    />
+                                </span>
                             </span>
                             <span className="text-lg font-black tracking-tight">
                                 BecaGest
