@@ -83,7 +83,7 @@ const AttendanceStatsCard = lazy(() =>
 
 function ChartFallback() {
     return (
-        <div className="min-h-[220px] rounded-xl border border-slate-200 bg-white/75 shadow-xs dark:border-slate-800 dark:bg-slate-900/75" />
+        <div className="min-h-[220px] rounded-xl border border-slate-200 bg-white/75 shadow-xs dark:border-[#2f4a62] dark:bg-[#111d2c]/92" />
     );
 }
 
@@ -632,7 +632,7 @@ export default function Dashboard({
                             className={cn(
                                 '-m-4 flex flex-col gap-6 rounded-xl p-4 transition-all duration-500',
                                 isEditing &&
-                                    'bg-slate-100/50 bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:24px_24px] shadow-inner ring-1 ring-slate-200/60 dark:bg-slate-950/20 dark:ring-slate-800/60',
+                                    'bg-slate-100/50 bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:24px_24px] shadow-inner ring-1 ring-slate-200/60 dark:bg-[#0f1b2a]/80 dark:ring-[#2f4a62]/60',
                             )}
                         >
                             {sections.map((rowId) => renderSection(rowId))}

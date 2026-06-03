@@ -119,7 +119,7 @@ export function ReportBuilderCard({
               : [];
 
     return (
-        <Card className="min-w-0 overflow-hidden border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+        <Card className="min-w-0 overflow-hidden border-sidebar/10 bg-white shadow-sm dark:bg-[#142235]">
             <CardHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-1.5">
                     <CardTitle className="text-lg font-black">
@@ -160,7 +160,7 @@ export function ReportBuilderCard({
                             onChange={(event) =>
                                 onDatasetChange(event.target.value)
                             }
-                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm dark:bg-slate-950"
+                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm dark:bg-[#0f1b2a]"
                         >
                             {datasetKeys.map((key) => (
                                 <option key={key} value={key}>
@@ -205,7 +205,7 @@ export function ReportBuilderCard({
                                 onStatusChange(event.target.value)
                             }
                             disabled={statusOptions.length === 0}
-                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 dark:bg-slate-950 dark:disabled:bg-slate-900"
+                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 dark:bg-[#0f1b2a] dark:disabled:bg-slate-900"
                         >
                             <option value="">
                                 {statusOptions.length > 0
@@ -244,7 +244,7 @@ export function ReportBuilderCard({
                             onChange={(event) =>
                                 onGroupByChange(event.target.value)
                             }
-                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm dark:bg-slate-950"
+                            className="h-10 w-full rounded-lg border border-sidebar/10 bg-white px-3 text-sm dark:bg-[#0f1b2a]"
                         >
                             <option value="">Sin agrupación</option>
                             {Object.entries(columns).map(([key, column]) => (
@@ -305,7 +305,7 @@ export function ReportBuilderCard({
                     <div className="max-w-full min-w-0 rounded-xl border border-sidebar/10 bg-sidebar/5 p-3">
                         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                             <div>
-                                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                                <h3 className="text-sm font-bold text-slate-900 dark:text-[#edf1f5]">
                                     Vista previa
                                 </h3>
                                 <p className="text-xs text-slate-500">
@@ -319,15 +319,15 @@ export function ReportBuilderCard({
                         </div>
 
                         {preview.rows.length > 0 ? (
-                            <div className="max-w-full overflow-x-auto rounded-lg border border-sidebar/10 bg-white dark:bg-slate-950">
+                            <div className="max-w-full overflow-x-auto rounded-lg border border-sidebar/10 bg-white dark:bg-[#0f1b2a]">
                                 <div className="h-1 bg-linear-to-r from-sidebar to-sidebar-accent" />
                                 <table className="min-w-full divide-y divide-sidebar/10 text-sm">
-                                    <thead className="border-b border-slate-400 bg-slate-200 text-slate-700 dark:border-slate-800 dark:bg-slate-800/70 dark:text-slate-100">
+                                    <thead className="border-b border-slate-400 bg-slate-200 text-slate-700 dark:border-[#2f4a62] dark:bg-[#1b2d42] dark:text-[#edf1f5]">
                                         <tr>
                                             {preview.columns.map((column) => (
                                                 <th
                                                     key={column}
-                                                    className="px-3 py-2 text-left text-xs font-bold whitespace-nowrap text-slate-700 uppercase dark:text-slate-100"
+                                                    className="px-3 py-2 text-left text-xs font-bold whitespace-nowrap text-slate-700 uppercase dark:text-[#edf1f5]"
                                                 >
                                                     {preview.availableColumns[
                                                         column
@@ -343,7 +343,7 @@ export function ReportBuilderCard({
                                                     (column) => (
                                                         <td
                                                             key={column}
-                                                            className="max-w-56 truncate px-3 py-2 text-slate-700 dark:text-slate-200"
+                                                            className="max-w-56 truncate px-3 py-2 text-slate-700 dark:text-[#d8e4ef]"
                                                             title={String(
                                                                 previewValue(
                                                                     column,
@@ -364,7 +364,7 @@ export function ReportBuilderCard({
                                 </table>
                             </div>
                         ) : (
-                            <div className="rounded-lg border border-dashed border-sidebar/20 bg-white px-4 py-6 text-center text-sm text-slate-500 dark:bg-slate-950">
+                            <div className="rounded-lg border border-dashed border-sidebar/20 bg-white px-4 py-6 text-center text-sm text-slate-500 dark:bg-[#0f1b2a]">
                                 No hay registros para los filtros actuales.
                             </div>
                         )}

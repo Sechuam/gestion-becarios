@@ -42,7 +42,7 @@ export function InternProfileTabsNav() {
                 <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all dark:text-[#aebecd] dark:hover:bg-[#22374d] dark:hover:text-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                 >
                     <div className="flex items-center gap-2">
                         <tab.icon className="h-4 w-4 shrink-0" />

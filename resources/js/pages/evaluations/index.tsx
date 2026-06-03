@@ -232,7 +232,7 @@ export default function Index({
                 />
 
                 {isIntern ? (
-                    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-slate-900/60">
+                    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-sidebar/10 bg-white p-3 shadow-lg dark:bg-[#142235]">
                         <span className="ml-1 text-[9px] font-black tracking-widest text-slate-500 uppercase">
                             Tipo
                         </span>
@@ -262,13 +262,13 @@ export default function Index({
                             ))}
                         </div>
 
-                        <p className="ml-auto rounded-full border border-sidebar/5 bg-slate-50 px-2 py-0.5 text-[9px] font-black tracking-widest text-muted-foreground uppercase dark:bg-slate-800">
+                        <p className="ml-auto rounded-full border border-sidebar/5 bg-slate-50 px-2 py-0.5 text-[9px] font-black tracking-widest text-muted-foreground uppercase dark:bg-[#17283c]">
                             {evaluations.data.length} / {evaluations.total}{' '}
                             evaluaciones
                         </p>
                     </div>
                 ) : (
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-[#142235]">
                         <div className="flex flex-wrap items-center gap-2">
                             {/* Búsqueda */}
                             <div className="relative w-full flex-none sm:w-64">
@@ -334,7 +334,7 @@ export default function Index({
                             </div>
 
                             {/* Contador */}
-                            <div className="ml-auto flex flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-3 py-1 dark:bg-slate-800">
+                            <div className="ml-auto flex flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-3 py-1 dark:bg-[#17283c]">
                                 <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
                                 <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                                     {evaluations.data.length} /{' '}

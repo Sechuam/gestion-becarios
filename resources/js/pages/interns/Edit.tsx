@@ -133,14 +133,14 @@ export default function Edit({
                     </div>
                 </div>
 
-                <div className="bg-slate-50/50 p-4 md:p-6 dark:bg-slate-900/40">
+                <div className="bg-slate-50/50 p-4 md:p-6 dark:bg-[#0f1b2a]/85">
                     <form
                         onSubmit={requestConfirmation}
                         className="space-y-4"
                         noValidate
                     >
                         <Tabs defaultValue="personal" className="w-full">
-                            <TabsList className="mb-6 grid h-auto w-full grid-cols-2 gap-2 rounded-xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm lg:grid-cols-4 dark:border-white/15 dark:bg-slate-900/50">
+                            <TabsList className="mb-6 grid h-auto w-full grid-cols-2 gap-2 rounded-xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm lg:grid-cols-4 dark:border-white/15 dark:bg-[#142235]/88">
                                 {[
                                     {
                                         value: 'personal',
@@ -156,7 +156,7 @@ export default function Edit({
                                     <TabsTrigger
                                         key={tab.value}
                                         value={tab.value}
-                                        className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:border-white/10 dark:bg-slate-800 dark:text-slate-300 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                        className="h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:border-white/10 dark:bg-[#17283c] dark:text-[#c4d2df] dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                                     >
                                         <span className="text-[10px] font-black tracking-widest uppercase">
                                             {tab.label}

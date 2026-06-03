@@ -378,32 +378,32 @@ export default function Show({
                 {/* Main Content with Tabs */}
                 <div className="app-panel w-full overflow-hidden border-2 border-sidebar/15 shadow-xl">
                     <Tabs defaultValue="summary" className="w-full">
-                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2 dark:bg-[#142235]/85">
                             <TabsList className="grid h-10 w-full grid-cols-4 gap-2 bg-transparent p-0">
                                 <TabsTrigger
                                     value="summary"
-                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all dark:text-[#aebecd] dark:hover:bg-[#22374d] dark:hover:text-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                                 >
                                     <LayoutGrid className="mr-2 h-4 w-4" />
                                     Resumen
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="resources"
-                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all dark:text-[#aebecd] dark:hover:bg-[#22374d] dark:hover:text-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                                 >
                                     <Paperclip className="mr-2 h-4 w-4" />
                                     Recursos
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="comments"
-                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all dark:text-[#aebecd] dark:hover:bg-[#22374d] dark:hover:text-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                                 >
                                     <MessageSquare className="mr-2 h-4 w-4" />
                                     Conversación
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="history"
-                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                    className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all dark:text-[#aebecd] dark:hover:bg-[#22374d] dark:hover:text-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                                 >
                                     <History className="mr-2 h-4 w-4" />
                                     Seguimiento
@@ -421,10 +421,10 @@ export default function Show({
                                     {/* Task Details */}
                                     <div className="space-y-6">
                                         <div className="flex items-center gap-2">
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 dark:bg-slate-800 dark:text-slate-400">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 dark:bg-[#17283c] dark:text-[#8fa3b6]">
                                                 <LayoutGrid className="h-4 w-4" />
                                             </div>
-                                            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                            <h2 className="text-lg font-bold text-slate-800 dark:text-[#d8e4ef]">
                                                 Planificación
                                             </h2>
                                         </div>
@@ -517,7 +517,7 @@ export default function Show({
                                             <h3 className="mb-3 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase">
                                                 Descripción del Trabajo
                                             </h3>
-                                            <p className="text-sm leading-relaxed text-slate-600 italic dark:text-slate-300">
+                                            <p className="text-sm leading-relaxed text-slate-600 italic dark:text-[#c4d2df]">
                                                 {task.description ||
                                                     'No se ha proporcionado una descripción detallada para esta tarea.'}
                                             </p>
@@ -549,10 +549,10 @@ export default function Show({
                                             }
                                         >
                                             <div className="flex items-center gap-2">
-                                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 dark:bg-slate-800 dark:text-slate-400">
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 dark:bg-[#17283c] dark:text-[#8fa3b6]">
                                                     <GraduationCap className="h-4 w-4" />
                                                 </div>
-                                                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                                <h2 className="text-lg font-bold text-slate-800 dark:text-[#d8e4ef]">
                                                     Equipo Asignado
                                                 </h2>
                                             </div>
@@ -628,7 +628,7 @@ export default function Show({
                                                     )
                                                 ) : (
                                                     <div className="flex flex-col items-center justify-center py-8 text-center text-slate-400">
-                                                        <div className="mb-2 rounded-full bg-stone-50 p-4 dark:bg-slate-800">
+                                                        <div className="mb-2 rounded-full bg-stone-50 p-4 dark:bg-[#17283c]">
                                                             <User className="h-8 w-8 opacity-20" />
                                                         </div>
                                                         <p className="text-sm font-medium">
@@ -652,7 +652,7 @@ export default function Show({
                                 <div className="grid gap-5 md:grid-cols-3">
                                     <div className="space-y-6 md:col-span-2">
                                         <div className="flex items-center justify-between">
-                                            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                            <h2 className="text-lg font-bold text-slate-800 dark:text-[#d8e4ef]">
                                                 Documentos y Archivos
                                             </h2>
                                             <span className="text-xs font-bold text-slate-400 uppercase">
@@ -715,7 +715,7 @@ export default function Show({
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4 rounded-xl bg-stone-50/50 p-6 dark:bg-slate-800/30">
+                                    <div className="space-y-4 rounded-xl bg-stone-50/50 p-6 dark:bg-[#17283c]/70">
                                         <h3 className="text-sm font-black tracking-widest text-sidebar uppercase">
                                             Gestionar Entregas
                                         </h3>
@@ -729,7 +729,7 @@ export default function Show({
                                             onSubmit={submitAttachments}
                                             className="space-y-4 pt-2"
                                         >
-                                            <div className="group relative cursor-pointer rounded-xl border-2 border-dashed border-stone-200 bg-white p-4 transition-colors hover:border-sidebar/50 dark:bg-slate-800">
+                                            <div className="group relative cursor-pointer rounded-xl border-2 border-dashed border-stone-200 bg-white p-4 transition-colors hover:border-sidebar/50 dark:bg-[#17283c]">
                                                 <Input
                                                     id="attachments"
                                                     type="file"
@@ -803,7 +803,7 @@ export default function Show({
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between border-b border-stone-50 pb-4">
                                         <div className="flex items-center gap-4">
-                                            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                                            <h2 className="text-lg font-bold text-slate-800 dark:text-[#d8e4ef]">
                                                 Hilo de Conversación
                                             </h2>
                                             <div className="flex h-6 items-center gap-1.5 rounded-full border border-sidebar/10 bg-sidebar/5 px-3 text-[9px] font-black tracking-widest text-sidebar uppercase">

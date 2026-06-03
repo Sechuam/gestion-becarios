@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /Users/joselepe10code/Herd/gestion-becarios/app/Http</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=12.5.6" rel="stylesheet" type="text/css">
+  <link href="../_css/billboard.min.css?v=12.5.6" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=12.5.6" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/Users/joselepe10code/Herd/gestion-becarios/app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Http</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Controllers/TutorController.php.html#14">App\Http\Controllers\TutorController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#18">App\Http\Controllers\EvaluationController</a></td><td class="text-right">34%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#23">App\Http\Controllers\TaskController</a></td><td class="text-right">37%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#16">App\Http\Controllers\EducationCenterController</a></td><td class="text-right">45%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#21">App\Http\Controllers\InternController</a></td><td class="text-right">46%</td></tr>
+       <tr><td><a href="Controllers/RolesController.php.html#12">App\Http\Controllers\RolesController</a></td><td class="text-right">56%</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#19">App\Http\Controllers\InvitationController</a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Controllers/CalendarEventController.php.html#10">App\Http\Controllers\CalendarEventController</a></td><td class="text-right">62%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#22">App\Http\Controllers\DashboardController</a></td><td class="text-right">67%</td></tr>
+       <tr><td><a href="Controllers/AbsenceController.php.html#13">App\Http\Controllers\AbsenceController</a></td><td class="text-right">67%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#21">App\Http\Controllers\ReportController</a></td><td class="text-right">69%</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#12">App\Http\Controllers\EvaluationCriterionController</a></td><td class="text-right">72%</td></tr>
+       <tr><td><a href="Controllers/Settings/ProfileController.php.html#15">App\Http\Controllers\Settings\ProfileController</a></td><td class="text-right">73%</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#14">App\Http\Controllers\TimeLogController</a></td><td class="text-right">73%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#17">App\Http\Controllers\MessageController</a></td><td class="text-right">74%</td></tr>
+       <tr><td><a href="Middleware/EnsureStaff.php.html#10">App\Http\Middleware\EnsureStaff</a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Requests/StoreEvaluationRequest.php.html#9">App\Http\Requests\StoreEvaluationRequest</a></td><td class="text-right">85%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Controllers/TaskController.php.html#23">App\Http\Controllers\TaskController</a></td><td class="text-right">37.5%</td><td class="text-right">119</td><td class="text-right">3580</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#18">App\Http\Controllers\EvaluationController</a></td><td class="text-right">34.1%</td><td class="text-right">73</td><td class="text-right">1599</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#21">App\Http\Controllers\InternController</a></td><td class="text-right">46.8%</td><td class="text-right">48</td><td class="text-right">395</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#16">App\Http\Controllers\EducationCenterController</a></td><td class="text-right">45.7%</td><td class="text-right">45</td><td class="text-right">370</td></tr>
+       <tr><td><a href="Controllers/TutorController.php.html#14">App\Http\Controllers\TutorController</a></td><td class="text-right">0.0%</td><td class="text-right">14</td><td class="text-right">210</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#14">App\Http\Controllers\TimeLogController</a></td><td class="text-right">73.5%</td><td class="text-right">73</td><td class="text-right">171</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#22">App\Http\Controllers\DashboardController</a></td><td class="text-right">67.3%</td><td class="text-right">53</td><td class="text-right">151</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#17">App\Http\Controllers\MessageController</a></td><td class="text-right">74.3%</td><td class="text-right">39</td><td class="text-right">64</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#21">App\Http\Controllers\ReportController</a></td><td class="text-right">69.9%</td><td class="text-right">33</td><td class="text-right">62</td></tr>
+       <tr><td><a href="Controllers/AbsenceController.php.html#13">App\Http\Controllers\AbsenceController</a></td><td class="text-right">67.4%</td><td class="text-right">20</td><td class="text-right">33</td></tr>
+       <tr><td><a href="Controllers/RolesController.php.html#12">App\Http\Controllers\RolesController</a></td><td class="text-right">56.2%</td><td class="text-right">12</td><td class="text-right">24</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#12">App\Http\Controllers\EvaluationCriterionController</a></td><td class="text-right">72.3%</td><td class="text-right">17</td><td class="text-right">23</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#19">App\Http\Controllers\InvitationController</a></td><td class="text-right">60.7%</td><td class="text-right">11</td><td class="text-right">18</td></tr>
+       <tr><td><a href="Controllers/CalendarEventController.php.html#10">App\Http\Controllers\CalendarEventController</a></td><td class="text-right">62.5%</td><td class="text-right">9</td><td class="text-right">13</td></tr>
+       <tr><td><a href="Requests/StoreEvaluationRequest.php.html#9">App\Http\Requests\StoreEvaluationRequest</a></td><td class="text-right">85.3%</td><td class="text-right">10</td><td class="text-right">10</td></tr>
+       <tr><td><a href="Controllers/Settings/ProfileController.php.html#15">App\Http\Controllers\Settings\ProfileController</a></td><td class="text-right">73.1%</td><td class="text-right">5</td><td class="text-right">5</td></tr>
+       <tr><td><a href="Middleware/EnsureStaff.php.html#10">App\Http\Middleware\EnsureStaff</a></td><td class="text-right">75.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Controllers/AbsenceController.php.html#98"><abbr title="App\Http\Controllers\AbsenceController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/AbsenceController.php.html#118"><abbr title="App\Http\Controllers\AbsenceController::uploadJustification">uploadJustification</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#211"><abbr title="App\Http\Controllers\DashboardController::eventManageableInterns">eventManageableInterns</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#228"><abbr title="App\Http\Controllers\DashboardController::eventManageableTutors">eventManageableTutors</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#72"><abbr title="App\Http\Controllers\EducationCenterController::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#97"><abbr title="App\Http\Controllers\EducationCenterController::edit">edit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#208"><abbr title="App\Http\Controllers\EducationCenterController::export">export</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#227"><abbr title="App\Http\Controllers\EducationCenterController::exportIndex">exportIndex</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#257"><abbr title="App\Http\Controllers\EducationCenterController::updateNotes">updateNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#272"><abbr title="App\Http\Controllers\EducationCenterController::storeInternalNote">storeInternalNote</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#288"><abbr title="App\Http\Controllers\EducationCenterController::updateInternalNote">updateInternalNote</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#309"><abbr title="App\Http\Controllers\EducationCenterController::destroyInternalNote">destroyInternalNote</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#323"><abbr title="App\Http\Controllers\EducationCenterController::syncInternalNoteSummary">syncInternalNoteSummary</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#335"><abbr title="App\Http\Controllers\EducationCenterController::myCenter">myCenter</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#20"><abbr title="App\Http\Controllers\EvaluationController::getEvaluationTypeLabel">getEvaluationTypeLabel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#40"><abbr title="App\Http\Controllers\EvaluationController::canManageEvaluations">canManageEvaluations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#47"><abbr title="App\Http\Controllers\EvaluationController::canDeleteEvaluations">canDeleteEvaluations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#73"><abbr title="App\Http\Controllers\EvaluationController::canViewEvaluation">canViewEvaluation</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#185"><abbr title="App\Http\Controllers\EvaluationController::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#229"><abbr title="App\Http\Controllers\EvaluationController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#394"><abbr title="App\Http\Controllers\EvaluationController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#81"><abbr title="App\Http\Controllers\EvaluationCriterionController::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#97"><abbr title="App\Http\Controllers\EvaluationCriterionController::edit">edit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#23"><abbr title="App\Http\Controllers\InternController::myProfile">myProfile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#34"><abbr title="App\Http\Controllers\InternController::updateAvatar">updateAvatar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#121"><abbr title="App\Http\Controllers\InternController::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#217"><abbr title="App\Http\Controllers\InternController::edit">edit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#269"><abbr title="App\Http\Controllers\InternController::export">export</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#280"><abbr title="App\Http\Controllers\InternController::restore">restore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#288"><abbr title="App\Http\Controllers\InternController::forceDelete">forceDelete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#296"><abbr title="App\Http\Controllers\InternController::updateNotes">updateNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#311"><abbr title="App\Http\Controllers\InternController::storeInternalNote">storeInternalNote</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#327"><abbr title="App\Http\Controllers\InternController::updateInternalNote">updateInternalNote</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#348"><abbr title="App\Http\Controllers\InternController::destroyInternalNote">destroyInternalNote</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#377"><abbr title="App\Http\Controllers\InternController::syncInternalNoteSummary">syncInternalNoteSummary</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#398"><abbr title="App\Http\Controllers\InternController::completeProfile">completeProfile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#410"><abbr title="App\Http\Controllers\InternController::storeCompleteProfile">storeCompleteProfile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#68"><abbr title="App\Http\Controllers\InvitationController::sendInvitationWithBrevoApi">sendInvitationWithBrevoApi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#145"><abbr title="App\Http\Controllers\MessageController::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#166"><abbr title="App\Http\Controllers\MessageController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#284"><abbr title="App\Http\Controllers\MessageController::authorizeRecipients">authorizeRecipients</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#264"><abbr title="App\Http\Controllers\ReportController::groupRows">groupRows</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/RolesController.php.html#14"><abbr title="App\Http\Controllers\RolesController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/Settings/ProfileController.php.html#36"><abbr title="App\Http\Controllers\Settings\ProfileController::updateAvatar">updateAvatar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#148"><abbr title="App\Http\Controllers\TaskController::myTasks">myTasks</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#296"><abbr title="App\Http\Controllers\TaskController::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#312"><abbr title="App\Http\Controllers\TaskController::edit">edit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#370"><abbr title="App\Http\Controllers\TaskController::destroy">destroy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#385"><abbr title="App\Http\Controllers\TaskController::updateStatus">updateStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#427"><abbr title="App\Http\Controllers\TaskController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#569"><abbr title="App\Http\Controllers\TaskController::storeComment">storeComment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#600"><abbr title="App\Http\Controllers\TaskController::updateComment">updateComment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#624"><abbr title="App\Http\Controllers\TaskController::destroyComment">destroyComment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#644"><abbr title="App\Http\Controllers\TaskController::updateBoardOrder">updateBoardOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#714"><abbr title="App\Http\Controllers\TaskController::addAttachment">addAttachment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#731"><abbr title="App\Http\Controllers\TaskController::serializeComment">serializeComment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TutorController.php.html#16"><abbr title="App\Http\Controllers\TutorController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TutorController.php.html#83"><abbr title="App\Http\Controllers\TutorController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/TutorController.php.html#164"><abbr title="App\Http\Controllers\TutorController::mine">mine</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#112"><abbr title="App\Http\Controllers\EvaluationController::index">index</abbr></a></td><td class="text-right">2%</td></tr>
+       <tr><td><a href="Controllers/CalendarEventController.php.html#52"><abbr title="App\Http\Controllers\CalendarEventController::update">update</abbr></a></td><td class="text-right">2%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#297"><abbr title="App\Http\Controllers\MessageController::canReplyToConversation">canReplyToConversation</abbr></a></td><td class="text-right">18%</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#324"><abbr title="App\Http\Controllers\TimeLogController::manageableInternsFor">manageableInternsFor</abbr></a></td><td class="text-right">23%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#163"><abbr title="App\Http\Controllers\ReportController::reportRows">reportRows</abbr></a></td><td class="text-right">30%</td></tr>
+       <tr><td><a href="Controllers/CalendarEventController.php.html#96"><abbr title="App\Http\Controllers\CalendarEventController::destroy">destroy</abbr></a></td><td class="text-right">33%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#256"><abbr title="App\Http\Controllers\InternController::destroy">destroy</abbr></a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#80"><abbr title="App\Http\Controllers\EducationCenterController::store">store</abbr></a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#171"><abbr title="App\Http\Controllers\EducationCenterController::update">update</abbr></a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#14"><abbr title="App\Http\Controllers\EvaluationCriterionController::ensureAdmin">ensureAdmin</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#362"><abbr title="App\Http\Controllers\InternController::syncInternMedia">syncInternMedia</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#57"><abbr title="App\Http\Controllers\InvitationController::sendInvitation">sendInvitation</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Controllers/PracticeTypeController.php.html#14"><abbr title="App\Http\Controllers\PracticeTypeController::ensureAdmin">ensureAdmin</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#451"><abbr title="App\Http\Controllers\DashboardController::taskProgress">taskProgress</abbr></a></td><td class="text-right">51%</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#189"><abbr title="App\Http\Controllers\TimeLogController::getEvents">getEvents</abbr></a></td><td class="text-right">53%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#191"><abbr title="App\Http\Controllers\EducationCenterController::destroy">destroy</abbr></a></td><td class="text-right">57%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#300"><abbr title="App\Http\Controllers\DashboardController::attendanceStats">attendanceStats</abbr></a></td><td class="text-right">59%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#89"><abbr title="App\Http\Controllers\ReportController::export">export</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#32"><abbr title="App\Http\Controllers\TaskController::index">index</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#235"><abbr title="App\Http\Controllers\MessageController::availableContacts">availableContacts</abbr></a></td><td class="text-right">61%</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#21"><abbr title="App\Http\Controllers\InvitationController::store">store</abbr></a></td><td class="text-right">62%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#72"><abbr title="App\Http\Controllers\MessageController::store">store</abbr></a></td><td class="text-right">65%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#202"><abbr title="App\Http\Controllers\DashboardController::activeCentersCount">activeCentersCount</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#92"><abbr title="App\Http\Controllers\EvaluationController::ensureNoDuplicateEvaluation">ensureNoDuplicateEvaluation</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#403"><abbr title="App\Http\Controllers\EvaluationController::notifyEvaluationCreated">notifyEvaluationCreated</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#255"><abbr title="App\Http\Controllers\ReportController::resolveGroupBy">resolveGroupBy</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Requests/StoreEvaluationRequest.php.html#33"><abbr title="App\Http\Requests\StoreEvaluationRequest::after">after</abbr></a></td><td class="text-right">68%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#784"><abbr title="App\Http\Controllers\TaskController::canManageTask">canManageTask</abbr></a></td><td class="text-right">70%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#24"><abbr title="App\Http\Controllers\DashboardController::index">index</abbr></a></td><td class="text-right">70%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#301"><abbr title="App\Http\Controllers\ReportController::scopedTaskQuery">scopedTaskQuery</abbr></a></td><td class="text-right">71%</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#21"><abbr title="App\Http\Controllers\EvaluationCriterionController::index">index</abbr></a></td><td class="text-right">74%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#46"><abbr title="App\Http\Controllers\InternController::index">index</abbr></a></td><td class="text-right">74%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#760"><abbr title="App\Http\Controllers\TaskController::canAccessTask">canAccessTask</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#373"><abbr title="App\Http\Controllers\TimeLogController::authorizeAttendanceManagement">authorizeAttendanceManagement</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Middleware/EnsureStaff.php.html#17"><abbr title="App\Http\Middleware\EnsureStaff::handle">handle</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#238"><abbr title="App\Http\Controllers\TaskController::store">store</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#229"><abbr title="App\Http\Controllers\InternController::update">update</abbr></a></td><td class="text-right">76%</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#395"><abbr title="App\Http\Controllers\TimeLogController::updateEvent">updateEvent</abbr></a></td><td class="text-right">78%</td></tr>
+       <tr><td><a href="Controllers/AbsenceController.php.html#15"><abbr title="App\Http\Controllers\AbsenceController::store">store</abbr></a></td><td class="text-right">79%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#21"><abbr title="App\Http\Controllers\EducationCenterController::index">index</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#132"><abbr title="App\Http\Controllers\InternController::store">store</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Controllers/RolesController.php.html#93"><abbr title="App\Http\Controllers\RolesController::destroy">destroy</abbr></a></td><td class="text-right">83%</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#16"><abbr title="App\Http\Controllers\TimeLogController::index">index</abbr></a></td><td class="text-right">84%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#238"><abbr title="App\Http\Controllers\ReportController::resolveColumns">resolveColumns</abbr></a></td><td class="text-right">85%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#498"><abbr title="App\Http\Controllers\TaskController::complete">complete</abbr></a></td><td class="text-right">86%</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#108"><abbr title="App\Http\Controllers\EducationCenterController::show">show</abbr></a></td><td class="text-right">86%</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#131"><abbr title="App\Http\Controllers\ReportController::preview">preview</abbr></a></td><td class="text-right">86%</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#436"><abbr title="App\Http\Controllers\DashboardController::averageTaskResolutionDays">averageTaskResolutionDays</abbr></a></td><td class="text-right">87%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#54"><abbr title="App\Http\Controllers\EvaluationController::canEvaluateIntern">canEvaluateIntern</abbr></a></td><td class="text-right">87%</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#829"><abbr title="App\Http\Controllers\TaskController::notifyTaskStatusChanged">notifyTaskStatusChanged</abbr></a></td><td class="text-right">88%</td></tr>
+       <tr><td><a href="Controllers/PracticeTypeController.php.html#21"><abbr title="App\Http\Controllers\PracticeTypeController::index">index</abbr></a></td><td class="text-right">88%</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#182"><abbr title="App\Http\Controllers\MessageController::destroyConversation">destroyConversation</abbr></a></td><td class="text-right">88%</td></tr>
+       <tr><td><a href="Controllers/RolesController.php.html#108"><abbr title="App\Http\Controllers\RolesController::togglePermission">togglePermission</abbr></a></td><td class="text-right">88%</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#298"><abbr title="App\Http\Controllers\EvaluationController::store">store</abbr></a></td><td class="text-right">89%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Controllers/TaskController.php.html#148"><abbr title="App\Http\Controllers\TaskController::myTasks">myTasks</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">15</td><td class="text-right">240</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#112"><abbr title="App\Http\Controllers\EvaluationController::index">index</abbr></a></td><td class="text-right">2.1%</td><td class="text-right">13</td><td class="text-right">171</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#644"><abbr title="App\Http\Controllers\TaskController::updateBoardOrder">updateBoardOrder</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">10</td><td class="text-right">110</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#189"><abbr title="App\Http\Controllers\TimeLogController::getEvents">getEvents</abbr></a></td><td class="text-right">53.5%</td><td class="text-right">25</td><td class="text-right">87</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#229"><abbr title="App\Http\Controllers\EvaluationController::show">show</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#20"><abbr title="App\Http\Controllers\EvaluationController::getEvaluationTypeLabel">getEvaluationTypeLabel</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#73"><abbr title="App\Http\Controllers\EvaluationController::canViewEvaluation">canViewEvaluation</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#185"><abbr title="App\Http\Controllers\EvaluationController::create">create</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#32"><abbr title="App\Http\Controllers\TaskController::index">index</abbr></a></td><td class="text-right">60.2%</td><td class="text-right">18</td><td class="text-right">38</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#385"><abbr title="App\Http\Controllers\TaskController::updateStatus">updateStatus</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#427"><abbr title="App\Http\Controllers\TaskController::show">show</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Controllers/TutorController.php.html#16"><abbr title="App\Http\Controllers\TutorController::index">index</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Controllers/TutorController.php.html#164"><abbr title="App\Http\Controllers\TutorController::mine">mine</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#300"><abbr title="App\Http\Controllers\DashboardController::attendanceStats">attendanceStats</abbr></a></td><td class="text-right">59.4%</td><td class="text-right">14</td><td class="text-right">27</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#297"><abbr title="App\Http\Controllers\MessageController::canReplyToConversation">canReplyToConversation</abbr></a></td><td class="text-right">18.2%</td><td class="text-right">6</td><td class="text-right">25</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#451"><abbr title="App\Http\Controllers\DashboardController::taskProgress">taskProgress</abbr></a></td><td class="text-right">51.6%</td><td class="text-right">11</td><td class="text-right">24</td></tr>
+       <tr><td><a href="Controllers/TutorController.php.html#83"><abbr title="App\Http\Controllers\TutorController::show">show</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#46"><abbr title="App\Http\Controllers\InternController::index">index</abbr></a></td><td class="text-right">74.5%</td><td class="text-right">15</td><td class="text-right">18</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#163"><abbr title="App\Http\Controllers\ReportController::reportRows">reportRows</abbr></a></td><td class="text-right">30.0%</td><td class="text-right">6</td><td class="text-right">18</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#24"><abbr title="App\Http\Controllers\DashboardController::index">index</abbr></a></td><td class="text-right">70.7%</td><td class="text-right">13</td><td class="text-right">17</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#324"><abbr title="App\Http\Controllers\TimeLogController::manageableInternsFor">manageableInternsFor</abbr></a></td><td class="text-right">23.1%</td><td class="text-right">5</td><td class="text-right">16</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#335"><abbr title="App\Http\Controllers\EducationCenterController::myCenter">myCenter</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#40"><abbr title="App\Http\Controllers\EvaluationController::canManageEvaluations">canManageEvaluations</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#47"><abbr title="App\Http\Controllers\EvaluationController::canDeleteEvaluations">canDeleteEvaluations</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#569"><abbr title="App\Http\Controllers\TaskController::storeComment">storeComment</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#624"><abbr title="App\Http\Controllers\TaskController::destroyComment">destroyComment</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#731"><abbr title="App\Http\Controllers\TaskController::serializeComment">serializeComment</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#21"><abbr title="App\Http\Controllers\EducationCenterController::index">index</abbr></a></td><td class="text-right">80.0%</td><td class="text-right">10</td><td class="text-right">10</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#21"><abbr title="App\Http\Controllers\EvaluationCriterionController::index">index</abbr></a></td><td class="text-right">74.4%</td><td class="text-right">9</td><td class="text-right">10</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#498"><abbr title="App\Http\Controllers\TaskController::complete">complete</abbr></a></td><td class="text-right">86.0%</td><td class="text-right">10</td><td class="text-right">10</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#16"><abbr title="App\Http\Controllers\TimeLogController::index">index</abbr></a></td><td class="text-right">84.4%</td><td class="text-right">10</td><td class="text-right">10</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#373"><abbr title="App\Http\Controllers\TimeLogController::authorizeAttendanceManagement">authorizeAttendanceManagement</abbr></a></td><td class="text-right">75.0%</td><td class="text-right">9</td><td class="text-right">10</td></tr>
+       <tr><td><a href="Controllers/AbsenceController.php.html#15"><abbr title="App\Http\Controllers\AbsenceController::store">store</abbr></a></td><td class="text-right">79.5%</td><td class="text-right">9</td><td class="text-right">9</td></tr>
+       <tr><td><a href="Controllers/PracticeTypeController.php.html#21"><abbr title="App\Http\Controllers\PracticeTypeController::index">index</abbr></a></td><td class="text-right">88.5%</td><td class="text-right">9</td><td class="text-right">9</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#108"><abbr title="App\Http\Controllers\EducationCenterController::show">show</abbr></a></td><td class="text-right">87.0%</td><td class="text-right">8</td><td class="text-right">8</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#403"><abbr title="App\Http\Controllers\EvaluationController::notifyEvaluationCreated">notifyEvaluationCreated</abbr></a></td><td class="text-right">66.7%</td><td class="text-right">7</td><td class="text-right">8</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#238"><abbr title="App\Http\Controllers\TaskController::store">store</abbr></a></td><td class="text-right">75.6%</td><td class="text-right">8</td><td class="text-right">8</td></tr>
+       <tr><td><a href="Requests/StoreEvaluationRequest.php.html#33"><abbr title="App\Http\Requests\StoreEvaluationRequest::after">after</abbr></a></td><td class="text-right">68.8%</td><td class="text-right">7</td><td class="text-right">8</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#298"><abbr title="App\Http\Controllers\EvaluationController::store">store</abbr></a></td><td class="text-right">89.4%</td><td class="text-right">7</td><td class="text-right">7</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#72"><abbr title="App\Http\Controllers\MessageController::store">store</abbr></a></td><td class="text-right">65.1%</td><td class="text-right">6</td><td class="text-right">7</td></tr>
+       <tr><td><a href="Controllers/AbsenceController.php.html#118"><abbr title="App\Http\Controllers\AbsenceController::uploadJustification">uploadJustification</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#208"><abbr title="App\Http\Controllers\EducationCenterController::export">export</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#227"><abbr title="App\Http\Controllers\EducationCenterController::exportIndex">exportIndex</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#288"><abbr title="App\Http\Controllers\EducationCenterController::updateInternalNote">updateInternalNote</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#309"><abbr title="App\Http\Controllers\EducationCenterController::destroyInternalNote">destroyInternalNote</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#54"><abbr title="App\Http\Controllers\EvaluationController::canEvaluateIntern">canEvaluateIntern</abbr></a></td><td class="text-right">87.5%</td><td class="text-right">6</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#269"><abbr title="App\Http\Controllers\InternController::export">export</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#327"><abbr title="App\Http\Controllers\InternController::updateInternalNote">updateInternalNote</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#348"><abbr title="App\Http\Controllers\InternController::destroyInternalNote">destroyInternalNote</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#362"><abbr title="App\Http\Controllers\InternController::syncInternMedia">syncInternMedia</abbr></a></td><td class="text-right">50.0%</td><td class="text-right">4</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#68"><abbr title="App\Http\Controllers\InvitationController::sendInvitationWithBrevoApi">sendInvitationWithBrevoApi</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#145"><abbr title="App\Http\Controllers\MessageController::update">update</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#166"><abbr title="App\Http\Controllers\MessageController::destroy">destroy</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#235"><abbr title="App\Http\Controllers\MessageController::availableContacts">availableContacts</abbr></a></td><td class="text-right">61.8%</td><td class="text-right">5</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#264"><abbr title="App\Http\Controllers\ReportController::groupRows">groupRows</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#296"><abbr title="App\Http\Controllers\TaskController::create">create</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#370"><abbr title="App\Http\Controllers\TaskController::destroy">destroy</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#600"><abbr title="App\Http\Controllers\TaskController::updateComment">updateComment</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#714"><abbr title="App\Http\Controllers\TaskController::addAttachment">addAttachment</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#760"><abbr title="App\Http\Controllers\TaskController::canAccessTask">canAccessTask</abbr></a></td><td class="text-right">75.0%</td><td class="text-right">6</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#784"><abbr title="App\Http\Controllers\TaskController::canManageTask">canManageTask</abbr></a></td><td class="text-right">70.0%</td><td class="text-right">6</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#238"><abbr title="App\Http\Controllers\ReportController::resolveColumns">resolveColumns</abbr></a></td><td class="text-right">85.7%</td><td class="text-right">5</td><td class="text-right">5</td></tr>
+       <tr><td><a href="Controllers/TimeLogController.php.html#395"><abbr title="App\Http\Controllers\TimeLogController::updateEvent">updateEvent</abbr></a></td><td class="text-right">78.3%</td><td class="text-right">5</td><td class="text-right">5</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#80"><abbr title="App\Http\Controllers\EducationCenterController::store">store</abbr></a></td><td class="text-right">42.9%</td><td class="text-right">3</td><td class="text-right">4</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#171"><abbr title="App\Http\Controllers\EducationCenterController::update">update</abbr></a></td><td class="text-right">42.9%</td><td class="text-right">3</td><td class="text-right">4</td></tr>
+       <tr><td><a href="Controllers/RolesController.php.html#108"><abbr title="App\Http\Controllers\RolesController::togglePermission">togglePermission</abbr></a></td><td class="text-right">88.9%</td><td class="text-right">4</td><td class="text-right">4</td></tr>
+       <tr><td><a href="Controllers/EducationCenterController.php.html#191"><abbr title="App\Http\Controllers\EducationCenterController::destroy">destroy</abbr></a></td><td class="text-right">57.1%</td><td class="text-right">3</td><td class="text-right">3</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#89"><abbr title="App\Http\Controllers\ReportController::export">export</abbr></a></td><td class="text-right">60.0%</td><td class="text-right">3</td><td class="text-right">3</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#255"><abbr title="App\Http\Controllers\ReportController::resolveGroupBy">resolveGroupBy</abbr></a></td><td class="text-right">66.7%</td><td class="text-right">3</td><td class="text-right">3</td></tr>
+       <tr><td><a href="Controllers/RolesController.php.html#93"><abbr title="App\Http\Controllers\RolesController::destroy">destroy</abbr></a></td><td class="text-right">83.3%</td><td class="text-right">3</td><td class="text-right">3</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#202"><abbr title="App\Http\Controllers\DashboardController::activeCentersCount">activeCentersCount</abbr></a></td><td class="text-right">66.7%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/DashboardController.php.html#436"><abbr title="App\Http\Controllers\DashboardController::averageTaskResolutionDays">averageTaskResolutionDays</abbr></a></td><td class="text-right">87.5%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/EvaluationController.php.html#92"><abbr title="App\Http\Controllers\EvaluationController::ensureNoDuplicateEvaluation">ensureNoDuplicateEvaluation</abbr></a></td><td class="text-right">66.7%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/EvaluationCriterionController.php.html#14"><abbr title="App\Http\Controllers\EvaluationCriterionController::ensureAdmin">ensureAdmin</abbr></a></td><td class="text-right">50.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#132"><abbr title="App\Http\Controllers\InternController::store">store</abbr></a></td><td class="text-right">80.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#229"><abbr title="App\Http\Controllers\InternController::update">update</abbr></a></td><td class="text-right">76.9%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/InternController.php.html#256"><abbr title="App\Http\Controllers\InternController::destroy">destroy</abbr></a></td><td class="text-right">40.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#21"><abbr title="App\Http\Controllers\InvitationController::store">store</abbr></a></td><td class="text-right">62.5%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/InvitationController.php.html#57"><abbr title="App\Http\Controllers\InvitationController::sendInvitation">sendInvitation</abbr></a></td><td class="text-right">50.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/MessageController.php.html#182"><abbr title="App\Http\Controllers\MessageController::destroyConversation">destroyConversation</abbr></a></td><td class="text-right">88.9%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/PracticeTypeController.php.html#14"><abbr title="App\Http\Controllers\PracticeTypeController::ensureAdmin">ensureAdmin</abbr></a></td><td class="text-right">50.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/ReportController.php.html#131"><abbr title="App\Http\Controllers\ReportController::preview">preview</abbr></a></td><td class="text-right">87.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Controllers/TaskController.php.html#829"><abbr title="App\Http\Controllers\TaskController::notifyTaskStatusChanged">notifyTaskStatusChanged</abbr></a></td><td class="text-right">88.2%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="Middleware/EnsureStaff.php.html#17"><abbr title="App\Http\Middleware\EnsureStaff::handle">handle</abbr></a></td><td class="text-right">75.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.5.6</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.31</a> and <a href="https://phpunit.de/">PHPUnit 12.5.24</a> at Wed Jun 3 14:00:20 CEST 2026.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/billboard.pkgd.min.js?v=12.5.6" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,14,"Controllers\/TutorController.php.html#14","App\\Http\\Controllers\\TutorController","210"],[34.074074074074076,73,"Controllers\/EvaluationController.php.html#18","App\\Http\\Controllers\\EvaluationController","1599.91"],[37.47747747747748,119,"Controllers\/TaskController.php.html#23","App\\Http\\Controllers\\TaskController","3580.01"],[45.65217391304348,45,"Controllers\/EducationCenterController.php.html#16","App\\Http\\Controllers\\EducationCenterController","370.07"],[46.75324675324675,48,"Controllers\/InternController.php.html#21","App\\Http\\Controllers\\InternController","395.83"],[56.16438356164384,12,"Controllers\/RolesController.php.html#12","App\\Http\\Controllers\\RolesController","24.13"],[60.71428571428571,11,"Controllers\/InvitationController.php.html#19","App\\Http\\Controllers\\InvitationController","18.34"],[62.5,9,"Controllers\/CalendarEventController.php.html#10","App\\Http\\Controllers\\CalendarEventController","13.27"],[67.26804123711341,53,"Controllers\/DashboardController.php.html#22","App\\Http\\Controllers\\DashboardController","151.51"],[67.41573033707866,20,"Controllers\/AbsenceController.php.html#13","App\\Http\\Controllers\\AbsenceController","33.84"],[69.87951807228916,33,"Controllers\/ReportController.php.html#21","App\\Http\\Controllers\\ReportController","62.76"],[72.3076923076923,17,"Controllers\/EvaluationCriterionController.php.html#12","App\\Http\\Controllers\\EvaluationCriterionController","23.14"],[73.07692307692307,5,"Controllers\/Settings\/ProfileController.php.html#15","App\\Http\\Controllers\\Settings\\ProfileController","5.49"],[73.53951890034365,73,"Controllers\/TimeLogController.php.html#14","App\\Http\\Controllers\\TimeLogController","171.73"],[74.29718875502009,39,"Controllers\/MessageController.php.html#17","App\\Http\\Controllers\\MessageController","64.83"],[75,2,"Middleware\/EnsureStaff.php.html#10","App\\Http\\Middleware\\EnsureStaff","2.06"],[85.29411764705883,10,"Requests\/StoreEvaluationRequest.php.html#9","App\\Http\\Requests\\StoreEvaluationRequest","10.32"],[91.66666666666666,17,"Controllers\/PracticeTypeController.php.html#12","App\\Http\\Controllers\\PracticeTypeController","17.17"],[100,6,"Controllers\/AttendanceReportController.php.html#10","App\\Http\\Controllers\\AttendanceReportController","6"],[100,0,"Controllers\/Controller.php.html#5","App\\Http\\Controllers\\Controller","0"],[100,9,"Controllers\/EvaluationReportController.php.html#9","App\\Http\\Controllers\\EvaluationReportController","9"],[100,10,"Controllers\/NotificationController.php.html#8","App\\Http\\Controllers\\NotificationController","10"],[100,17,"Controllers\/ScheduleController.php.html#11","App\\Http\\Controllers\\ScheduleController","17"],[100,2,"Controllers\/Settings\/PasswordController.php.html#11","App\\Http\\Controllers\\Settings\\PasswordController","2"],[100,3,"Controllers\/Settings\/TwoFactorAuthenticationController.php.html#13","App\\Http\\Controllers\\Settings\\TwoFactorAuthenticationController","3"],[100,6,"Controllers\/UsersController.php.html#12","App\\Http\\Controllers\\UsersController","6"],[100,2,"Middleware\/EnsureAdmin.php.html#10","App\\Http\\Middleware\\EnsureAdmin","2"],[100,4,"Middleware\/EnsureTutor.php.html#10","App\\Http\\Middleware\\EnsureTutor","4"],[100,1,"Middleware\/HandleAppearance.php.html#10","App\\Http\\Middleware\\HandleAppearance","1"],[100,4,"Middleware\/HandleInertiaRequests.php.html#8","App\\Http\\Middleware\\HandleInertiaRequests","4"],[100,1,"Requests\/Settings\/PasswordUpdateRequest.php.html#9","App\\Http\\Requests\\Settings\\PasswordUpdateRequest","1"],[100,1,"Requests\/Settings\/ProfileDeleteRequest.php.html#9","App\\Http\\Requests\\Settings\\ProfileDeleteRequest","1"],[100,1,"Requests\/Settings\/ProfileUpdateRequest.php.html#9","App\\Http\\Requests\\Settings\\ProfileUpdateRequest","1"],[100,2,"Requests\/Settings\/TwoFactorAuthenticationRequest.php.html#10","App\\Http\\Requests\\Settings\\TwoFactorAuthenticationRequest","2"],[100,5,"Requests\/StoreEducationCenterRequest.php.html#7","App\\Http\\Requests\\StoreEducationCenterRequest","5"],[100,6,"Requests\/StoreEvaluationCriterionRequest.php.html#7","App\\Http\\Requests\\StoreEvaluationCriterionRequest","6"],[100,4,"Requests\/StoreInternRequest.php.html#7","App\\Http\\Requests\\StoreInternRequest","4"],[100,2,"Requests\/StorePracticeTypeRequest.php.html#7","App\\Http\\Requests\\StorePracticeTypeRequest","2"],[100,2,"Requests\/StoreTaskRequest.php.html#7","App\\Http\\Requests\\StoreTaskRequest","2"],[100,2,"Requests\/UpdateEvaluationCriterionRequest.php.html#7","App\\Http\\Requests\\UpdateEvaluationCriterionRequest","2"],[100,4,"Requests\/UpdateInternRequest.php.html#7","App\\Http\\Requests\\UpdateInternRequest","4"],[100,2,"Requests\/UpdatePracticeTypeRequest.php.html#7","App\\Http\\Requests\\UpdatePracticeTypeRequest","2"],[100,2,"Requests\/UpdateTaskRequest.php.html#7","App\\Http\\Requests\\UpdateTaskRequest","2"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Controllers\/AbsenceController.php.html#98","App\\Http\\Controllers\\AbsenceController::destroy","2"],[0,2,"Controllers\/AbsenceController.php.html#118","App\\Http\\Controllers\\AbsenceController::uploadJustification","6"],[0,1,"Controllers\/DashboardController.php.html#211","App\\Http\\Controllers\\DashboardController::eventManageableInterns","2"],[0,1,"Controllers\/DashboardController.php.html#228","App\\Http\\Controllers\\DashboardController::eventManageableTutors","2"],[0,1,"Controllers\/EducationCenterController.php.html#72","App\\Http\\Controllers\\EducationCenterController::create","2"],[0,1,"Controllers\/EducationCenterController.php.html#97","App\\Http\\Controllers\\EducationCenterController::edit","2"],[0,2,"Controllers\/EducationCenterController.php.html#208","App\\Http\\Controllers\\EducationCenterController::export","6"],[0,2,"Controllers\/EducationCenterController.php.html#227","App\\Http\\Controllers\\EducationCenterController::exportIndex","6"],[0,1,"Controllers\/EducationCenterController.php.html#257","App\\Http\\Controllers\\EducationCenterController::updateNotes","2"],[0,1,"Controllers\/EducationCenterController.php.html#272","App\\Http\\Controllers\\EducationCenterController::storeInternalNote","2"],[0,2,"Controllers\/EducationCenterController.php.html#288","App\\Http\\Controllers\\EducationCenterController::updateInternalNote","6"],[0,2,"Controllers\/EducationCenterController.php.html#309","App\\Http\\Controllers\\EducationCenterController::destroyInternalNote","6"],[0,1,"Controllers\/EducationCenterController.php.html#323","App\\Http\\Controllers\\EducationCenterController::syncInternalNoteSummary","2"],[0,3,"Controllers\/EducationCenterController.php.html#335","App\\Http\\Controllers\\EducationCenterController::myCenter","12"],[0,6,"Controllers\/EvaluationController.php.html#20","App\\Http\\Controllers\\EvaluationController::getEvaluationTypeLabel","42"],[0,3,"Controllers\/EvaluationController.php.html#40","App\\Http\\Controllers\\EvaluationController::canManageEvaluations","12"],[0,3,"Controllers\/EvaluationController.php.html#47","App\\Http\\Controllers\\EvaluationController::canDeleteEvaluations","12"],[0,6,"Controllers\/EvaluationController.php.html#73","App\\Http\\Controllers\\EvaluationController::canViewEvaluation","42"],[0,6,"Controllers\/EvaluationController.php.html#185","App\\Http\\Controllers\\EvaluationController::create","42"],[0,8,"Controllers\/EvaluationController.php.html#229","App\\Http\\Controllers\\EvaluationController::show","72"],[0,1,"Controllers\/EvaluationController.php.html#394","App\\Http\\Controllers\\EvaluationController::destroy","2"],[0,1,"Controllers\/EvaluationCriterionController.php.html#81","App\\Http\\Controllers\\EvaluationCriterionController::create","2"],[0,1,"Controllers\/EvaluationCriterionController.php.html#97","App\\Http\\Controllers\\EvaluationCriterionController::edit","2"],[0,1,"Controllers\/InternController.php.html#23","App\\Http\\Controllers\\InternController::myProfile","2"],[0,1,"Controllers\/InternController.php.html#34","App\\Http\\Controllers\\InternController::updateAvatar","2"],[0,1,"Controllers\/InternController.php.html#121","App\\Http\\Controllers\\InternController::create","2"],[0,1,"Controllers\/InternController.php.html#217","App\\Http\\Controllers\\InternController::edit","2"],[0,2,"Controllers\/InternController.php.html#269","App\\Http\\Controllers\\InternController::export","6"],[0,1,"Controllers\/InternController.php.html#280","App\\Http\\Controllers\\InternController::restore","2"],[0,1,"Controllers\/InternController.php.html#288","App\\Http\\Controllers\\InternController::forceDelete","2"],[0,1,"Controllers\/InternController.php.html#296","App\\Http\\Controllers\\InternController::updateNotes","2"],[0,1,"Controllers\/InternController.php.html#311","App\\Http\\Controllers\\InternController::storeInternalNote","2"],[0,2,"Controllers\/InternController.php.html#327","App\\Http\\Controllers\\InternController::updateInternalNote","6"],[0,2,"Controllers\/InternController.php.html#348","App\\Http\\Controllers\\InternController::destroyInternalNote","6"],[0,1,"Controllers\/InternController.php.html#377","App\\Http\\Controllers\\InternController::syncInternalNoteSummary","2"],[0,1,"Controllers\/InternController.php.html#398","App\\Http\\Controllers\\InternController::completeProfile","2"],[0,1,"Controllers\/InternController.php.html#410","App\\Http\\Controllers\\InternController::storeCompleteProfile","2"],[0,2,"Controllers\/InvitationController.php.html#68","App\\Http\\Controllers\\InvitationController::sendInvitationWithBrevoApi","6"],[0,2,"Controllers\/MessageController.php.html#145","App\\Http\\Controllers\\MessageController::update","6"],[0,2,"Controllers\/MessageController.php.html#166","App\\Http\\Controllers\\MessageController::destroy","6"],[0,1,"Controllers\/MessageController.php.html#284","App\\Http\\Controllers\\MessageController::authorizeRecipients","2"],[0,2,"Controllers\/ReportController.php.html#264","App\\Http\\Controllers\\ReportController::groupRows","6"],[0,1,"Controllers\/RolesController.php.html#14","App\\Http\\Controllers\\RolesController::index","2"],[0,1,"Controllers\/Settings\/ProfileController.php.html#36","App\\Http\\Controllers\\Settings\\ProfileController::updateAvatar","2"],[0,15,"Controllers\/TaskController.php.html#148","App\\Http\\Controllers\\TaskController::myTasks","240"],[0,2,"Controllers\/TaskController.php.html#296","App\\Http\\Controllers\\TaskController::create","6"],[0,1,"Controllers\/TaskController.php.html#312","App\\Http\\Controllers\\TaskController::edit","2"],[0,2,"Controllers\/TaskController.php.html#370","App\\Http\\Controllers\\TaskController::destroy","6"],[0,5,"Controllers\/TaskController.php.html#385","App\\Http\\Controllers\\TaskController::updateStatus","30"],[0,5,"Controllers\/TaskController.php.html#427","App\\Http\\Controllers\\TaskController::show","30"],[0,3,"Controllers\/TaskController.php.html#569","App\\Http\\Controllers\\TaskController::storeComment","12"],[0,2,"Controllers\/TaskController.php.html#600","App\\Http\\Controllers\\TaskController::updateComment","6"],[0,3,"Controllers\/TaskController.php.html#624","App\\Http\\Controllers\\TaskController::destroyComment","12"],[0,10,"Controllers\/TaskController.php.html#644","App\\Http\\Controllers\\TaskController::updateBoardOrder","110"],[0,2,"Controllers\/TaskController.php.html#714","App\\Http\\Controllers\\TaskController::addAttachment","6"],[0,3,"Controllers\/TaskController.php.html#731","App\\Http\\Controllers\\TaskController::serializeComment","12"],[0,5,"Controllers\/TutorController.php.html#16","App\\Http\\Controllers\\TutorController::index","30"],[0,4,"Controllers\/TutorController.php.html#83","App\\Http\\Controllers\\TutorController::show","20"],[0,5,"Controllers\/TutorController.php.html#164","App\\Http\\Controllers\\TutorController::mine","30"],[2.127659574468085,13,"Controllers\/EvaluationController.php.html#112","App\\Http\\Controllers\\EvaluationController::index","171.44"],[2.941176470588235,1,"Controllers\/CalendarEventController.php.html#52","App\\Http\\Controllers\\CalendarEventController::update","1.91"],[18.181818181818183,6,"Controllers\/MessageController.php.html#297","App\\Http\\Controllers\\MessageController::canReplyToConversation","25.72"],[23.076923076923077,5,"Controllers\/TimeLogController.php.html#324","App\\Http\\Controllers\\TimeLogController::manageableInternsFor","16.38"],[30,6,"Controllers\/ReportController.php.html#163","App\\Http\\Controllers\\ReportController::reportRows","18.35"],[33.33333333333333,1,"Controllers\/CalendarEventController.php.html#96","App\\Http\\Controllers\\CalendarEventController::destroy","1.30"],[40,2,"Controllers\/InternController.php.html#256","App\\Http\\Controllers\\InternController::destroy","2.86"],[42.857142857142854,3,"Controllers\/EducationCenterController.php.html#80","App\\Http\\Controllers\\EducationCenterController::store","4.68"],[42.857142857142854,3,"Controllers\/EducationCenterController.php.html#171","App\\Http\\Controllers\\EducationCenterController::update","4.68"],[50,2,"Controllers\/EvaluationCriterionController.php.html#14","App\\Http\\Controllers\\EvaluationCriterionController::ensureAdmin","2.50"],[50,4,"Controllers\/InternController.php.html#362","App\\Http\\Controllers\\InternController::syncInternMedia","6.00"],[50,2,"Controllers\/InvitationController.php.html#57","App\\Http\\Controllers\\InvitationController::sendInvitation","2.50"],[50,2,"Controllers\/PracticeTypeController.php.html#14","App\\Http\\Controllers\\PracticeTypeController::ensureAdmin","2.50"],[51.61290322580645,11,"Controllers\/DashboardController.php.html#451","App\\Http\\Controllers\\DashboardController::taskProgress","24.71"],[53.46534653465347,25,"Controllers\/TimeLogController.php.html#189","App\\Http\\Controllers\\TimeLogController::getEvents","87.98"],[57.14285714285714,3,"Controllers\/EducationCenterController.php.html#191","App\\Http\\Controllers\\EducationCenterController::destroy","3.71"],[59.375,14,"Controllers\/DashboardController.php.html#300","App\\Http\\Controllers\\DashboardController::attendanceStats","27.14"],[60,3,"Controllers\/ReportController.php.html#89","App\\Http\\Controllers\\ReportController::export","3.58"],[60.24096385542169,18,"Controllers\/TaskController.php.html#32","App\\Http\\Controllers\\TaskController::index","38.36"],[61.76470588235294,5,"Controllers\/MessageController.php.html#235","App\\Http\\Controllers\\MessageController::availableContacts","6.40"],[62.5,2,"Controllers\/InvitationController.php.html#21","App\\Http\\Controllers\\InvitationController::store","2.21"],[65.11627906976744,6,"Controllers\/MessageController.php.html#72","App\\Http\\Controllers\\MessageController::store","7.53"],[66.66666666666666,2,"Controllers\/DashboardController.php.html#202","App\\Http\\Controllers\\DashboardController::activeCentersCount","2.15"],[66.66666666666666,2,"Controllers\/EvaluationController.php.html#92","App\\Http\\Controllers\\EvaluationController::ensureNoDuplicateEvaluation","2.15"],[66.66666666666666,7,"Controllers\/EvaluationController.php.html#403","App\\Http\\Controllers\\EvaluationController::notifyEvaluationCreated","8.81"],[66.66666666666666,3,"Controllers\/ReportController.php.html#255","App\\Http\\Controllers\\ReportController::resolveGroupBy","3.33"],[68.75,7,"Requests\/StoreEvaluationRequest.php.html#33","App\\Http\\Requests\\StoreEvaluationRequest::after","8.50"],[70,6,"Controllers\/TaskController.php.html#784","App\\Http\\Controllers\\TaskController::canManageTask","6.97"],[70.74829931972789,13,"Controllers\/DashboardController.php.html#24","App\\Http\\Controllers\\DashboardController::index","17.23"],[71.42857142857143,1,"Controllers\/ReportController.php.html#301","App\\Http\\Controllers\\ReportController::scopedTaskQuery","1.02"],[74.4186046511628,9,"Controllers\/EvaluationCriterionController.php.html#21","App\\Http\\Controllers\\EvaluationCriterionController::index","10.36"],[74.50980392156863,15,"Controllers\/InternController.php.html#46","App\\Http\\Controllers\\InternController::index","18.73"],[75,6,"Controllers\/TaskController.php.html#760","App\\Http\\Controllers\\TaskController::canAccessTask","6.56"],[75,9,"Controllers\/TimeLogController.php.html#373","App\\Http\\Controllers\\TimeLogController::authorizeAttendanceManagement","10.27"],[75,2,"Middleware\/EnsureStaff.php.html#17","App\\Http\\Middleware\\EnsureStaff::handle","2.06"],[75.60975609756098,8,"Controllers\/TaskController.php.html#238","App\\Http\\Controllers\\TaskController::store","8.93"],[76.92307692307693,2,"Controllers\/InternController.php.html#229","App\\Http\\Controllers\\InternController::update","2.05"],[78.26086956521739,5,"Controllers\/TimeLogController.php.html#395","App\\Http\\Controllers\\TimeLogController::updateEvent","5.26"],[79.48717948717949,9,"Controllers\/AbsenceController.php.html#15","App\\Http\\Controllers\\AbsenceController::store","9.70"],[80,10,"Controllers\/EducationCenterController.php.html#21","App\\Http\\Controllers\\EducationCenterController::index","10.80"],[80,2,"Controllers\/InternController.php.html#132","App\\Http\\Controllers\\InternController::store","2.03"],[83.33333333333334,3,"Controllers\/RolesController.php.html#93","App\\Http\\Controllers\\RolesController::destroy","3.04"],[84.375,10,"Controllers\/TimeLogController.php.html#16","App\\Http\\Controllers\\TimeLogController::index","10.38"],[85.71428571428571,5,"Controllers\/ReportController.php.html#238","App\\Http\\Controllers\\ReportController::resolveColumns","5.07"],[86.04651162790698,10,"Controllers\/TaskController.php.html#498","App\\Http\\Controllers\\TaskController::complete","10.27"],[86.95652173913044,8,"Controllers\/EducationCenterController.php.html#108","App\\Http\\Controllers\\EducationCenterController::show","8.14"],[86.95652173913044,2,"Controllers\/ReportController.php.html#131","App\\Http\\Controllers\\ReportController::preview","2.01"],[87.5,2,"Controllers\/DashboardController.php.html#436","App\\Http\\Controllers\\DashboardController::averageTaskResolutionDays","2.01"],[87.5,6,"Controllers\/EvaluationController.php.html#54","App\\Http\\Controllers\\EvaluationController::canEvaluateIntern","6.07"],[88.23529411764706,2,"Controllers\/TaskController.php.html#829","App\\Http\\Controllers\\TaskController::notifyTaskStatusChanged","2.01"],[88.46153846153845,9,"Controllers\/PracticeTypeController.php.html#21","App\\Http\\Controllers\\PracticeTypeController::index","9.12"],[88.88888888888889,2,"Controllers\/MessageController.php.html#182","App\\Http\\Controllers\\MessageController::destroyConversation","2.01"],[88.88888888888889,4,"Controllers\/RolesController.php.html#108","App\\Http\\Controllers\\RolesController::togglePermission","4.02"],[89.39393939393939,7,"Controllers\/EvaluationController.php.html#298","App\\Http\\Controllers\\EvaluationController::store","7.06"],[90,4,"Controllers\/MessageController.php.html#202","App\\Http\\Controllers\\MessageController::notifyRecipients","4.02"],[90.47619047619048,3,"Controllers\/InternController.php.html#161","App\\Http\\Controllers\\InternController::show","3.01"],[90.9090909090909,3,"Controllers\/CalendarEventController.php.html#130","App\\Http\\Controllers\\CalendarEventController::notifyEventAttendees","3.01"],[92.85714285714286,3,"Controllers\/TimeLogController.php.html#345","App\\Http\\Controllers\\TimeLogController::manageableTutorsFor","3.00"],[93.75,9,"Controllers\/TimeLogController.php.html#143","App\\Http\\Controllers\\TimeLogController::storeManual","9.02"],[100,2,"Controllers\/AbsenceController.php.html#69","App\\Http\\Controllers\\AbsenceController::updateStatus","2"],[100,6,"Controllers\/AbsenceController.php.html#135","App\\Http\\Controllers\\AbsenceController::authorizeAbsenceManagement","6"],[100,6,"Controllers\/AttendanceReportController.php.html#12","App\\Http\\Controllers\\AttendanceReportController::download","6"],[100,2,"Controllers\/CalendarEventController.php.html#12","App\\Http\\Controllers\\CalendarEventController::store","2"],[100,2,"Controllers\/CalendarEventController.php.html#105","App\\Http\\Controllers\\CalendarEventController::updateAttendance","2"],[100,3,"Controllers\/DashboardController.php.html#194","App\\Http\\Controllers\\DashboardController::scopedInternQuery","3"],[100,2,"Controllers\/DashboardController.php.html#245","App\\Http\\Controllers\\DashboardController::internsByCenter","2"],[100,1,"Controllers\/DashboardController.php.html#263","App\\Http\\Controllers\\DashboardController::attendanceChart","1"],[100,1,"Controllers\/DashboardController.php.html#391","App\\Http\\Controllers\\DashboardController::taskStatusChart","1"],[100,1,"Controllers\/DashboardController.php.html#414","App\\Http\\Controllers\\DashboardController::pendingEvaluationsCount","1"],[100,1,"Controllers\/DashboardController.php.html#428","App\\Http\\Controllers\\DashboardController::upcomingEndingsCount","1"],[100,1,"Controllers\/EducationCenterController.php.html#241","App\\Http\\Controllers\\EducationCenterController::restore","1"],[100,1,"Controllers\/EducationCenterController.php.html#249","App\\Http\\Controllers\\EducationCenterController::forceDelete","1"],[100,5,"Controllers\/EvaluationController.php.html#31","App\\Http\\Controllers\\EvaluationController::canAccessEvaluations","5"],[100,1,"Controllers\/EvaluationCriterionController.php.html#88","App\\Http\\Controllers\\EvaluationCriterionController::store","1"],[100,1,"Controllers\/EvaluationCriterionController.php.html#106","App\\Http\\Controllers\\EvaluationCriterionController::update","1"],[100,1,"Controllers\/EvaluationCriterionController.php.html#115","App\\Http\\Controllers\\EvaluationCriterionController::destroy","1"],[100,1,"Controllers\/EvaluationCriterionController.php.html#124","App\\Http\\Controllers\\EvaluationCriterionController::toggle","1"],[100,9,"Controllers\/EvaluationReportController.php.html#11","App\\Http\\Controllers\\EvaluationReportController::download","9"],[100,3,"Controllers\/InternController.php.html#389","App\\Http\\Controllers\\InternController::authorizeInternAccess","3"],[100,1,"Controllers\/InvitationController.php.html#97","App\\Http\\Controllers\\InvitationController::accept","1"],[100,4,"Controllers\/InvitationController.php.html#110","App\\Http\\Controllers\\InvitationController::register","4"],[100,3,"Controllers\/MessageController.php.html#19","App\\Http\\Controllers\\MessageController::index","3"],[100,1,"Controllers\/MessageController.php.html#221","App\\Http\\Controllers\\MessageController::conversationQuery","1"],[100,1,"Controllers\/MessageController.php.html#319","App\\Http\\Controllers\\MessageController::conversationParticipantIds","1"],[100,6,"Controllers\/MessageController.php.html#339","App\\Http\\Controllers\\MessageController::conversationPayload","6"],[100,9,"Controllers\/NotificationController.php.html#13","App\\Http\\Controllers\\NotificationController::read","9"],[100,1,"Controllers\/NotificationController.php.html#48","App\\Http\\Controllers\\NotificationController::readAll","1"],[100,1,"Controllers\/PracticeTypeController.php.html#63","App\\Http\\Controllers\\PracticeTypeController::create","1"],[100,1,"Controllers\/PracticeTypeController.php.html#70","App\\Http\\Controllers\\PracticeTypeController::store","1"],[100,1,"Controllers\/PracticeTypeController.php.html#79","App\\Http\\Controllers\\PracticeTypeController::edit","1"],[100,1,"Controllers\/PracticeTypeController.php.html#88","App\\Http\\Controllers\\PracticeTypeController::update","1"],[100,1,"Controllers\/PracticeTypeController.php.html#97","App\\Http\\Controllers\\PracticeTypeController::destroy","1"],[100,1,"Controllers\/PracticeTypeController.php.html#106","App\\Http\\Controllers\\PracticeTypeController::toggle","1"],[100,1,"Controllers\/ReportController.php.html#23","App\\Http\\Controllers\\ReportController::index","1"],[100,1,"Controllers\/ReportController.php.html#42","App\\Http\\Controllers\\ReportController::storeTemplate","1"],[100,1,"Controllers\/ReportController.php.html#63","App\\Http\\Controllers\\ReportController::updateTemplate","1"],[100,1,"Controllers\/ReportController.php.html#78","App\\Http\\Controllers\\ReportController::destroyTemplate","1"],[100,4,"Controllers\/ReportController.php.html#276","App\\Http\\Controllers\\ReportController::reportUser","4"],[100,1,"Controllers\/ReportController.php.html#289","App\\Http\\Controllers\\ReportController::allowedDatasetKeys","1"],[100,1,"Controllers\/ReportController.php.html#294","App\\Http\\Controllers\\ReportController::scopedInternQuery","1"],[100,1,"Controllers\/ReportController.php.html#313","App\\Http\\Controllers\\ReportController::datasets","1"],[100,1,"Controllers\/RolesController.php.html#51","App\\Http\\Controllers\\RolesController::store","1"],[100,3,"Controllers\/RolesController.php.html#72","App\\Http\\Controllers\\RolesController::update","3"],[100,1,"Controllers\/ScheduleController.php.html#13","App\\Http\\Controllers\\ScheduleController::store","1"],[100,1,"Controllers\/ScheduleController.php.html#53","App\\Http\\Controllers\\ScheduleController::update","1"],[100,1,"Controllers\/ScheduleController.php.html#93","App\\Http\\Controllers\\ScheduleController::destroy","1"],[100,10,"Controllers\/ScheduleController.php.html#101","App\\Http\\Controllers\\ScheduleController::authorizeScheduleManagement","10"],[100,4,"Controllers\/ScheduleController.php.html#114","App\\Http\\Controllers\\ScheduleController::ensureNoScheduleOverlap","4"],[100,1,"Controllers\/Settings\/PasswordController.php.html#16","App\\Http\\Controllers\\Settings\\PasswordController::edit","1"],[100,1,"Controllers\/Settings\/PasswordController.php.html#24","App\\Http\\Controllers\\Settings\\PasswordController::update","1"],[100,1,"Controllers\/Settings\/ProfileController.php.html#20","App\\Http\\Controllers\\Settings\\ProfileController::edit","1"],[100,2,"Controllers\/Settings\/ProfileController.php.html#52","App\\Http\\Controllers\\Settings\\ProfileController::update","2"],[100,1,"Controllers\/Settings\/ProfileController.php.html#68","App\\Http\\Controllers\\Settings\\ProfileController::destroy","1"],[100,2,"Controllers\/Settings\/TwoFactorAuthenticationController.php.html#18","App\\Http\\Controllers\\Settings\\TwoFactorAuthenticationController::middleware","2"],[100,1,"Controllers\/Settings\/TwoFactorAuthenticationController.php.html#28","App\\Http\\Controllers\\Settings\\TwoFactorAuthenticationController::show","1"],[100,1,"Controllers\/TaskController.php.html#25","App\\Http\\Controllers\\TaskController::taskPaginationSize","1"],[100,7,"Controllers\/TaskController.php.html#328","App\\Http\\Controllers\\TaskController::update","7"],[100,3,"Controllers\/TaskController.php.html#804","App\\Http\\Controllers\\TaskController::canCreateTasks","3"],[100,1,"Controllers\/TaskController.php.html#809","App\\Http\\Controllers\\TaskController::nextKanbanPosition","1"],[100,2,"Controllers\/TaskController.php.html#814","App\\Http\\Controllers\\TaskController::notifyAssignedInterns","2"],[100,2,"Controllers\/TaskController.php.html#855","App\\Http\\Controllers\\TaskController::notifyTaskSubmitted","2"],[100,2,"Controllers\/TimeLogController.php.html#91","App\\Http\\Controllers\\TimeLogController::clockIn","2"],[100,2,"Controllers\/TimeLogController.php.html#115","App\\Http\\Controllers\\TimeLogController::clockOut","2"],[100,3,"Controllers\/TimeLogController.php.html#365","App\\Http\\Controllers\\TimeLogController::attendanceEventTitle","3"],[100,1,"Controllers\/UsersController.php.html#14","App\\Http\\Controllers\\UsersController::index","1"],[100,5,"Controllers\/UsersController.php.html#46","App\\Http\\Controllers\\UsersController::updateRole","5"],[100,2,"Middleware\/EnsureAdmin.php.html#17","App\\Http\\Middleware\\EnsureAdmin::handle","2"],[100,4,"Middleware\/EnsureTutor.php.html#17","App\\Http\\Middleware\\EnsureTutor::handle","4"],[100,1,"Middleware\/HandleAppearance.php.html#17","App\\Http\\Middleware\\HandleAppearance::handle","1"],[100,1,"Middleware\/HandleInertiaRequests.php.html#24","App\\Http\\Middleware\\HandleInertiaRequests::version","1"],[100,3,"Middleware\/HandleInertiaRequests.php.html#36","App\\Http\\Middleware\\HandleInertiaRequests::share","3"],[100,1,"Requests\/Settings\/PasswordUpdateRequest.php.html#18","App\\Http\\Requests\\Settings\\PasswordUpdateRequest::rules","1"],[100,1,"Requests\/Settings\/ProfileDeleteRequest.php.html#18","App\\Http\\Requests\\Settings\\ProfileDeleteRequest::rules","1"],[100,1,"Requests\/Settings\/ProfileUpdateRequest.php.html#18","App\\Http\\Requests\\Settings\\ProfileUpdateRequest::rules","1"],[100,1,"Requests\/Settings\/TwoFactorAuthenticationRequest.php.html#17","App\\Http\\Requests\\Settings\\TwoFactorAuthenticationRequest::authorize","1"],[100,1,"Requests\/Settings\/TwoFactorAuthenticationRequest.php.html#27","App\\Http\\Requests\\Settings\\TwoFactorAuthenticationRequest::rules","1"],[100,1,"Requests\/StoreEducationCenterRequest.php.html#12","App\\Http\\Requests\\StoreEducationCenterRequest::authorize","1"],[100,2,"Requests\/StoreEducationCenterRequest.php.html#22","App\\Http\\Requests\\StoreEducationCenterRequest::rules","2"],[100,1,"Requests\/StoreEducationCenterRequest.php.html#44","App\\Http\\Requests\\StoreEducationCenterRequest::messages","1"],[100,1,"Requests\/StoreEducationCenterRequest.php.html#61","App\\Http\\Requests\\StoreEducationCenterRequest::attributes","1"],[100,1,"Requests\/StoreEvaluationCriterionRequest.php.html#9","App\\Http\\Requests\\StoreEvaluationCriterionRequest::authorize","1"],[100,4,"Requests\/StoreEvaluationCriterionRequest.php.html#14","App\\Http\\Requests\\StoreEvaluationCriterionRequest::prepareForValidation","4"],[100,1,"Requests\/StoreEvaluationCriterionRequest.php.html#24","App\\Http\\Requests\\StoreEvaluationCriterionRequest::rules","1"],[100,1,"Requests\/StoreEvaluationRequest.php.html#11","App\\Http\\Requests\\StoreEvaluationRequest::authorize","1"],[100,1,"Requests\/StoreEvaluationRequest.php.html#16","App\\Http\\Requests\\StoreEvaluationRequest::rules","1"],[100,1,"Requests\/StoreEvaluationRequest.php.html#61","App\\Http\\Requests\\StoreEvaluationRequest::messages","1"],[100,1,"Requests\/StoreInternRequest.php.html#12","App\\Http\\Requests\\StoreInternRequest::authorize","1"],[100,1,"Requests\/StoreInternRequest.php.html#22","App\\Http\\Requests\\StoreInternRequest::rules","1"],[100,1,"Requests\/StoreInternRequest.php.html#50","App\\Http\\Requests\\StoreInternRequest::messages","1"],[100,1,"Requests\/StoreInternRequest.php.html#71","App\\Http\\Requests\\StoreInternRequest::attributes","1"],[100,1,"Requests\/StorePracticeTypeRequest.php.html#9","App\\Http\\Requests\\StorePracticeTypeRequest::authorize","1"],[100,1,"Requests\/StorePracticeTypeRequest.php.html#14","App\\Http\\Requests\\StorePracticeTypeRequest::rules","1"],[100,1,"Requests\/StoreTaskRequest.php.html#9","App\\Http\\Requests\\StoreTaskRequest::authorize","1"],[100,1,"Requests\/StoreTaskRequest.php.html#14","App\\Http\\Requests\\StoreTaskRequest::rules","1"],[100,1,"Requests\/UpdateEvaluationCriterionRequest.php.html#9","App\\Http\\Requests\\UpdateEvaluationCriterionRequest::authorize","1"],[100,1,"Requests\/UpdateEvaluationCriterionRequest.php.html#14","App\\Http\\Requests\\UpdateEvaluationCriterionRequest::rules","1"],[100,1,"Requests\/UpdateInternRequest.php.html#12","App\\Http\\Requests\\UpdateInternRequest::authorize","1"],[100,1,"Requests\/UpdateInternRequest.php.html#22","App\\Http\\Requests\\UpdateInternRequest::rules","1"],[100,1,"Requests\/UpdateInternRequest.php.html#54","App\\Http\\Requests\\UpdateInternRequest::messages","1"],[100,1,"Requests\/UpdateInternRequest.php.html#75","App\\Http\\Requests\\UpdateInternRequest::attributes","1"],[100,1,"Requests\/UpdatePracticeTypeRequest.php.html#9","App\\Http\\Requests\\UpdatePracticeTypeRequest::authorize","1"],[100,1,"Requests\/UpdatePracticeTypeRequest.php.html#14","App\\Http\\Requests\\UpdatePracticeTypeRequest::rules","1"],[100,1,"Requests\/UpdateTaskRequest.php.html#9","App\\Http\\Requests\\UpdateTaskRequest::authorize","1"],[100,1,"Requests\/UpdateTaskRequest.php.html#14","App\\Http\\Requests\\UpdateTaskRequest::rules","1"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [1,0,0,0,2,2,1,5,5,1,1,25])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [59,2,1,1,2,3,8,10,12,15,5,105])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

@@ -72,19 +72,19 @@ export function InternTaskProgressPanel({
 
     return (
         <Card
-            className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 ${className}`}
+            className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-[#2a4158] dark:bg-[#142235] dark:shadow-[0_18px_50px_-34px_rgba(0,0,0,0.9)] dark:hover:border-[#3c6270] ${className}`}
         >
-            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent dark:from-[#9fc6bf] dark:to-[#5f9e95]" />
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
                 <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white dark:from-[#9fc6bf] dark:to-[#5f9e95] dark:text-[#14202a] shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <Users className="h-4 w-4" />
                     </span>
                     <div>
-                        <CardTitle className="text-sm leading-tight font-black text-slate-800 dark:text-slate-100">
+                        <CardTitle className="text-sm leading-tight font-black text-slate-800 dark:text-[#edf1f5]">
                             Panel de progreso por becario
                         </CardTitle>
-                        <p className="mt-0.5 text-[11px] leading-none text-slate-500">
+                        <p className="mt-0.5 text-[11px] leading-none text-slate-500 dark:text-[#94a7b8]">
                             Tareas completadas, carga total y horas fichadas.
                         </p>
                     </div>
@@ -92,7 +92,7 @@ export function InternTaskProgressPanel({
                 <div className="flex items-center gap-2">
                     <Badge
                         variant="outline"
-                        className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
+                        className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-[#2c465c] dark:bg-[#0f1b2a]/90 dark:text-teal-100"
                     >
                         {averageResolutionDays === null
                             ? 'Sin resolución media'
@@ -103,9 +103,9 @@ export function InternTaskProgressPanel({
                     </span>
                 </div>
             </CardHeader>
-            <CardContent className="flex flex-1 flex-col justify-between gap-1.5 bg-slate-50/60 px-2.5 pt-2 pb-2 dark:bg-slate-950/20">
+            <CardContent className="flex flex-1 flex-col justify-between gap-1.5 bg-slate-50/60 px-2.5 pt-2 pb-2 dark:bg-[#0f1b2a]/80">
                 {taskProgress.length === 0 ? (
-                    <div className="rounded-md border border-dashed border-slate-200 px-2.5 py-2 text-xs text-slate-500 dark:border-slate-700">
+                    <div className="rounded-md border border-dashed border-slate-200 px-2.5 py-2 text-xs text-slate-500 dark:border-[#2c465c]">
                         Todavía no hay tareas vinculadas para mostrar progreso.
                     </div>
                 ) : (
@@ -119,12 +119,12 @@ export function InternTaskProgressPanel({
                                         handleSearch(event.target.value)
                                     }
                                     placeholder="Buscar becario o centro"
-                                    className="h-8 rounded-md border-slate-300 bg-white pl-8 text-xs shadow-sm focus-visible:ring-sidebar/20 dark:border-slate-700 dark:bg-slate-900"
+                                    className="h-8 rounded-md border-slate-300 bg-white pl-8 text-xs shadow-sm focus-visible:ring-sidebar/20 dark:border-[#2c465c] dark:bg-[#17283c]"
                                 />
                             </div>
 
                             {visibleProgress.length === 0 ? (
-                                <div className="rounded-md border border-dashed border-slate-200 px-2.5 py-2 text-xs text-slate-500 dark:border-slate-700">
+                                <div className="rounded-md border border-dashed border-slate-200 px-2.5 py-2 text-xs text-slate-500 dark:border-[#2c465c]">
                                     No hay becarios que coincidan con la
                                     búsqueda.
                                 </div>
@@ -150,21 +150,21 @@ export function InternTaskProgressPanel({
                                                     intern.url ??
                                                     `/becarios/${intern.id}`
                                                 }
-                                                className="min-h-[76px] rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-1.5 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
+                                                className="min-h-[76px] rounded-md border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-1.5 shadow-sm dark:border-[#2c465c] dark:border-l-[#9fc6bf] dark:bg-[#17283c]"
                                             >
                                                 <div className="flex items-center justify-between gap-2">
                                                     <div className="min-w-0">
                                                         <p className="truncate text-xs font-black text-slate-900 dark:text-white">
                                                             {intern.name}
                                                         </p>
-                                                        <p className="truncate text-[10px] text-slate-500">
+                                                        <p className="truncate text-[10px] text-slate-500 dark:text-[#94a7b8]">
                                                             {intern.center}
                                                         </p>
                                                     </div>
                                                     <div className="flex flex-col items-end gap-1">
                                                         <Badge
                                                             variant="outline"
-                                                            className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
+                                                            className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-[#2c465c] dark:bg-[#0f1b2a]/90 dark:text-teal-100"
                                                         >
                                                             {intern.hours} h
                                                         </Badge>
@@ -192,11 +192,11 @@ export function InternTaskProgressPanel({
                                                         className="h-1"
                                                         indicatorClassName="bg-sidebar dark:bg-teal-400"
                                                     />
-                                                    <span className="w-9 text-right text-[11px] font-black text-slate-500">
+                                                    <span className="w-9 text-right text-[11px] font-black text-slate-500 dark:text-[#94a7b8]">
                                                         {intern.progress}%
                                                     </span>
                                                 </div>
-                                                <p className="mt-1 text-[10px] text-slate-500">
+                                                <p className="mt-1 text-[10px] text-slate-500 dark:text-[#94a7b8]">
                                                     {intern.completed} de{' '}
                                                     {intern.total} tareas
                                                     completadas
@@ -209,7 +209,7 @@ export function InternTaskProgressPanel({
                         </div>
 
                         <div className="flex items-center justify-between gap-2 pt-4">
-                            <span className="text-[10px] font-medium text-slate-500">
+                            <span className="text-[10px] font-medium text-slate-500 dark:text-[#94a7b8]">
                                 {filteredProgress.length === 0
                                     ? '0 resultados'
                                     : `${visibleProgress.length} de ${filteredProgress.length}`}
@@ -230,7 +230,7 @@ export function InternTaskProgressPanel({
                                 >
                                     <ChevronLeft className="h-3.5 w-3.5" />
                                 </Button>
-                                <span className="w-12 text-center text-[10px] font-bold text-slate-500">
+                                <span className="w-12 text-center text-[10px] font-bold text-slate-500 dark:text-[#94a7b8]">
                                     {currentPage}/{totalPages}
                                 </span>
                                 <Button
@@ -270,35 +270,35 @@ function InternOwnProgressPanel({
 
     return (
         <Card
-            className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 ${className}`}
+            className={`group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-[#2a4158] dark:bg-[#142235] dark:shadow-[0_18px_50px_-34px_rgba(0,0,0,0.9)] dark:hover:border-[#3c6270] ${className}`}
         >
-            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent dark:from-[#9fc6bf] dark:to-[#5f9e95]" />
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
                 <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white dark:from-[#9fc6bf] dark:to-[#5f9e95] dark:text-[#14202a] shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <TrendingUp className="h-4 w-4" />
                     </span>
                     <div>
-                        <CardTitle className="text-sm leading-tight font-black text-slate-800 dark:text-slate-100">
+                        <CardTitle className="text-sm leading-tight font-black text-slate-800 dark:text-[#edf1f5]">
                             Mi progreso
                         </CardTitle>
-                        <p className="mt-0.5 text-[11px] leading-none text-slate-500">
+                        <p className="mt-0.5 text-[11px] leading-none text-slate-500 dark:text-[#94a7b8]">
                             Tu avance de tareas y actividad registrada.
                         </p>
                     </div>
                 </div>
                 <Badge
                     variant="outline"
-                    className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-slate-700 dark:bg-slate-950/40 dark:text-teal-100"
+                    className="rounded-md border-sidebar/20 bg-white/80 px-2 py-0 text-[10px] text-sidebar dark:border-[#2c465c] dark:bg-[#0f1b2a]/90 dark:text-teal-100"
                 >
                     {averageResolutionDays === null
                         ? 'Sin media'
                         : `${averageResolutionDays} días`}
                 </Badge>
             </CardHeader>
-            <CardContent className="flex flex-1 flex-col justify-between gap-4 bg-slate-50/60 px-4 pt-4 pb-4 dark:bg-slate-950/20">
+            <CardContent className="flex flex-1 flex-col justify-between gap-4 bg-slate-50/60 px-4 pt-4 pb-4 dark:bg-[#0f1b2a]/80">
                 {!intern ? (
-                    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white px-4 py-8 text-center text-sm font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-900">
+                    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white px-4 py-8 text-center text-sm font-medium text-slate-500 dark:border-[#2c465c] dark:bg-[#17283c]">
                         Todavía no hay tareas vinculadas para mostrar progreso.
                     </div>
                 ) : (
@@ -312,7 +312,7 @@ function InternOwnProgressPanel({
                                     background: `conic-gradient(var(--sidebar) ${progress * 3.6}deg, #e2e8f0 0deg)`,
                                 }}
                             >
-                                <div className="absolute inset-3 rounded-full bg-white shadow-inner dark:bg-slate-900" />
+                                <div className="absolute inset-3 rounded-full bg-white shadow-inner dark:bg-[#17283c]" />
                                 <div className="relative text-center">
                                     <p className="text-5xl leading-none font-black text-slate-900 dark:text-white">
                                         {progress}%
@@ -327,7 +327,7 @@ function InternOwnProgressPanel({
                                 <p className="truncate text-sm font-black text-slate-900 dark:text-white">
                                     {intern.name}
                                 </p>
-                                <p className="mt-0.5 truncate text-[11px] font-medium text-slate-500">
+                                <p className="mt-0.5 truncate text-[11px] font-medium text-slate-500 dark:text-[#94a7b8]">
                                     {intern.center}
                                 </p>
                             </div>
@@ -362,14 +362,14 @@ function InternProgressStat({
     hint: string;
 }) {
     return (
-        <div className="rounded-lg border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-2 text-center shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900">
+        <div className="rounded-lg border border-l-2 border-slate-300 border-l-sidebar bg-white px-2.5 py-2 text-center shadow-sm dark:border-[#2c465c] dark:border-l-[#9fc6bf] dark:bg-[#17283c]">
             <p className="text-[9px] leading-3 font-black tracking-widest text-slate-500 uppercase">
                 {label}
             </p>
             <p className="mt-1 text-base leading-5 font-black text-slate-900 dark:text-white">
                 {value}
             </p>
-            <p className="mt-0.5 truncate text-[10px] font-medium text-slate-500">
+            <p className="mt-0.5 truncate text-[10px] font-medium text-slate-500 dark:text-[#94a7b8]">
                 {hint}
             </p>
         </div>

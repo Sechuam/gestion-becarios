@@ -53,11 +53,11 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
     }
 
     return (
-        <Card className="gap-0 overflow-visible rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+        <Card className="gap-0 overflow-visible rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-[#2f4a62] dark:bg-[#142235]">
             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-            <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
+            <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-[#3c6270] dark:bg-[#22374d]">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
-                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-[#142235]">
                         <FileText className="h-4 w-4" />
                     </div>
                     Registro Manual
@@ -119,7 +119,7 @@ export function ManualLogCard({ form, manageableInterns, onSubmit }: Props) {
                                     <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
                                     {showInternDropdown && (
-                                        <div className="absolute top-[calc(100%+4px)] right-0 left-0 z-50 max-h-56 overflow-y-auto rounded-xl border border-sidebar/20 bg-white shadow-xl dark:bg-slate-900">
+                                        <div className="absolute top-[calc(100%+4px)] right-0 left-0 z-50 max-h-56 overflow-y-auto rounded-xl border border-sidebar/20 bg-white shadow-xl dark:bg-[#142235]">
                                             {filteredInterns.length > 0 ? (
                                                 filteredInterns.map(
                                                     (intern) => (

@@ -9,7 +9,7 @@ type Props = {
 
 export function AbsenceRow({ absence, onUploadJustification }: Props) {
     return (
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-300 bg-slate-100 p-4 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-200/70 hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-300 bg-slate-100 p-4 shadow-sm transition-all hover:border-slate-400 hover:bg-slate-200/70 hover:shadow-md dark:border-[#2c465c] dark:bg-[#17283c]">
             <div className="flex items-center gap-4">
                 <div
                     className={`flex h-10 w-10 items-center justify-center rounded-lg shadow-inner ${
@@ -26,7 +26,7 @@ export function AbsenceRow({ absence, onUploadJustification }: Props) {
                     <p className="text-sm leading-none font-black text-slate-800 dark:text-white">
                         {absence?.reason || 'Sin motivo'}
                     </p>
-                    <p className="mt-1 text-[9px] font-black tracking-widest text-slate-500 uppercase dark:text-slate-400">
+                    <p className="mt-1 text-[9px] font-black tracking-widest text-slate-500 uppercase dark:text-[#8fa3b6]">
                         {absence?.date || '--'}
                     </p>
                 </div>
@@ -54,7 +54,7 @@ export function AbsenceRow({ absence, onUploadJustification }: Props) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-lg text-slate-600 hover:bg-white hover:text-sidebar dark:text-slate-300 dark:hover:bg-slate-900"
+                            className="h-8 w-8 rounded-lg text-slate-600 hover:bg-white hover:text-sidebar dark:text-[#c4d2df] dark:hover:bg-slate-900"
                             asChild
                         >
                             <a
@@ -68,7 +68,7 @@ export function AbsenceRow({ absence, onUploadJustification }: Props) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-lg text-slate-600 hover:bg-white hover:text-sidebar dark:text-slate-300 dark:hover:bg-slate-900"
+                            className="h-8 w-8 rounded-lg text-slate-600 hover:bg-white hover:text-sidebar dark:text-[#c4d2df] dark:hover:bg-slate-900"
                             asChild
                         >
                             <a href={absence.justification_url} download>

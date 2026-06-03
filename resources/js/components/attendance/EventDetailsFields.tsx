@@ -29,7 +29,7 @@ type Props = {
 
 export function EventDetailsFields({ data, errors, colors, setData }: Props) {
     return (
-        <div className="custom-scrollbar flex-[1.4] space-y-4 overflow-y-auto border-r border-slate-100 p-6 dark:border-slate-800">
+        <div className="custom-scrollbar flex-[1.4] space-y-4 overflow-y-auto border-r border-slate-100 p-6 dark:border-[#2f4a62]">
             <div className="space-y-1.5">
                 <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-900 uppercase">
                     Título del Evento
@@ -66,7 +66,7 @@ export function EventDetailsFields({ data, errors, colors, setData }: Props) {
                 />
             </div>
 
-            <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-800/30">
+            <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/80 p-4 dark:border-[#2f4a62] dark:bg-[#17283c]/70">
                 <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
                         <Label className="ml-1 text-[9px] font-black tracking-widest text-slate-900 uppercase">

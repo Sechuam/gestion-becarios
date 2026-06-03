@@ -87,8 +87,8 @@ export default function Index() {
                 <div className="grid gap-3 xl:grid-cols-[1fr_22rem]">
                     <Card className="pt-0 pb-0">
                         <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-                        <CardHeader className="border-b border-slate-400 bg-slate-200 py-3 dark:border-slate-800 dark:bg-slate-800/70">
-                            <CardTitle className="text-slate-800 dark:text-slate-100">
+                        <CardHeader className="border-b border-slate-400 bg-slate-200 py-3 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
+                            <CardTitle className="text-slate-800 dark:text-[#edf1f5]">
                                 Accesos de gestión
                             </CardTitle>
                             <CardDescription>
@@ -104,7 +104,7 @@ export default function Index() {
                                     <Link
                                         key={item.href}
                                         href={item.href}
-                                        className="group flex min-h-28 items-start gap-3 rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm transition-all hover:border-sidebar/25 hover:bg-slate-50 hover:shadow-md dark:bg-slate-900/60 dark:hover:bg-slate-800/80"
+                                        className="group flex min-h-28 items-start gap-3 rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm transition-all hover:border-sidebar/25 hover:bg-slate-50 hover:shadow-md dark:bg-[#142235] dark:hover:bg-slate-800/80"
                                     >
                                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sidebar text-white shadow-sm transition-transform group-hover:scale-105">
                                             <Icon className="h-5 w-5" />
@@ -125,8 +125,8 @@ export default function Index() {
 
                     <Card className="pt-0 pb-0">
                         <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-                        <CardHeader className="border-b border-slate-400 bg-slate-200 py-3 dark:border-slate-800 dark:bg-slate-800/70">
-                            <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                        <CardHeader className="border-b border-slate-400 bg-slate-200 py-3 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
+                            <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-[#edf1f5]">
                                 <ListChecks className="h-4 w-4" />
                                 Revisión rápida
                             </CardTitle>
@@ -139,12 +139,12 @@ export default function Index() {
                             {operatingChecks.map((check, index) => (
                                 <div
                                     key={check}
-                                    className="flex gap-3 rounded-xl border border-sidebar/10 bg-white p-3 shadow-sm dark:bg-slate-900/60"
+                                    className="flex gap-3 rounded-xl border border-sidebar/10 bg-white p-3 shadow-sm dark:bg-[#142235]"
                                 >
-                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[10px] font-black text-slate-800 dark:bg-slate-700 dark:text-white">
+                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[10px] font-black text-slate-800 dark:bg-[#22374d] dark:text-white">
                                         {index + 1}
                                     </span>
-                                    <p className="text-xs leading-snug font-medium text-slate-600 dark:text-slate-300">
+                                    <p className="text-xs leading-snug font-medium text-slate-600 dark:text-[#c4d2df]">
                                         {check}
                                     </p>
                                 </div>

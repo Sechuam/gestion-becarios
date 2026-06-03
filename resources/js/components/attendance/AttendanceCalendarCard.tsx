@@ -72,7 +72,7 @@ export function AttendanceCalendarCard({
     };
 
     return (
-        <Card className="overflow-hidden rounded-xl border-sidebar/10 bg-white p-2 shadow-lg dark:bg-slate-900">
+        <Card className="overflow-hidden rounded-xl border-sidebar/10 bg-white p-2 shadow-lg dark:bg-[#142235]">
             <CardContent className="p-0">
                 <CalendarVisibilityFilters
                     showJornadas={showJornadas}
@@ -83,7 +83,7 @@ export function AttendanceCalendarCard({
                     onShowAbsencesChange={setShowAbsences}
                     onShowPersonalEventsChange={setShowPersonalEvents}
                 />
-                <div className="attendance-calendar rounded-lg border border-sidebar/10 bg-slate-50/50 p-2 shadow-inner transition-all dark:bg-slate-800/50">
+                <div className="attendance-calendar rounded-lg border border-sidebar/10 bg-slate-50/50 p-2 shadow-inner transition-all dark:bg-[#17283c]/85">
                     <FullCalendar
                         ref={calendarRef}
                         plugins={[

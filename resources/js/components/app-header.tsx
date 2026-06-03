@@ -72,7 +72,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
     return (
         <>
-            <div className="border-b-2 border-sidebar bg-white/50 backdrop-blur-md dark:bg-slate-900/50">
+            <div className="border-b-2 border-sidebar bg-white/50 backdrop-blur-md dark:bg-[#142235]/88">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
@@ -242,7 +242,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                 </div>
             </div>
             {breadcrumbs.length > 1 && (
-                <div className="flex w-full border-b border-sidebar bg-stone-100/40 dark:bg-slate-900/20">
+                <div className="flex w-full border-b border-sidebar bg-stone-100/40 dark:bg-[#0f1b2a]/70">
                     <div className="mx-auto flex h-12 w-full items-center justify-start px-4 font-bold text-slate-500 md:max-w-7xl">
                         <Breadcrumbs breadcrumbs={breadcrumbs} />
                     </div>

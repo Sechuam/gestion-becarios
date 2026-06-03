@@ -24,11 +24,11 @@ export function DailyRegisterCard({
     onTodayLogsOpenChange,
 }: Props) {
     return (
-        <Card className="gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+        <Card className="gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs dark:border-[#2f4a62] dark:bg-[#142235]">
             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-            <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-slate-600 dark:bg-slate-700">
+            <CardHeader className="border-b border-slate-400 bg-slate-200 p-3 pb-2 dark:border-[#3c6270] dark:bg-[#22374d]">
                 <CardTitle className="flex items-center gap-2 text-base font-black tracking-tight text-slate-800 dark:text-white">
-                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-slate-900">
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-sidebar shadow-sm ring-1 ring-sidebar/10 dark:bg-[#142235]">
                         <CalendarClock className="h-4 w-4" />
                     </div>
                     Registro de Jornada
@@ -42,14 +42,14 @@ export function DailyRegisterCard({
                                 <p className="text-[10px] font-black tracking-widest text-slate-800 uppercase dark:text-white">
                                     Monitor de actividad
                                 </p>
-                                <p className="text-[11px] font-medium text-slate-500 italic dark:text-slate-400">
+                                <p className="text-[11px] font-medium text-slate-500 italic dark:text-[#8fa3b6]">
                                     Accede al fichaje rápido arriba y deja aquí
                                     solo el resumen de hoy.
                                 </p>
                             </div>
                             <Badge
                                 variant="outline"
-                                className="h-8 rounded-full border-sidebar/20 bg-white/85 px-3 text-[10px] font-black tracking-widest text-sidebar uppercase shadow-sm backdrop-blur-sm dark:bg-slate-900/85"
+                                className="h-8 rounded-full border-sidebar/20 bg-white/85 px-3 text-[10px] font-black tracking-widest text-sidebar uppercase shadow-sm backdrop-blur-sm dark:bg-[#142235]/92"
                             >
                                 {currentLog
                                     ? 'Jornada en curso'
@@ -76,7 +76,7 @@ export function DailyRegisterCard({
                         </div>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/10 to-sidebar-accent/10 p-3 shadow-sm dark:bg-slate-800/80 dark:from-sidebar/15 dark:to-sidebar-accent/15">
+                    <div className="rounded-xl border border-sidebar/20 bg-gradient-to-r from-sidebar/10 to-sidebar-accent/10 p-3 shadow-sm dark:bg-[#17283c]/90 dark:from-sidebar/15 dark:to-sidebar-accent/15">
                         {liveElapsed ? (
                             <div className="relative overflow-hidden rounded-xl border border-sidebar/10 bg-gradient-to-r from-sidebar/5 to-sidebar-accent/5 p-3 backdrop-blur-sm">
                                 <div className="relative flex items-center gap-3">
@@ -98,7 +98,7 @@ export function DailyRegisterCard({
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex h-full min-h-28 items-center rounded-xl border border-dashed border-sidebar/15 bg-slate-50/60 px-4 py-3 dark:bg-slate-900/30">
+                            <div className="flex h-full min-h-28 items-center rounded-xl border border-dashed border-sidebar/15 bg-slate-50/60 px-4 py-3 dark:bg-[#142235]/70">
                                 <div className="space-y-1">
                                     <p className="text-[8px] leading-none font-black tracking-[0.2em] text-sidebar uppercase">
                                         Estado actual
@@ -106,7 +106,7 @@ export function DailyRegisterCard({
                                     <p className="text-sm font-bold text-slate-800 dark:text-white">
                                         No hay un tramo abierto ahora mismo.
                                     </p>
-                                    <p className="text-[11px] font-medium text-slate-500 italic dark:text-slate-400">
+                                    <p className="text-[11px] font-medium text-slate-500 italic dark:text-[#8fa3b6]">
                                         Cuando fiches entrada, el contador en
                                         vivo aparecerá aquí.
                                     </p>

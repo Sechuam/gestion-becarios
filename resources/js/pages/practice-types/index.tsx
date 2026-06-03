@@ -181,7 +181,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
                     }
                 />
 
-                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-slate-900/60">
+                <div className="rounded-xl border border-sidebar/10 bg-white p-2 shadow-lg transition-all dark:bg-[#142235]">
                     <div className="flex flex-wrap items-center gap-2">
                         <div className="relative flex-1">
                             <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -220,7 +220,7 @@ export default function Index({ practice_types, filters = {} }: Props) {
                             </Select>
                         </div>
 
-                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-3 py-1 dark:bg-slate-800">
+                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-3 py-1 dark:bg-[#17283c]">
                             <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
                             <span className="text-[10px] font-bold tracking-widest whitespace-nowrap text-muted-foreground uppercase tabular-nums">
                                 {practice_types.data.length} /{' '}

@@ -272,7 +272,7 @@ export default function Show({
                 {/* PANEL ÚNICO UNIFICADO */}
                 <Card className="app-panel overflow-hidden rounded-xl border-sidebar/10 pt-0 pb-0 shadow-xl">
                     <Tabs defaultValue="general" className="w-full">
-                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2 dark:bg-[#142235]/85">
                             <TabsList
                                 className={cn(
                                     'grid h-auto w-full grid-cols-1 gap-2 bg-transparent p-0 md:h-10',
@@ -311,7 +311,7 @@ export default function Show({
                                         <TabsTrigger
                                             key={tab.value}
                                             value={tab.value}
-                                            className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                            className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all dark:text-[#aebecd] dark:hover:bg-[#22374d] dark:hover:text-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                                         >
                                             <div className="flex items-center gap-2">
                                                 <tab.icon className="h-4 w-4" />
@@ -395,7 +395,7 @@ export default function Show({
                                                             {item.value}
                                                         </a>
                                                     ) : (
-                                                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                                                        <p className="text-xs font-semibold text-slate-800 dark:text-[#edf1f5]">
                                                             {item.value || '—'}
                                                         </p>
                                                     )}
@@ -410,7 +410,7 @@ export default function Show({
                                                     <a
                                                         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${educationCenter.address}, ${educationCenter.city || ''}`)}`}
                                                         target="_blank"
-                                                        className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 transition-colors hover:text-indigo-600 dark:text-slate-100"
+                                                        className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 transition-colors hover:text-indigo-600 dark:text-[#edf1f5]"
                                                     >
                                                         {
                                                             educationCenter.address
@@ -505,7 +505,7 @@ export default function Show({
                                 className="mt-0 animate-in space-y-4 duration-500 fade-in"
                             >
                                 {/* BARRA DE HERRAMIENTAS DE BECARIOS */}
-                                <div className="rounded-xl border border-sidebar/10 bg-white/70 p-1.5 shadow-xs backdrop-blur-md transition-all dark:bg-slate-900/60">
+                                <div className="rounded-xl border border-sidebar/10 bg-white/70 p-1.5 shadow-xs backdrop-blur-md transition-all dark:bg-[#142235]">
                                     <div className="flex flex-wrap items-center gap-2">
                                         <div className="relative w-full flex-none sm:w-64">
                                             <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -700,7 +700,7 @@ export default function Show({
                                             </Dialog>
                                         )}
 
-                                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2.5 dark:bg-slate-800">
+                                        <div className="flex h-8 flex-none items-center gap-1.5 rounded-lg border border-sidebar/5 bg-slate-50 px-2.5 dark:bg-[#17283c]">
                                             <span className="flex h-1 w-1 animate-pulse rounded-full bg-sidebar" />
                                             <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                                                 {interns.data.length} /{' '}
@@ -711,7 +711,7 @@ export default function Show({
                                 </div>
 
                                 {/* LISTADO DE BECARIOS (TABLA INTEGRADA) */}
-                                <div className="w-full overflow-hidden rounded-xl border border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+                                <div className="w-full overflow-hidden rounded-xl border border-sidebar/10 bg-white shadow-sm dark:bg-[#142235]">
                                     <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                                     <div className="w-full overflow-x-auto">
                                         <table className="w-full border-collapse text-left text-sm">
@@ -775,7 +775,7 @@ export default function Show({
                                                                             {!isIntern ? (
                                                                                 <Link
                                                                                     href={`/interns/${intern.id}`}
-                                                                                    className="text-xs font-bold text-slate-900 transition-colors hover:text-sidebar dark:text-slate-100"
+                                                                                    className="text-xs font-bold text-slate-900 transition-colors hover:text-sidebar dark:text-[#edf1f5]"
                                                                                 >
                                                                                     {
                                                                                         intern
@@ -784,7 +784,7 @@ export default function Show({
                                                                                     }
                                                                                 </Link>
                                                                             ) : (
-                                                                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                                                                                <span className="text-xs font-bold text-slate-900 dark:text-[#edf1f5]">
                                                                                     {
                                                                                         intern
                                                                                             .user
@@ -801,7 +801,7 @@ export default function Show({
                                                                     </div>
                                                                 </td>
                                                                 <td className="px-4 py-2.5">
-                                                                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                                                                    <span className="text-xs font-semibold text-slate-600 dark:text-[#c4d2df]">
                                                                         {
                                                                             intern.academic_degree
                                                                         }
@@ -854,7 +854,7 @@ export default function Show({
                                     </div>
 
                                     {/* PAGINACIÓN INTEGRADA */}
-                                    <div className="flex items-center justify-between border-t border-sidebar/10 bg-slate-50/50 px-4 py-3 dark:bg-slate-800/70">
+                                    <div className="flex items-center justify-between border-t border-sidebar/10 bg-slate-50/50 px-4 py-3 dark:bg-[#1b2d42]">
                                         <p className="text-[9px] font-black tracking-widest text-slate-500 uppercase">
                                             Mostrando {interns.from || 0} a{' '}
                                             {interns.to || 0} de {interns.total}{' '}
@@ -871,8 +871,8 @@ export default function Show({
                                 className="mt-0 animate-in duration-500 fade-in"
                             >
                                 <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
-                                    <div className="flex items-center justify-between border-b border-slate-50 pb-2 tracking-tight md:col-span-12 dark:border-slate-800">
-                                        <h3 className="flex items-center gap-1.5 text-sm font-bold text-slate-800 dark:text-slate-100">
+                                    <div className="flex items-center justify-between border-b border-slate-50 pb-2 tracking-tight md:col-span-12 dark:border-[#2f4a62]">
+                                        <h3 className="flex items-center gap-1.5 text-sm font-bold text-slate-800 dark:text-[#edf1f5]">
                                             <HistoryIcon className="h-4.5 w-4.5 text-slate-500" />
                                             Historial y Notas de Auditoría
                                         </h3>
@@ -881,11 +881,11 @@ export default function Show({
                                     {canViewNotes && (
                                         <div className="space-y-4 md:col-span-5">
                                             <div className="space-y-3">
-                                                <div className="rounded-xl border border-sidebar/15 bg-white p-4 shadow-xs dark:bg-slate-900">
+                                                <div className="rounded-xl border border-sidebar/15 bg-white p-4 shadow-xs dark:bg-[#142235]">
                                                     <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                                         Notas del centro
                                                     </p>
-                                                    <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                                                    <p className="mt-0.5 text-[11px] text-slate-500 dark:text-[#8fa3b6]">
                                                         Escribe observaciones
                                                         internas sobre este
                                                         centro educativo y
@@ -898,7 +898,7 @@ export default function Show({
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        className="mt-3 min-h-[140px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-700 transition-all outline-none focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-800"
+                                                        className="mt-3 min-h-[140px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-700 transition-all outline-none focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-[#2c465c] dark:bg-[#17283c] dark:text-[#d8e4ef] dark:focus:bg-slate-800"
                                                         placeholder="Añade observaciones internas sobre este centro..."
                                                     />
                                                     <div className="mt-3 flex justify-end gap-2">
@@ -937,7 +937,7 @@ export default function Show({
 
                                                     {(educationCenter.notes_updated_by ||
                                                         educationCenter.internal_notes_updated_at) && (
-                                                        <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-[9px] font-semibold text-slate-400 dark:border-slate-700">
+                                                        <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-[9px] font-semibold text-slate-400 dark:border-[#2c465c]">
                                                             <span className="tracking-tighter uppercase opacity-70">
                                                                 Última edición
                                                             </span>
@@ -1056,14 +1056,14 @@ export default function Show({
                                                                 }
                                                                 className="group relative"
                                                             >
-                                                                <div className="absolute top-1.5 -left-[29px] z-10 h-3.5 w-3.5 rounded-full border-4 border-white bg-slate-200 transition-colors group-hover:bg-primary dark:border-slate-900" />
+                                                                <div className="absolute top-1.5 -left-[29px] z-10 h-3.5 w-3.5 rounded-full border-4 border-white bg-slate-200 transition-colors group-hover:bg-primary dark:border-[#0f1b2a]" />
                                                                 <div>
                                                                     <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                                                                         {formatDateTimeEs(
                                                                             activity.created_at,
                                                                         )}
                                                                     </p>
-                                                                    <p className="mt-0.5 text-xs font-bold text-slate-800 uppercase dark:text-slate-100">
+                                                                    <p className="mt-0.5 text-xs font-bold text-slate-800 uppercase dark:text-[#edf1f5]">
                                                                         {activity.event ===
                                                                         'updated'
                                                                             ? 'Actualización de ficha'
@@ -1072,7 +1072,7 @@ export default function Show({
                                                                     <p className="mt-0.5 text-[11px] text-slate-500">
                                                                         Realizado
                                                                         por{' '}
-                                                                        <span className="font-bold text-slate-700 dark:text-slate-300">
+                                                                        <span className="font-bold text-slate-700 dark:text-[#c4d2df]">
                                                                             {activity.causer_name ||
                                                                                 'Sistema'}
                                                                         </span>
@@ -1080,7 +1080,7 @@ export default function Show({
 
                                                                     {visibleFields.length >
                                                                         0 && (
-                                                                        <div className="mt-2.5 space-y-1.5 rounded-xl border border-sidebar/15 bg-white p-3 dark:bg-slate-900">
+                                                                        <div className="mt-2.5 space-y-1.5 rounded-xl border border-sidebar/15 bg-white p-3 dark:bg-[#142235]">
                                                                             {visibleFields.map(
                                                                                 (
                                                                                     field,

@@ -37,7 +37,7 @@ export default function Create() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nuevo tipo de práctica" />
-            <div className="min-h-screen w-full space-y-4 p-4 dark:bg-slate-900/20">
+            <div className="min-h-screen w-full space-y-4 p-4 dark:bg-[#0f1b2a]/70">
                 {/* CABECERA ESTILIZADA */}
                 <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-6 shadow-lg">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0)_100%)]" />
@@ -59,7 +59,7 @@ export default function Create() {
 
                 <form
                     onSubmit={submit}
-                    className="app-panel rounded-xl border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900"
+                    className="app-panel rounded-xl border-sidebar/10 bg-white p-6 shadow-xl dark:bg-[#142235]"
                 >
                     {/* SECCIÓN 01: INFORMACIÓN BÁSICA */}
                     <div className="mb-8">

@@ -49,7 +49,7 @@ export default function Create() {
 
                 <form
                     onSubmit={submit}
-                    className="app-panel rounded-xl border-sidebar/10 bg-white p-5 shadow-xl md:p-6 dark:bg-slate-900"
+                    className="app-panel rounded-xl border-sidebar/10 bg-white p-5 shadow-xl md:p-6 dark:bg-[#142235]"
                 >
                     <div className="mb-8">
                         <div className="mb-5 flex items-center gap-4 border-b border-sidebar/10 pb-3">
