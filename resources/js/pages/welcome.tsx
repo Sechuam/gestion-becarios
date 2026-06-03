@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import ThemeToggleButton from '@/components/theme-toggle-button';
 import { dashboard, login, register } from '@/routes';
 
 const fadeUp = {
@@ -95,15 +96,15 @@ export default function Welcome({
         <>
             <Head title="BecaGest | Gestión integral de becarios" />
 
-            <main className="min-h-dvh overflow-hidden bg-[#f6f7f2] text-[#172033]">
-                <section className="relative min-h-[92dvh] border-b border-[#d7ded2]">
+            <main className="min-h-dvh overflow-hidden bg-[#f6f7f2] text-[#172033] dark:bg-[#111922] dark:text-[#edf1f5]">
+                <section className="relative min-h-[92dvh] border-b border-[#d7ded2] dark:border-white/10">
                     <div className="absolute inset-0">
                         <img
                             src="/images/becagest-logo.png"
                             alt=""
-                            className="h-full w-full object-cover object-center opacity-[0.08]"
+                            className="h-full w-full object-cover object-center opacity-[0.08] dark:opacity-[0.05]"
                         />
-                        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(246,247,242,0.96)_0%,rgba(230,238,232,0.94)_46%,rgba(43,48,54,0.9)_100%)]" />
+                        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(246,247,242,0.96)_0%,rgba(230,238,232,0.94)_46%,rgba(43,48,54,0.9)_100%)] dark:bg-[linear-gradient(135deg,rgba(17,25,34,0.98)_0%,rgba(25,38,49,0.94)_48%,rgba(8,13,18,0.98)_100%)]" />
                     </div>
 
                     <motion.header
@@ -117,7 +118,7 @@ export default function Welcome({
                             className="flex items-center gap-3"
                             aria-label="BecaGest"
                         >
-                            <span className="flex size-10 overflow-hidden rounded-lg bg-white shadow-sm">
+                            <span className="flex size-10 overflow-hidden rounded-lg bg-white shadow-sm dark:bg-white/10">
                                 <img
                                     src="/images/becagest-logo-small.png"
                                     alt=""
@@ -129,45 +130,57 @@ export default function Welcome({
                             </span>
                         </Link>
 
-                        <nav className="hidden items-center gap-7 text-sm font-semibold text-[#4f5b6b] md:flex">
-                            <a href="#modulos" className="hover:text-[#172033]">
+                        <nav className="hidden items-center gap-7 text-sm font-semibold text-[#4f5b6b] md:flex dark:text-[#b9c6d5]">
+                            <a
+                                href="#modulos"
+                                className="hover:text-[#172033] dark:hover:text-white"
+                            >
                                 Módulos
                             </a>
-                            <a href="#flujo" className="hover:text-[#172033]">
+                            <a
+                                href="#flujo"
+                                className="hover:text-[#172033] dark:hover:text-white"
+                            >
                                 Flujo
                             </a>
                             <a
                                 href="#informes"
-                                className="hover:text-[#172033]"
+                                className="hover:text-[#172033] dark:hover:text-white"
                             >
                                 Informes
                             </a>
                         </nav>
 
-                        {auth.user ? (
-                            <Button asChild className="bg-[#2b3036] text-white">
-                                <Link href={dashboard()}>
-                                    Dashboard
-                                    <ArrowRight />
-                                </Link>
-                            </Button>
-                        ) : (
-                            <div className="flex items-center gap-2">
-                                <Button asChild variant="ghost">
-                                    <Link href={login()}>Acceder</Link>
+                        <div className="flex items-center gap-2">
+                            <ThemeToggleButton />
+                            {auth.user ? (
+                                <Button
+                                    asChild
+                                    className="bg-[#2b3036] text-white dark:bg-[#9fc6bf] dark:text-[#14202a]"
+                                >
+                                    <Link href={dashboard()}>
+                                        Dashboard
+                                        <ArrowRight />
+                                    </Link>
                                 </Button>
-                                {canRegister && (
-                                    <Button
-                                        asChild
-                                        className="hidden bg-[#2b3036] text-white sm:inline-flex"
-                                    >
-                                        <Link href={register()}>
-                                            Crear cuenta
-                                        </Link>
+                            ) : (
+                                <>
+                                    <Button asChild variant="ghost">
+                                        <Link href={login()}>Acceder</Link>
                                     </Button>
-                                )}
-                            </div>
-                        )}
+                                    {canRegister && (
+                                        <Button
+                                            asChild
+                                            className="hidden bg-[#2b3036] text-white sm:inline-flex"
+                                        >
+                                            <Link href={register()}>
+                                                Crear cuenta
+                                            </Link>
+                                        </Button>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </motion.header>
 
                     <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-5 pt-8 pb-14 sm:px-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:pt-14 lg:pb-20">
@@ -180,7 +193,7 @@ export default function Welcome({
                             <motion.div
                                 variants={fadeUp}
                                 transition={{ duration: 0.55, ease: 'easeOut' }}
-                                className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#9fb6aa]/60 bg-white/72 px-3 py-1 text-xs font-bold tracking-[0.16em] text-[#3b6f66] uppercase shadow-sm"
+                                className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#9fb6aa]/60 bg-white/72 px-3 py-1 text-xs font-bold tracking-[0.16em] text-[#3b6f66] uppercase shadow-sm dark:border-white/10 dark:bg-white/8 dark:text-[#b9d8d2]"
                             >
                                 <Sparkles className="size-3.5" />
                                 Plataforma de prácticas
@@ -188,7 +201,7 @@ export default function Welcome({
                             <motion.h1
                                 variants={fadeUp}
                                 transition={{ duration: 0.65, ease: 'easeOut' }}
-                                className="max-w-4xl text-5xl leading-[1.02] font-black tracking-tight text-[#172033] sm:text-6xl lg:text-7xl"
+                                className="max-w-4xl text-5xl leading-[1.02] font-black tracking-tight text-[#172033] sm:text-6xl lg:text-7xl dark:text-[#edf1f5]"
                             >
                                 Gestiona becarios, tutores y prácticas sin
                                 perder el pulso.
@@ -196,7 +209,7 @@ export default function Welcome({
                             <motion.p
                                 variants={fadeUp}
                                 transition={{ duration: 0.65, ease: 'easeOut' }}
-                                className="mt-6 max-w-2xl text-lg leading-8 font-medium text-[#536073] sm:text-xl"
+                                className="mt-6 max-w-2xl text-lg leading-8 font-medium text-[#536073] sm:text-xl dark:text-[#aeb9c7]"
                             >
                                 BecaGest reúne expedientes, tareas, asistencia,
                                 evaluaciones, mensajes e informes para que cada
@@ -211,7 +224,7 @@ export default function Welcome({
                                 <Button
                                     asChild
                                     size="lg"
-                                    className="bg-[#2b3036] text-white shadow-xl shadow-slate-900/15 hover:bg-[#3b424b]"
+                                    className="bg-[#2b3036] text-white shadow-xl shadow-slate-900/15 hover:bg-[#3b424b] dark:bg-[#9fc6bf] dark:text-[#14202a] dark:hover:bg-[#b7d8d2]"
                                 >
                                     <Link
                                         href={auth.user ? dashboard() : login()}
@@ -227,7 +240,7 @@ export default function Welcome({
                                         asChild
                                         size="lg"
                                         variant="outline"
-                                        className="border-[#b9c8be] bg-white/75"
+                                        className="border-[#b9c8be] bg-white/75 dark:border-white/12 dark:bg-white/8 dark:text-[#edf1f5] dark:hover:bg-white/12"
                                     >
                                         <Link href={register()}>
                                             Solicitar acceso
@@ -239,7 +252,7 @@ export default function Welcome({
                             <motion.div
                                 variants={fadeUp}
                                 transition={{ duration: 0.65, ease: 'easeOut' }}
-                                className="mt-10 grid max-w-2xl gap-3 text-sm font-semibold text-[#425067] sm:grid-cols-3"
+                                className="mt-10 grid max-w-2xl gap-3 text-sm font-semibold text-[#425067] sm:grid-cols-3 dark:text-[#c9d2dc]"
                             >
                                 <span className="flex items-center gap-2">
                                     <CheckCircle2 className="size-4 text-[#4e7f78]" />
@@ -273,19 +286,19 @@ export default function Welcome({
                                     repeat: Infinity,
                                     ease: 'easeInOut',
                                 }}
-                                className="rounded-2xl border border-white/60 bg-white/82 p-4 shadow-2xl shadow-slate-900/18 backdrop-blur"
+                                className="rounded-2xl border border-white/60 bg-white/82 p-4 shadow-2xl shadow-slate-900/18 backdrop-blur dark:border-white/10 dark:bg-white/8 dark:shadow-black/30"
                             >
-                                <div className="rounded-xl border border-[#d7ded2] bg-[#fbfcf9] p-4">
-                                    <div className="flex items-center justify-between border-b border-[#e1e7de] pb-4">
+                                <div className="rounded-xl border border-[#d7ded2] bg-[#fbfcf9] p-4 dark:border-white/10 dark:bg-[#121b26]">
+                                    <div className="flex items-center justify-between border-b border-[#e1e7de] pb-4 dark:border-white/10">
                                         <div>
-                                            <p className="text-xs font-bold tracking-[0.14em] text-[#6a7687] uppercase">
+                                            <p className="text-xs font-bold tracking-[0.14em] text-[#6a7687] uppercase dark:text-[#aeb9c7]">
                                                 Panel operativo
                                             </p>
                                             <h2 className="mt-1 text-xl font-black">
                                                 Resumen de prácticas
                                             </h2>
                                         </div>
-                                        <div className="rounded-lg bg-[#d9e9e4] p-2 text-[#315d58]">
+                                        <div className="rounded-lg bg-[#d9e9e4] p-2 text-[#315d58] dark:bg-[#9fc6bf]/15 dark:text-[#9fc6bf]">
                                             <LayoutDashboard className="size-5" />
                                         </div>
                                     </div>
@@ -295,9 +308,9 @@ export default function Welcome({
                                             ([label, value, meta]) => (
                                                 <div
                                                     key={label}
-                                                    className="rounded-lg border border-[#dde5da] bg-white p-3"
+                                                    className="rounded-lg border border-[#dde5da] bg-white p-3 dark:border-white/10 dark:bg-white/6"
                                                 >
-                                                    <p className="text-xs font-semibold text-[#6a7687]">
+                                                    <p className="text-xs font-semibold text-[#6a7687] dark:text-[#aeb9c7]">
                                                         {label}
                                                     </p>
                                                     <p className="mt-2 text-2xl font-black">
@@ -312,12 +325,12 @@ export default function Welcome({
                                     </div>
 
                                     <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_0.75fr]">
-                                        <div className="rounded-lg border border-[#dde5da] bg-white p-4">
+                                        <div className="rounded-lg border border-[#dde5da] bg-white p-4 dark:border-white/10 dark:bg-white/6">
                                             <div className="mb-4 flex items-center justify-between">
                                                 <p className="font-bold">
                                                     Progreso por fase
                                                 </p>
-                                                <span className="rounded-full bg-[#eef3ed] px-2 py-1 text-xs font-bold">
+                                                <span className="rounded-full bg-[#eef3ed] px-2 py-1 text-xs font-bold dark:bg-white/10">
                                                     Mayo
                                                 </span>
                                             </div>
@@ -327,7 +340,7 @@ export default function Welcome({
                                                         key={value}
                                                         className="mb-3 last:mb-0"
                                                     >
-                                                        <div className="mb-1 flex justify-between text-xs font-semibold text-[#667286]">
+                                                        <div className="mb-1 flex justify-between text-xs font-semibold text-[#667286] dark:text-[#b9c6d5]">
                                                             <span>
                                                                 Grupo{' '}
                                                                 {index + 1}
@@ -336,7 +349,7 @@ export default function Welcome({
                                                                 {value}%
                                                             </span>
                                                         </div>
-                                                        <div className="h-2 rounded-full bg-[#edf1ea]">
+                                                        <div className="h-2 rounded-full bg-[#edf1ea] dark:bg-white/10">
                                                             <motion.div
                                                                 initial={{
                                                                     width: 0,
@@ -368,7 +381,7 @@ export default function Welcome({
                                                 delay: 0.85,
                                                 ease: 'easeOut',
                                             }}
-                                            className="rounded-lg border border-[#dde5da] bg-[#2b3036] p-4 text-white"
+                                            className="rounded-lg border border-[#dde5da] bg-[#2b3036] p-4 text-white dark:border-[#9fc6bf]/20 dark:bg-[#0f1720]"
                                         >
                                             <p className="text-sm font-bold">
                                                 Próximas acciones
@@ -429,15 +442,15 @@ export default function Welcome({
                                         duration: 0.5,
                                         ease: 'easeOut',
                                     }}
-                                    className="rounded-xl border border-[#d9e1d6] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/10"
+                                    className="rounded-xl border border-[#d9e1d6] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/10 dark:border-white/10 dark:bg-[#17222e] dark:hover:shadow-black/20"
                                 >
-                                    <div className="mb-5 inline-flex rounded-lg bg-[#d9e9e4] p-3 text-[#315d58]">
+                                    <div className="mb-5 inline-flex rounded-lg bg-[#d9e9e4] p-3 text-[#315d58] dark:bg-[#9fc6bf]/15 dark:text-[#9fc6bf]">
                                         <module.icon className="size-6" />
                                     </div>
                                     <h3 className="text-xl font-black">
                                         {module.title}
                                     </h3>
-                                    <p className="mt-3 text-sm leading-6 text-[#5a657c]">
+                                    <p className="mt-3 text-sm leading-6 text-[#5a657c] dark:text-[#aeb9c7]">
                                         {module.description}
                                     </p>
                                 </motion.article>
@@ -448,7 +461,7 @@ export default function Welcome({
 
                 <section
                     id="flujo"
-                    className="border-y border-[#d7ded2] bg-white px-5 py-20 sm:px-8"
+                    className="border-y border-[#d7ded2] bg-white px-5 py-20 sm:px-8 dark:border-white/10 dark:bg-[#121b26]"
                 >
                     <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.85fr_1fr] lg:items-center">
                         <motion.div
@@ -465,7 +478,7 @@ export default function Welcome({
                                 Del alta inicial al informe final, sin saltos
                                 entre herramientas.
                             </h2>
-                            <p className="mt-5 text-lg leading-8 text-[#5a657c]">
+                            <p className="mt-5 text-lg leading-8 text-[#5a657c] dark:text-[#aeb9c7]">
                                 Administradores, tutores y becarios trabajan en
                                 la misma plataforma, pero cada rol ve solo lo
                                 que necesita para avanzar.
@@ -487,9 +500,9 @@ export default function Welcome({
                                         duration: 0.5,
                                         ease: 'easeOut',
                                     }}
-                                    className="flex gap-4 rounded-xl border border-[#d9e1d6] bg-[#f8faf6] p-5"
+                                    className="flex gap-4 rounded-xl border border-[#d9e1d6] bg-[#f8faf6] p-5 dark:border-white/10 dark:bg-white/6"
                                 >
-                                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#2b3036] text-sm font-black text-white">
+                                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#2b3036] text-sm font-black text-white dark:bg-[#9fc6bf] dark:text-[#14202a]">
                                         {index + 1}
                                     </span>
                                     <p className="pt-1 text-lg font-bold">
@@ -507,7 +520,7 @@ export default function Welcome({
                         whileInView={{ opacity: 1, y: 0, scale: 1 }}
                         viewport={{ once: true, amount: 0.25 }}
                         transition={{ duration: 0.65, ease: 'easeOut' }}
-                        className="mx-auto grid max-w-7xl gap-10 rounded-2xl bg-[#2b3036] p-6 text-white shadow-2xl shadow-slate-900/20 sm:p-10 lg:grid-cols-[1fr_0.9fr] lg:items-center"
+                        className="mx-auto grid max-w-7xl gap-10 rounded-2xl bg-[#2b3036] p-6 text-white shadow-2xl shadow-slate-900/20 sm:p-10 lg:grid-cols-[1fr_0.9fr] lg:items-center dark:bg-[#0f1720] dark:shadow-black/30"
                     >
                         <div>
                             <div className="mb-5 inline-flex rounded-lg bg-white/10 p-3 text-[#9fc6bf]">
@@ -557,7 +570,7 @@ export default function Welcome({
                 </section>
 
                 <section className="px-5 pb-20 sm:px-8">
-                    <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 border-t border-[#d7ded2] pt-10 md:flex-row md:items-center">
+                    <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 border-t border-[#d7ded2] pt-10 md:flex-row md:items-center dark:border-white/10">
                         <div>
                             <div className="flex items-center gap-3">
                                 <GraduationCap className="size-7 text-[#4e7f78]" />
@@ -565,7 +578,7 @@ export default function Welcome({
                                     BecaGest
                                 </h2>
                             </div>
-                            <p className="mt-3 max-w-xl text-[#5a657c]">
+                            <p className="mt-3 max-w-xl text-[#5a657c] dark:text-[#aeb9c7]">
                                 Una plataforma pensada para que la gestión de
                                 prácticas sea ordenada, medible y fácil de
                                 acompañar.
@@ -574,7 +587,7 @@ export default function Welcome({
                         <Button
                             asChild
                             size="lg"
-                            className="bg-[#2b3036] text-white hover:bg-[#3b424b]"
+                            className="bg-[#2b3036] text-white hover:bg-[#3b424b] dark:bg-[#9fc6bf] dark:text-[#14202a] dark:hover:bg-[#b7d8d2]"
                         >
                             <Link href={auth.user ? dashboard() : login()}>
                                 {auth.user
