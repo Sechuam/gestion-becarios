@@ -41,16 +41,16 @@ export function SimpleTable<T>({
     striped = false,
 }: SimpleTableProps<T>) {
     return (
-        <div className="app-panel w-full overflow-hidden rounded-xl border border-sidebar/15 shadow-xl">
-            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
+        <div className="app-panel w-full overflow-hidden rounded-xl border border-sidebar/15 shadow-xl dark:border-[#2a4158] dark:bg-[#142235] dark:shadow-[0_24px_72px_-48px_rgba(0,0,0,0.95)]">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent dark:from-[#9fc6bf] dark:to-[#5f9e95]" />
             <div className="w-full overflow-x-auto">
                 <Table className="w-full min-w-[920px] text-left text-sm">
                     <TableHeader>
-                        <TableRow className="border-b border-slate-400 bg-slate-200 text-slate-700 hover:bg-slate-200 dark:border-slate-800 dark:bg-slate-800/70 dark:text-slate-100">
+                        <TableRow className="border-b border-slate-400 bg-slate-200 text-slate-700 hover:bg-slate-200 dark:border-[#2f4a62] dark:bg-[#1b2d42] dark:text-[#edf1f5]">
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.label}
-                                    className={`px-4 py-3 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-slate-100 ${col.headClassName ?? ''}`}
+                                    className={`px-4 py-3 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-[#d8e4ef] ${col.headClassName ?? ''}`}
                                 >
                                     {col.sortKey && onSort ? (
                                         <button
@@ -58,14 +58,14 @@ export function SimpleTable<T>({
                                             onClick={() =>
                                                 onSort(col.sortKey as string)
                                             }
-                                            className="inline-flex items-center gap-1 tracking-widest text-slate-700 uppercase hover:text-slate-950 dark:text-slate-100 dark:hover:text-white"
+                                            className="inline-flex items-center gap-1 tracking-widest text-slate-700 uppercase hover:text-slate-950 dark:text-[#d8e4ef] dark:hover:text-white"
                                         >
                                             <span>{col.label}</span>
                                             {sortKey === col.sortKey ? (
                                                 sortDirection === 'desc' ? (
-                                                    <ChevronDown className="h-3 w-3 text-slate-700 dark:text-slate-100" />
+                                                    <ChevronDown className="h-3 w-3 text-slate-700 dark:text-[#d8e4ef]" />
                                                 ) : (
-                                                    <ChevronUp className="h-3 w-3 text-slate-700 dark:text-slate-100" />
+                                                    <ChevronUp className="h-3 w-3 text-slate-700 dark:text-[#d8e4ef]" />
                                                 )
                                             ) : (
                                                 <ArrowUpDown className="h-3 w-3 text-slate-400" />
@@ -83,9 +83,9 @@ export function SimpleTable<T>({
                             rows.map((row, index) => (
                                 <TableRow
                                     key={rowKey(row)}
-                                    className={`border-b border-sidebar/10 transition-colors hover:bg-accent/35 ${
+                                    className={`border-b border-sidebar/10 transition-colors hover:bg-accent/35 dark:border-[#203548] dark:hover:bg-[#1d3148] ${
                                         striped && index % 2 !== 0
-                                            ? 'bg-muted/45 dark:bg-sidebar/10'
+                                            ? 'bg-muted/45 dark:bg-[#17283c]/70'
                                             : ''
                                     }`}
                                 >

@@ -232,8 +232,8 @@ export function KanbanBoard({
                                 key={col.key}
                                 className={`flex h-[calc(100vh-17rem)] max-h-[38rem] min-h-[27rem] w-[14rem] min-w-[14rem] flex-col overflow-hidden rounded-xl border-2 shadow-sm lg:w-auto lg:min-w-0 lg:flex-1 ${
                                     index % 2 === 0
-                                        ? 'border-slate-400 bg-slate-200 dark:border-slate-600 dark:bg-slate-700'
-                                        : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900'
+                                        ? 'border-slate-400 bg-slate-200 dark:border-[#3c6270] dark:bg-[#17283c]'
+                                        : 'border-slate-200 bg-white dark:border-[#2c465c] dark:bg-[#142235]'
                                 } ${
                                     tasksByStatus[col.key].length >
                                     KANBAN_WIP_LIMIT
@@ -245,15 +245,15 @@ export function KanbanBoard({
                                 <div
                                     className={`flex shrink-0 items-center justify-between gap-3 px-3 py-2.5 ${
                                         index % 2 === 0
-                                            ? 'bg-slate-200 dark:bg-slate-700'
-                                            : 'bg-white dark:bg-slate-900'
+                                            ? 'bg-slate-200 dark:bg-[#17283c]'
+                                            : 'bg-white dark:bg-[#142235]'
                                     }`}
                                 >
                                     <div className="min-w-0">
-                                        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                                        <h3 className="text-sm font-semibold text-slate-800 dark:text-[#edf1f5]">
                                             {col.label}
                                         </h3>
-                                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                        <p className="text-[11px] text-slate-500 dark:text-[#8fa3b6]">
                                             {tasksByStatus[col.key].length}{' '}
                                             tareas
                                         </p>

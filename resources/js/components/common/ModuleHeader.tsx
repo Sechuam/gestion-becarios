@@ -37,10 +37,10 @@ export function ModuleHeader({
                 variant === 'dark'
                     ? 'app-panel bg-linear-to-r from-sidebar to-sidebar-accent'
                     : variant === 'sidebar'
-                      ? 'border border-white/10 bg-linear-to-r from-sidebar to-sidebar-accent'
+                      ? 'border border-white/10 bg-linear-to-r from-sidebar to-sidebar-accent dark:border-[#9fc6bf]/25 dark:bg-[linear-gradient(135deg,#1b2b39_0%,#242b33_54%,#33434b_100%)] dark:shadow-[0_22px_70px_-44px_rgba(159,198,191,0.6)]'
                       : variant === 'primary'
                         ? 'border border-primary/20 bg-primary text-white shadow-xl'
-                        : 'border border-sidebar/10 bg-white/70 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-slate-900/60',
+                        : 'border border-sidebar/10 bg-white/70 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-[#142235]',
             )}
         >
             {(variant === 'dark' ||

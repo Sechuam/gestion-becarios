@@ -20,7 +20,7 @@ export default function AppearanceToggleTab({
     return (
         <div
             className={cn(
-                'grid w-full grid-cols-1 gap-2 rounded-xl border border-sidebar/10 bg-slate-50/80 p-1.5 shadow-sm sm:grid-cols-3 dark:border-slate-700 dark:bg-slate-900/60',
+                'grid w-full grid-cols-1 gap-2 rounded-xl border border-sidebar/10 bg-slate-50/80 p-1.5 shadow-sm sm:grid-cols-3 dark:border-[#2c465c] dark:bg-[#142235]',
                 className,
             )}
             {...props}
@@ -32,8 +32,8 @@ export default function AppearanceToggleTab({
                     className={cn(
                         'flex h-10 items-center justify-center rounded-lg px-3.5 text-[10px] font-black tracking-widest uppercase transition-all',
                         appearance === value
-                            ? 'border border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white'
-                            : 'text-slate-500 hover:bg-white hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white',
+                            ? 'border border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-[#3c6270] dark:bg-[#22374d] dark:text-white'
+                            : 'text-slate-500 hover:bg-white hover:text-slate-800 dark:text-[#8fa3b6] dark:hover:bg-slate-800 dark:hover:text-white',
                     )}
                 >
                     <Icon className="mr-2 h-4 w-4" />

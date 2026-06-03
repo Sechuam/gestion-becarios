@@ -391,7 +391,7 @@ export function CreateScheduleModal({
 
                     <div className="space-y-3 border-t pt-4">
                         <div className="flex items-center justify-between">
-                            <Label className="text-base font-bold text-slate-900 dark:text-slate-100">
+                            <Label className="text-base font-bold text-slate-900 dark:text-[#edf1f5]">
                                 Horas y Turnos
                             </Label>
                             <div className="hidden gap-8 px-4 text-[10px] font-bold text-slate-400 uppercase sm:flex">
@@ -420,9 +420,9 @@ export function CreateScheduleModal({
                                 return (
                                     <div
                                         key={day}
-                                        className="flex flex-col items-start justify-between rounded-xl border border-slate-200/60 bg-slate-50 p-2.5 transition-colors hover:border-sidebar/30 sm:flex-row sm:items-center dark:border-slate-800/60 dark:bg-slate-900/40"
+                                        className="flex flex-col items-start justify-between rounded-xl border border-slate-200/60 bg-slate-50 p-2.5 transition-colors hover:border-sidebar/30 sm:flex-row sm:items-center dark:border-[#2f4a62]/60 dark:bg-[#0f1b2a]/85"
                                     >
-                                        <span className="mb-2 w-full text-sm font-bold text-slate-700 sm:mb-0 sm:w-24 dark:text-slate-200">
+                                        <span className="mb-2 w-full text-sm font-bold text-slate-700 sm:mb-0 sm:w-24 dark:text-[#d8e4ef]">
                                             {
                                                 dayLabels[
                                                     day as keyof typeof dayLabels
@@ -441,7 +441,7 @@ export function CreateScheduleModal({
                                                     min="0"
                                                     max="24"
                                                     step="0.5"
-                                                    className="h-9 w-20 rounded-lg border-slate-200 bg-white text-center focus:ring-sidebar/20 dark:border-slate-800 dark:bg-slate-950"
+                                                    className="h-9 w-20 rounded-lg border-slate-200 bg-white text-center focus:ring-sidebar/20 dark:border-[#2f4a62] dark:bg-[#0f1b2a]"
                                                     value={data[field]}
                                                     onChange={(e) =>
                                                         setData(
@@ -459,7 +459,7 @@ export function CreateScheduleModal({
                                                 </span>
                                                 <Input
                                                     type="time"
-                                                    className="h-9 w-24 rounded-lg border-slate-200 bg-white text-xs focus:ring-sidebar/20 dark:border-slate-800 dark:bg-slate-950"
+                                                    className="h-9 w-24 rounded-lg border-slate-200 bg-white text-xs focus:ring-sidebar/20 dark:border-[#2f4a62] dark:bg-[#0f1b2a]"
                                                     value={
                                                         data[
                                                             `${day}_entry_time` as keyof typeof data
@@ -481,7 +481,7 @@ export function CreateScheduleModal({
                                                 </span>
                                                 <Input
                                                     type="time"
-                                                    className="h-9 w-24 rounded-lg border-slate-200 bg-white text-xs focus:ring-sidebar/20 dark:border-slate-800 dark:bg-slate-950"
+                                                    className="h-9 w-24 rounded-lg border-slate-200 bg-white text-xs focus:ring-sidebar/20 dark:border-[#2f4a62] dark:bg-[#0f1b2a]"
                                                     value={
                                                         data[
                                                             `${day}_exit_time` as keyof typeof data

@@ -477,7 +477,7 @@ export default function Index({
                     initial="hidden"
                     animate="visible"
                     transition={{ duration: 0.45, delay: 0.1, ease: 'easeOut' }}
-                    className="rounded-xl border border-[#d9e1d6] bg-white/88 p-2 shadow-lg shadow-slate-900/6 backdrop-blur transition-all dark:bg-slate-900/60"
+                    className="rounded-xl border border-[#d9e1d6] bg-white/88 p-2 shadow-lg shadow-slate-900/6 backdrop-blur transition-all dark:bg-[#142235]"
                 >
                     <div className="flex flex-wrap items-center gap-2">
                         <div className="relative w-full flex-none sm:w-64">
@@ -612,7 +612,7 @@ export default function Index({
                             </Dialog>
                         )}
 
-                        <div className="ml-auto flex h-8 flex-none items-center gap-1.5 rounded-lg border border-[#d6dfd3] bg-[#eef3ed] px-2 py-1 dark:bg-slate-800">
+                        <div className="ml-auto flex h-8 flex-none items-center gap-1.5 rounded-lg border border-[#d6dfd3] bg-[#eef3ed] px-2 py-1 dark:bg-[#17283c]">
                             <span className="flex h-1 w-1 animate-pulse rounded-full bg-[#4e7f78]" />
                             <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                                 {schools.data.length} / {schools.total} centros

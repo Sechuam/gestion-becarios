@@ -6,7 +6,7 @@ export function SummaryTile({
     value: string;
 }) {
     return (
-        <div className="rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-slate-800">
+        <div className="rounded-lg border border-sidebar/10 bg-white p-2 shadow-sm dark:bg-[#17283c]">
             <p className="text-[8px] leading-none font-black tracking-widest text-sidebar uppercase">
                 {label}
             </p>

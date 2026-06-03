@@ -166,7 +166,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Evaluación #${evaluation.id}`} />
 
-            <div className="w-full space-y-4 p-4 dark:bg-slate-950/20">
+            <div className="w-full space-y-4 p-4 dark:bg-[#0f1b2a]/80">
                 <div className="flex items-center justify-between">
                     <Button
                         variant="outline"
@@ -327,7 +327,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                 />
 
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-[#142235]">
                         <div className="mb-1 flex items-center gap-1.5 text-sidebar">
                             <Percent className="h-3 w-3" />
                             <span className="text-[9px] font-black tracking-widest uppercase">
@@ -341,7 +341,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-[#142235]">
                         <div className="mb-1 flex items-center gap-1.5 text-sidebar">
                             <ClipboardList className="h-3 w-3" />
                             <span className="text-[9px] font-black tracking-widest uppercase">
@@ -353,7 +353,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-[#142235]">
                         <div className="mb-1 flex items-center gap-1.5 text-sidebar">
                             <UserRound className="h-3 w-3" />
                             <span className="text-[9px] font-black tracking-widest uppercase">
@@ -368,7 +368,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-[#142235]">
                         <div className="mb-1 flex items-center gap-1.5 text-slate-400">
                             <span className="text-[9px] font-black tracking-widest uppercase">
                                 Registros
@@ -379,7 +379,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-[#142235]">
                         <div className="mb-1 flex items-center gap-1.5 text-slate-400">
                             <span className="text-[9px] font-black tracking-widest uppercase">
                                 Mejor nota
@@ -390,7 +390,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-2.5 shadow-sm transition-all hover:shadow-md dark:bg-[#142235]">
                         <div className="mb-1 flex items-center gap-1.5 text-slate-400">
                             <span className="text-[9px] font-black tracking-widest uppercase">
                                 Media
@@ -410,28 +410,28 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                     <TabsList className="flex h-auto w-full flex-col items-stretch justify-start gap-2 bg-transparent p-0 lg:w-64">
                         <TabsTrigger
                             value="general"
-                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-[#142235] dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                         >
                             <Info className="h-4 w-4" />
                             Información general
                         </TabsTrigger>
                         <TabsTrigger
                             value="comments"
-                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-[#142235] dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                         >
                             <MessageSquareText className="h-4 w-4" />
                             Comentario general
                         </TabsTrigger>
                         <TabsTrigger
                             value="criteria"
-                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-[#142235] dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                         >
                             <ListChecks className="h-4 w-4" />
                             Criterios evaluados
                         </TabsTrigger>
                         <TabsTrigger
                             value="history"
-                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-900/60 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                            className="flex h-10 justify-start gap-3 rounded-xl border border-sidebar/5 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-[#142235] dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                         >
                             <History className="h-4 w-4" />
                             Historia y evolución
@@ -440,7 +440,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
 
                     <div className="flex-1">
                         <TabsContent value="general" className="mt-0">
-                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-[#142235]">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
                                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         01
@@ -523,7 +523,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </TabsContent>
 
                         <TabsContent value="comments" className="mt-0">
-                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-[#142235]">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
                                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         02
@@ -555,7 +555,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </TabsContent>
 
                         <TabsContent value="criteria" className="mt-0">
-                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-[#142235]">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
                                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         03
@@ -650,7 +650,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                                                 <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                     Comentario del criterio
                                                 </p>
-                                                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                                                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-[#c4d2df]">
                                                     {score.comment ||
                                                         'No se ha añadido comentario para este criterio.'}
                                                 </p>
@@ -662,7 +662,7 @@ export default function Show({ evaluation, history = [], userMode }: Props) {
                         </TabsContent>
 
                         <TabsContent value="history" className="mt-0">
-                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-slate-900/60">
+                            <div className="rounded-xl border border-sidebar/10 bg-white p-5 shadow-xl dark:bg-[#142235]">
                                 <div className="mb-6 flex items-center gap-4 border-b border-sidebar/10 pb-4">
                                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-r from-sidebar to-sidebar-accent text-xl font-black text-white shadow-lg">
                                         04

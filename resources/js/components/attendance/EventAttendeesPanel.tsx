@@ -95,7 +95,7 @@ export function EventAttendeesPanel({
                 </span>
             </div>
 
-            <div className="space-y-2 rounded-xl border border-slate-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-800">
+            <div className="space-y-2 rounded-xl border border-slate-100 bg-white p-3 shadow-sm dark:border-[#2f4a62] dark:bg-[#17283c]">
                 <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                     Becarios
                 </p>
@@ -120,7 +120,7 @@ export function EventAttendeesPanel({
                 )}
             </div>
 
-            <div className="space-y-2 rounded-xl border border-slate-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-800">
+            <div className="space-y-2 rounded-xl border border-slate-100 bg-white p-3 shadow-sm dark:border-[#2f4a62] dark:bg-[#17283c]">
                 <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
                     Tutores
                 </p>
@@ -161,7 +161,7 @@ export function EventAttendeesPanel({
                             className={cn(
                                 'flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all',
                                 selectedAttendeeIds.includes(intern.user_id)
-                                    ? 'border-slate-400 bg-slate-200 shadow-sm ring-1 ring-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:ring-slate-600'
+                                    ? 'border-slate-400 bg-slate-200 shadow-sm ring-1 ring-slate-400 dark:border-[#3c6270] dark:bg-[#22374d] dark:ring-slate-600'
                                     : 'border-slate-100 bg-white shadow-sm hover:border-slate-200',
                             )}
                         >
@@ -179,7 +179,7 @@ export function EventAttendeesPanel({
                                 </div>
                             </div>
                             {selectedAttendeeIds.includes(intern.user_id) && (
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-400 text-white dark:bg-slate-500">
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-400 text-white dark:bg-[#5b7188]">
                                     <Check className="h-3 w-3" />
                                 </div>
                             )}
@@ -203,7 +203,7 @@ export function EventAttendeesPanel({
                                 className={cn(
                                     'flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all',
                                     selectedAttendeeIds.includes(tutor.user_id)
-                                        ? 'border-slate-400 bg-slate-200 shadow-sm ring-1 ring-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:ring-slate-600'
+                                        ? 'border-slate-400 bg-slate-200 shadow-sm ring-1 ring-slate-400 dark:border-[#3c6270] dark:bg-[#22374d] dark:ring-slate-600'
                                         : 'border-slate-100 bg-white shadow-sm hover:border-slate-200',
                                 )}
                             >
@@ -223,7 +223,7 @@ export function EventAttendeesPanel({
                                 {selectedAttendeeIds.includes(
                                     tutor.user_id,
                                 ) && (
-                                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-400 text-white dark:bg-slate-500">
+                                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-400 text-white dark:bg-[#5b7188]">
                                         <Check className="h-3 w-3" />
                                     </div>
                                 )}
@@ -284,7 +284,7 @@ function AttendeeResults({
                         className={cn(
                             'flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left transition-all',
                             selected
-                                ? 'border-slate-400 bg-slate-200 shadow-sm ring-1 ring-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:ring-slate-600'
+                                ? 'border-slate-400 bg-slate-200 shadow-sm ring-1 ring-slate-400 dark:border-[#3c6270] dark:bg-[#22374d] dark:ring-slate-600'
                                 : 'border-slate-100 bg-white shadow-sm hover:border-slate-200',
                         )}
                     >
@@ -304,7 +304,7 @@ function AttendeeResults({
                             </div>
                         </div>
                         {selected && (
-                            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-400 text-white dark:bg-slate-500">
+                            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-400 text-white dark:bg-[#5b7188]">
                                 <Check className="h-3 w-3" />
                             </div>
                         )}

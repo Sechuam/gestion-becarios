@@ -318,7 +318,7 @@ export default function My({
                 />
                 <MetricPills metrics={headerMetrics} />
 
-                <div className="space-y-4 rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
+                <div className="space-y-4 rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-[#142235]">
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="relative min-w-[240px] flex-1">
                             <Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -359,7 +359,7 @@ export default function My({
                             </SelectContent>
                         </Select>
 
-                        <p className="ml-auto rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase dark:bg-slate-800">
+                        <p className="ml-auto rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase dark:bg-[#17283c]">
                             Mostrando {interns.data.length} de {interns.total}{' '}
                             becarios
                         </p>
@@ -388,8 +388,8 @@ export default function My({
                     </div>
                 </div>
 
-                <Card className="app-panel overflow-hidden rounded-xl border-sidebar/10 bg-white shadow-xl dark:bg-slate-900">
-                    <CardHeader className="border-b border-sidebar/10 bg-slate-50/50 pb-4 dark:bg-slate-800/50">
+                <Card className="app-panel overflow-hidden rounded-xl border-sidebar/10 bg-white shadow-xl dark:bg-[#142235]">
+                    <CardHeader className="border-b border-sidebar/10 bg-slate-50/50 pb-4 dark:bg-[#17283c]/85">
                         <CardTitle className="text-lg font-black tracking-tight text-slate-800 dark:text-white">
                             Tareas recientes creadas por mí
                         </CardTitle>

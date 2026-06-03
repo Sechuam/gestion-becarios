@@ -161,7 +161,7 @@ export default function Index({
                     }
                 />
 
-                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-slate-900/60">
+                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-sidebar/10 bg-white p-6 shadow-xl dark:bg-[#142235]">
                     <div className="relative w-full max-w-sm">
                         <Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -217,13 +217,13 @@ export default function Index({
                         </Select>
                     </div>
 
-                    <p className="ml-auto rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase dark:bg-slate-800">
+                    <p className="ml-auto rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase dark:bg-[#17283c]">
                         Mostrando {criteria.data.length} de {criteria.total}{' '}
                         criterios
                     </p>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-sidebar/10 bg-white shadow-xl dark:bg-slate-900/60">
+                <div className="overflow-hidden rounded-xl border border-sidebar/10 bg-white shadow-xl dark:bg-[#142235]">
                     <SimpleTable
                         columns={columns}
                         rows={criteria.data}

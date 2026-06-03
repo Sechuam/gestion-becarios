@@ -89,26 +89,26 @@ export function TodayAgendaPanel({
     return (
         <Card
             className={cn(
-                'group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700',
+                'group flex flex-col gap-0 overflow-hidden rounded-xl border-slate-200 bg-white py-0 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-[#2a4158] dark:bg-[#142235] dark:shadow-[0_18px_50px_-34px_rgba(0,0,0,0.9)] dark:hover:border-[#3c6270]',
                 className,
             )}
         >
-            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
+            <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent dark:from-[#9fc6bf] dark:to-[#5f9e95]" />
+            <CardHeader className="flex flex-row items-center justify-between gap-3 border-b border-slate-400 bg-slate-200 px-3.5 py-2.5 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
                 <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar to-sidebar-accent/90 text-white dark:from-[#9fc6bf] dark:to-[#5f9e95] dark:text-[#14202a] shadow-xs transition-transform duration-300 group-hover:scale-105">
                         <Calendar className="h-4 w-4" />
                     </span>
                     <div>
-                        <CardTitle className="text-sm leading-tight font-black text-slate-800 dark:text-slate-100">
+                        <CardTitle className="text-sm leading-tight font-black text-slate-800 dark:text-[#edf1f5]">
                             Mi Agenda de Hoy
                         </CardTitle>
-                        <p className="mt-0.5 text-[11px] leading-none text-slate-500">
+                        <p className="mt-0.5 text-[11px] leading-none text-slate-500 dark:text-[#94a7b8]">
                             Eventos, reuniones y ausencias previstas.
                         </p>
                     </div>
                 </div>
-                <span className="rounded-md border border-sidebar/20 bg-white/80 px-2 py-0.5 text-[10px] font-black tracking-widest text-sidebar uppercase dark:border-slate-700 dark:bg-slate-900">
+                <span className="rounded-md border border-sidebar/20 bg-white/80 px-2 py-0.5 text-[10px] font-black tracking-widest text-sidebar uppercase dark:border-[#2c465c] dark:bg-[#17283c]">
                     {new Date().toLocaleDateString('es-ES', {
                         weekday: 'short',
                         day: 'numeric',
@@ -117,9 +117,9 @@ export function TodayAgendaPanel({
                 </span>
             </CardHeader>
 
-            <div className="flex flex-1 flex-col gap-2.5 bg-slate-50/60 px-4 pt-3 pb-4 dark:bg-slate-950/20">
+            <div className="flex flex-1 flex-col gap-2.5 bg-slate-50/60 px-4 pt-3 pb-4 dark:bg-[#0f1b2a]/80">
                 {showWorkStatus && (
-                    <div className="relative overflow-hidden rounded-xl border border-l-2 border-slate-300 border-l-sidebar bg-white p-3.5 text-slate-900 shadow-sm dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900 dark:text-white">
+                    <div className="relative overflow-hidden rounded-xl border border-l-2 border-slate-300 border-l-sidebar bg-white p-3.5 text-slate-900 shadow-sm dark:border-[#2c465c] dark:border-l-[#9fc6bf] dark:bg-[#17283c] dark:text-white">
                         <div className="relative z-10 flex items-center justify-between">
                             <div className="space-y-0.5">
                                 <p className="text-[10px] font-black tracking-[0.2em] text-sidebar uppercase dark:text-teal-100">
@@ -130,7 +130,7 @@ export function TodayAgendaPanel({
                                         <span className="text-2xl font-black">
                                             {formatElapsed(seconds)}
                                         </span>
-                                        <span className="text-xs font-medium text-slate-500">
+                                        <span className="text-xs font-medium text-slate-500 dark:text-[#94a7b8]">
                                             trabajando
                                         </span>
                                     </div>
@@ -154,7 +154,7 @@ export function TodayAgendaPanel({
                             </div>
                         </div>
                         {currentLog && (
-                            <div className="relative z-10 mt-2 flex items-center gap-2 rounded-lg border border-sidebar/10 bg-white px-2.5 py-1.5 text-[11px] font-bold text-sidebar dark:bg-slate-900 dark:text-teal-100">
+                            <div className="relative z-10 mt-2 flex items-center gap-2 rounded-lg border border-sidebar/10 bg-white px-2.5 py-1.5 text-[11px] font-bold text-sidebar dark:bg-[#17283c] dark:text-teal-100">
                                 <Clock className="h-3.5 w-3.5" />
                                 Entrada registrada a las{' '}
                                 {currentLog.clock_in.substring(0, 5)}
@@ -198,7 +198,7 @@ export function TodayAgendaPanel({
                                         type="button"
                                         key={`${currentAgendaPage}-${idx}`}
                                         onClick={() => setSelectedItem(item)}
-                                        className="group flex w-full items-center gap-3.5 rounded-lg border border-l-2 border-slate-300 border-l-sidebar bg-white p-2.5 text-left shadow-sm transition-all hover:border-slate-400 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar/30 dark:border-slate-700 dark:border-l-teal-400 dark:bg-slate-900"
+                                        className="group flex w-full items-center gap-3.5 rounded-lg border border-l-2 border-slate-300 border-l-sidebar bg-white p-2.5 text-left shadow-sm transition-all hover:border-slate-400 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar/30 dark:border-[#2c465c] dark:border-l-[#9fc6bf] dark:bg-[#17283c]"
                                     >
                                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-sidebar text-white shadow-sm">
                                             {item.type === 'event' ? (
@@ -208,7 +208,7 @@ export function TodayAgendaPanel({
                                             )}
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <p className="truncate text-[13px] font-bold text-slate-800 dark:text-slate-200">
+                                            <p className="truncate text-[13px] font-bold text-slate-800 dark:text-[#d8e4ef]">
                                                 {item.title}
                                                 {item.creator && (
                                                     <span className="ml-1.5 text-[10px] font-medium text-slate-400">
@@ -216,7 +216,7 @@ export function TodayAgendaPanel({
                                                     </span>
                                                 )}
                                             </p>
-                                            <p className="text-[11px] font-medium text-slate-500">
+                                            <p className="text-[11px] font-medium text-slate-500 dark:text-[#94a7b8]">
                                                 {item.time}
                                             </p>
                                         </div>
@@ -226,7 +226,7 @@ export function TodayAgendaPanel({
 
                             {totalAgendaPages > 1 && (
                                 <div className="mt-auto flex items-center justify-between gap-2 pt-5">
-                                    <span className="text-[10px] font-medium text-slate-500">
+                                    <span className="text-[10px] font-medium text-slate-500 dark:text-[#94a7b8]">
                                         {visibleAgenda.length} de{' '}
                                         {todayAgenda.length}
                                     </span>
@@ -246,7 +246,7 @@ export function TodayAgendaPanel({
                                         >
                                             <ChevronLeft className="h-3.5 w-3.5" />
                                         </Button>
-                                        <span className="w-12 text-center text-[10px] font-bold text-slate-500">
+                                        <span className="w-12 text-center text-[10px] font-bold text-slate-500 dark:text-[#94a7b8]">
                                             {currentAgendaPage}/
                                             {totalAgendaPages}
                                         </span>
@@ -277,7 +277,7 @@ export function TodayAgendaPanel({
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center py-8 text-center">
-                            <div className="mb-2 rounded-full bg-slate-50 p-3 dark:bg-slate-800">
+                            <div className="mb-2 rounded-full bg-slate-50 p-3 dark:bg-[#17283c]">
                                 <ClipboardCheck className="h-5 w-5 text-slate-300" />
                             </div>
                             <p className="text-xs font-bold text-slate-400">
@@ -345,7 +345,7 @@ function AgendaDetailModal({
 
                         <div className="space-y-4">
                             {item.description && (
-                                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600 dark:border-[#2a4158] dark:bg-[#142235] dark:text-[#c4d2df]">
                                     {item.description}
                                 </div>
                             )}
@@ -392,7 +392,7 @@ function AgendaDetailModal({
                                         <p className="text-sm font-black text-slate-900 dark:text-white">
                                             Confirmación de asistencia
                                         </p>
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-xs text-slate-500 dark:text-[#94a7b8]">
                                             Estado actual:{' '}
                                             {item.attendance_status ??
                                                 'Pendiente de confirmación'}
@@ -440,7 +440,7 @@ function AgendaDetailModal({
 
                             {isEvent && (
                                 <div className="space-y-2">
-                                    <div className="flex items-center gap-2 text-sm font-black text-slate-800 dark:text-slate-100">
+                                    <div className="flex items-center gap-2 text-sm font-black text-slate-800 dark:text-[#edf1f5]">
                                         <Users className="h-4 w-4 text-sidebar" />
                                         Integrantes
                                     </div>
@@ -449,7 +449,7 @@ function AgendaDetailModal({
                                             {attendees.map((attendee) => (
                                                 <div
                                                     key={attendee.id}
-                                                    className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-2.5 dark:border-slate-800 dark:bg-slate-900"
+                                                    className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-2.5 dark:border-[#2a4158] dark:bg-[#142235]"
                                                 >
                                                     <div className="flex min-w-0 items-center gap-2.5">
                                                         <Avatar className="h-8 w-8">
@@ -476,7 +476,7 @@ function AgendaDetailModal({
                                                                 {attendee.name}
                                                             </p>
                                                             {attendee.email && (
-                                                                <p className="truncate text-xs text-slate-500">
+                                                                <p className="truncate text-xs text-slate-500 dark:text-[#94a7b8]">
                                                                     {
                                                                         attendee.email
                                                                     }
@@ -492,7 +492,7 @@ function AgendaDetailModal({
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="rounded-lg border border-dashed border-slate-200 p-3 text-sm text-slate-500 dark:border-slate-800">
+                                        <div className="rounded-lg border border-dashed border-slate-200 p-3 text-sm text-slate-500 dark:border-[#2f4a62]">
                                             No hay integrantes invitados.
                                         </div>
                                     )}
@@ -516,7 +516,7 @@ function AgendaDetailRow({
     value?: string | null;
 }) {
     return (
-        <div className="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 dark:border-[#2a4158] dark:bg-[#142235]">
             <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-sidebar text-white">
                 <Icon className="h-3.5 w-3.5" />
             </span>
@@ -524,7 +524,7 @@ function AgendaDetailRow({
                 <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                     {label}
                 </p>
-                <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">
+                <p className="truncate text-sm font-bold text-slate-800 dark:text-[#edf1f5]">
                     {value || 'No especificado'}
                 </p>
             </div>

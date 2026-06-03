@@ -43,7 +43,7 @@ export function SaveReportTemplateCard({
     }
 
     return (
-        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-[#142235]">
             <CardHeader>
                 <CardTitle className="text-lg font-black">
                     Guardar plantilla

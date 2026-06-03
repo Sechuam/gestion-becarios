@@ -53,7 +53,7 @@ export function TaskFormShell({
                 </div>
             </div>
 
-            <div className="rounded-b-[1.2rem] bg-slate-50/50 p-4 md:p-6 dark:bg-slate-900/40">
+            <div className="rounded-b-[1.2rem] bg-slate-50/50 p-4 md:p-6 dark:bg-[#0f1b2a]/85">
                 {children}
             </div>
         </div>
@@ -74,11 +74,11 @@ export function TaskFormTabs({
     assignment,
 }: TaskFormTabsProps) {
     const triggerClass =
-        'h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white dark:border-white/10 dark:bg-slate-800 dark:text-slate-300';
+        'h-10 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white dark:border-white/10 dark:bg-[#17283c] dark:text-[#c4d2df]';
 
     return (
         <Tabs defaultValue="info" className="w-full">
-            <TabsList className="mb-6 grid h-auto w-full grid-cols-3 gap-2 rounded-xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-slate-900/50">
+            <TabsList className="mb-6 grid h-auto w-full grid-cols-3 gap-2 rounded-xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm dark:border-white/15 dark:bg-[#142235]/88">
                 <TabsTrigger value="info" className={triggerClass}>
                     <span className="text-[10px] font-black tracking-widest uppercase">
                         {infoLabel}

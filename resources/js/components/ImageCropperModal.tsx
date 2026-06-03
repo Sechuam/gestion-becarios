@@ -70,7 +70,7 @@ export default function ImageCropperModal({
                     <DialogTitle>Recortar Foto de Perfil</DialogTitle>
                 </DialogHeader>
 
-                <div className="relative mt-4 h-[350px] w-full bg-slate-100 dark:bg-slate-900">
+                <div className="relative mt-4 h-[350px] w-full bg-slate-100 dark:bg-[#142235]">
                     <Cropper
                         image={image}
                         crop={crop}
@@ -96,7 +96,7 @@ export default function ImageCropperModal({
                             step={0.1}
                             value={zoom}
                             onChange={(e) => setZoom(Number(e.target.value))}
-                            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-lg bg-slate-200 accent-primary dark:bg-slate-800"
+                            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-lg bg-slate-200 accent-primary dark:bg-[#17283c]"
                         />
                         <ZoomIn className="h-4 w-4 text-muted-foreground" />
                     </div>

@@ -31,7 +31,7 @@ export function DayClickModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[420px] dark:bg-slate-900">
+            <DialogContent className="overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[420px] dark:bg-[#142235]">
                 <DialogHeader className="p-5 pb-4">
                     <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                         ¿Qué quieres hacer?
@@ -44,7 +44,7 @@ export function DayClickModal({
                 <div className="grid gap-4 p-5 pt-2">
                     <button
                         onClick={() => onSelectOption('event')}
-                        className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-sidebar hover:ring-4 hover:ring-slate-100 dark:bg-slate-800/50 dark:hover:bg-sidebar"
+                        className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-sidebar hover:ring-4 hover:ring-slate-100 dark:bg-[#17283c]/85 dark:hover:bg-sidebar"
                     >
                         <div className="flex h-10 w-12 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar transition-all group-hover:bg-sidebar group-hover:text-white">
                             <Calendar className="h-6 w-6" />
@@ -63,7 +63,7 @@ export function DayClickModal({
                     {canRequestAbsence && (
                         <button
                             onClick={() => onSelectOption('absence')}
-                            className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-sidebar hover:ring-4 hover:ring-slate-100 dark:bg-slate-800/50 dark:hover:bg-sidebar"
+                            className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-sidebar hover:ring-4 hover:ring-slate-100 dark:bg-[#17283c]/85 dark:hover:bg-sidebar"
                         >
                             <div className="flex h-10 w-12 items-center justify-center rounded-xl bg-sidebar/10 text-sidebar transition-all group-hover:bg-sidebar group-hover:text-white">
                                 <Umbrella className="h-6 w-6" />
