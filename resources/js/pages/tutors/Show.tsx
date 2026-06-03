@@ -195,7 +195,7 @@ export default function Show({
 
                 <Card className="app-panel w-full overflow-hidden border-2 border-sidebar/15 pt-0 pb-0 shadow-xl">
                     <Tabs defaultValue="interns" className="w-full">
-                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2 dark:bg-[#142235]/85">
                             <TabsList className="grid h-auto w-full grid-cols-1 gap-2 bg-transparent p-0 md:h-10 md:grid-cols-3">
                                 {[
                                     {
@@ -217,7 +217,7 @@ export default function Show({
                                     <TabsTrigger
                                         key={tab.value}
                                         value={tab.value}
-                                        className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                        className="relative h-10 w-full rounded-xl border-none bg-transparent px-2 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase shadow-none transition-all dark:text-[#aebecd] dark:hover:bg-[#22374d] dark:hover:text-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                                     >
                                         <div className="flex items-center gap-2">
                                             <tab.icon className="h-4 w-4 shrink-0" />
@@ -253,7 +253,7 @@ export default function Show({
                                             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                             <Input
                                                 placeholder="Buscar por nombre, DNI o centro..."
-                                                className="h-11 rounded-xl border-sidebar/10 bg-slate-50/50 pl-10 dark:bg-slate-800/50"
+                                                className="h-11 rounded-xl border-sidebar/10 bg-slate-50/50 pl-10 dark:bg-[#17283c]/85"
                                                 defaultValue={filters.search}
                                                 onChange={(e) =>
                                                     handleFilter(
@@ -265,26 +265,26 @@ export default function Show({
                                         </div>
                                     </div>
 
-                                    <div className="overflow-hidden rounded-xl border border-sidebar/10 bg-slate-50/70 shadow-sm dark:bg-slate-800/40">
+                                    <div className="overflow-hidden rounded-xl border border-sidebar/10 bg-slate-50/70 shadow-sm dark:bg-[#17283c]/75">
                                         <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-slate-400 bg-slate-200 dark:border-slate-800 dark:bg-slate-800/70">
-                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-slate-100">
+                                                <tr className="border-b border-slate-400 bg-slate-200 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
+                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-[#edf1f5]">
                                                         Nombre
                                                     </th>
-                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-slate-100">
+                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-[#edf1f5]">
                                                         Centro
                                                     </th>
-                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-slate-100">
+                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-[#edf1f5]">
                                                         Estado
                                                     </th>
-                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-slate-100">
+                                                    <th className="px-6 py-4 text-left text-[10px] font-black tracking-widest text-slate-700 uppercase dark:text-[#edf1f5]">
                                                         Progreso
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-sidebar/5 bg-slate-50/60 dark:bg-slate-800/30">
+                                            <tbody className="divide-y divide-sidebar/5 bg-slate-50/60 dark:bg-[#17283c]/70">
                                                 {assigned_interns.data.length >
                                                 0 ? (
                                                     assigned_interns.data.map(
@@ -316,7 +316,7 @@ export default function Show({
                                                                         ?.id ? (
                                                                         <Link
                                                                             href={`/centros/${intern.education_center.id}`}
-                                                                            className="font-medium text-slate-600 hover:underline dark:text-slate-400"
+                                                                            className="font-medium text-slate-600 hover:underline dark:text-[#8fa3b6]"
                                                                         >
                                                                             {
                                                                                 intern
@@ -337,7 +337,7 @@ export default function Show({
                                                                 </td>
                                                                 <td className="px-6 py-4">
                                                                     <div className="w-32 space-y-1.5">
-                                                                        <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                                                        <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-[#17283c]">
                                                                             <div
                                                                                 className="h-full rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
                                                                                 style={{
@@ -345,7 +345,7 @@ export default function Show({
                                                                                 }}
                                                                             />
                                                                         </div>
-                                                                        <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase dark:text-slate-400">
+                                                                        <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase dark:text-[#8fa3b6]">
                                                                             {intern.progress ||
                                                                                 0}
                                                                             %
@@ -400,7 +400,7 @@ export default function Show({
                                     </div>
 
                                     {created_tasks.length > 0 ? (
-                                        <div className="space-y-4 rounded-xl border border-sidebar/10 bg-slate-50/70 p-4 dark:bg-slate-800/30">
+                                        <div className="space-y-4 rounded-xl border border-sidebar/10 bg-slate-50/70 p-4 dark:bg-[#17283c]/70">
                                             <div className="flex flex-wrap items-center justify-between gap-3 px-1">
                                                 <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                     Mostrando{' '}
@@ -418,11 +418,11 @@ export default function Show({
                                                 {visibleTasks.map((task) => (
                                                     <div
                                                         key={task.id}
-                                                        className="group relative flex items-center justify-between rounded-xl border border-sidebar/15 bg-white p-5 shadow-sm transition-all hover:border-sidebar/30 hover:shadow-md dark:bg-slate-900/70"
+                                                        className="group relative flex items-center justify-between rounded-xl border border-sidebar/15 bg-white p-5 shadow-sm transition-all hover:border-sidebar/30 hover:shadow-md dark:bg-[#142235]/86"
                                                     >
                                                         <div className="flex items-center gap-4">
                                                             <div
-                                                                className={`flex h-10 w-12 items-center justify-center rounded-xl border border-sidebar/10 bg-slate-50 shadow-sm ${getTaskStatusTone(task.status)} bg-opacity-10 text-current dark:bg-slate-800`}
+                                                                className={`flex h-10 w-12 items-center justify-center rounded-xl border border-sidebar/10 bg-slate-50 shadow-sm ${getTaskStatusTone(task.status)} bg-opacity-10 text-current dark:bg-[#17283c]`}
                                                             >
                                                                 <ClipboardList className="h-6 w-6" />
                                                             </div>
@@ -475,7 +475,7 @@ export default function Show({
                                                         type="button"
                                                         variant="outline"
                                                         size="sm"
-                                                        className="rounded-xl border-sidebar/15 bg-white px-4 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-100 dark:bg-slate-900"
+                                                        className="rounded-xl border-sidebar/15 bg-white px-4 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-100 dark:bg-[#142235]"
                                                         onClick={() =>
                                                             setTasksPage(
                                                                 (page) =>
@@ -514,7 +514,7 @@ export default function Show({
                                                                     page ===
                                                                     tasksPage
                                                                         ? 'h-8 rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent px-3 text-[10px] font-black tracking-widest text-white uppercase hover:opacity-95'
-                                                                        : 'h-8 rounded-xl border-sidebar/15 bg-white px-3 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-100 dark:bg-slate-900'
+                                                                        : 'h-8 rounded-xl border-sidebar/15 bg-white px-3 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-100 dark:bg-[#142235]'
                                                                 }
                                                                 onClick={() =>
                                                                     setTasksPage(
@@ -530,7 +530,7 @@ export default function Show({
                                                         type="button"
                                                         variant="outline"
                                                         size="sm"
-                                                        className="rounded-xl border-sidebar/15 bg-white px-4 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-100 dark:bg-slate-900"
+                                                        className="rounded-xl border-sidebar/15 bg-white px-4 text-[10px] font-black tracking-widest text-sidebar uppercase hover:bg-slate-100 dark:bg-[#142235]"
                                                         onClick={() =>
                                                             setTasksPage(
                                                                 (page) =>
@@ -609,7 +609,7 @@ export default function Show({
                                         ].map((item, i) => (
                                             <div
                                                 key={i}
-                                                className="flex items-start gap-4 rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/70"
+                                                className="flex items-start gap-4 rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-[#142235]/86"
                                             >
                                                 <div className="rounded-xl bg-gradient-to-r from-sidebar to-sidebar-accent p-2 text-white shadow shadow-sidebar/20">
                                                     <item.icon className="h-5 w-5" />

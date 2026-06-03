@@ -79,7 +79,7 @@ export function TaskBoardQuickFiltersSheet({
                             type="button"
                             className={`rounded-xl border p-3 text-left shadow-sm transition-all ${
                                 activeFilter === filter.key
-                                    ? 'border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white'
+                                    ? 'border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-[#3c6270] dark:bg-[#22374d] dark:text-white'
                                     : 'border-sidebar/10 bg-white text-foreground hover:border-sidebar/30 hover:bg-slate-50'
                             }`}
                             onClick={() => {
@@ -94,7 +94,7 @@ export function TaskBoardQuickFiltersSheet({
                                 <span
                                     className={`rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums ${
                                         activeFilter === filter.key
-                                            ? 'border border-slate-400 bg-slate-100 text-slate-800 dark:border-slate-500 dark:bg-slate-600 dark:text-white'
+                                            ? 'border border-slate-400 bg-slate-100 text-slate-800 dark:border-[#5e7f98] dark:bg-[#334d66] dark:text-white'
                                             : 'border border-sidebar/10 bg-slate-100 text-sidebar'
                                     }`}
                                 >
@@ -105,7 +105,7 @@ export function TaskBoardQuickFiltersSheet({
                                 <p
                                     className={`mt-1.5 text-[11px] leading-snug ${
                                         activeFilter === filter.key
-                                            ? 'text-slate-600 dark:text-slate-200'
+                                            ? 'text-slate-600 dark:text-[#d8e4ef]'
                                             : 'text-muted-foreground'
                                     }`}
                                 >

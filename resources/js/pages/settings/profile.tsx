@@ -117,10 +117,10 @@ export default function Profile({
                     className="flex flex-col items-start gap-5 md:flex-row"
                 >
                     {/* Barra lateral de pestañas */}
-                    <TabsList className="flex h-auto w-full shrink-0 flex-col justify-start space-y-1 rounded-xl border border-sidebar/10 bg-sidebar/5 p-3 md:w-56 dark:border-slate-700/50 dark:bg-slate-800/50">
+                    <TabsList className="flex h-auto w-full shrink-0 flex-col justify-start space-y-1 rounded-xl border border-sidebar/10 bg-sidebar/5 p-3 md:w-56 dark:border-[#2c465c]/50 dark:bg-[#17283c]/85">
                         <TabsTrigger
                             value="cuenta"
-                            className="w-full justify-start rounded-xl px-4 py-3 font-medium text-sidebar transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-slate-300 dark:hover:bg-slate-700/50 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                            className="w-full justify-start rounded-xl px-4 py-3 font-medium text-sidebar transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-[#c4d2df] dark:hover:bg-[#22374d] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                         >
                             Cuenta
                         </TabsTrigger>
@@ -128,7 +128,7 @@ export default function Profile({
                         {intern && (
                             <TabsTrigger
                                 value="datos"
-                                className="w-full justify-start rounded-xl px-4 py-3 font-medium text-sidebar transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-slate-300 dark:hover:bg-slate-700/50 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                className="w-full justify-start rounded-xl px-4 py-3 font-medium text-sidebar transition-all hover:bg-white data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-md dark:text-[#c4d2df] dark:hover:bg-[#22374d] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                             >
                                 Datos Personales
                             </TabsTrigger>
@@ -136,7 +136,7 @@ export default function Profile({
 
                         <TabsTrigger
                             value="eliminar"
-                            className="w-full justify-start rounded-xl px-4 py-3 font-medium text-red-600 transition-all hover:bg-red-50 hover:text-red-700 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:text-red-400 dark:hover:bg-red-900/20 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                            className="w-full justify-start rounded-xl px-4 py-3 font-medium text-red-600 transition-all hover:bg-red-50 hover:text-red-700 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:text-red-400 dark:hover:bg-red-900/20 dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                         >
                             Eliminar Cuenta
                         </TabsTrigger>
@@ -153,7 +153,7 @@ export default function Profile({
                                 {/* AVATAR SECTION */}
                                 <div className="flex flex-col items-center gap-5 border-b border-sidebar/20 pb-6 md:flex-row md:items-start">
                                     <div className="group relative">
-                                        <Avatar className="h-32 w-32 shrink-0 border-4 border-white shadow-lg ring-1 ring-slate-200 dark:border-slate-800 dark:ring-slate-700">
+                                        <Avatar className="h-32 w-32 shrink-0 border-4 border-white shadow-lg ring-1 ring-slate-200 dark:border-[#2f4a62] dark:ring-[#2c465c]">
                                             <AvatarImage
                                                 src={
                                                     previewUrl ||
@@ -414,7 +414,7 @@ export default function Profile({
                                                         <Phone className="h-3 w-3" />{' '}
                                                         Teléfono
                                                     </p>
-                                                    <p className="font-bold text-slate-800 dark:text-slate-100">
+                                                    <p className="font-bold text-slate-800 dark:text-[#edf1f5]">
                                                         {intern?.phone ||
                                                             'No especificado'}
                                                     </p>
@@ -423,7 +423,7 @@ export default function Profile({
                                                     <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                         DNI / NIE
                                                     </p>
-                                                    <p className="font-bold text-slate-800 dark:text-slate-100">
+                                                    <p className="font-bold text-slate-800 dark:text-[#edf1f5]">
                                                         {intern?.dni ||
                                                             'No especificado'}
                                                     </p>
@@ -433,7 +433,7 @@ export default function Profile({
                                                         <CalendarRange className="h-3 w-3" />{' '}
                                                         Nacimiento
                                                     </p>
-                                                    <p className="font-bold text-slate-800 dark:text-slate-100">
+                                                    <p className="font-bold text-slate-800 dark:text-[#edf1f5]">
                                                         {intern?.birth_date ||
                                                             'No especificado'}
                                                     </p>
@@ -443,7 +443,7 @@ export default function Profile({
                                                         <MapPin className="h-3 w-3" />{' '}
                                                         Dirección
                                                     </p>
-                                                    <p className="font-bold text-slate-800 dark:text-slate-100">
+                                                    <p className="font-bold text-slate-800 dark:text-[#edf1f5]">
                                                         {[
                                                             intern?.address,
                                                             intern?.city,
@@ -457,7 +457,7 @@ export default function Profile({
                                         </Card>
 
                                         <Card className="app-panel overflow-hidden rounded-xl border-sidebar/10 shadow-sm">
-                                            <div className="border-b border-sidebar/10 bg-slate-50/50 px-6 py-3 dark:bg-slate-800/30">
+                                            <div className="border-b border-sidebar/10 bg-slate-50/50 px-6 py-3 dark:bg-[#17283c]/70">
                                                 <h3 className="flex items-center gap-2 text-sm font-bold">
                                                     <Building2 className="h-4 w-4 text-sidebar" />{' '}
                                                     Centro Educativo
@@ -466,7 +466,7 @@ export default function Profile({
                                             <CardContent className="p-6">
                                                 {education_center ? (
                                                     <div className="flex items-center gap-4">
-                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sidebar/10 font-bold text-sidebar dark:bg-slate-800 dark:text-slate-100">
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sidebar/10 font-bold text-sidebar dark:bg-[#17283c] dark:text-[#edf1f5]">
                                                             <GraduationCap className="h-5 w-5" />
                                                         </div>
                                                         <div>

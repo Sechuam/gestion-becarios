@@ -163,7 +163,7 @@ function UserRowItem({
                                 onClick={() => onRoleChange(user, role.name)}
                                 className={`flex items-center gap-2.5 ${
                                     isCurrent
-                                        ? 'bg-slate-200 font-semibold text-slate-800 focus:bg-slate-200 focus:text-slate-800 dark:bg-slate-700 dark:text-white dark:focus:bg-slate-700 dark:focus:text-white'
+                                        ? 'bg-slate-200 font-semibold text-slate-800 focus:bg-slate-200 focus:text-slate-800 dark:bg-[#22374d] dark:text-white dark:focus:bg-slate-700 dark:focus:text-white'
                                         : ''
                                 }`}
                             >
@@ -365,7 +365,7 @@ export default function UsersIndex({
                         placeholder="Busca un usuario por nombre o email..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        className="h-11 rounded-xl border-sidebar/20 bg-card pr-9 pl-10 text-foreground shadow-sm placeholder:text-muted-foreground dark:bg-slate-900/60"
+                        className="h-11 rounded-xl border-sidebar/20 bg-card pr-9 pl-10 text-foreground shadow-sm placeholder:text-muted-foreground dark:bg-[#142235]"
                     />
                     {isSearching && (
                         <button
@@ -392,7 +392,7 @@ export default function UsersIndex({
                                 );
                             }
                         }}
-                        className="grid w-full grid-cols-1 gap-2 rounded-xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm md:grid-cols-2 xl:grid-cols-4 dark:border-white/15 dark:bg-slate-900/50"
+                        className="grid w-full grid-cols-1 gap-2 rounded-xl border border-slate-900/15 bg-slate-50/70 p-1.5 shadow-sm md:grid-cols-2 xl:grid-cols-4 dark:border-white/15 dark:bg-[#142235]/88"
                     >
                         {[
                             { key: 'all', label: 'Todos' },
@@ -403,7 +403,7 @@ export default function UsersIndex({
                             <ToggleGroupItem
                                 key={item.key}
                                 value={item.key}
-                                className="h-10 w-full rounded-lg border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=on]:border-slate-400 data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 data-[state=on]:shadow-sm dark:border-white/10 dark:bg-slate-800 dark:text-slate-300 dark:data-[state=on]:border-slate-600 dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
+                                className="h-10 w-full rounded-lg border border-slate-900/10 bg-white px-4 text-slate-500 shadow-sm transition-all data-[state=on]:border-slate-400 data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 data-[state=on]:shadow-sm dark:border-white/10 dark:bg-[#17283c] dark:text-[#c4d2df] dark:data-[state=on]:border-slate-600 dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                                 aria-label={item.label}
                             >
                                 <span className="text-[10px] font-black tracking-widest uppercase">
@@ -417,9 +417,9 @@ export default function UsersIndex({
                     </ToggleGroup>
                 </div>
 
-                <div className="app-panel overflow-hidden rounded-xl border border-sidebar/15 bg-white shadow-xl dark:bg-slate-900/60">
+                <div className="app-panel overflow-hidden rounded-xl border border-sidebar/15 bg-white shadow-xl dark:bg-[#142235]">
                     <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-                    <p className="border-b border-slate-400 bg-slate-200 px-5 py-3 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-800/70 dark:text-slate-100">
+                    <p className="border-b border-slate-400 bg-slate-200 px-5 py-3 text-xs font-semibold text-slate-700 dark:border-[#2f4a62] dark:bg-[#1b2d42] dark:text-[#edf1f5]">
                         {filteredUsers.length} usuario
                         {filteredUsers.length !== 1 ? 's' : ''}
                         {filteredUsers.length > 0 && (
@@ -606,8 +606,8 @@ export default function UsersIndex({
                         </div>
 
                         <div className="space-y-5 px-6 py-5">
-                            <div className="rounded-xl border border-sidebar/10 bg-slate-50/80 p-4 dark:bg-slate-900/60">
-                                <p className="text-sm leading-relaxed font-medium text-slate-600 dark:text-slate-300">
+                            <div className="rounded-xl border border-sidebar/10 bg-slate-50/80 p-4 dark:bg-[#142235]">
+                                <p className="text-sm leading-relaxed font-medium text-slate-600 dark:text-[#c4d2df]">
                                     ¿Quieres cambiar el rol de{' '}
                                     <span className="font-black text-slate-900 dark:text-white">
                                         {pendingRoleChange?.user.name}

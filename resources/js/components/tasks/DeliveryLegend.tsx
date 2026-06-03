@@ -35,7 +35,7 @@ export function DeliveryLegend() {
 
     return (
         <div className="flex justify-end">
-            <div className="inline-block overflow-hidden rounded-lg border border-sidebar/10 bg-slate-50 shadow-sm transition-all dark:bg-slate-900/60">
+            <div className="inline-block overflow-hidden rounded-lg border border-sidebar/10 bg-slate-50 shadow-sm transition-all dark:bg-[#142235]">
                 <button
                     type="button"
                     onClick={() => setOpen((v) => !v)}
@@ -51,7 +51,7 @@ export function DeliveryLegend() {
                 </button>
 
                 {open && (
-                    <div className="flex max-w-3xl flex-wrap gap-x-4 gap-y-1.5 border-t border-sidebar/10 bg-white px-3 py-2 dark:bg-slate-900">
+                    <div className="flex max-w-3xl flex-wrap gap-x-4 gap-y-1.5 border-t border-sidebar/10 bg-white px-3 py-2 dark:bg-[#142235]">
                         {LEGEND_ITEMS.map((item) => (
                             <div
                                 key={item.label}

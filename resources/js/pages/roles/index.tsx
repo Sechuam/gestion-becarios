@@ -252,17 +252,17 @@ export default function RolesIndex({
                 <MetricPills metrics={headerMetrics} />
 
                 <Tabs defaultValue="roles" className="w-full">
-                    <div className="rounded-xl border border-sidebar/10 bg-white p-1.5 shadow-sm dark:bg-slate-900/60">
+                    <div className="rounded-xl border border-sidebar/10 bg-white p-1.5 shadow-sm dark:bg-[#142235]">
                         <TabsList className="grid h-auto w-full grid-cols-1 gap-2 bg-transparent p-0 md:grid-cols-2">
                             <TabsTrigger
                                 value="roles"
-                                className="h-10 rounded-xl border border-sidebar/10 bg-slate-50/80 text-[10px] font-black tracking-[0.18em] text-slate-500 uppercase data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-800/70 dark:text-slate-300 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                className="h-10 rounded-xl border border-sidebar/10 bg-slate-50/80 text-[10px] font-black tracking-[0.18em] text-slate-500 uppercase data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-[#1b2d42] dark:text-[#c4d2df] dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                             >
                                 Vista roles
                             </TabsTrigger>
                             <TabsTrigger
                                 value="matrix"
-                                className="h-10 rounded-xl border border-sidebar/10 bg-slate-50/80 text-[10px] font-black tracking-[0.18em] text-slate-500 uppercase data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-slate-800/70 dark:text-slate-300 dark:data-[state=active]:border-slate-600 dark:data-[state=active]:bg-slate-700 dark:data-[state=active]:text-white"
+                                className="h-10 rounded-xl border border-sidebar/10 bg-slate-50/80 text-[10px] font-black tracking-[0.18em] text-slate-500 uppercase data-[state=active]:border-slate-400 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-800 data-[state=active]:shadow-sm dark:bg-[#1b2d42] dark:text-[#c4d2df] dark:data-[state=active]:border-[#5e7f98] dark:data-[state=active]:bg-[#2f4a62] dark:data-[state=active]:text-white"
                             >
                                 Vista matriz
                             </TabsTrigger>
@@ -272,11 +272,11 @@ export default function RolesIndex({
                     <TabsContent value="roles" className="mt-4">
                         <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
                             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-                            <div className="border-b border-slate-400 bg-slate-200 px-6 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
-                                <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                            <div className="border-b border-slate-400 bg-slate-200 px-6 py-2.5 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
+                                <h2 className="text-base font-semibold text-slate-800 dark:text-[#edf1f5]">
                                     Lista de roles
                                 </h2>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                <p className="text-xs text-slate-500 dark:text-[#8fa3b6]">
                                     Gestiona cada rol desde una vista más
                                     compacta.
                                 </p>
@@ -687,11 +687,11 @@ export default function RolesIndex({
                     <TabsContent value="matrix" className="mt-4">
                         <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
                             <div className="h-1 bg-gradient-to-r from-sidebar to-sidebar-accent" />
-                            <div className="border-b border-slate-400 bg-slate-200 px-6 py-2.5 dark:border-slate-800 dark:bg-slate-800/70">
-                                <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                            <div className="border-b border-slate-400 bg-slate-200 px-6 py-2.5 dark:border-[#2f4a62] dark:bg-[#1b2d42]">
+                                <h2 className="text-base font-semibold text-slate-800 dark:text-[#edf1f5]">
                                     Matriz de permisos
                                 </h2>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                <p className="text-xs text-slate-500 dark:text-[#8fa3b6]">
                                     Vista avanzada para comparar rápidamente
                                     permisos entre roles.
                                 </p>
@@ -785,7 +785,7 @@ export default function RolesIndex({
                                                                                     isUpdating
                                                                                         ? 'cursor-not-allowed border-slate-300 bg-slate-100 opacity-60'
                                                                                         : hasPermission
-                                                                                          ? 'border-slate-400 bg-slate-200 hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-700'
+                                                                                          ? 'border-slate-400 bg-slate-200 hover:bg-slate-200 dark:border-[#3c6270] dark:bg-[#22374d] dark:hover:bg-[#22374d]'
                                                                                           : 'border-border hover:bg-muted'
                                                                                 }`}
                                                                                 disabled={
@@ -848,7 +848,7 @@ export default function RolesIndex({
                                 groupedPermissions.map((group) => (
                                     <div
                                         key={`modal-${group.name}`}
-                                        className="rounded-xl border border-sidebar/10 bg-slate-50/70 p-4 dark:bg-slate-900/50"
+                                        className="rounded-xl border border-sidebar/10 bg-slate-50/70 p-4 dark:bg-[#142235]/88"
                                     >
                                         <div className="mb-4 flex items-center justify-between gap-3">
                                             <div>
@@ -862,7 +862,7 @@ export default function RolesIndex({
                                                         : ''}
                                                 </p>
                                             </div>
-                                            <span className="rounded-full border border-sidebar/10 bg-white px-3 py-1 text-[10px] font-black tracking-widest text-sidebar uppercase dark:bg-slate-900">
+                                            <span className="rounded-full border border-sidebar/10 bg-white px-3 py-1 text-[10px] font-black tracking-widest text-sidebar uppercase dark:bg-[#142235]">
                                                 {
                                                     group.items.filter(
                                                         (permission) =>
@@ -903,8 +903,8 @@ export default function RolesIndex({
                                                         disabled={isUpdating}
                                                         className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-all ${
                                                             hasPermission
-                                                                ? 'border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white'
-                                                                : 'border-sidebar/10 bg-white text-slate-700 hover:border-sidebar/20 hover:bg-slate-50 dark:bg-slate-950/50 dark:text-slate-200'
+                                                                ? 'border-slate-400 bg-slate-200 text-slate-800 shadow-sm dark:border-[#3c6270] dark:bg-[#22374d] dark:text-white'
+                                                                : 'border-sidebar/10 bg-white text-slate-700 hover:border-sidebar/20 hover:bg-slate-50 dark:bg-[#0f1b2a]/90 dark:text-[#d8e4ef]'
                                                         } ${isUpdating ? 'opacity-60' : ''}`}
                                                     >
                                                         <div>
@@ -916,7 +916,7 @@ export default function RolesIndex({
                                                             <p
                                                                 className={`text-[11px] ${
                                                                     hasPermission
-                                                                        ? 'text-slate-600 dark:text-slate-200'
+                                                                        ? 'text-slate-600 dark:text-[#d8e4ef]'
                                                                         : 'text-muted-foreground'
                                                                 }`}
                                                             >
@@ -928,8 +928,8 @@ export default function RolesIndex({
                                                         <span
                                                             className={`inline-flex h-8 min-w-[92px] items-center justify-center rounded-lg px-3 text-[10px] font-black tracking-widest uppercase ${
                                                                 hasPermission
-                                                                    ? 'border border-slate-400 bg-slate-100 text-slate-800 dark:border-slate-500 dark:bg-slate-600 dark:text-white'
-                                                                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-300'
+                                                                    ? 'border border-slate-400 bg-slate-100 text-slate-800 dark:border-[#5e7f98] dark:bg-[#334d66] dark:text-white'
+                                                                    : 'bg-slate-100 text-slate-500 dark:bg-[#17283c] dark:text-[#c4d2df]'
                                                             }`}
                                                         >
                                                             {isUpdating

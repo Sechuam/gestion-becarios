@@ -20,7 +20,7 @@ export function CalendarVisibilityFilters({
     return (
         <div className="mb-4 flex items-center justify-end gap-4 px-2 pt-2">
             {canShowJornadas && (
-                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-[#c4d2df]">
                     <input
                         id="calendar-filter-jornadas"
                         name="calendar_filter_jornadas"
@@ -34,7 +34,7 @@ export function CalendarVisibilityFilters({
                     Mostrar Jornadas
                 </label>
             )}
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-[#c4d2df]">
                 <input
                     id="calendar-filter-absences"
                     name="calendar_filter_absences"
@@ -47,7 +47,7 @@ export function CalendarVisibilityFilters({
                 />
                 Mostrar Ausencias
             </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-600 dark:text-[#c4d2df]">
                 <input
                     id="calendar-filter-personal-events"
                     name="calendar_filter_personal_events"

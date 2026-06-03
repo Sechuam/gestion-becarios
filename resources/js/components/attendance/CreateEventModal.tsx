@@ -155,7 +155,7 @@ export function CreateEventModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[720px] overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[800px] dark:bg-slate-900">
+            <DialogContent className="max-h-[720px] overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[800px] dark:bg-[#142235]">
                 <style>{`
                     .input-white-bg {
                         background-color: #ffffff !important;
@@ -163,7 +163,7 @@ export function CreateEventModal({
                     }
                 `}</style>
 
-                <DialogHeader className="border-b border-slate-100 p-6 pb-4 dark:border-slate-800">
+                <DialogHeader className="border-b border-slate-100 p-6 pb-4 dark:border-[#2f4a62]">
                     <DialogTitle className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
                         {event ? 'Editar Evento' : 'Nuevo Evento'}
                     </DialogTitle>
@@ -183,7 +183,7 @@ export function CreateEventModal({
                         />
 
                         {/* Columna Derecha: Invitados (Más estrecha) */}
-                        <div className="flex flex-[0.9] flex-col overflow-hidden bg-slate-50/30 p-7 dark:bg-slate-950/20">
+                        <div className="flex flex-[0.9] flex-col overflow-hidden bg-slate-50/30 p-7 dark:bg-[#0f1b2a]/80">
                             <EventAttendeesPanel
                                 available={
                                     Boolean(isTutorOrAdmin) &&
@@ -199,7 +199,7 @@ export function CreateEventModal({
                     </div>
 
                     {/* Botonera Inferior */}
-                    <div className="flex items-center gap-3 border-t border-slate-100 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+                    <div className="flex items-center gap-3 border-t border-slate-100 bg-white p-5 dark:border-[#2f4a62] dark:bg-[#142235]">
                         {event && (
                             <Button
                                 type="button"

@@ -158,7 +158,7 @@ export default function Edit({
                         key={intern.id}
                         value={String(intern.id)}
                         onClick={() => toggleIntern(intern.id)}
-                        className="h-9 rounded-xl border border-sidebar/10 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=on]:border-slate-400 data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 dark:bg-slate-900 dark:data-[state=on]:border-slate-600 dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
+                        className="h-9 rounded-xl border border-sidebar/10 bg-white px-4 text-xs font-bold shadow-sm transition-all data-[state=on]:border-slate-400 data-[state=on]:bg-slate-200 data-[state=on]:text-slate-800 dark:bg-[#142235] dark:data-[state=on]:border-slate-600 dark:data-[state=on]:bg-slate-700 dark:data-[state=on]:text-white"
                     >
                         {intern.user?.name || `Becario #${intern.id}`}
                     </ToggleGroupItem>

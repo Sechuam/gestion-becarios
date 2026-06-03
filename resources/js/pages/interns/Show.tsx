@@ -247,7 +247,7 @@ export default function Show({
                         className="w-full"
                     >
                         {/* NAVEGACIÓN INTEGRADA EN LA CABECERA DEL PANEL */}
-                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2">
+                        <div className="border-b border-sidebar/20 bg-stone-100/50 p-2 dark:border-[#2f4a62] dark:bg-[#142235]/85">
                             <InternProfileTabsNav />
                         </div>
 
@@ -263,7 +263,7 @@ export default function Show({
                                             <div className="rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-2 shadow-md shadow-sidebar/20">
                                                 <Clock className="h-5 w-5 text-white" />
                                             </div>
-                                            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                                            <h3 className="text-lg font-bold text-slate-800 dark:text-[#edf1f5]">
                                                 Estado de Horas
                                             </h3>
                                         </div>
@@ -321,7 +321,7 @@ export default function Show({
                                                 <div className="rounded-xl bg-gradient-to-br from-sidebar to-sidebar-accent p-2 shadow-md shadow-sidebar/20">
                                                     <GraduationCap className="h-5 w-5 text-white" />
                                                 </div>
-                                                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                                                <h3 className="text-lg font-bold text-slate-800 dark:text-[#edf1f5]">
                                                     Progreso Total
                                                 </h3>
                                             </div>
@@ -341,7 +341,7 @@ export default function Show({
                                                     time_stats.target_total) *
                                                 100
                                             }
-                                            className="h-4 rounded-full bg-slate-200 dark:bg-slate-700"
+                                            className="h-4 rounded-full bg-slate-200 dark:bg-[#22374d]"
                                             indicatorClassName="bg-slate-700 dark:bg-slate-200"
                                         />
 
@@ -390,7 +390,7 @@ export default function Show({
                                 className="mt-0 animate-in duration-500 fade-in"
                             >
                                 <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
-                                    <div className="flex items-center justify-between border-b border-slate-50 pb-3 md:col-span-12 dark:border-slate-800">
+                                    <div className="flex items-center justify-between border-b border-slate-50 pb-3 md:col-span-12 dark:border-[#2f4a62]">
                                         <h3 className="flex items-center gap-2 text-xl font-bold">
                                             <User className="h-5 w-5 text-primary" />
                                             Ficha de Expediente
@@ -445,7 +445,7 @@ export default function Show({
                                                         {item.value}
                                                     </a>
                                                 ) : (
-                                                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                                                    <p className="text-sm font-bold text-slate-800 dark:text-[#edf1f5]">
                                                         {item.value}
                                                     </p>
                                                 )}
@@ -516,7 +516,7 @@ export default function Show({
                             >
                                 <div className="grid grid-cols-1 gap-x-16 gap-y-12 md:grid-cols-2">
                                     <div className="space-y-8">
-                                        <div className="border-b border-slate-50 pb-4 dark:border-slate-800">
+                                        <div className="border-b border-slate-50 pb-4 dark:border-[#2f4a62]">
                                             <h3 className="flex items-center gap-2 text-xl font-bold">
                                                 <GraduationCap className="h-5 w-5 text-primary" />
                                                 Formación y Centro
@@ -550,7 +550,7 @@ export default function Show({
                                                 <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                     Grado o Titulación
                                                 </p>
-                                                <p className="text-base font-bold text-slate-800 dark:text-slate-100">
+                                                <p className="text-base font-bold text-slate-800 dark:text-[#edf1f5]">
                                                     {intern.academic_degree}
                                                 </p>
                                             </div>
@@ -581,7 +581,7 @@ export default function Show({
                                     </div>
 
                                     <div className="space-y-8">
-                                        <div className="border-b border-slate-50 pb-4 dark:border-slate-800">
+                                        <div className="border-b border-slate-50 pb-4 dark:border-[#2f4a62]">
                                             <h3 className="flex items-center gap-2 text-xl font-bold">
                                                 <User className="h-5 w-5 text-black dark:text-white" />
                                                 Tutorización
@@ -782,7 +782,7 @@ export default function Show({
                                                     },
                                                 )
                                             ) : (
-                                                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/30 py-8 text-center dark:border-slate-800">
+                                                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/30 py-8 text-center dark:border-[#2f4a62]">
                                                     <CalendarRange className="mx-auto mb-2 h-8 w-8 text-slate-300" />
                                                     <p className="text-sm text-slate-500 italic">
                                                         No hay horarios
@@ -806,7 +806,7 @@ export default function Show({
                                                         (abs: any) => (
                                                             <div
                                                                 key={abs.id}
-                                                                className="group flex items-center justify-between rounded-xl border border-sidebar/20 bg-white p-5 transition-all hover:shadow-md dark:bg-slate-900"
+                                                                className="group flex items-center justify-between rounded-xl border border-sidebar/20 bg-white p-5 transition-all hover:shadow-md dark:bg-[#142235]"
                                                             >
                                                                 <div className="flex items-center gap-4">
                                                                     <div
@@ -823,7 +823,7 @@ export default function Show({
                                                                         <FileText className="h-5 w-5" />
                                                                     </div>
                                                                     <div>
-                                                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                                                                        <p className="text-sm font-bold text-slate-800 dark:text-[#edf1f5]">
                                                                             {
                                                                                 abs.reason
                                                                             }
@@ -958,7 +958,7 @@ export default function Show({
                                 <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
                                     {canViewNotes && (
                                         <div className="space-y-6 md:col-span-5">
-                                            <div className="flex items-center justify-between border-b border-slate-50 pb-4 dark:border-slate-800">
+                                            <div className="flex items-center justify-between border-b border-slate-50 pb-4 dark:border-[#2f4a62]">
                                                 <h3 className="flex items-center gap-2 text-xl font-bold">
                                                     <FileText className="h-5 w-5 text-primary" />
                                                     Notas de Seguimiento
@@ -966,11 +966,11 @@ export default function Show({
                                             </div>
 
                                             <div className="space-y-4">
-                                                <div className="rounded-xl border border-sidebar/15 bg-white p-5 shadow-sm dark:bg-slate-900">
+                                                <div className="rounded-xl border border-sidebar/15 bg-white p-5 shadow-sm dark:bg-[#142235]">
                                                     <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                         Nota de seguimiento
                                                     </p>
-                                                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                                    <p className="mt-1 text-xs text-slate-500 dark:text-[#8fa3b6]">
                                                         Escribe aquí las
                                                         observaciones del
                                                         becario y guarda los
@@ -983,7 +983,7 @@ export default function Show({
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        className="mt-4 min-h-[220px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-700 transition-all outline-none focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-800"
+                                                        className="mt-4 min-h-[220px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-700 transition-all outline-none focus:border-sidebar/30 focus:bg-white focus:ring-2 focus:ring-sidebar/15 dark:border-[#2c465c] dark:bg-[#17283c] dark:text-[#d8e4ef] dark:focus:bg-slate-800"
                                                         placeholder="Añade observaciones sobre el desempeño..."
                                                     />
                                                     <div className="mt-4 flex justify-end gap-2">
@@ -1021,7 +1021,7 @@ export default function Show({
 
                                                     {(visibleNoteAuthor ||
                                                         visibleNoteDate) && (
-                                                        <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+                                                        <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-[#2c465c]">
                                                             <span className="text-[10px] font-bold tracking-tighter uppercase opacity-50">
                                                                 Última edición
                                                             </span>
@@ -1036,7 +1036,7 @@ export default function Show({
                                                                             ''
                                                                         }
                                                                     />
-                                                                    <AvatarFallback className="bg-slate-100 text-[10px] dark:bg-slate-700">
+                                                                    <AvatarFallback className="bg-slate-100 text-[10px] dark:bg-[#22374d]">
                                                                         {visibleNoteAuthor?.name?.charAt(
                                                                             0,
                                                                         ) ||
@@ -1057,7 +1057,7 @@ export default function Show({
 
                                                 {previousInternalNotes.length >
                                                     0 && (
-                                                    <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900">
+                                                    <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-[#142235]">
                                                         <p className="mb-3 text-[10px] font-black tracking-widest text-slate-400 uppercase">
                                                             Historial de notas
                                                         </p>
@@ -1068,7 +1068,7 @@ export default function Show({
                                                                         key={
                                                                             note.id
                                                                         }
-                                                                        className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 dark:border-slate-700 dark:bg-slate-800/70"
+                                                                        className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 dark:border-[#2c465c] dark:bg-[#1b2d42]"
                                                                     >
                                                                         <div className="mb-2 flex items-center justify-between gap-2">
                                                                             <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
@@ -1084,7 +1084,7 @@ export default function Show({
                                                                                 )}
                                                                             </span>
                                                                         </div>
-                                                                        <p className="text-sm leading-relaxed whitespace-pre-wrap text-slate-600 dark:text-slate-300">
+                                                                        <p className="text-sm leading-relaxed whitespace-pre-wrap text-slate-600 dark:text-[#c4d2df]">
                                                                             {
                                                                                 note.content
                                                                             }
@@ -1102,7 +1102,7 @@ export default function Show({
                                     <div
                                         className={`${canViewNotes ? 'md:col-span-7' : 'md:col-span-12'} min-w-0 space-y-6`}
                                     >
-                                        <h3 className="flex items-center gap-2 border-b border-slate-50 pb-4 text-xl font-bold dark:border-slate-800">
+                                        <h3 className="flex items-center gap-2 border-b border-slate-50 pb-4 text-xl font-bold dark:border-[#2f4a62]">
                                             <HistoryIcon className="h-5 w-5 text-slate-500" />
                                             Historial de Auditoría
                                         </h3>
@@ -1234,7 +1234,7 @@ export default function Show({
                                                                 className="group relative pb-10"
                                                             >
                                                                 {/* Línea vertical y Avatar */}
-                                                                <div className="absolute top-0.5 -left-10 z-10 h-8 w-8 overflow-hidden rounded-xl border-4 border-white bg-white shadow-sm ring-1 ring-slate-200 transition-all group-hover:scale-110 dark:border-slate-900 dark:bg-slate-800 dark:ring-slate-700">
+                                                                <div className="absolute top-0.5 -left-10 z-10 h-8 w-8 overflow-hidden rounded-xl border-4 border-white bg-white shadow-sm ring-1 ring-slate-200 transition-all group-hover:scale-110 dark:border-[#0f1b2a] dark:bg-[#17283c] dark:ring-[#2c465c]">
                                                                     <Avatar className="h-full w-full rounded-none">
                                                                         <AvatarImage
                                                                             src={
@@ -1244,7 +1244,7 @@ export default function Show({
                                                                                 activity.causer_name
                                                                             }
                                                                         />
-                                                                        <AvatarFallback className="bg-slate-100 text-[10px] font-bold text-slate-500 dark:bg-slate-700">
+                                                                        <AvatarFallback className="bg-slate-100 text-[10px] font-bold text-slate-500 dark:bg-[#22374d]">
                                                                             {activity.causer_name?.charAt(
                                                                                 0,
                                                                             ) ||
@@ -1255,7 +1255,7 @@ export default function Show({
 
                                                                 <div className="space-y-1">
                                                                     <div className="flex items-center gap-3">
-                                                                        <p className="rounded-md border border-slate-100 bg-slate-50 px-2 py-0.5 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-slate-800 dark:bg-slate-800/50">
+                                                                        <p className="rounded-md border border-slate-100 bg-slate-50 px-2 py-0.5 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-[#2f4a62] dark:bg-[#17283c]/85">
                                                                             {formatDateTimeEs(
                                                                                 activity.created_at,
                                                                             )}
@@ -1270,7 +1270,7 @@ export default function Show({
                                                                         </span>
                                                                     </div>
 
-                                                                    <p className="mt-1 flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
+                                                                    <p className="mt-1 flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-[#edf1f5]">
                                                                         {activity.event ===
                                                                         'updated' ? (
                                                                             <span className="flex items-center gap-1.5">
@@ -1369,7 +1369,7 @@ export default function Show({
                                                                                                     label
                                                                                                 }
                                                                                             </span>
-                                                                                            <span className="text-xs font-bold break-words text-slate-700 dark:text-slate-300">
+                                                                                            <span className="text-xs font-bold break-words text-slate-700 dark:text-[#c4d2df]">
                                                                                                 {
                                                                                                     newValue
                                                                                                 }
@@ -1399,7 +1399,7 @@ export default function Show({
                                                                                             <span className="font-bold text-primary/40">
                                                                                                 →
                                                                                             </span>
-                                                                                            <span className="font-bold break-words text-sidebar dark:text-slate-100">
+                                                                                            <span className="font-bold break-words text-sidebar dark:text-[#edf1f5]">
                                                                                                 {
                                                                                                     newValue
                                                                                                 }

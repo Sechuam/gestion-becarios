@@ -75,7 +75,7 @@ export function RequestAbsenceModal() {
                     }
                 />
             </DialogTrigger>
-            <DialogContent className="overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[460px] dark:bg-slate-900">
+            <DialogContent className="overflow-hidden rounded-xl border-none bg-background p-0 shadow-xl sm:max-w-[460px] dark:bg-[#142235]">
                 <style>{`
                     .input-white-bg {
                         background-color: #ffffff !important;
@@ -184,7 +184,7 @@ export function RequestAbsenceModal() {
                         )}
                     </div>
 
-                    <div className="flex items-center gap-3 border-t border-slate-100 pt-6 dark:border-slate-800">
+                    <div className="flex items-center gap-3 border-t border-slate-100 pt-6 dark:border-[#2f4a62]">
                         <Button
                             type="button"
                             variant="outline"

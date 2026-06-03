@@ -27,12 +27,12 @@ export function DashboardAlertCards({ alerts }: Props) {
                     : 'border-l-sidebar dark:border-l-teal-500';
                 const iconBgClass = isAlertActive
                     ? 'bg-rose-50 text-rose-500 border border-rose-100 animate-pulse'
-                    : 'bg-sidebar text-white';
+                    : 'bg-sidebar text-white dark:bg-[#9fc6bf] dark:text-[#14202a]';
 
                 return (
                     <Card
                         key={alert.label}
-                        className={`group rounded-xl border-l-3 border-slate-200/80 bg-white py-2.5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 ${borderLeftClass}`}
+                        className={`group rounded-xl border-l-3 border-slate-200/80 bg-white py-2.5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-[#2a4158] dark:bg-[#142235] dark:shadow-[0_16px_46px_-32px_rgba(0,0,0,0.95)] ${borderLeftClass}`}
                     >
                         <CardContent className="flex items-center gap-2.5 p-0 px-3">
                             <span
@@ -47,11 +47,11 @@ export function DashboardAlertCards({ alerts }: Props) {
                                     >
                                         {alert.value}
                                     </span>
-                                    <span className="line-clamp-1 text-[10px] leading-none font-bold tracking-wider text-slate-600 uppercase dark:text-slate-300">
+                                    <span className="line-clamp-1 text-[10px] leading-none font-bold tracking-wider text-slate-600 uppercase dark:text-[#c4d2df]">
                                         {alert.label}
                                     </span>
                                 </div>
-                                <span className="mt-0.5 line-clamp-1 block text-[10px] leading-none font-medium text-slate-600 dark:text-slate-300">
+                                <span className="mt-0.5 line-clamp-1 block text-[10px] leading-none font-medium text-slate-600 dark:text-[#93a7ba]">
                                     {isAlertActive
                                         ? 'Requiere atención'
                                         : 'Sin incidencias hoy'}

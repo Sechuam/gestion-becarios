@@ -45,7 +45,7 @@ export function MetricPills({ metrics, className }: Props) {
                 return (
                     <div
                         key={metric.label}
-                        className="flex min-h-12 items-center gap-2.5 rounded-lg border border-sidebar/10 bg-white px-3 py-2 shadow-sm dark:bg-slate-900/60"
+                        className="flex min-h-12 items-center gap-2.5 rounded-lg border border-sidebar/10 bg-white px-3 py-2 shadow-sm dark:bg-[#142235]"
                     >
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-sidebar/10 bg-sidebar/5">
                             <IconComponent

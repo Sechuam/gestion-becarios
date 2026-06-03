@@ -85,7 +85,7 @@ export function ReportTemplatesCard({
                                 onApplyTemplate(template);
                             }
                         }}
-                        className="w-full cursor-pointer rounded-lg border border-sidebar/10 bg-white p-3 text-left transition hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800"
+                        className="w-full cursor-pointer rounded-lg border border-sidebar/10 bg-white p-3 text-left transition hover:bg-slate-50 dark:bg-[#142235] dark:hover:bg-slate-800"
                     >
                         <div className="flex items-center justify-between gap-2">
                             {editingId === template.id ? (
@@ -186,7 +186,7 @@ export function ReportTemplatesCard({
     }
 
     return (
-        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-slate-900">
+        <Card className="border-sidebar/10 bg-white shadow-sm dark:bg-[#142235]">
             <CardHeader>
                 <CardTitle className="text-lg font-black">
                     Plantillas guardadas

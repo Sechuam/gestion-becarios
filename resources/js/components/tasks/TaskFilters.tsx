@@ -37,7 +37,7 @@ export function TaskFilters({
     rightSlot,
 }: TaskFiltersProps) {
     return (
-        <div className="rounded-xl border border-[#d9e1d6] bg-white/88 p-2 shadow-lg shadow-slate-900/6 backdrop-blur transition-all dark:bg-slate-900/60">
+        <div className="rounded-xl border border-[#d9e1d6] bg-white/88 p-2 shadow-lg shadow-slate-900/6 backdrop-blur transition-all dark:bg-[#142235]">
             <div className="flex flex-wrap items-center gap-2">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                     {/* Búsqueda principal */}
@@ -188,7 +188,7 @@ export function TaskFilters({
                     </div>
 
                     {/* Contador discreto */}
-                    <div className="flex flex-none items-center gap-1.5 rounded-lg border border-[#d6dfd3] bg-[#eef3ed] px-2 py-1 dark:bg-slate-800">
+                    <div className="flex flex-none items-center gap-1.5 rounded-lg border border-[#d6dfd3] bg-[#eef3ed] px-2 py-1 dark:bg-[#17283c]">
                         <span className="flex h-1 w-1 animate-pulse rounded-full bg-[#4e7f78]" />
                         <span className="text-[10px] font-bold whitespace-nowrap text-muted-foreground tabular-nums">
                             {tasksCount} / {totalTasks}

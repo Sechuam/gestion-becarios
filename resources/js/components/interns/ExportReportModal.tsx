@@ -56,7 +56,7 @@ function ExportReportModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="overflow-hidden border-sidebar/20 bg-slate-50 p-0 shadow-xl sm:max-w-md dark:bg-slate-900">
+            <DialogContent className="overflow-hidden border-sidebar/20 bg-slate-50 p-0 shadow-xl sm:max-w-md dark:bg-[#142235]">
                 <div className="bg-gradient-to-r from-sidebar to-sidebar-accent px-6 py-5 text-white">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-white">

@@ -202,7 +202,7 @@ export default function TaskQuickViewSheet({
 
                         <div className="flex-1 space-y-6 p-6">
                             <section className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-[#142235]">
                                     <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Contexto
                                     </p>
@@ -249,7 +249,7 @@ export default function TaskQuickViewSheet({
                                     </div>
                                 </div>
 
-                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
+                                <div className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-[#142235]">
                                     <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                         Señales rápidas
                                     </p>
@@ -326,7 +326,7 @@ export default function TaskQuickViewSheet({
                             {task &&
                                 onMoveTask &&
                                 availableStatuses.length > 0 && (
-                                    <section className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-slate-900/60">
+                                    <section className="rounded-xl border border-sidebar/10 bg-white p-4 shadow-sm dark:bg-[#142235]">
                                         <div className="mb-3">
                                             <h3 className="text-sm font-semibold text-foreground">
                                                 Mover a otra columna

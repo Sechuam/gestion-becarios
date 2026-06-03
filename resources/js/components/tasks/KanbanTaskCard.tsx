@@ -93,7 +93,7 @@ export default function KanbanTaskCard({
         <div
             ref={setNodeRef}
             style={style}
-            className={`task-surface-soft group relative rounded-xl border border-border p-4 pl-5 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+            className={`task-surface-soft group relative rounded-xl border border-border p-4 pl-5 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-[#2a4158] dark:bg-[#142235] dark:hover:border-[#3c6270] ${
                 isDragging ? 'z-0 border-dashed opacity-40' : ''
             } ${onOpenDetails ? 'cursor-pointer' : ''} ${
                 highlightMove ? 'task-card-drop-highlight' : ''
@@ -111,7 +111,7 @@ export default function KanbanTaskCard({
                     {onOpenDetails ? (
                         <button
                             type="button"
-                            className="line-clam-2 block text-left leading-tight font-semibold text-foreground hover:underline"
+                            className="line-clam-2 block text-left leading-tight font-semibold text-foreground hover:underline dark:text-[#edf1f5]"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();
@@ -123,19 +123,19 @@ export default function KanbanTaskCard({
                     ) : (
                         <Link
                             href={`/tareas/${task.id}`}
-                            className="line-clamp-2 block leading-tight font-semibold text-foreground hover:underline"
+                            className="line-clamp-2 block leading-tight font-semibold text-foreground hover:underline dark:text-[#edf1f5]"
                         >
                             {task.title}
                         </Link>
                     )}
-                    <p className="line-clamp-2 text-xs text-muted-foreground">
+                    <p className="line-clamp-2 text-xs text-muted-foreground dark:text-[#9fb0c1]">
                         {task.description || 'Sin descripción'}
                     </p>
                 </div>
                 {canDrag && (
                     <button
                         type="button"
-                        className="absolute top-0 right-0 inline-flex cursor-grab items-center rounded-md border border-border/70 bg-muted/30 p-1.5 text-muted-foreground/70 shadow-sm transition hover:border-primary/30 hover:bg-primary/8 hover:text-foreground active:cursor-grabbing"
+                        className="absolute top-0 right-0 inline-flex cursor-grab items-center rounded-md border border-border/70 bg-muted/30 p-1.5 text-muted-foreground/70 shadow-sm transition hover:border-primary/30 hover:bg-primary/8 hover:text-foreground active:cursor-grabbing dark:border-[#2f4a62] dark:bg-[#1d3148] dark:text-[#9fb0c1] dark:hover:border-[#9fc6bf]/45 dark:hover:bg-[#22374d] dark:hover:text-white"
                         {...listeners}
                         {...attributes}
                         onClick={(event) => {
@@ -152,7 +152,7 @@ export default function KanbanTaskCard({
 
             <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
                 {/* Estado */}
-                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-[#d8e4ef]">
                     <div
                         className={cn('h-1.5 w-1.5 shrink-0 rounded-full', {
                             'bg-slate-300': task.status === 'pending',
@@ -168,7 +168,7 @@ export default function KanbanTaskCard({
                 </div>
 
                 {/* Prioridad */}
-                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                <div className="flex items-center gap-1.5 font-medium text-sidebar dark:text-[#d8e4ef]">
                     <div
                         className={cn('h-1.5 w-1.5 shrink-0 rounded-full', {
                             'bg-rose-500': task.priority === 'high',
@@ -185,7 +185,7 @@ export default function KanbanTaskCard({
                 {task.due_date && (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="flex cursor-default items-center gap-1.5 font-medium text-sidebar dark:text-white/80">
+                            <div className="flex cursor-default items-center gap-1.5 font-medium text-sidebar dark:text-[#d8e4ef]">
                                 {(() => {
                                     const dStatus = dueStatus(task.due_date);
                                     const isCompleted =
@@ -243,10 +243,10 @@ export default function KanbanTaskCard({
 
             <div className="mb-3 flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                    <p className="truncate text-xs font-medium text-foreground">
+                    <p className="truncate text-xs font-medium text-foreground dark:text-[#edf1f5]">
                         {task.practice_type?.name || 'Sin tipo'}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-[11px] text-muted-foreground dark:text-[#9fb0c1]">
                         {task.creator?.name
                             ? `Creada por ${task.creator.name}`
                             : 'Sin creador visible'}
@@ -255,7 +255,7 @@ export default function KanbanTaskCard({
                 <AssignedInternsStack interns={task.interns || []} />
             </div>
 
-            <div className="mb-3 flex items-center gap-3 text-[11px] text-muted-foreground">
+            <div className="mb-3 flex items-center gap-3 text-[11px] text-muted-foreground dark:text-[#9fb0c1]">
                 <span className="inline-flex items-center gap-1">
                     <MessageSquareText className="h-3.5 w-3.5" />
                     {commentsCount}
@@ -272,7 +272,7 @@ export default function KanbanTaskCard({
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-8 shrink-0 px-2.5"
+                            className="h-8 shrink-0 border-[#2f4a62] px-2.5 dark:bg-[#1d3148] dark:text-[#edf1f5] dark:hover:bg-[#22374d]"
                             onClick={(event) => {
                                 event.preventDefault();
                                 event.stopPropagation();
@@ -286,7 +286,7 @@ export default function KanbanTaskCard({
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-8 shrink-0 px-2.5"
+                        className="h-8 shrink-0 border-[#2f4a62] px-2.5 dark:bg-[#1d3148] dark:text-[#edf1f5] dark:hover:bg-[#22374d]"
                         asChild
                     >
                         <Link href={`/tareas/${task.id}`}>
@@ -297,7 +297,7 @@ export default function KanbanTaskCard({
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-8 shrink-0 px-2.5"
+                            className="h-8 shrink-0 border-[#2f4a62] px-2.5 dark:bg-[#1d3148] dark:text-[#edf1f5] dark:hover:bg-[#22374d]"
                             asChild
                         >
                             <Link href={`/tareas/${task.id}/edit`}>
