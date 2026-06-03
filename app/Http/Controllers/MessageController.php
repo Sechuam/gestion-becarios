@@ -21,6 +21,26 @@ class MessageController extends Controller
         /** @var User $user */
         $user = Auth::user();
         $selectedConversation = null;
+        $selectedId = $request->integer('conversation');
+
+        if ($selectedId) {
+            $conversationToRead = (clone $this->conversationQuery($user))
+                ->whereKey($selectedId)
+                ->firstOrFail();
+
+            $conversationToRead->messages()
+                ->where('sender_user_id', '!=', $user->id)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
+
+            $selectedConversation = (clone $this->conversationQuery($user))
+                ->whereKey($selectedId)
+                ->with([
+                    'internUser', 'tutorUser', 'userA', 'userB',
+                    'practiceType', 'messages.sender', 'participants',
+                ])
+                ->firstOrFail();
+        }
 
         $conversations = $this->conversationQuery($user)
             ->with([
@@ -36,23 +56,6 @@ class MessageController extends Controller
             ->orderByDesc('last_message_at')
             ->orderByDesc('updated_at')
             ->get();
-
-        $selectedId = $request->integer('conversation');
-
-        if ($selectedId) {
-            $selectedConversation = (clone $this->conversationQuery($user))
-                ->whereKey($selectedId)
-                ->with([
-                    'internUser', 'tutorUser', 'userA', 'userB',
-                    'practiceType', 'messages.sender', 'participants',
-                ])
-                ->firstOrFail();
-
-            $selectedConversation->messages()
-                ->where('sender_user_id', '!=', $user->id)
-                ->whereNull('read_at')
-                ->update(['read_at' => now()]);
-        }
 
         return Inertia::render('messages/index', [
             'conversations' => $conversations->map(

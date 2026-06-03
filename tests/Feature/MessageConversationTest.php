@@ -4,6 +4,7 @@ use App\Models\EducationCenter;
 use App\Models\Intern;
 use App\Models\MessageConversation;
 use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
 
 it('keeps a conversation available for the remaining participant when another user leaves it', function () {
     $tutor = User::factory()->create();
@@ -62,4 +63,31 @@ it('allows interns to reply to group conversations they participate in', functio
         ->assertRedirect(route('messages.index', ['conversation' => $conversation->id]));
 
     expect($conversation->messages()->where('body', 'Recibido.')->exists())->toBeTrue();
+});
+
+it('clears the unread count in the conversation list when opening a chat', function () {
+    $sender = User::factory()->create();
+    $recipient = User::factory()->create();
+
+    $conversation = MessageConversation::create([
+        'last_message_at' => now(),
+    ]);
+
+    $conversation->participants()->attach([$sender->id, $recipient->id]);
+    $message = $conversation->messages()->create([
+        'sender_user_id' => $sender->id,
+        'body' => 'Tienes un mensaje pendiente.',
+        'read_at' => null,
+    ]);
+
+    $this->actingAs($recipient)
+        ->get(route('messages.index', ['conversation' => $conversation->id]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('messages/index')
+            ->where('conversations.0.id', $conversation->id)
+            ->where('conversations.0.unread_count', 0)
+        );
+
+    expect($message->fresh()->read_at)->not->toBeNull();
 });
