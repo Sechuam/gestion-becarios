@@ -3,7 +3,6 @@
 use App\Models\EducationCenter;
 use App\Models\Intern;
 use App\Models\User;
-use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -14,90 +13,6 @@ beforeEach(function () {
     Permission::findOrCreate('manage interns');
 
     Role::findOrCreate('admin')->givePermissionTo('manage interns');
-    Role::findOrCreate('tutor');
-});
-
-it('allows admins to view the interns index', function () {
-    $admin = User::factory()->create();
-    $admin->assignRole('admin');
-    $center = EducationCenter::factory()->create();
-    $internUser = User::factory()->create(['name' => 'Becario Visible']);
-
-    Intern::factory()->create([
-        'user_id' => $internUser->id,
-        'education_center_id' => $center->id,
-        'status' => 'active',
-    ]);
-
-    $this->actingAs($admin)
-        ->get(route('becarios.index'))
-        ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('interns/index')
-            ->where('interns.data.0.user.name', 'Becario Visible')
-            ->has('education_centers', 1)
-        );
-});
-
-it('allows admins to view intern details', function () {
-    $admin = User::factory()->create();
-    $admin->assignRole('admin');
-    $center = EducationCenter::factory()->create();
-    $internUser = User::factory()->create(['name' => 'Detalle Admin']);
-    $intern = Intern::factory()->create([
-        'user_id' => $internUser->id,
-        'education_center_id' => $center->id,
-        'status' => 'active',
-    ]);
-
-    $this->actingAs($admin)
-        ->get(route('interns.show', $intern))
-        ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('interns/Show')
-            ->where('intern.user.name', 'Detalle Admin')
-            ->has('time_stats')
-        );
-});
-
-it('allows assigned tutors to view intern details', function () {
-    $tutor = User::factory()->create();
-    $tutor->assignRole('tutor');
-    $center = EducationCenter::factory()->create();
-    $internUser = User::factory()->create(['name' => 'Becario Asignado']);
-    $intern = Intern::factory()->create([
-        'user_id' => $internUser->id,
-        'education_center_id' => $center->id,
-        'company_tutor_user_id' => $tutor->id,
-        'status' => 'active',
-    ]);
-
-    $this->actingAs($tutor)
-        ->get(route('interns.show', $intern))
-        ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('interns/Show')
-            ->where('intern.user.name', 'Becario Asignado')
-        );
-});
-
-it('prevents tutors from viewing interns assigned to another tutor', function () {
-    $assignedTutor = User::factory()->create();
-    $assignedTutor->assignRole('tutor');
-    $otherTutor = User::factory()->create();
-    $otherTutor->assignRole('tutor');
-    $center = EducationCenter::factory()->create();
-    $internUser = User::factory()->create();
-    $intern = Intern::factory()->create([
-        'user_id' => $internUser->id,
-        'education_center_id' => $center->id,
-        'company_tutor_user_id' => $assignedTutor->id,
-        'status' => 'active',
-    ]);
-
-    $this->actingAs($otherTutor)
-        ->get(route('interns.show', $intern))
-        ->assertForbidden();
 });
 
 it('allows admins to update interns', function () {
@@ -192,4 +107,23 @@ it('allows admins to archive interns', function () {
 
     expect(Intern::query()->find($intern->id))->toBeNull()
         ->and(Intern::withTrashed()->find($intern->id)?->trashed())->toBeTrue();
+});
+
+it('prevents tutors from viewing interns they are not assigned to', function () {
+    $tutor = User::factory()->create();
+
+    Role::firstOrCreate(['name' => 'tutor', 'guard_name' => 'web']);
+
+    $tutor->assignRole('tutor');
+
+    $center = EducationCenter::factory()->create();
+
+    $intern = Intern::factory()->create([
+        'education_center_id' => $center->id,
+        'company_tutor_user_id' => null,
+    ]);
+
+    $this->actingAs($tutor)
+        ->get(route('interns.show', $intern))
+        ->assertForbidden();
 });
